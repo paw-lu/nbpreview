@@ -1,0 +1,11 @@
+{
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Paulo S. Costa",
+  "email": "Paulo.S.Costa5@gmail.com",
+  "friendly_name": "nbpreview",
+  "github_user": "paw-lu",
+  "license": "MIT",
+  "package_name": "nbpreview",
+  "project_name": "nbpreview",
+  "version": "0.0.0"
+}
