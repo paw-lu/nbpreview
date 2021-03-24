@@ -51,7 +51,7 @@ ipykernel = "^5.5.0"
 ipdb = "^0.13.7"
 
 [tool.poetry.scripts]
-nbpreview = "nbpreview.__main__:main"
+nbpreview = "nbpreview.__main__:app"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
