@@ -1,5 +1,6 @@
 """Test cases for the __main__ module."""
 import pathlib
+import tempfile
 
 import pytest
 import typer.testing
@@ -44,8 +45,10 @@ def test_exit_invalid_file_status(runner: CliRunner) -> None:
 
 def test_exit_invalid_file_output(runner: CliRunner) -> None:
     """It outputs a message when fed an invalid file."""
-    invalid_file = str(
-        (pathlib.Path(__file__).parent / pathlib.Path("__init__.py")).resolve()
-    )
-    result = runner.invoke(app, [invalid_file])
-    assert result.output == f"{invalid_file} is not a valid \nJupyter Notebook path.\n"
+    with tempfile.NamedTemporaryFile() as invalid_file:
+        invalid_path = invalid_file.name
+        result = runner.invoke(app, [invalid_path])
+        assert (
+            result.output.replace("\n", "")
+            == f"{invalid_path} is not a valid Jupyter Notebook path."
+        )
