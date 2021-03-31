@@ -3,7 +3,7 @@ import pathlib
 import tempfile
 
 import pytest
-import typer.testing
+from typer import testing
 from typer.testing import CliRunner
 
 import nbpreview
@@ -13,7 +13,7 @@ from nbpreview.__main__ import app
 @pytest.fixture
 def runner() -> CliRunner:
     """Fixture for invoking command-line interfaces."""
-    return typer.testing.CliRunner()
+    return testing.CliRunner()
 
 
 @pytest.fixture
