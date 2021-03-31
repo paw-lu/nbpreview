@@ -42,7 +42,8 @@ theme_option = typer.Option(
     "--theme",
     "-t",
     help="The theme to use for syntax highlighting. May be 'ansi_light',"
-    " 'ansi_dark', or any Pygments theme. By default 'ansi_dark'.",
+    " 'ansi_dark', or any Pygments theme.",
+    envvar="NBPREVIEW_THEME",
 )
 version_option = typer.Option(
     None,
