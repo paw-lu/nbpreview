@@ -3,15 +3,15 @@ import sys
 from pathlib import Path
 
 import nbformat
-import rich.console
-import rich.traceback
 import typer
+from rich import console
+from rich import traceback
 
 from . import __version__
 from . import render
 
 app = typer.Typer()
-rich.traceback.install(theme="ansi_dark", show_locals=True)
+traceback.install(theme="ansi_dark", show_locals=True)
 
 
 def version_callback(value: bool) -> None:
@@ -56,15 +56,15 @@ def main(
     version: bool = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
-    console = rich.console.Console()
-    stderr = rich.console.Console(file=sys.stdout)
+    stdout_console = console.Console()
+    stderr_console = console.Console(file=sys.stdout)
 
     try:
         notebook = render.Notebook(notebook_path=file, theme=theme, nb_version=4)
     except nbformat.reader.NotJSONError:
-        stderr.print(f"{file} is not a valid Jupyter Notebook path.")
+        stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1)
-    console.print(notebook)
+    stdout_console.print(notebook)
 
 
 if __name__ == "__main__":
