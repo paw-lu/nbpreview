@@ -38,7 +38,11 @@ file_argument = typer.Argument(
     help="A Jupyter Notebook file to render.",
 )
 theme_option = typer.Option(
-    "ansi_dark", "--theme", "-t", help="The theme to use for syntax highlighting."
+    "ansi_dark",
+    "--theme",
+    "-t",
+    help="The theme to use for syntax highlighting. May be 'ansi_light',"
+    " 'ansi_dark', or any Pygments theme. By default 'ansi_dark'.",
 )
 version_option = typer.Option(
     None,
