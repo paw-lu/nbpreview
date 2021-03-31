@@ -47,6 +47,7 @@ theme_option = typer.Option(
 version_option = typer.Option(
     None,
     "--version",
+    "-V",
     help="Display the version and exit.",
     callback=version_callback,
     is_eager=True,
