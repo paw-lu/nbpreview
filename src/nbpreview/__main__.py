@@ -65,7 +65,7 @@ def main(
     stderr_console = console.Console(file=sys.stdout)
 
     try:
-        notebook = render.Notebook(notebook_path=file, theme=theme, nb_version=4)
+        notebook = render.Notebook(notebook_path=file, theme=theme)
     except nbformat.reader.NotJSONError:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1)
