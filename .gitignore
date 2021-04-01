@@ -1,8 +1,10 @@
+.ipynb_checkpoints/
 .mypy_cache/
 /.coverage
 /.nox/
 /.python-version
 /.pytype/
+/.virtual_documents/
 /dist/
 /docs/_build/
 /src/*.egg-info/
