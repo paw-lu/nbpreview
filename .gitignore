@@ -8,4 +8,5 @@
 /dist/
 /docs/_build/
 /src/*.egg-info/
+/htmlcov
 __pycache__/
