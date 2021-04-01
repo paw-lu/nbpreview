@@ -1,7 +1,12 @@
 """Test cases for the __main__ module."""
 import pathlib
 import tempfile
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Optional
 
+import nbformat
 import pytest
 from typer import testing
 from typer.testing import CliRunner
@@ -16,16 +21,17 @@ def runner() -> CliRunner:
     return testing.CliRunner()
 
 
-@pytest.fixture
-def notebook() -> str:
-    """Fixture for returning an example notebook."""
-    return str(pathlib.Path(__file__).parent / pathlib.Path("notebook.ipynb"))
-
-
-def test_main_succeeds(runner: CliRunner, notebook: str) -> None:
+def test_main_succeeds(
+    runner: CliRunner,
+    make_notebook: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
     """It exits with a status code of zero with a valid file."""
-    result = runner.invoke(app, [notebook])
-    assert result.exit_code == 0
+    with tempfile.NamedTemporaryFile() as notebook_file:
+        notebook_path = notebook_file.name
+        notebook_node = nbformat.from_dict(make_notebook(None))
+        pathlib.Path(notebook_file.name).write_text(nbformat.writes(notebook_node))
+        result = runner.invoke(app, [notebook_path])
+        assert result.exit_code == 0
 
 
 def test_version(runner: CliRunner) -> None:
@@ -36,11 +42,10 @@ def test_version(runner: CliRunner) -> None:
 
 def test_exit_invalid_file_status(runner: CliRunner) -> None:
     """It exits with a status code of 1 when fed an invalid file."""
-    invalid_file = str(
-        (pathlib.Path(__file__).parent / pathlib.Path("__init__.py")).resolve()
-    )
-    result = runner.invoke(app, [invalid_file])
-    assert result.exit_code == 1
+    with tempfile.NamedTemporaryFile() as invalid_file:
+        invalid_path = invalid_file.name
+        result = runner.invoke(app, [invalid_path])
+        assert result.exit_code == 1
 
 
 def test_exit_invalid_file_output(runner: CliRunner) -> None:
