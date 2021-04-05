@@ -7,6 +7,6 @@ else:  # pragma: no cover
     from importlib_metadata import version, PackageNotFoundError
 
 try:
-    __version__ = version(__name__)
+    __version__ = version(__name__)  # type: ignore[no-untyped-call]
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
