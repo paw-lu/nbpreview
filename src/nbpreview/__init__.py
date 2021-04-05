@@ -1,8 +1,10 @@
 """nbpreview."""
-try:
-    from importlib.metadata import version, PackageNotFoundError  # type: ignore
-except ImportError:  # pragma: no cover
-    from importlib_metadata import version, PackageNotFoundError  # type: ignore
+import sys
+
+if sys.version_info >= (3, 8):
+    from importlib.metadata import version, PackageNotFoundError
+else:  # pragma: no cover
+    from importlib_metadata import version, PackageNotFoundError
 
 try:
     __version__ = version(__name__)
