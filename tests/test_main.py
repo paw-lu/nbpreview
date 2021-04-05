@@ -8,6 +8,7 @@ from typing import Optional
 
 import nbformat
 import pytest
+from nbformat.notebooknode import NotebookNode
 from typer import testing
 from typer.testing import CliRunner
 
@@ -23,12 +24,12 @@ def runner() -> CliRunner:
 
 def test_main_succeeds(
     runner: CliRunner,
-    make_notebook: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
 ) -> None:
     """It exits with a status code of zero with a valid file."""
     with tempfile.NamedTemporaryFile() as notebook_file:
         notebook_path = notebook_file.name
-        notebook_node = nbformat.from_dict(make_notebook(None))
+        notebook_node = make_notebook(None)
         pathlib.Path(notebook_file.name).write_text(nbformat.writes(notebook_node))
         result = runner.invoke(app, [notebook_path])
         assert result.exit_code == 0

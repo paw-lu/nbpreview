@@ -6,29 +6,39 @@ from typing import Optional
 
 import nbformat
 import pytest
+from nbformat.notebooknode import NotebookNode
 
 
 @pytest.fixture
-def make_notebook() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]:
+def make_notebook() -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
     """Fixture that returns a function that creates a base notebook."""
 
-    def _make_notebook(cell: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _make_notebook(cell: Optional[Dict[str, Any]] = None) -> NotebookNode:
+        """Create a NotebookNode.
+
+        Args:
+            cell (Optional[Dict[str, Any]], optional): The cell for the
+                NotebookNode. Defaults to None.
+
+        Returns:
+            NotebookNode: The NotebookNode containing the inputted cell.
+        """
         notebook = {
             "cells": [
                 {
                     "cell_type": "code",
                     "execution_count": None,
-                    "id": "stone-segment",
+                    "id": "conceptual-conditions",
                     "metadata": {},
                     "outputs": [],
-                    "source": [],
+                    "source": "",
                 }
             ],
             "metadata": {
                 "kernelspec": {
-                    "display_name": "Python 3",
+                    "display_name": "nbpreview",
                     "language": "python",
-                    "name": "python3",
+                    "name": "nbpreview",
                 },
                 "language_info": {
                     "codemirror_mode": {"name": "ipython", "version": 3},
@@ -37,7 +47,7 @@ def make_notebook() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]:
                     "name": "python",
                     "nbconvert_exporter": "python",
                     "pygments_lexer": "ipython3",
-                    "version": "3.9.2",
+                    "version": "3.8.6",
                 },
             },
             "nbformat": 4,
@@ -46,6 +56,7 @@ def make_notebook() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]:
         if cell is not None:
             notebook["cells"] = [cell]
         nbformat.validate(notebook)
-        return notebook
+
+        return nbformat.from_dict(notebook)
 
     return _make_notebook
