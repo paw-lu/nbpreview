@@ -43,12 +43,14 @@ class Notebook:
         self.theme = theme
         self.plain = plain
 
-    def _render_execution_indicator(self, execution_count: Union[str, None]) -> Text:
+    def _render_execution_indicator(
+        self, execution_count: Union[str, int, None]
+    ) -> Text:
         """Render the execution indicator.
 
         Args:
-            execution_count (Union[str, None]): The execution count.
-                Set to None if there is no execution count.
+            execution_count (Union[str, int, None]): The execution
+                count. Set to None if there is no execution count.
 
         Returns:
             Text: The rendered execution indicator.
