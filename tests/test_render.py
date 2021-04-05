@@ -1,11 +1,11 @@
 """Test cases for render."""
 import io
+import sys
 from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Protocol
 
 import pytest
 from nbformat import NotebookNode
@@ -13,6 +13,11 @@ from rich import console
 from rich.console import Console
 
 from nbpreview import render
+
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:  # pragma: no cover
+    from typing_extensions import Protocol
 
 
 class RichOutput(Protocol):
