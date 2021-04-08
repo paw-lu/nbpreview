@@ -1,6 +1,7 @@
 """Command-line interface."""
 import sys
 from pathlib import Path
+from typing import Optional
 
 import nbformat
 import typer
@@ -14,7 +15,7 @@ app = typer.Typer()
 traceback.install(theme="ansi_dark", show_locals=True)
 
 
-def version_callback(value: bool) -> None:
+def version_callback(value: Optional[bool] = None) -> None:
     """Return the package version.
 
     Args:
@@ -59,7 +60,7 @@ version_option = typer.Option(
 def main(
     file: Path = file_argument,
     theme: str = theme_option,
-    version: bool = version_option,
+    version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     stdout_console = console.Console()
