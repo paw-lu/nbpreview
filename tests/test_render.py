@@ -191,6 +191,19 @@ def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
+def test_notebook_raw_cell(rich_output: RichOutput) -> None:
+    """It renders a raw cell as plain text."""
+    code_cell = {
+        "cell_type": "raw",
+        "id": "emotional-amount",
+        "metadata": {},
+        "source": "Lorep ipsum",
+    }
+    expected_output = " ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
+    output = rich_output(code_cell)
+    assert output == expected_output
+
+
 def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
     """It uses the default highlighting when magic is not a syntax."""
     code_cell = {
