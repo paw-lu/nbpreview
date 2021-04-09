@@ -191,6 +191,47 @@ def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
+def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
+    """It uses the default highlighting when magic is not a syntax."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "%%timeit\ndef foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    expected_output = (
+        "\x1b[38;5;247m    \x1b[0m ╭─────────"
+        "──────────────────────────────"
+        "──────────────────────────────"
+        "────╮\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b["
+        "49m%%time\x1b[0m\x1b[49mit\x1b[0m      "
+        "                              "
+        "                            │\n"
+        "     │ \x1b[94;49mdef\x1b[0m\x1b[49m \x1b["
+        "0m\x1b[92;49mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[4"
+        "9mx\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[9"
+        "6;49mfloat\x1b[0m\x1b[49m,\x1b[0m\x1b[49m "
+        "\x1b[0m\x1b[49my\x1b[0m\x1b[49m:\x1b[0m\x1b[49m "
+        "\x1b[0m\x1b[96;49mfloat\x1b[0m\x1b[49m)\x1b[0"
+        "m\x1b[49m \x1b[0m\x1b[49m-\x1b[0m\x1b[49m>\x1b[0"
+        "m\x1b[49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b["
+        "49m:\x1b[0m                      "
+        "             │\n     │ \x1b[49m   "
+        " \x1b[0m\x1b[94;49mreturn\x1b[0m\x1b[49m \x1b"
+        "[0m\x1b[49mx\x1b[0m\x1b[49m \x1b[0m\x1b[49m+\x1b"
+        "[0m\x1b[49m \x1b[0m\x1b[49my\x1b[0m       "
+        "                              "
+        "                   │\n     ╰───"
+        "──────────────────────────────"
+        "──────────────────────────────"
+        "──────────╯\n"
+    )
+    output = rich_output(code_cell)
+    assert output == expected_output
+
+
 def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
     """It renders a code cell with plain formatting."""
     code_cell = {
