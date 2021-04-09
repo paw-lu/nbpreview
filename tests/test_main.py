@@ -4,6 +4,7 @@ import tempfile
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import Generator
 from typing import Optional
 
 import nbformat
@@ -22,17 +23,51 @@ def runner() -> CliRunner:
     return testing.CliRunner()
 
 
+@pytest.fixture
+def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
+    """Fixture that returns function to create temporary file.
+
+    This is used in place of NamedTemporaryFile as a contex manager
+    because of the inability to read from an open file created on
+    Windows.
+
+    Yields:
+        Generator[Callable[[Optional[str]], str]: Function to create
+            tempfile that is delted at teardown.
+    """
+    file = tempfile.NamedTemporaryFile(delete=False)
+    file_name = file.name
+    tempfile_path = pathlib.Path(file_name)
+
+    def _named_temp_file(text: Optional[str] = None) -> str:
+        """Create a temporary file.
+
+        Args:
+            text (Optional[str], optional): The text to fill the file
+                with. Defaults to None, which creates a blank file.
+
+        Returns:
+            str: The path of the temporary file.
+        """
+        if text is not None:
+            tempfile_path.write_text(text)
+        file.close()
+        return file_name
+
+    yield _named_temp_file
+    tempfile_path.unlink()
+
+
 def test_main_succeeds(
     runner: CliRunner,
     make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    temp_file: Callable[[Optional[str]], str],
 ) -> None:
     """It exits with a status code of zero with a valid file."""
-    with tempfile.NamedTemporaryFile() as notebook_file:
-        notebook_path = notebook_file.name
-        notebook_node = make_notebook(None)
-        pathlib.Path(notebook_file.name).write_text(nbformat.writes(notebook_node))
-        result = runner.invoke(app, [notebook_path])
-        assert result.exit_code == 0
+    notebook_node = make_notebook(None)
+    notebook_path = temp_file(nbformat.writes(notebook_node))
+    result = runner.invoke(app, [notebook_path])
+    assert result.exit_code == 0
 
 
 def test_version(runner: CliRunner) -> None:
@@ -41,20 +76,24 @@ def test_version(runner: CliRunner) -> None:
     assert result.stdout == f"nbpreview {nbpreview.__version__}\n"
 
 
-def test_exit_invalid_file_status(runner: CliRunner) -> None:
+def test_exit_invalid_file_status(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+) -> None:
     """It exits with a status code of 1 when fed an invalid file."""
-    with tempfile.NamedTemporaryFile() as invalid_file:
-        invalid_path = invalid_file.name
-        result = runner.invoke(app, [invalid_path])
-        assert result.exit_code == 1
+    invalid_path = temp_file(None)
+    result = runner.invoke(app, [invalid_path])
+    assert result.exit_code == 1
 
 
-def test_exit_invalid_file_output(runner: CliRunner) -> None:
+def test_exit_invalid_file_output(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+) -> None:
     """It outputs a message when fed an invalid file."""
-    with tempfile.NamedTemporaryFile() as invalid_file:
-        invalid_path = invalid_file.name
-        result = runner.invoke(app, [invalid_path])
-        assert (
-            result.output.replace("\n", "")
-            == f"{invalid_path} is not a valid Jupyter Notebook path."
-        )
+    invalid_path = temp_file(None)
+    result = runner.invoke(app, [invalid_path])
+    assert (
+        result.output.replace("\n", "")
+        == f"{invalid_path} is not a valid Jupyter Notebook path."
+    )
