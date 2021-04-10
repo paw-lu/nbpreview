@@ -70,9 +70,10 @@ def test_main_succeeds(
     assert result.exit_code == 0
 
 
-def test_version(runner: CliRunner) -> None:
+@pytest.mark.parametrize("option", ("--version", "-V"))
+def test_version(runner: CliRunner, option: str) -> None:
     """It returns the version number."""
-    result = runner.invoke(app, ["--version"])
+    result = runner.invoke(app, [option])
     assert result.stdout == f"nbpreview {nbpreview.__version__}\n"
 
 
