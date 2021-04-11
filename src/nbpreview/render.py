@@ -1,4 +1,5 @@
 """Render the notebook."""
+import dataclasses
 from typing import Iterator
 from typing import Tuple
 from typing import Union
@@ -21,6 +22,7 @@ from rich.text import Text
 Cell = Union[Markdown, Panel, Text, Syntax]
 
 
+@dataclasses.dataclass()
 class Notebook:
     """Construct a Notebook object to render Jupyter Notebooks.
 
@@ -34,14 +36,14 @@ class Notebook:
             boxes or execution counts. By default False.
     """
 
-    def __init__(
-        self, notebook_node: NotebookNode, theme: str = "ansi_dark", plain: bool = False
-    ) -> None:
-        """Initialize."""
-        self.cells = notebook_node.cells
-        self.language = notebook_node.metadata.kernelspec.language
-        self.theme = theme
-        self.plain = plain
+    notebook_node: NotebookNode
+    theme: str = "ansi_dark"
+    plain: bool = False
+
+    def __post_init__(self) -> None:
+        """Constructor."""
+        self.cells = self.notebook_node.cells
+        self.language = self.notebook_node.metadata.kernelspec.language
 
     def _render_execution_indicator(
         self, execution_count: Union[str, int, None]
