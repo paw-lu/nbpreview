@@ -77,7 +77,7 @@ class Notebook:
             Tuple[Text, Cell]: The execution count indicator and cell
                 content.
         """
-        cell_type = cell.get("cell_type", False)
+        cell_type = cell.get("cell_type")
         source = cell.source
         default_lexer_name = "ipython" if self.language == "python" else self.language
 
