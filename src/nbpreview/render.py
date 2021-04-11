@@ -46,13 +46,16 @@ class Notebook:
         self.language = self.notebook_node.metadata.kernelspec.language
 
     def _render_execution_indicator(
-        self, execution_count: Union[str, int, None]
+        self, execution_count: Union[str, int, None], shift: bool
     ) -> Text:
         """Render the execution indicator.
 
         Args:
             execution_count (Union[str, int, None]): The execution
                 count. Set to None if there is no execution count.
+            shift (bool): Whether to shift the indicator down. Useful
+                if aligned with a code cell box and the execution count
+                should be aligned with the content.
 
         Returns:
             Text: The rendered execution indicator.
@@ -60,7 +63,8 @@ class Notebook:
         if execution_count is None:
             execution_indicator = ""
         else:
-            execution_indicator = f"\n[{execution_count}]:"
+            shift_char = "\n" if shift else ""
+            execution_indicator = f"{shift_char}[{execution_count}]:"
         return text.Text(execution_indicator, style="color(247)")
 
     def _render_cells(self, cell: NotebookNode) -> Tuple[Text, Cell]:
