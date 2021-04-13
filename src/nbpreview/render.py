@@ -1,12 +1,14 @@
 """Render the notebook."""
 import dataclasses
 from typing import Iterator
+from typing import Optional
 from typing import Tuple
 from typing import Union
 
 import pygments
 from nbformat.notebooknode import NotebookNode
 from rich import markdown
+from rich import padding
 from rich import panel
 from rich import syntax
 from rich import table
@@ -14,12 +16,13 @@ from rich import text
 from rich.console import Console
 from rich.console import ConsoleOptions
 from rich.markdown import Markdown
+from rich.padding import Padding
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-Cell = Union[Markdown, Panel, Text, Syntax]
+Cell = Union[Padding, Markdown, Panel, Text, Syntax, str]
 
 
 @dataclasses.dataclass()
@@ -44,30 +47,36 @@ class Notebook:
         """Constructor."""
         self.cells = self.notebook_node.cells
         self.language = self.notebook_node.metadata.kernelspec.language
+        self.output_pad = (0, 0, 0, 1) if not self.plain else (0, 0, 0, 0)
 
     def _render_execution_indicator(
-        self, execution_count: Union[str, int, None], shift: bool
-    ) -> Text:
+        self, execution_count: Union[str, int, None], pad: bool
+    ) -> Union[Text, Padding]:
         """Render the execution indicator.
 
         Args:
             execution_count (Union[str, int, None]): The execution
                 count. Set to None if there is no execution count.
-            shift (bool): Whether to shift the indicator down. Useful
+            pad (bool): Whether to top pad the indicator count. Useful
                 if aligned with a code cell box and the execution count
                 should be aligned with the content.
 
         Returns:
             Text: The rendered execution indicator.
         """
+        execution_indicator: Union[Text, Padding]
         if execution_count is None:
-            execution_indicator = ""
+            execution_text = ""
         else:
-            shift_char = "\n" if shift else ""
-            execution_indicator = f"{shift_char}[{execution_count}]:"
-        return text.Text(execution_indicator, style="color(247)")
+            execution_text = f"[{execution_count}]:"
+        execution_indicator = text.Text(execution_text, style="color(247)")
 
-    def _render_cells(self, cell: NotebookNode) -> Tuple[Text, Cell]:
+        if pad:
+            execution_indicator = padding.Padding(execution_indicator, pad=(2, 0, 0, 0))
+
+        return execution_indicator
+
+    def _render_cells(self, cell: NotebookNode) -> Tuple[Union[Text, Padding], Cell]:
         """Render a Jupyter Notebook cell.
 
         Args:
@@ -81,17 +90,20 @@ class Notebook:
         source = cell.source
         default_lexer_name = "ipython" if self.language == "python" else self.language
 
+        rendered_cell: Optional[Cell] = None
+        rendered_source: Union[Text, Syntax, str]
         if cell_type == "markdown":
             execution_count = None
-            rendered_cell: Cell = markdown.Markdown(
-                source, inline_code_theme=self.theme
+            rendered_cell = padding.Padding(
+                markdown.Markdown(source, inline_code_theme=self.theme),
+                pad=self.output_pad,
             )
 
         elif cell_type == "code":
             execution_count = (
                 cell.execution_count if cell.execution_count is not None else " "
             )
-            rendered_source: Cell = syntax.Syntax(
+            rendered_source = syntax.Syntax(
                 source,
                 lexer_name=default_lexer_name,
                 theme=self.theme,
@@ -125,19 +137,21 @@ class Notebook:
                 except pygments.util.ClassNotFound:
                     pass
 
+        else:
+            execution_count = None
+            rendered_source = source
+
+        if rendered_cell is None:
             if not self.plain:
-                rendered_cell = panel.Panel(
-                    rendered_source,
-                    expand=True,
+                rendered_cell = padding.Padding(
+                    panel.Panel(rendered_source), pad=(1, 0, 0, 0)
                 )
             else:
                 rendered_cell = rendered_source
 
-        else:
-            execution_count = None
-            rendered_cell = panel.Panel(source)
-
-        execution_count_indicator = self._render_execution_indicator(execution_count)
+        execution_count_indicator = self._render_execution_indicator(
+            execution_count, pad=not self.plain
+        )
         return execution_count_indicator, rendered_cell
 
     def __rich_console__(

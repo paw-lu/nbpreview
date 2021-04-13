@@ -121,9 +121,9 @@ def test_notebook_markdown_cell(rich_output: RichOutput) -> None:
         "                            \n "
         "                              "
         "                              "
-        "                   \n \x1b[1mdolor"
-        "\x1b[0m \x1b[3msit\x1b[0m \x1b[97;40mamet\x1b"
-        "[0m                           "
+        "                   \n  \x1b[1mdolo"
+        "r\x1b[0m \x1b[3msit\x1b[0m \x1b[97;40mamet"
+        "\x1b[0m                          "
         "                              "
         "        \n"
     )
@@ -142,28 +142,30 @@ def test_notebook_code_cell(rich_output: RichOutput) -> None:
     }
     output = rich_output(code_cell)
     expected_output = (
-        "\x1b[38;5;247m    \x1b[0m ╭─────────"
-        "──────────────────────────────"
-        "──────────────────────────────"
-        "────╮\n\x1b[38;5;247m[2]:\x1b[0m │ \x1b["
-        "94;49mdef\x1b[0m\x1b[49m \x1b[0m\x1b[92;49"
-        "mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[49mx\x1b[0m\x1b["
-        "49m:\x1b[0m\x1b[49m \x1b[0m\x1b[96;49mfloa"
-        "t\x1b[0m\x1b[49m,\x1b[0m\x1b[49m \x1b[0m\x1b[49m"
-        "y\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[96;"
-        "49mfloat\x1b[0m\x1b[49m)\x1b[0m\x1b[49m \x1b["
-        "0m\x1b[49m-\x1b[0m\x1b[49m>\x1b[0m\x1b[49m \x1b["
-        "0m\x1b[96;49mfloat\x1b[0m\x1b[49m:\x1b[0m "
         "                              "
-        "    │\n     │ \x1b[49m    \x1b[0m\x1b[94"
-        ";49mreturn\x1b[0m\x1b[49m \x1b[0m\x1b[49mx"
-        "\x1b[0m\x1b[49m \x1b[0m\x1b[49m+\x1b[0m\x1b[49m "
-        "\x1b[0m\x1b[49my\x1b[0m                "
         "                              "
-        "          │\n     ╰────────────"
+        "                    \n     ╭───"
         "──────────────────────────────"
         "──────────────────────────────"
-        "─╯\n"
+        "──────────╮\n\x1b[38;5;247m[2]:\x1b[0"
+        "m │ \x1b[94;49mdef\x1b[0m\x1b[49m \x1b[0m\x1b"
+        "[92;49mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[49mx"
+        "\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[96;4"
+        "9mfloat\x1b[0m\x1b[49m,\x1b[0m\x1b[49m \x1b[0"
+        "m\x1b[49my\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0"
+        "m\x1b[96;49mfloat\x1b[0m\x1b[49m)\x1b[0m\x1b["
+        "49m \x1b[0m\x1b[49m-\x1b[0m\x1b[49m>\x1b[0m\x1b["
+        "49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b[49m"
+        ":\x1b[0m                         "
+        "          │\n     │ \x1b[49m    \x1b["
+        "0m\x1b[94;49mreturn\x1b[0m\x1b[49m \x1b[0m"
+        "\x1b[49mx\x1b[0m\x1b[49m \x1b[0m\x1b[49m+\x1b[0m"
+        "\x1b[49m \x1b[0m\x1b[49my\x1b[0m          "
+        "                              "
+        "                │\n     ╰──────"
+        "──────────────────────────────"
+        "──────────────────────────────"
+        "───────╯\n"
     )
     assert output == expected_output
 
@@ -179,13 +181,13 @@ def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
         "source": "%%bash\necho 'lorep'",
     }
     expected_output = (
-        "\x1b[38;5;247m    \x1b[0m ╭─────────"
-        "─────╮\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b"
-        "[49m%%\x1b[0m\x1b[94;49mbash\x1b[0m    "
-        "   │\n     │ \x1b[96;49mecho\x1b[0m\x1b["
-        "49m \x1b[0m\x1b[33;49m'lorep'\x1b[0m │\n"
-        "     │              │\n     ╰──"
-        "────────────╯\n"
+        "                     \n     ╭──"
+        "────────────╮\n\x1b[38;5;247m[3]:\x1b"
+        "[0m │ \x1b[49m%%\x1b[0m\x1b[94;49mbash\x1b"
+        "[0m       │\n     │ \x1b[96;49mech"
+        "o\x1b[0m\x1b[49m \x1b[0m\x1b[33;49m'lorep'"
+        "\x1b[0m │\n     │              │\n "
+        "    ╰──────────────╯\n"
     )
     output = rich_output(code_cell)
     assert output == expected_output
@@ -199,7 +201,10 @@ def test_notebook_raw_cell(rich_output: RichOutput) -> None:
         "metadata": {},
         "source": "Lorep ipsum",
     }
-    expected_output = " ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
+    expected_output = (
+        "                \n ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
+    )
+
     output = rich_output(code_cell)
     assert output == expected_output
 
@@ -215,31 +220,33 @@ def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
         "source": "%%timeit\ndef foo(x: float, y: float) -> float:\n    return x + y",
     }
     expected_output = (
-        "\x1b[38;5;247m    \x1b[0m ╭─────────"
-        "──────────────────────────────"
-        "──────────────────────────────"
-        "────╮\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b["
-        "49m%%time\x1b[0m\x1b[49mit\x1b[0m      "
         "                              "
-        "                            │\n"
-        "     │ \x1b[94;49mdef\x1b[0m\x1b[49m \x1b["
-        "0m\x1b[92;49mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[4"
-        "9mx\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[9"
-        "6;49mfloat\x1b[0m\x1b[49m,\x1b[0m\x1b[49m "
-        "\x1b[0m\x1b[49my\x1b[0m\x1b[49m:\x1b[0m\x1b[49m "
-        "\x1b[0m\x1b[96;49mfloat\x1b[0m\x1b[49m)\x1b[0"
-        "m\x1b[49m \x1b[0m\x1b[49m-\x1b[0m\x1b[49m>\x1b[0"
-        "m\x1b[49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b["
-        "49m:\x1b[0m                      "
-        "             │\n     │ \x1b[49m   "
-        " \x1b[0m\x1b[94;49mreturn\x1b[0m\x1b[49m \x1b"
-        "[0m\x1b[49mx\x1b[0m\x1b[49m \x1b[0m\x1b[49m+\x1b"
-        "[0m\x1b[49m \x1b[0m\x1b[49my\x1b[0m       "
         "                              "
-        "                   │\n     ╰───"
+        "                    \n     ╭───"
         "──────────────────────────────"
         "──────────────────────────────"
-        "──────────╯\n"
+        "──────────╮\n\x1b[38;5;247m[3]:\x1b[0"
+        "m │ \x1b[49m%%time\x1b[0m\x1b[49mit\x1b[0m"
+        "                              "
+        "                              "
+        "    │\n     │ \x1b[94;49mdef\x1b[0m\x1b["
+        "49m \x1b[0m\x1b[92;49mfoo\x1b[0m\x1b[49m(\x1b"
+        "[0m\x1b[49mx\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b"
+        "[0m\x1b[96;49mfloat\x1b[0m\x1b[49m,\x1b[0m"
+        "\x1b[49m \x1b[0m\x1b[49my\x1b[0m\x1b[49m:\x1b[0m"
+        "\x1b[49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b[4"
+        "9m)\x1b[0m\x1b[49m \x1b[0m\x1b[49m-\x1b[0m\x1b[4"
+        "9m>\x1b[0m\x1b[49m \x1b[0m\x1b[96;49mfloat"
+        "\x1b[0m\x1b[49m:\x1b[0m                "
+        "                   │\n     │ \x1b["
+        "49m    \x1b[0m\x1b[94;49mreturn\x1b[0m\x1b"
+        "[49m \x1b[0m\x1b[49mx\x1b[0m\x1b[49m \x1b[0m\x1b"
+        "[49m+\x1b[0m\x1b[49m \x1b[0m\x1b[49my\x1b[0m "
+        "                              "
+        "                         │\n   "
+        "  ╰───────────────────────────"
+        "──────────────────────────────"
+        "────────────────╯\n"
     )
     output = rich_output(code_cell)
     assert output == expected_output
