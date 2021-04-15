@@ -4,8 +4,8 @@ import sys
 from typing import Any
 from typing import Callable
 from typing import Dict
-from typing import List
 from typing import Optional
+from typing import Tuple
 
 import pytest
 from nbformat import NotebookNode
@@ -33,7 +33,7 @@ class RichOutput(Protocol):
         ...
 
 
-def split_string(string: str, sub_length: int = 30) -> List[str]:
+def split_string(string: str, sub_length: int = 30) -> Tuple[str, ...]:
     """Split a string into subsections less than or equal to new length.
 
     Args:
@@ -42,13 +42,13 @@ def split_string(string: str, sub_length: int = 30) -> List[str]:
             Defaults to 56.
 
     Returns:
-        List[str]: The string split into sections.
+        Tuple[str]: The string split into sections.
     """
     string_length = len(string)
-    return [
+    return tuple(
         string[begin : begin + sub_length]
         for begin in range(0, string_length, sub_length)
-    ]
+    )
 
 
 @pytest.fixture()
@@ -142,94 +142,10 @@ def test_notebook_code_cell(rich_output: RichOutput) -> None:
     }
     output = rich_output(code_cell)
     expected_output = (
-        "                              "
-        "                              "
-        "                    \n     ╭───"
+        "     ╭────────────────────────"
         "──────────────────────────────"
-        "──────────────────────────────"
-        "──────────╮\n\x1b[38;5;247m[2]:\x1b[0"
-        "m │ \x1b[94;49mdef\x1b[0m\x1b[49m \x1b[0m\x1b"
-        "[92;49mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[49mx"
-        "\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[96;4"
-        "9mfloat\x1b[0m\x1b[49m,\x1b[0m\x1b[49m \x1b[0"
-        "m\x1b[49my\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0"
-        "m\x1b[96;49mfloat\x1b[0m\x1b[49m)\x1b[0m\x1b["
-        "49m \x1b[0m\x1b[49m-\x1b[0m\x1b[49m>\x1b[0m\x1b["
-        "49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b[49m"
-        ":\x1b[0m                         "
-        "          │\n     │ \x1b[49m    \x1b["
-        "0m\x1b[94;49mreturn\x1b[0m\x1b[49m \x1b[0m"
-        "\x1b[49mx\x1b[0m\x1b[49m \x1b[0m\x1b[49m+\x1b[0m"
-        "\x1b[49m \x1b[0m\x1b[49my\x1b[0m          "
-        "                              "
-        "                │\n     ╰──────"
-        "──────────────────────────────"
-        "──────────────────────────────"
-        "───────╯\n"
-    )
-    assert output == expected_output
-
-
-def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
-    """It renders a code cell in a language specified by cell magic."""
-    code_cell = {
-        "cell_type": "code",
-        "execution_count": 3,
-        "id": "emotional-amount",
-        "metadata": {},
-        "outputs": [],
-        "source": "%%bash\necho 'lorep'",
-    }
-    expected_output = (
-        "                     \n     ╭──"
-        "────────────╮\n\x1b[38;5;247m[3]:\x1b"
-        "[0m │ \x1b[49m%%\x1b[0m\x1b[94;49mbash\x1b"
-        "[0m       │\n     │ \x1b[96;49mech"
-        "o\x1b[0m\x1b[49m \x1b[0m\x1b[33;49m'lorep'"
-        "\x1b[0m │\n     │              │\n "
-        "    ╰──────────────╯\n"
-    )
-    output = rich_output(code_cell)
-    assert output == expected_output
-
-
-def test_notebook_raw_cell(rich_output: RichOutput) -> None:
-    """It renders a raw cell as plain text."""
-    code_cell = {
-        "cell_type": "raw",
-        "id": "emotional-amount",
-        "metadata": {},
-        "source": "Lorep ipsum",
-    }
-    expected_output = (
-        "                \n ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
-    )
-
-    output = rich_output(code_cell)
-    assert output == expected_output
-
-
-def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
-    """It uses the default highlighting when magic is not a syntax."""
-    code_cell = {
-        "cell_type": "code",
-        "execution_count": 3,
-        "id": "emotional-amount",
-        "metadata": {},
-        "outputs": [],
-        "source": "%%timeit\ndef foo(x: float, y: float) -> float:\n    return x + y",
-    }
-    expected_output = (
-        "                              "
-        "                              "
-        "                    \n     ╭───"
-        "──────────────────────────────"
-        "──────────────────────────────"
-        "──────────╮\n\x1b[38;5;247m[3]:\x1b[0"
-        "m │ \x1b[49m%%time\x1b[0m\x1b[49mit\x1b[0m"
-        "                              "
-        "                              "
-        "    │\n     │ \x1b[94;49mdef\x1b[0m\x1b["
+        "───────────────────╮\n\x1b[38;5;24"
+        "7m[2]:\x1b[0m │ \x1b[94;49mdef\x1b[0m\x1b["
         "49m \x1b[0m\x1b[92;49mfoo\x1b[0m\x1b[49m(\x1b"
         "[0m\x1b[49mx\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b"
         "[0m\x1b[96;49mfloat\x1b[0m\x1b[49m,\x1b[0m"
@@ -247,6 +163,81 @@ def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
         "  ╰───────────────────────────"
         "──────────────────────────────"
         "────────────────╯\n"
+    )
+    assert output == expected_output
+
+
+def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
+    """It renders a code cell in a language specified by cell magic."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "%%bash\necho 'lorep'",
+    }
+    expected_output = (
+        "     ╭──────────────╮\n\x1b[38;5;2"
+        "47m[3]:\x1b[0m │ \x1b[49m%%\x1b[0m\x1b[94;"
+        "49mbash\x1b[0m       │\n     │ \x1b[9"
+        "6;49mecho\x1b[0m\x1b[49m \x1b[0m\x1b[33;49"
+        "m'lorep'\x1b[0m │\n     │         "
+        "     │\n     ╰──────────────╯\n"
+    )
+    output = rich_output(code_cell)
+    assert output == expected_output
+
+
+def test_notebook_raw_cell(rich_output: RichOutput) -> None:
+    """It renders a raw cell as plain text."""
+    code_cell = {
+        "cell_type": "raw",
+        "id": "emotional-amount",
+        "metadata": {},
+        "source": "Lorep ipsum",
+    }
+    expected_output = " ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
+
+    output = rich_output(code_cell)
+    assert output == expected_output
+
+
+def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
+    """It uses the default highlighting when magic is not a syntax."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "%%timeit\ndef foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    expected_output = (
+        "     ╭────────────────────────"
+        "──────────────────────────────"
+        "───────────────────╮\n\x1b[38;5;24"
+        "7m[3]:\x1b[0m │ \x1b[49m%%time\x1b[0m\x1b["
+        "49mit\x1b[0m                     "
+        "                              "
+        "             │\n     │ \x1b[94;49m"
+        "def\x1b[0m\x1b[49m \x1b[0m\x1b[92;49mfoo\x1b["
+        "0m\x1b[49m(\x1b[0m\x1b[49mx\x1b[0m\x1b[49m:\x1b["
+        "0m\x1b[49m \x1b[0m\x1b[96;49mfloat\x1b[0m\x1b"
+        "[49m,\x1b[0m\x1b[49m \x1b[0m\x1b[49my\x1b[0m\x1b"
+        "[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[96;49mflo"
+        "at\x1b[0m\x1b[49m)\x1b[0m\x1b[49m \x1b[0m\x1b[49"
+        "m-\x1b[0m\x1b[49m>\x1b[0m\x1b[49m \x1b[0m\x1b[96"
+        ";49mfloat\x1b[0m\x1b[49m:\x1b[0m       "
+        "                            │\n"
+        "     │ \x1b[49m    \x1b[0m\x1b[94;49mre"
+        "turn\x1b[0m\x1b[49m \x1b[0m\x1b[49mx\x1b[0m\x1b["
+        "49m \x1b[0m\x1b[49m+\x1b[0m\x1b[49m \x1b[0m\x1b["
+        "49my\x1b[0m                      "
+        "                              "
+        "    │\n     ╰──────────────────"
+        "──────────────────────────────"
+        "─────────────────────────╯\n"
     )
     output = rich_output(code_cell)
     assert output == expected_output

@@ -72,7 +72,7 @@ class Notebook:
         execution_indicator = text.Text(execution_text, style="color(247)")
 
         if pad:
-            execution_indicator = padding.Padding(execution_indicator, pad=(2, 0, 0, 0))
+            execution_indicator = padding.Padding(execution_indicator, pad=(1, 0, 0, 0))
 
         return execution_indicator
 
@@ -143,9 +143,7 @@ class Notebook:
 
         if rendered_cell is None:
             if not self.plain:
-                rendered_cell = padding.Padding(
-                    panel.Panel(rendered_source), pad=(1, 0, 0, 0)
-                )
+                rendered_cell = panel.Panel(rendered_source)
             else:
                 rendered_cell = rendered_source
 
@@ -166,10 +164,7 @@ class Notebook:
         Yields:
             Iterator[RenderResult]: The
         """
-        grid = table.Table.grid(
-            padding=(0, 1, 0, 0),
-            collapse_padding=True,
-        )
+        grid = table.Table.grid(padding=(1, 1, 1, 0))
         if not self.plain:
             grid.add_column(justify="right")
         grid.add_column()
