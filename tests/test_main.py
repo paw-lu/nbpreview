@@ -6,15 +6,40 @@ from typing import Callable
 from typing import Dict
 from typing import Generator
 from typing import Optional
+from unittest.mock import Mock
 
 import nbformat
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 from nbformat.notebooknode import NotebookNode
+from pytest_mock import MockFixture
 from typer import testing
 from typer.testing import CliRunner
 
 import nbpreview
 from nbpreview.__main__ import app
+
+
+@pytest.fixture(autouse=True)
+def mock_isatty(mocker: MockFixture) -> Mock:
+    """Make the CLI act as if running in a terminal."""
+    mock: Mock = mocker.patch(
+        "nbpreview.__main__.sys.stdout.isatty", return_value="mocked!"
+    )
+    return mock
+
+
+@pytest.fixture(autouse=True)
+def patch_env(monkeypatch: MonkeyPatch) -> None:
+    """Patch environmental variables that affect tests."""
+    for environment_variable in (
+        "TERM",
+        "NO_COLOR",
+        "PAGER",
+        "NBPREVIEW_THEME",
+        "NBPREVIEW_PLAIN",
+    ):
+        monkeypatch.delenv(environment_variable, raising=False)
 
 
 @pytest.fixture
