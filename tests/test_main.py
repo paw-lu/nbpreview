@@ -23,9 +23,7 @@ from nbpreview.__main__ import app
 @pytest.fixture(autouse=True)
 def mock_isatty(mocker: MockFixture) -> Mock:
     """Make the CLI act as if running in a terminal."""
-    mock: Mock = mocker.patch(
-        "nbpreview.__main__.sys.stdout.isatty", return_value="mocked!"
-    )
+    mock: Mock = mocker.patch("nbpreview.__main__.sys.stdout.isatty", return_value=True)
     return mock
 
 
