@@ -6,6 +6,7 @@ from typing import Callable
 from typing import Dict
 from typing import Generator
 from typing import Optional
+from typing import Union
 from unittest.mock import Mock
 
 import nbformat
@@ -81,14 +82,36 @@ def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
     tempfile_path.unlink()
 
 
-def test_main_succeeds(
-    runner: CliRunner,
+@pytest.fixture
+def write_notebook(
     make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
     temp_file: Callable[[Optional[str]], str],
+) -> Callable[[Union[Dict[str, Any], None]], str]:
+    """Fixture for generating notebook files."""
+
+    def _write_notebook(cell: Union[Dict[str, Any], None]) -> str:
+        """Writes a notebook file.
+
+        Args:
+            cell (Union[Dict[str, Any], None]): The cell of the notebook
+                to render
+
+        Returns:
+            str: The path of the notebook file.
+        """
+        notebook_node = make_notebook(cell)
+        notebook_path = temp_file(nbformat.writes(notebook_node))
+        return notebook_path
+
+    return _write_notebook
+
+
+def test_main_succeeds(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
 ) -> None:
     """It exits with a status code of zero with a valid file."""
-    notebook_node = make_notebook(None)
-    notebook_path = temp_file(nbformat.writes(notebook_node))
+    notebook_path = write_notebook(None)
     result = runner.invoke(app, [notebook_path])
     assert result.exit_code == 0
 
