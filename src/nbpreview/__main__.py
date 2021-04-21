@@ -1,6 +1,7 @@
 """Command-line interface."""
 import sys
 from pathlib import Path
+from sys import stdout
 from typing import Optional
 
 import nbformat
@@ -46,6 +47,14 @@ theme_option = typer.Option(
     " 'ansi_dark', or any Pygments theme.",
     envvar="NBPREVIEW_THEME",
 )
+plain_option = typer.Option(
+    None,
+    "--plain / --decorated",
+    "-p / -d",
+    help="Whether to render in a plain style with no boxes, execution"
+    " counts, or spacing.",
+    envvar="NBPREVIEW_PLAIN",
+)
 version_option = typer.Option(
     None,
     "--version",
@@ -60,15 +69,26 @@ version_option = typer.Option(
 def main(
     file: Path = file_argument,
     theme: str = theme_option,
+    plain: Optional[bool] = plain_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     stdout_console = console.Console()
     stderr_console = console.Console(file=sys.stdout)
-
+    if plain is None:
+        # Calling this instead of sys.stdout.isatty because I'm having
+        # trouble mocking sys.stdout.isatty
+        if stdout.isatty():
+            plain = False
+        else:
+            plain = True
     try:
         notebook_node = nbformat.read(file, as_version=4)
-        notebook = render.Notebook(notebook_node=notebook_node, theme=theme)
+        notebook = render.Notebook(
+            notebook_node=notebook_node,
+            theme=theme,
+            plain=plain,
+        )
     except nbformat.reader.NotJSONError:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1)

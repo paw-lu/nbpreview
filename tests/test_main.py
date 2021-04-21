@@ -1,16 +1,19 @@
 """Test cases for the __main__ module."""
 import pathlib
 import tempfile
+import textwrap
 from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import Generator
+from typing import Mapping
 from typing import Optional
 from typing import Union
 from unittest.mock import Mock
 
 import nbformat
 import pytest
+from _pytest.fixtures import FixtureRequest
 from _pytest.monkeypatch import MonkeyPatch
 from nbformat.notebooknode import NotebookNode
 from pytest_mock import MockFixture
@@ -22,10 +25,15 @@ from nbpreview.__main__ import app
 
 
 @pytest.fixture(autouse=True)
-def mock_isatty(mocker: MockFixture) -> Mock:
+def mock_isatty(mocker: MockFixture, request: FixtureRequest) -> Union[None, Mock]:
     """Make the CLI act as if running in a terminal."""
-    mock: Mock = mocker.patch("nbpreview.__main__.sys.stdout.isatty", return_value=True)
-    return mock
+    if "no_atty_mock" not in request.keywords:
+        mock: Mock = mocker.patch(
+            "nbpreview.__main__.sys.stdout.isatty", return_value=True
+        )
+        return mock
+    else:
+        return None
 
 
 @pytest.fixture(autouse=True)
@@ -144,3 +152,90 @@ def test_exit_invalid_file_output(
         result.output.replace("\n", "")
         == f"{invalid_path} is not a valid Jupyter Notebook path."
     )
+
+
+def test_render_notebook(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> None:
+    """It renders a notebook."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    notebook_path = write_notebook(code_cell)
+    result = runner.invoke(app, [notebook_path])
+    expected_output = textwrap.dedent(
+        """\
+         ╭─────────────────────────────────────────────────────────────────────────╮
+    [2]: │ def foo(x: float, y: float) -> float:                                   │
+         │     return x + y                                                        │
+         ╰─────────────────────────────────────────────────────────────────────────╯
+    """
+    )
+    assert result.output == expected_output
+
+
+@pytest.mark.parametrize(
+    "option, env",
+    (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
+)
+def test_force_plain(
+    option: Optional[str],
+    env: Optional[Mapping[str, str]],
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> None:
+    """It renders in plain format when flag or env is specified."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    notebook_path = write_notebook(code_cell)
+    args = ([option] if option is not None else []) + [notebook_path]
+    result = runner.invoke(
+        app,
+        args=args,
+        env=env,
+    )
+    expected_output = (
+        "def foo(x: float, y: float) -> float:                         "
+        "                  \n    return x + y                          "
+        "                                      \n"
+    )
+    assert result.output == expected_output
+
+
+@pytest.mark.no_atty_mock
+def test_automatic_plain(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> None:
+    """It renders in plain format automatically when not in terminal."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    notebook_path = write_notebook(code_cell)
+    result = runner.invoke(
+        app,
+        args=[notebook_path],
+    )
+    expected_output = (
+        "def foo(x: float, y: float) -> float:                         "
+        "                  \n    return x + y                          "
+        "                                      \n"
+    )
+    assert result.output == expected_output
