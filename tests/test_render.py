@@ -6,6 +6,7 @@ from typing import Callable
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+from typing import Union
 
 import pytest
 from nbformat import NotebookNode
@@ -25,7 +26,7 @@ class RichOutput(Protocol):
 
     def __call__(
         self,
-        cell: Dict[str, Any],
+        cell: Union[Dict[str, Any], None],
         plain: bool = False,
         no_wrap: bool = False,
     ) -> str:
@@ -67,7 +68,7 @@ def rich_console() -> Console:
 def rich_output(
     rich_console: Console,
     make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
-) -> Callable[..., str]:
+) -> RichOutput:
     """Fixture returning a function that returns the rendered output.
 
     Args:
@@ -77,18 +78,18 @@ def rich_output(
             A fixture that creates a notebook node.
 
     Returns:
-        Callable[..., str]: The output generating function.
+        RichOutput: The output generating function.
     """
 
     def _rich_output(
-        cell: Dict[str, Any],
+        cell: Union[Dict[str, Any], None],
         plain: bool = False,
         no_wrap: bool = False,
     ) -> str:
         """Return the rendered output of a notebook containing the cell.
 
         Args:
-            cell (Dict[str, Any]): The cell of the notebook to render.
+            cell (Union[Dict[str, Any], None]): The cell of the notebook to render.
             plain (bool): Whether to render the notebook in a
                 plain style, with no boxes or decorations. Defaults to
                 False.
