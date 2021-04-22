@@ -166,11 +166,12 @@ def test_render_markdown(
         "source": "Lorep",
     }
     notebook_path = write_notebook(markdown_cell)
-    result = runner.invoke(app, args=[notebook_path])
-    assert result.output == (
+    result = runner.invoke(app, args=["--width=80", notebook_path])
+    expected_output = (
         "  Lorep                                                    "
         "                     \n"
     )
+    assert result.output == expected_output
 
 
 def test_render_notebook(
@@ -187,7 +188,8 @@ def test_render_notebook(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    result = runner.invoke(app, [notebook_path])
+    result = runner.invoke(app, ["--width=80", notebook_path])
+    actual_output = result.output
     expected_output = textwrap.dedent(
         """\
          ╭─────────────────────────────────────────────────────────────────────────╮
@@ -196,7 +198,7 @@ def test_render_notebook(
          ╰─────────────────────────────────────────────────────────────────────────╯
     """
     )
-    assert result.output == expected_output
+    assert actual_output == expected_output
 
 
 @pytest.mark.parametrize(
@@ -219,7 +221,7 @@ def test_force_plain(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    args = ([option] if option is not None else []) + [notebook_path]
+    args = ([option] if option is not None else []) + ["--width=80", notebook_path]
     result = runner.invoke(
         app,
         args=args,
@@ -250,7 +252,7 @@ def test_automatic_plain(
     notebook_path = write_notebook(code_cell)
     result = runner.invoke(
         app,
-        args=[notebook_path],
+        args=["--width=80", notebook_path],
     )
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
