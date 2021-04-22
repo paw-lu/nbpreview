@@ -154,6 +154,25 @@ def test_exit_invalid_file_output(
     )
 
 
+def test_render_markdown(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> None:
+    """It renders a markdown cell."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "Lorep",
+    }
+    notebook_path = write_notebook(markdown_cell)
+    result = runner.invoke(app, args=[notebook_path])
+    assert result.output == (
+        "  Lorep                                                    "
+        "                     \n"
+    )
+
+
 def test_render_notebook(
     runner: CliRunner,
     write_notebook: Callable[[Union[Dict[str, Any], None]], str],
