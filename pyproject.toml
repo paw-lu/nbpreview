@@ -52,7 +52,7 @@ sphinx-click = "^2.6.0"
 Pygments = "^2.8.1"
 ipykernel = "^5.5.0"
 ipdb = "^0.13.7"
-pytest-mock = "^3.5.1"
+pytest-mock = "^3.6.0"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
