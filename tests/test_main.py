@@ -188,7 +188,7 @@ def test_render_notebook(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    result = runner.invoke(app, ["--width=80", notebook_path])
+    result = runner.invoke(app, ["--width=80", "--unicode", notebook_path])
     actual_output = result.output
     expected_output = textwrap.dedent(
         """\

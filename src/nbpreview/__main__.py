@@ -47,12 +47,19 @@ theme_option = typer.Option(
     " 'ansi_dark', or any Pygments theme.",
     envvar="NBPREVIEW_THEME",
 )
+hide_output_option = typer.Option(
+    False,
+    "--hide-output",
+    "-h",
+    help="Whether to hide the notebook outputs.",
+    envvar="NBPREVIEW_HIDE_OUTPUT",
+)
 plain_option = typer.Option(
     None,
     "--plain / --decorated",
     "-p / -d",
     help="Whether to render in a plain style with no boxes, execution"
-    " counts, or spacing.",
+    " counts, or spacing. By default detected depending on usage context.",
     envvar="NBPREVIEW_PLAIN",
 )
 width_option = typer.Option(
@@ -70,6 +77,12 @@ version_option = typer.Option(
     callback=version_callback,
     is_eager=True,
 )
+unicode_option = typer.Option(
+    None,
+    help="Force the display or replacement of unicode chartacters"
+    " instead of determining automatically.",
+    envvar="NBPREVIEW_UNICODE",
+)
 
 
 @app.command()
@@ -77,7 +90,9 @@ def main(
     file: Path = file_argument,
     theme: str = theme_option,
     width: Optional[int] = width_option,
+    hide_output: bool = hide_output_option,
     plain: Optional[bool] = plain_option,
+    unicode: Optional[bool] = unicode_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
@@ -97,7 +112,9 @@ def main(
         notebook = render.Notebook(
             notebook_node=notebook_node,
             theme=theme,
+            hide_output=hide_output,
             plain=plain,
+            unicode=unicode,
         )
     except nbformat.reader.NotJSONError:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
