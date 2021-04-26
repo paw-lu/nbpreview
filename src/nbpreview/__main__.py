@@ -55,6 +55,13 @@ plain_option = typer.Option(
     " counts, or spacing. By default detected depending on usage context.",
     envvar="NBPREVIEW_PLAIN",
 )
+width_option = typer.Option(
+    None,
+    "--width",
+    "-w",
+    help="Explicitly set the width of the render instead of determining automatically.",
+    envvar="NBPREVIEW_WIDTH",
+)
 version_option = typer.Option(
     None,
     "--version",
@@ -69,12 +76,13 @@ version_option = typer.Option(
 def main(
     file: Path = file_argument,
     theme: str = theme_option,
+    width: Optional[int] = width_option,
     plain: Optional[bool] = plain_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     stdout_console = console.Console()
-    stderr_console = console.Console(file=sys.stdout)
+    stderr_console = console.Console(file=sys.stdout, width=width)
     if plain is None:
         # Calling this instead of sys.stdout.isatty because I'm having
         # trouble mocking sys.stdout.isatty
