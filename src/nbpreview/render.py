@@ -37,11 +37,14 @@ class Notebook:
             "ansi_dark".
         plain (bool): Only show plain style. No decorations such as
             boxes or execution counts. By default False.
+        unicode (Optional[bool]): Whether to use unicode characters to
+            render the notebook. By default will autodetect.
     """
 
     notebook_node: NotebookNode
     theme: str = "ansi_dark"
     plain: bool = False
+    unicode: Optional[bool] = None
 
     def __post_init__(self) -> None:
         """Constructor."""
@@ -143,7 +146,8 @@ class Notebook:
 
         if rendered_cell is None:
             if not self.plain:
-                rendered_cell = panel.Panel(rendered_source)
+                safe_box = None if self.unicode is None else not self.unicode
+                rendered_cell = panel.Panel(rendered_source, safe_box=safe_box)
             else:
                 rendered_cell = rendered_source
 

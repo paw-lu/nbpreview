@@ -62,6 +62,12 @@ width_option = typer.Option(
     help="Explicitly set the width of the render instead of determining automatically.",
     envvar="NBPREVIEW_WIDTH",
 )
+unicode_option = typer.Option(
+    None,
+    help="Force the display or replacement of unicode chartacters"
+    " instead of determining automatically.",
+    envvar="NBPREVIEW_UNICODE",
+)
 version_option = typer.Option(
     None,
     "--version",
@@ -78,6 +84,7 @@ def main(
     theme: str = theme_option,
     width: Optional[int] = width_option,
     plain: Optional[bool] = plain_option,
+    unicode: Optional[bool] = unicode_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
@@ -96,6 +103,7 @@ def main(
             notebook_node=notebook_node,
             theme=theme,
             plain=plain,
+            unicode=unicode,
         )
     except nbformat.reader.NotJSONError:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
