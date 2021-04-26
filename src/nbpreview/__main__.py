@@ -52,7 +52,7 @@ plain_option = typer.Option(
     "--plain / --decorated",
     "-p / -d",
     help="Whether to render in a plain style with no boxes, execution"
-    " counts, or spacing.",
+    " counts, or spacing. By default detected depending on usage context.",
     envvar="NBPREVIEW_PLAIN",
 )
 version_option = typer.Option(
