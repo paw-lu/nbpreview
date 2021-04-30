@@ -242,6 +242,21 @@ def test_render_notebook(run_cli: RunCli) -> None:
     assert result.output == expected_output
 
 
+def test_render_markdown(run_cli: RunCli) -> None:
+    """It renders a markdown cell."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "Lorep",
+    }
+    result = run_cli(markdown_cell)
+    assert result.output == (
+        "  Lorep                                                    "
+        "                     \n"
+    )
+
+
 @pytest.mark.parametrize(
     "args, env",
     (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
