@@ -60,6 +60,7 @@ def rich_console() -> Console:
         width=80,
         color_system="truecolor",
         legacy_windows=False,
+        force_terminal=True,
     )
     return con
 
