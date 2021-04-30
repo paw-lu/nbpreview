@@ -12,7 +12,7 @@ from . import __version__
 from . import render
 
 app = typer.Typer()
-traceback.install(theme="ansi_dark", show_locals=True)
+traceback.install(theme="ansi_dark")
 
 
 def version_callback(value: Optional[bool] = None) -> None:
