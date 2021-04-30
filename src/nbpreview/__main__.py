@@ -1,7 +1,6 @@
 """Command-line interface."""
 import sys
 from pathlib import Path
-from sys import stdout
 from typing import Optional
 
 import nbformat
@@ -88,15 +87,8 @@ def main(
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
-    stdout_console = console.Console()
-    stderr_console = console.Console(file=sys.stdout, width=width)
-    if plain is None:
-        # Calling this instead of sys.stdout.isatty because I'm having
-        # trouble mocking sys.stdout.isatty
-        if stdout.isatty():
-            plain = False
-        else:
-            plain = True
+    stdout_console = console.Console(file=sys.stdout, width=width)
+    stderr_console = console.Console(file=sys.stderr)
     try:
         notebook_node = nbformat.read(file, as_version=4)
         notebook = render.Notebook(
@@ -108,6 +100,7 @@ def main(
     except nbformat.reader.NotJSONError:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1)
+
     stdout_console.print(notebook)
 
 
