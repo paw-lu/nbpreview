@@ -108,6 +108,36 @@ def rich_output(
     return _rich_output
 
 
+def test_automatic_plain(
+    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode]
+) -> None:
+    """It automatically renders in plain format when not a terminal."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "%%bash\necho 'lorep'",
+    }
+    con = console.Console(
+        file=io.StringIO(),
+        width=80,
+        color_system="truecolor",
+        legacy_windows=False,
+        force_terminal=False,
+    )
+    notebook_node = make_notebook(code_cell)
+    notebook = render.Notebook(notebook_node)
+    con.print(notebook)
+    output = con.file.getvalue()  # type: ignore[attr-defined]
+    assert output == (
+        "\x1b[49m%%\x1b[0m\x1b[94;49mbash\x1b[0m      "
+        "\n\x1b[96;49mecho\x1b[0m\x1b[49m \x1b[0m\x1b[33;49m'lorep'\x1b"
+        "[0m\n            \n"
+    )
+
+
 def test_notebook_markdown_cell(rich_output: RichOutput) -> None:
     """It renders a markdown cell."""
     markdown_cell = {
