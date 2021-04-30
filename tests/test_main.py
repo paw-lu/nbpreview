@@ -1,39 +1,52 @@
 """Test cases for the __main__ module."""
 import pathlib
+import shlex
+import sys
 import tempfile
 import textwrap
 from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import Generator
+from typing import IO
+from typing import Iterable
 from typing import Mapping
 from typing import Optional
+from typing import Text
 from typing import Union
-from unittest.mock import Mock
 
 import nbformat
 import pytest
-from _pytest.fixtures import FixtureRequest
 from _pytest.monkeypatch import MonkeyPatch
+from click.testing import Result
 from nbformat.notebooknode import NotebookNode
-from pytest_mock import MockFixture
 from typer import testing
 from typer.testing import CliRunner
 
 import nbpreview
 from nbpreview.__main__ import app
 
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:  # pragma: no cover
+    from typing_extensions import Protocol
 
-@pytest.fixture(autouse=True)
-def mock_isatty(mocker: MockFixture, request: FixtureRequest) -> Union[None, Mock]:
-    """Make the CLI act as if running in a terminal."""
-    if "no_atty_mock" not in request.keywords:
-        mock: Mock = mocker.patch(
-            "nbpreview.__main__.sys.stdout.isatty", return_value=True
-        )
-        return mock
-    else:
-        return None
+
+class RunCli(Protocol):
+    """Typing protocol for run_cli."""
+
+    def __call__(
+        self,
+        cell: Optional[Dict[str, Any]] = None,
+        args: Optional[Union[str, Iterable[str]]] = None,
+        input: Optional[Union[bytes, Text, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        """Callable types."""
+        ...
 
 
 @pytest.fixture(autouse=True)
@@ -43,8 +56,10 @@ def patch_env(monkeypatch: MonkeyPatch) -> None:
         "TERM",
         "NO_COLOR",
         "PAGER",
-        "NBPREVIEW_THEME",
         "NBPREVIEW_PLAIN",
+        "NBPREVIEW_THEME",
+        "NBPREVIEW_UNICODE",
+        "NBPREVIEW_WIDTH",
     ):
         monkeypatch.delenv(environment_variable, raising=False)
 
@@ -114,13 +129,64 @@ def write_notebook(
     return _write_notebook
 
 
-def test_main_succeeds(
+@pytest.fixture
+def run_cli(
     runner: CliRunner,
     write_notebook: Callable[[Union[Dict[str, Any], None]], str],
-) -> None:
+) -> RunCli:
+    """Fixture for running the cli against a notebook file."""
+
+    def _run_cli(
+        cell: Optional[Dict[str, Any]] = None,
+        args: Optional[Union[str, Iterable[str]]] = None,
+        input: Optional[Union[bytes, Text, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        r"""Runs the CLI against a notebook file.
+
+        Args:
+            cell (Optional[Dict[str, Any]], optional): The cell to add
+                to the notebook file. Defaults to None.
+            args (Optional[Union[str, Iterable[str]]]): The extra
+                arguments to invoke. By default --width=80 and
+                --unicode are included.
+            input (Optional[Union[bytes, Text, IO[Any]]]): The input
+                data. By default None.
+            env (Optional[Mapping[str, str]]): The environmental
+                overrides. By default None.
+            catch_exceptions (bool): Whether to catch exceptions.
+            color (bool): Whether the output should contain color codes.
+            **extra (Any): Extra arguments to pass.
+
+        Returns:
+            Result: The result from running the CLI command against the
+                notebook.
+        """
+        notebook_path = write_notebook(cell)
+        if isinstance(args, str):
+            args = shlex.split(args)
+        default_args = ["--decorated", "--unicode", "--width=80", notebook_path]
+        full_args = [*args, *default_args] if args is not None else default_args
+        result = runner.invoke(
+            app,
+            args=full_args,
+            input=input,
+            env=env,
+            catch_exceptions=catch_exceptions,
+            color=color,
+            **extra,
+        )
+        return result
+
+    return _run_cli
+
+
+def test_main_succeeds(run_cli: RunCli) -> None:
     """It exits with a status code of zero with a valid file."""
-    notebook_path = write_notebook(None)
-    result = runner.invoke(app, [notebook_path])
+    result = run_cli()
     assert result.exit_code == 0
 
 
@@ -154,10 +220,7 @@ def test_exit_invalid_file_output(
     )
 
 
-def test_render_notebook(
-    runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
-) -> None:
+def test_render_notebook(run_cli: RunCli) -> None:
     """It renders a notebook."""
     code_cell = {
         "cell_type": "code",
@@ -167,8 +230,7 @@ def test_render_notebook(
         "outputs": [],
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
-    notebook_path = write_notebook(code_cell)
-    result = runner.invoke(app, [notebook_path])
+    result = run_cli(code_cell)
     expected_output = textwrap.dedent(
         """\
          ╭─────────────────────────────────────────────────────────────────────────╮
@@ -181,11 +243,11 @@ def test_render_notebook(
 
 
 @pytest.mark.parametrize(
-    "option, env",
+    "args, env",
     (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
 )
 def test_force_plain(
-    option: Optional[str],
+    args: Optional[str],
     env: Optional[Mapping[str, str]],
     runner: CliRunner,
     write_notebook: Callable[[Union[Dict[str, Any], None]], str],
@@ -200,38 +262,8 @@ def test_force_plain(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    args = ([option] if option is not None else []) + [notebook_path]
     result = runner.invoke(
-        app,
-        args=args,
-        env=env,
-    )
-    expected_output = (
-        "def foo(x: float, y: float) -> float:                         "
-        "                  \n    return x + y                          "
-        "                                      \n"
-    )
-    assert result.output == expected_output
-
-
-@pytest.mark.no_atty_mock
-def test_automatic_plain(
-    runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
-) -> None:
-    """It renders in plain format automatically when not in terminal."""
-    code_cell = {
-        "cell_type": "code",
-        "execution_count": 2,
-        "id": "emotional-amount",
-        "metadata": {},
-        "outputs": [],
-        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
-    }
-    notebook_path = write_notebook(code_cell)
-    result = runner.invoke(
-        app,
-        args=[notebook_path],
+        app, args=["--unicode", "--width=80", notebook_path], env=env
     )
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
