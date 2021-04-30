@@ -46,6 +46,13 @@ theme_option = typer.Option(
     " 'ansi_dark', or any Pygments theme.",
     envvar="NBPREVIEW_THEME",
 )
+hide_output_option = typer.Option(
+    False,
+    "--hide-output",
+    "-h",
+    help="Whether to hide the notebook outputs.",
+    envvar="NBPREVIEW_HIDE_OUTPUT",
+)
 plain_option = typer.Option(
     None,
     "--plain / --decorated",
@@ -82,6 +89,7 @@ def main(
     file: Path = file_argument,
     theme: str = theme_option,
     width: Optional[int] = width_option,
+    hide_output: bool = hide_output_option,
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
     version: Optional[bool] = version_option,
@@ -94,6 +102,7 @@ def main(
         notebook = render.Notebook(
             notebook_node=notebook_node,
             theme=theme,
+            hide_output=hide_output,
             plain=plain,
             unicode=unicode,
         )

@@ -39,6 +39,8 @@ class Notebook:
             boxes or execution counts. By default will autodetect.
         unicode (Optional[bool]): Whether to use unicode characters to
             render the notebook. By default will autodetect.
+        hide_output (bool): Do not render the notebook outputs. By
+            default False.
     """
 
     notebook_node: NotebookNode
