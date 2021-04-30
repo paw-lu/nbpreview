@@ -84,8 +84,8 @@ def rich_output(
 
     def _rich_output(
         cell: Union[Dict[str, Any], None],
-        plain: bool = False,
-        no_wrap: bool = False,
+        plain: Optional[bool] = None,
+        no_wrap: Optional[bool] = None,
     ) -> str:
         """Return the rendered output of a notebook containing the cell.
 
