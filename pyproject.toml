@@ -27,7 +27,7 @@ ipython = "^7.23.0"
 importlib-metadata = {version = "^4.0.1", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.2"
+pytest = "^6.2.4"
 coverage = {extras = ["toml"], version = "^5.4"}
 safety = "^1.10.3"
 mypy = "^0.812"
