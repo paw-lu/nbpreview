@@ -49,7 +49,7 @@ pre-commit-hooks = "^3.4.0"
 sphinx-rtd-theme = "^0.5.1"
 sphinx-click = "^2.6.0"
 Pygments = "^2.9.0"
-ipykernel = "^5.5.0"
+ipykernel = "^5.5.4"
 ipdb = "^0.13.7"
 typing-extensions = "^3.10.0"
 
