@@ -1,15 +1,19 @@
 """Render the notebook."""
+import collections
 import dataclasses
 from typing import Dict
 from typing import Generator
 from typing import Iterator
+from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
 
 import pygments
 from lxml import html
+from lxml.html import HtmlElement
 from nbformat.notebooknode import NotebookNode
+from rich import box
 from rich import markdown
 from rich import padding
 from rich import panel
@@ -22,6 +26,7 @@ from rich.console import ConsoleOptions
 from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.panel import Panel
+from rich.style import Style
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
@@ -249,6 +254,85 @@ class Notebook:
         if "text/plain" in data:
             return data["text/plain"]
         return None
+
+    def _render_table_element(
+        self, column: HtmlElement, column_width: int
+    ) -> List[Text]:
+        attributes = column.attrib
+        column_width = int(attributes.get("colspan", 1))
+        text_style: Union[str, Style] = (
+            style.Style(bold=True) if column.tag == "th" else ""
+        )
+        column_string = column.text if column.text is not None else ""
+        element_text = text.Text(column_string, style=text_style)
+        table_element = (column_width - 1) * [text.Text("")] + [element_text]
+        return table_element
+
+    def _render_dataframe(self, table_html: List[HtmlElement]) -> Table:
+        dataframe_html = table_html[0]
+        column_rows = dataframe_html.find("thead").findall("tr")
+
+        dataframe_table = table.Table(
+            show_edge=False,
+            show_header=False,
+            box=box.HORIZONTALS,
+            show_footer=False,
+        )
+
+        n_column_rows = len(column_rows)
+        for i, column_row in enumerate(column_rows):
+
+            table_row = []
+            for column in column_row.xpath("th|td"):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+
+                if i == 0:
+                    for _ in range(column_width):
+                        dataframe_table.add_column(justify="right")
+
+                table_element = self._render_table_element(
+                    column, column_width=column_width
+                )
+                table_row.extend(table_element)
+
+            end_section = i == n_column_rows - 1
+            dataframe_table.add_row(*table_row, end_section=end_section)
+
+        previous_row_spans: Dict[int, int] = {}
+        for row in dataframe_html.find("tbody").findall("tr"):
+
+            table_row = []
+            current_row_spans: Dict[int, int] = collections.defaultdict(int)
+            for i, column in enumerate(row.xpath("th|td")):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+                row_span = int(attributes.get("rowspan", 1))
+                table_element = self._render_table_element(
+                    column, column_width=column_width
+                )
+                table_row.extend(table_element)
+
+                if 1 < row_span:
+                    current_row_spans[i] += row_span
+
+            for column, row_span in previous_row_spans.copy().items():
+                table_row.insert(column, text.Text(""))
+                remaining_span = row_span - 1
+
+                if 1 < remaining_span:
+                    previous_row_spans[column] = remaining_span
+                else:
+                    previous_row_spans.pop(column, None)
+
+            previous_row_spans = {
+                column: previous_row_spans.get(column, 0)
+                + current_row_spans.get(column, 0)
+                for column in previous_row_spans.keys() | current_row_spans.keys()
+            }
+            dataframe_table.add_row(*table_row)
+
+        return dataframe_table
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
