@@ -51,6 +51,7 @@ sphinx-click = "^2.6.0"
 Pygments = "^2.8.1"
 ipykernel = "^5.5.0"
 typing-extensions = "^3.7.4"
+pdbpp = "^0.10.2"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
