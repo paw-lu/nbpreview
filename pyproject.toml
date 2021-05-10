@@ -25,6 +25,7 @@ nbformat = "^5.1.2"
 Pygments = "^2.9.0"
 ipython = "^7.23.1"
 importlib-metadata = {version = "^4.0.1", python = "<3.8"}
+lxml = "^4.6.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
