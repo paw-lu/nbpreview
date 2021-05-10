@@ -255,6 +255,73 @@ class Notebook:
             return data["text/plain"]
         return None
 
+    def _render_output(
+        self,
+        outputs: NotebookNode,
+        plain: bool,
+        pad: Tuple[int, int, int, int],
+    ) -> Generator[
+        Union[
+            Tuple[Padding],
+            Tuple[Union[Text, Padding], Union[Padding]],
+        ],
+        None,
+        None,
+    ]:
+        """Render the output of a notebook.
+
+        Args:
+            outputs (NotebookNode): The output nodes of a notebook.
+            plain (bool): Whether to render the notebook in a plain
+                format.
+            pad (Tuple[int, int, int, int]): The output padding to use.
+
+        Yields:
+            Generator[
+                Union[
+                    Tuple[Padding],
+                    Tuple[Union[Text, Padding],
+                    Union[Padding]],
+                ],
+                None,
+                None,
+            ]:
+                The notebook output.
+        """
+        for output in outputs:
+            rendered_outputs: List[Union[Text, str, Table, Syntax]] = []
+            output_type = output.output_type
+            execution_count = output.get("execution_count")
+
+            # TODO: This won't work, we'll assign each cell the same count!
+            execution_count_indicator = self._render_execution_indicator(
+                execution_count, top_pad=False
+            )
+
+            if output_type == "stream":
+                rendered_stream = self._render_stream(output)
+                rendered_outputs.append(rendered_stream)
+
+            elif output_type == "error":
+                rendered_error = self._render_error(output)
+                if rendered_error:
+                    rendered_outputs.extend(rendered_error)
+
+            elif output_type == "execute_result":
+                rendered_execute_result = self._render_execute_result(
+                    output, plain=plain
+                )
+                if rendered_execute_result:
+                    rendered_outputs.append(rendered_execute_result)
+
+            for rendered_output in rendered_outputs:
+                yield self._arrange_row(
+                    rendered_output,
+                    plain=plain,
+                    execution_count_indicator=execution_count_indicator,
+                    pad=pad,
+                )
+
     def _render_table_element(
         self, column: HtmlElement, column_width: int
     ) -> List[Text]:
@@ -368,6 +435,8 @@ class Notebook:
             plain = self.plain
 
         grid = table.Table.grid(padding=(1, 1, 1, 0))
+
+        pad = self._get_output_pad(plain)
         if not plain:
             grid.add_column(justify="right")
         grid.add_column()
@@ -379,4 +448,9 @@ class Notebook:
             cell_row = (execution_count_indicator, source) if not plain else (source,)
             grid.add_row(*cell_row)
 
+            outputs = cell.get("outputs")
+            if not self.hide_output and outputs is not None:
+                rendered_outputs = self._render_output(outputs, plain=plain, pad=pad)
+                for rendered_output in rendered_outputs:
+                    grid.add_row(*rendered_output)
         yield grid
