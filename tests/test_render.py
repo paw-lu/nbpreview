@@ -34,7 +34,7 @@ class RichOutput(Protocol):
         ...
 
 
-def split_string(string: str, sub_length: int = 30) -> Tuple[str, ...]:
+def split_string(string: str, sub_length: int = 40) -> Tuple[str, ...]:
     """Split a string into subsections less than or equal to new length.
 
     Args:
