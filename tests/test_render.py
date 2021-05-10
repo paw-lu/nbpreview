@@ -647,3 +647,37 @@ def test_error_traceback(rich_output: RichOutput) -> None:
     )
     output = rich_output(traceback_cell)
     assert output == expected_output
+
+
+def test_render_result(rich_output: RichOutput) -> None:
+    """It renders a result."""
+    output_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "intense-middle",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"text/plain": "3"},
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        "3                                       "
+        "                                  \n"
+    )
+    output = rich_output(output_cell)
+    assert output == expected_output
