@@ -10,6 +10,7 @@ from nbformat.notebooknode import NotebookNode
 from rich import markdown
 from rich import padding
 from rich import panel
+from rich import style
 from rich import syntax
 from rich import table
 from rich import text
@@ -186,6 +187,26 @@ class Notebook:
             execution_count, top_pad=not plain
         )
         return execution_count_indicator, rendered_cell
+
+    def _render_stream(self, output: NotebookNode) -> Union[Text, str]:
+        """Render a stream type output.
+
+        Args:
+            output (NotebookNode): The stream output.
+
+        Returns:
+            Union[Test, str]: The rendered stream.
+        """
+        name = output.get("name")
+        output_text = output.get("text", "")
+        if name == "stderr":
+            rendered_stream = text.Text(
+                output_text, style=style.Style(bgcolor="color(174)")
+            )
+
+        else:
+            rendered_stream = output_text
+        return rendered_stream
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
