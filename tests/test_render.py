@@ -582,3 +582,68 @@ def test_render_stream_stdout(rich_output: RichOutput) -> None:
     )
     output = rich_output(stdout_cell)
     assert output == expected_output
+
+
+def test_error_traceback(rich_output: RichOutput) -> None:
+    """It renders the traceback from an error."""
+    traceback_cell = {
+        "cell_type": "code",
+        "execution_count": 7,
+        "id": "brave-sheep",
+        "metadata": {},
+        "outputs": [
+            {
+                "ename": "ZeroDivisionError",
+                "evalue": "division by zero",
+                "output_type": "error",
+                "traceback": [
+                    "\x1b[1;31m----------------------------------------"
+                    "-----------------------------------\x1b[0m",
+                    "\x1b[1;31mZeroDivisionError\x1b[0m                "
+                    "         Traceback (most recent call last)",
+                    "\x1b[1;32m<ipython-input-7-9e1622b385b6>\x1b[0m in"
+                    " \x1b[0;36m<module>\x1b[1;34m\x1b[0m\n\x1b[1;32m--"
+                    "--> 1\x1b[1;33m \x1b[1;36m1\x1b[0m\x1b[1;33m/\x1b["
+                    "0m\x1b[1;36m0\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m"
+                    "\x1b[0m\x1b[0m\n\x1b[0m",
+                    "\x1b[1;31mZeroDivisionError\x1b[0m: division by zero",
+                ],
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[7]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b[49m\x1b[1;31m----------------------------"
+        "---------------------------------------…"
+        "\x1b[0m\n                                   "
+        "                                        "
+        "     \n\x1b[38;5;247m    \x1b[0m  \x1b[49m\x1b[1;31mZ"
+        "eroDivisionError\x1b[0m                    "
+        "     Traceback (most recent…\x1b[0m\n       "
+        "                                        "
+        "                                 \n\x1b[38;5"
+        ";247m    \x1b[0m  \x1b[49m\x1b[1;32m<ipython-inpu"
+        "t-7-9e1622b385b6>\x1b[0m in \x1b[0;36m<module>"
+        "\x1b[1;34m\x1b[0m\x1b[0m        \n      \x1b[49m\x1b[1;3"
+        "2m----> 1\x1b[1;33m \x1b[1;36m1\x1b[0m\x1b[1;33m/\x1b[0"
+        "m\x1b[1;36m0\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m\x1b[0m\x1b[0m\x1b"
+        "[0m   \n      \x1b[49m\x1b[0m\x1b[0m              "
+        "                                        "
+        "                 \n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b[49m\x1b[1;31mZeroDivisionError\x1b[0m: divis"
+        "ion by zero\x1b[0m                         "
+        "     \n"
+    )
+    output = rich_output(traceback_cell)
+    assert output == expected_output
