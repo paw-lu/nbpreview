@@ -548,3 +548,37 @@ def test_render_stderr_stream(rich_output: RichOutput) -> None:
     )
     output = rich_output(stderr_cell)
     assert output == expected_output
+
+
+def test_render_stream_stdout(rich_output: RichOutput) -> None:
+    """It renders stdout."""
+    stdout_cell = {
+        "cell_type": "code",
+        "execution_count": 6,
+        "id": "underlying-merit",
+        "metadata": {},
+        "outputs": [{"name": "stdout", "output_type": "stream", "text": "Lorep\n"}],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭────────────────────────"
+        "──────────────────────────────"
+        "───────────────────╮\n\x1b[38;5;24"
+        "7m[6]:\x1b[0m │                  "
+        "                              "
+        "                         │\n   "
+        "  ╰───────────────────────────"
+        "──────────────────────────────"
+        "────────────────╯\n            "
+        "                              "
+        "                              "
+        "        \n\x1b[38;5;247m    \x1b[0m  "
+        "Lorep                         "
+        "                              "
+        "              \n               "
+        "                              "
+        "                              "
+        "     \n"
+    )
+    output = rich_output(stdout_cell)
+    assert output == expected_output
