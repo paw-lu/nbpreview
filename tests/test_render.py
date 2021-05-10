@@ -508,3 +508,43 @@ def test_render_plain_dataframe(rich_output: RichOutput) -> None:
     )
     output = rich_output(code_cell, plain=True)
     assert output == expected_output
+
+
+def test_render_stderr_stream(rich_output: RichOutput) -> None:
+    """It renders the stderr stream."""
+    stderr_cell = {
+        "cell_type": "code",
+        "execution_count": 5,
+        "id": "impressed-canadian",
+        "metadata": {},
+        "outputs": [
+            {
+                "name": "stderr",
+                "output_type": "stream",
+                "text": "<ipython-input-5-bc08279b5148>:2: UserWarning: Lorep\n"
+                ' warnings.warn("Lorep")\n',
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[5]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b[48;5;174m<ipython-input-5-bc08279b5148"
+        ">:2: UserWarning: Lorep                 "
+        "     \x1b[0m\n      \x1b[48;5;174m warnings.war"
+        'n("Lorep")                              '
+        "                     \x1b[0m\n      \x1b[48;5;1"
+        "74m                                     "
+        "                                     \x1b[0"
+        "m\n"
+    )
+    output = rich_output(stderr_cell)
+    assert output == expected_output
