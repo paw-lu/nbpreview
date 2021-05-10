@@ -1,5 +1,6 @@
 """Render the notebook."""
 import dataclasses
+from typing import Dict
 from typing import Generator
 from typing import Iterator
 from typing import Optional
@@ -7,6 +8,7 @@ from typing import Tuple
 from typing import Union
 
 import pygments
+from lxml import html
 from nbformat.notebooknode import NotebookNode
 from rich import markdown
 from rich import padding
@@ -232,6 +234,21 @@ class Notebook:
                     background_color="default",
                 )
             )
+
+    def _render_execute_result(
+        self, output: NotebookNode, plain: bool
+    ) -> Optional[Union[Table, str]]:
+        data: Dict[str, str] = output.get("data", ())
+        if "text/html" in data:
+            # Detect if output is a rendered DataFrame
+            datum = data["text/html"]
+            dataframe_html = html.fromstring(datum).find_class("dataframe")
+            if not plain and dataframe_html and dataframe_html[0].tag == "table":
+                rendered_html = self._render_dataframe(dataframe_html)
+                return rendered_html
+        if "text/plain" in data:
+            return data["text/plain"]
+        return None
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
