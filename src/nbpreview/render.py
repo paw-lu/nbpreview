@@ -1,5 +1,6 @@
 """Render the notebook."""
 import dataclasses
+from typing import Generator
 from typing import Iterator
 from typing import Optional
 from typing import Tuple
@@ -207,6 +208,30 @@ class Notebook:
         else:
             rendered_stream = output_text
         return rendered_stream
+
+    def _render_error(self, output: NotebookNode) -> Generator[Syntax, None, None]:
+        """Render an error type output.
+
+        Args:
+            output (NotebookNode): The error output.
+
+        Yields:
+            Generator[Syntax, None, None]: Generate each row of the
+                traceback.
+        """
+        traceback = output.get("traceback", ())
+        for traceback_line in traceback:
+            lexer_name = "IPython Traceback"
+            # A background here looks odd--highlighting only
+            # certain words.
+            yield (
+                syntax.Syntax(
+                    traceback_line,
+                    lexer_name=lexer_name,
+                    theme=self.theme,
+                    background_color="default",
+                )
+            )
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
