@@ -304,3 +304,113 @@ def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
         "                    \n"
     )
     assert output == expected_output
+
+
+def test_render_dataframe(rich_output: RichOutput) -> None:
+    """It renders a DataFrame."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead tr th {\n    "
+                        "    text-align: left;\n    }\n\n    .datafr"
+                        "ame thead tr:last-of-type th {\n        t"
+                        "ext-align: right;\n    }\n</style>\n<table "
+                        'border="1" class="dataframe">\n  <thead>\n'
+                        "    <tr>\n      <th></th>\n      <th></th>"
+                        "\n      <th>lorep</th>\n      <th colspan="
+                        '"2" halign="left">hey</th>\n      <th>bye'
+                        "</th>\n    </tr>\n    <tr>\n      <th></th>"
+                        "\n      <th></th>\n      <th>ipsum</th>\n  "
+                        "    <th>hi</th>\n      <th>very_long_word"
+                        "</th>\n      <th>hi</th>\n    </tr>\n    <t"
+                        "r>\n      <th>first</th>\n      <th>second"
+                        "</th>\n      <th>third</th>\n      <th></t"
+                        "h>\n      <th></th>\n      <th></th>\n    <"
+                        "/tr>\n  </thead>\n  <tbody>\n    <tr>\n     "
+                        ' <th rowspan="3" valign="top">bar</th>\n '
+                        '     <th rowspan="2" valign="top">one</t'
+                        "h>\n      <th>1</th>\n      <td>1</td>\n   "
+                        "   <td>2</td>\n      <td>4</td>\n    </tr>"
+                        "\n    <tr>\n      <th>10</th>\n      <td>3<"
+                        "/td>\n      <td>4</td>\n      <td>-1</td>\n"
+                        "    </tr>\n    <tr>\n      <th>three</th>\n"
+                        "      <th>3</th>\n      <td>3</td>\n      "
+                        "<td>4</td>\n      <td>-1</td>\n    </tr>\n "
+                        "   <tr>\n      <th>foo</th>\n      <th>one"
+                        "</th>\n      <th>1</th>\n      <td>3</td>\n"
+                        "      <td>4</td>\n      <td>-1</td>\n    <"
+                        "/tr>\n  </tbody>\n</table>\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭────────────────────────"
+        "──────────────────────────────"
+        "───────────────────╮\n\x1b[38;5;24"
+        "7m[2]:\x1b[0m │                  "
+        "                              "
+        "                         │\n   "
+        "  ╰───────────────────────────"
+        "──────────────────────────────"
+        "────────────────╯\n            "
+        "                              "
+        "                              "
+        "        \n\x1b[38;5;247m[2]:\x1b[0m  "
+        " \x1b[1m     \x1b[0m   \x1b[1m      \x1b[0"
+        "m   \x1b[1mlorep\x1b[0m        \x1b[1m "
+        "          hey\x1b[0m   \x1b[1mbye\x1b[0"
+        "m                       \n     "
+        "  \x1b[1m     \x1b[0m   \x1b[1m      \x1b["
+        "0m   \x1b[1mipsum\x1b[0m   \x1b[1mhi\x1b[0"
+        "m   \x1b[1mvery_long_word\x1b[0m   \x1b"
+        "[1m hi\x1b[0m                    "
+        "   \n       \x1b[1mfirst\x1b[0m   \x1b[1"
+        "msecond\x1b[0m   \x1b[1mthird\x1b[0m   "
+        "\x1b[1m  \x1b[0m   \x1b[1m             "
+        " \x1b[0m   \x1b[1m   \x1b[0m           "
+        "            \n      ───────────"
+        "──────────────────────────────"
+        "───────────                   "
+        "   \n       \x1b[1m  bar\x1b[0m   \x1b[1"
+        "m   one\x1b[0m   \x1b[1m    1\x1b[0m   "
+        " 1                2     4     "
+        "                  \n           "
+        "             \x1b[1m   10\x1b[0m    "
+        "3                4    -1      "
+        "                 \n            "
+        "   \x1b[1m three\x1b[0m   \x1b[1m    3\x1b"
+        "[0m    3                4    -"
+        "1                       \n     "
+        "  \x1b[1m  foo\x1b[0m   \x1b[1m   one\x1b["
+        "0m   \x1b[1m    1\x1b[0m    3       "
+        "         4    -1              "
+        "         \n"
+    )
+    output = rich_output(code_cell)
+    assert output == expected_output
