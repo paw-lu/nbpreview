@@ -334,6 +334,19 @@ class Notebook:
 
         return dataframe_table
 
+    def _arrange_row(
+        self,
+        content: Union[Table, Syntax, Text, str, Table],
+        plain: bool,
+        execution_count_indicator: Union[Text, Padding],
+        pad: Tuple[int, int, int, int],
+    ) -> Union[Tuple[Padding], Tuple[Union[Text, Padding], Union[Padding]]]:
+        padded_content = padding.Padding(content, pad=pad)
+        if plain:
+            return (padded_content,)
+        else:
+            return (execution_count_indicator, padded_content)
+
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> Iterator[Table]:
