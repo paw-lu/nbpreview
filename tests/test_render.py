@@ -741,3 +741,45 @@ def test_render_error_no_traceback(rich_output: RichOutput) -> None:
     )
     output = rich_output(traceback_cell)
     assert output == expected_output
+
+
+def test_render_markdown_output(rich_output: RichOutput) -> None:
+    """It renders a markdown output."""
+    markdown_output_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "declared-stevens",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/markdown": "**Lorep** _ipsum_\n",
+                    "text/plain": "<IPython.core.display.Markdown object>",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "%%markdown\n**Lorep** _ipsum_",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │ \x1b[49m%%\x1b[0m\x1b[94;4"
+        "9mmarkdown\x1b[0m                          "
+        "                                    │\n  "
+        "   │ \x1b[49m**Lorep**\x1b[0m\x1b[49m \x1b[0m\x1b[49m_i"
+        "psum_\x1b[0m                               "
+        "                        │\n     │        "
+        "                                        "
+        "                         │\n     ╰───────"
+        "────────────────────────────────────────"
+        "──────────────────────────╯\n            "
+        "                                        "
+        "                            \n\x1b[38;5;247m"
+        "    \x1b[0m  \x1b[1mLorep\x1b[0m \x1b[3mipsum\x1b[0m   "
+        "                                        "
+        "                    \n"
+    )
+    output = rich_output(markdown_output_cell)
+    assert output == expected_output
