@@ -257,7 +257,7 @@ class Notebook:
 
     def _render_output(
         self,
-        outputs: NotebookNode,
+        outputs: List[NotebookNode],
         plain: bool,
         pad: Tuple[int, int, int, int],
     ) -> Generator[
@@ -271,7 +271,8 @@ class Notebook:
         """Render the output of a notebook.
 
         Args:
-            outputs (NotebookNode): The output nodes of a notebook.
+            outputs (List[NotebookNode]): The output nodes of a
+                notebook.
             plain (bool): Whether to render the notebook in a plain
                 format.
             pad (Tuple[int, int, int, int]): The output padding to use.
