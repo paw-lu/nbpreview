@@ -180,6 +180,7 @@ class Notebook:
                 except pygments.util.ClassNotFound:
                     pass
 
+        # Includes cell_type == "raw"
         else:
             execution_count = None
             rendered_source = source
