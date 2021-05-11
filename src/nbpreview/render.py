@@ -23,6 +23,7 @@ from rich import table
 from rich import text
 from rich.console import Console
 from rich.console import ConsoleOptions
+from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.style import Style
@@ -262,6 +263,16 @@ class Notebook:
             return data["text/plain"]
         return None
 
+    def _render_display_data(
+        self, output: NotebookNode, plain: bool
+    ) -> Optional[Markdown]:
+        """Render display data outputs."""
+        data = output.get("data", {})
+        if "text/markdown" in data:
+            markdown_text = data["text/markdown"]
+            return markdown.Markdown(markdown_text, inline_code_theme=self.theme)
+        return None
+
     def _render_output(
         self,
         outputs: List[NotebookNode],
@@ -297,7 +308,7 @@ class Notebook:
                 The notebook output.
         """
         for output in outputs:
-            rendered_outputs: List[Union[Text, str, Table, Syntax]] = []
+            rendered_outputs: List[Union[Text, str, Table, Syntax, Markdown]] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
 
@@ -320,6 +331,11 @@ class Notebook:
                 )
                 if rendered_execute_result:
                     rendered_outputs.append(rendered_execute_result)
+
+            elif output_type == "display_data":
+                rendered_display_data = self._render_display_data(output, plain=plain)
+                if rendered_display_data:
+                    rendered_outputs.append(rendered_display_data)
 
             for rendered_output in rendered_outputs:
                 yield self._arrange_row(
@@ -410,7 +426,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Table, Syntax, Text, str, Table],
+        content: Union[Table, Syntax, Text, str, Table, Markdown],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],
