@@ -681,3 +681,33 @@ def test_render_result(rich_output: RichOutput) -> None:
     )
     output = rich_output(output_cell)
     assert output == expected_output
+
+
+def test_render_unknown_data_format(rich_output: RichOutput) -> None:
+    """It passes on rendering an unknown data format."""
+    output_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "intense-middle",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"unknown_format": "3"},
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n"
+    )
+    output = rich_output(output_cell)
+    assert output == expected_output
