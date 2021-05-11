@@ -584,7 +584,7 @@ def test_render_stream_stdout(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
-def test_error_traceback(rich_output: RichOutput) -> None:
+def test_render_error_traceback(rich_output: RichOutput) -> None:
     """It renders the traceback from an error."""
     traceback_cell = {
         "cell_type": "code",
@@ -713,7 +713,7 @@ def test_render_unknown_data_format(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
-def test_error_no_traceback(rich_output: RichOutput) -> None:
+def test_render_error_no_traceback(rich_output: RichOutput) -> None:
     """It skips rendering an error with no traceback."""
     traceback_cell = {
         "cell_type": "code",
