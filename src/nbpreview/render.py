@@ -23,7 +23,6 @@ from rich import table
 from rich import text
 from rich.console import Console
 from rich.console import ConsoleOptions
-from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.style import Style
@@ -31,7 +30,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-Cell = Union[Padding, Markdown, Panel, Text, Syntax, str]
+Cell = Union[Panel, Text, Syntax, str, Padding]
 
 
 @dataclasses.dataclass()
@@ -111,15 +110,17 @@ class Notebook:
     def _render_cells(
         self,
         cell: NotebookNode,
-        plain: bool = False,
+        plain: bool,
+        pad: Tuple[int, int, int, int],
         unicode_border: Optional[bool] = None,
-    ) -> Tuple[Union[Text, Padding], Cell]:
+    ) -> Tuple[Cell, ...]:
         """Render a Jupyter Notebook cell.
 
         Args:
             cell (NotebookNode): The cell to render.
             plain (bool): Only show plain style. No decorations such as
-                boxes or execution counts. By default False.
+                boxes or execution counts.
+            pad (Tuple[int, int, int, int]): The output padding to use.
             unicode_border (Optional[bool]): Whether to render the cell
                 borders using unicode characters. Will autodetect by
                 default.
@@ -132,14 +133,13 @@ class Notebook:
         source = cell.source
         default_lexer_name = "ipython" if self.language == "python" else self.language
 
-        output_pad = self._get_output_pad(plain)
-        rendered_cell: Optional[Cell] = None
         rendered_source: Union[Text, Syntax, str]
+        rendered_cell: Optional[Cell] = None
         if cell_type == "markdown":
             execution_count = None
             rendered_cell = padding.Padding(
                 markdown.Markdown(source, inline_code_theme=self.theme),
-                pad=output_pad,
+                pad=pad,
             )
 
         elif cell_type == "code":
@@ -195,7 +195,13 @@ class Notebook:
         execution_count_indicator = self._render_execution_indicator(
             execution_count, top_pad=not plain
         )
-        return execution_count_indicator, rendered_cell
+        cell_row = (
+            (execution_count_indicator, rendered_cell)
+            if not plain
+            else (rendered_cell,)
+        )
+
+        return cell_row
 
     def _render_stream(self, output: NotebookNode) -> Union[Text, str]:
         """Render a stream type output.
@@ -443,10 +449,12 @@ class Notebook:
         grid.add_column()
 
         for cell in self.cells:
-            execution_count_indicator, source = self._render_cells(
-                cell, plain=plain, unicode_border=self.unicode
+            cell_row = self._render_cells(
+                cell,
+                plain=plain,
+                pad=pad,
+                unicode_border=self.unicode,
             )
-            cell_row = (execution_count_indicator, source) if not plain else (source,)
             grid.add_row(*cell_row)
 
             outputs = cell.get("outputs")
@@ -454,4 +462,5 @@ class Notebook:
                 rendered_outputs = self._render_output(outputs, plain=plain, pad=pad)
                 for rendered_output in rendered_outputs:
                     grid.add_row(*rendered_output)
+
         yield grid
