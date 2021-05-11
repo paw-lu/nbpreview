@@ -229,8 +229,8 @@ class Notebook:
         traceback = output.get("traceback", ())
         for traceback_line in traceback:
             lexer_name = "IPython Traceback"
-            # A background here looks odd--highlighting only
-            # certain words.
+            # A background here looks odd--highlighting only certain
+            # words.
             yield (
                 syntax.Syntax(
                     traceback_line,
