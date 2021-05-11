@@ -243,7 +243,7 @@ class Notebook:
     def _render_execute_result(
         self, output: NotebookNode, plain: bool
     ) -> Optional[Union[Table, str]]:
-        data: Dict[str, str] = output.get("data", ())
+        data: Dict[str, str] = output.get("data", {})
         if "text/html" in data:
             # Detect if output is a rendered DataFrame
             datum = data["text/html"]
