@@ -711,3 +711,33 @@ def test_render_unknown_data_format(rich_output: RichOutput) -> None:
     )
     output = rich_output(output_cell)
     assert output == expected_output
+
+
+def test_error_no_traceback(rich_output: RichOutput) -> None:
+    """It skips rendering an error with no traceback."""
+    traceback_cell = {
+        "cell_type": "code",
+        "execution_count": 7,
+        "id": "brave-sheep",
+        "metadata": {},
+        "outputs": [
+            {
+                "ename": "ZeroDivisionError",
+                "evalue": "division by zero",
+                "output_type": "error",
+                "traceback": [],
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[7]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n"
+    )
+    output = rich_output(traceback_cell)
+    assert output == expected_output
