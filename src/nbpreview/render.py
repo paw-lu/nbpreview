@@ -294,7 +294,6 @@ class Notebook:
             output_type = output.output_type
             execution_count = output.get("execution_count")
 
-            # TODO: This won't work, we'll assign each cell the same count!
             execution_count_indicator = self._render_execution_indicator(
                 execution_count, top_pad=False
             )
