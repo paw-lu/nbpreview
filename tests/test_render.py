@@ -814,3 +814,46 @@ def test_render_unknown_display_data(rich_output: RichOutput) -> None:
     )
     output = rich_output(unknown_display_data_cell)
     assert output == expected_output
+
+
+def test_render_json_output(rich_output: RichOutput) -> None:
+    """It renders a JSON output."""
+    json_output_cell = {
+        "cell_type": "code",
+        "execution_count": 1,
+        "id": "behind-authentication",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "application/json": {"one": 1, "three": {"a": "b"}, "two": 2},
+                    "text/plain": "<IPython.core.display.JSON object>",
+                },
+                "execution_count": 1,
+                "metadata": {"application/json": {"expanded": False, "root": "root"}},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[1]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[1]:\x1b[0m  "
+        '\x1b[49m{\x1b[0m\x1b[94;49m"one"\x1b[0m\x1b[49m:\x1b[0m\x1b[4'
+        "9m \x1b[0m\x1b[94;49m1\x1b[0m\x1b[49m,\x1b[0m\x1b[49m \x1b[0m"
+        '\x1b[94;49m"three"\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b'
+        '[49m{\x1b[0m\x1b[94;49m"a"\x1b[0m\x1b[49m:\x1b[0m\x1b[49m '
+        '\x1b[0m\x1b[33;49m"b"\x1b[0m\x1b[49m},\x1b[0m\x1b[49m \x1b[0m'
+        '\x1b[94;49m"two"\x1b[0m\x1b[49m:\x1b[0m\x1b[49m \x1b[0m\x1b[9'
+        "4;49m2\x1b[0m\x1b[49m}\x1b[0m                    "
+        "             \n"
+    )
+    output = rich_output(json_output_cell)
+    assert output == expected_output
