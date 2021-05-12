@@ -1,6 +1,7 @@
 """Render the notebook."""
 import collections
 import dataclasses
+import json
 from typing import Dict
 from typing import Generator
 from typing import Iterator
@@ -260,6 +261,14 @@ class Notebook:
             if not plain and dataframe_html and dataframe_html[0].tag == "table":
                 rendered_html = self._render_dataframe(dataframe_html)
                 return rendered_html
+        if "application/json" in data:
+            json_data = json.dumps(data["application/json"])
+            return syntax.Syntax(
+                json_data,
+                lexer_name="json",
+                theme=self.theme,
+                background_color="default",
+            )
         if "text/plain" in data:
             return data["text/plain"]
         return None
@@ -272,6 +281,7 @@ class Notebook:
         if "text/markdown" in data:
             markdown_text = data["text/markdown"]
             return markdown.Markdown(markdown_text, inline_code_theme=self.theme)
+
         return None
 
     def _render_output(
