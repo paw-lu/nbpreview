@@ -323,8 +323,7 @@ class Notebook:
 
             elif output_type == "error":
                 rendered_error = self._render_error(output)
-                if rendered_error:
-                    rendered_outputs.extend(rendered_error)
+                rendered_outputs.extend(rendered_error)
 
             elif output_type == "execute_result":
                 rendered_execute_result = self._render_execute_result(
