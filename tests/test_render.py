@@ -787,7 +787,7 @@ def test_render_markdown_output(rich_output: RichOutput) -> None:
 
 def test_render_unknown_display_data(rich_output: RichOutput) -> None:
     """It skips rendering an unknown data display type."""
-    markdown_output_cell = {
+    unknown_display_data_cell = {
         "cell_type": "code",
         "execution_count": 2,
         "id": "declared-stevens",
@@ -812,5 +812,5 @@ def test_render_unknown_display_data(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n"
     )
-    output = rich_output(markdown_output_cell)
+    output = rich_output(unknown_display_data_cell)
     assert output == expected_output
