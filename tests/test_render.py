@@ -783,3 +783,34 @@ def test_render_markdown_output(rich_output: RichOutput) -> None:
     )
     output = rich_output(markdown_output_cell)
     assert output == expected_output
+
+
+def test_render_unknown_display_data(rich_output: RichOutput) -> None:
+    """It skips rendering an unknown data display type."""
+    markdown_output_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "declared-stevens",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "unknown_data_type": "**Lorep** _ipsum_\n",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n"
+    )
+    output = rich_output(markdown_output_cell)
+    assert output == expected_output
