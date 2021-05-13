@@ -913,3 +913,38 @@ def test_render_latex_output(rich_output: RichOutput) -> None:
     )
     output = rich_output(latex_output_cell)
     assert expected_output == output
+
+
+def test_render_text_display_data(rich_output: RichOutput) -> None:
+    """It skips rendering an unknown data display type."""
+    text_display_data_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "declared-stevens",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/plain": "Lorep ipsum",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "Lorep ipsum                             "
+        "                                  \n"
+    )
+    output = rich_output(text_display_data_cell)
+    assert output == expected_output
