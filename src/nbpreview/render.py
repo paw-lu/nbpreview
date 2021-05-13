@@ -293,6 +293,10 @@ class Notebook:
                 strict_latex_spaces=False,
             ).latex_to_text(latex_data)
             return rendered_latex
+
+        if "text/plain" in data:
+            return data["text/plain"]
+
         return None
 
     def _render_output(
