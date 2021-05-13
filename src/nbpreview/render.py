@@ -250,7 +250,7 @@ class Notebook:
             )
 
     def _render_execute_result(
-        self, output: NotebookNode, plain: bool
+        self, output: NotebookNode, plain: bool, unicode: bool
     ) -> Optional[Union[Table, str, Syntax]]:
         """Render executed result outputs."""
         data: Dict[str, str] = output.get("data", {})
@@ -259,7 +259,7 @@ class Notebook:
             datum = data["text/html"]
             dataframe_html = html.fromstring(datum).find_class("dataframe")
             if not plain and dataframe_html and dataframe_html[0].tag == "table":
-                rendered_html = self._render_dataframe(dataframe_html)
+                rendered_html = self._render_dataframe(dataframe_html, unicode=unicode)
                 return rendered_html
 
         if "application/json" in data:
@@ -291,6 +291,7 @@ class Notebook:
         outputs: List[NotebookNode],
         plain: bool,
         pad: Tuple[int, int, int, int],
+        unicode: bool,
     ) -> Generator[
         Union[
             Tuple[Padding],
@@ -307,6 +308,7 @@ class Notebook:
             plain (bool): Whether to render the notebook in a plain
                 format.
             pad (Tuple[int, int, int, int]): The output padding to use.
+            unicode (bool): Whether to render using unicode characters.
 
         Yields:
             Generator[
@@ -339,13 +341,15 @@ class Notebook:
 
             elif output_type == "execute_result":
                 rendered_execute_result = self._render_execute_result(
-                    output, plain=plain
+                    output, plain=plain, unicode=unicode
                 )
                 if rendered_execute_result:
                     rendered_outputs.append(rendered_execute_result)
 
             elif output_type == "display_data":
-                rendered_display_data = self._render_display_data(output, plain=plain)
+                rendered_display_data = self._render_display_data(
+                    output, plain=plain, unicode=unicode
+                )
                 if rendered_display_data:
                     rendered_outputs.append(rendered_display_data)
 
@@ -370,7 +374,7 @@ class Notebook:
         table_element = (column_width - 1) * [text.Text("")] + [element_text]
         return table_element
 
-    def _render_dataframe(self, table_html: List[HtmlElement]) -> Table:
+    def _render_dataframe(self, table_html: List[HtmlElement], unicode: bool) -> Table:
         dataframe_html = table_html[0]
         column_rows = dataframe_html.find("thead").findall("tr")
 
@@ -379,6 +383,7 @@ class Notebook:
             show_header=False,
             box=box.HORIZONTALS,
             show_footer=False,
+            safe_box=not unicode,
         )
 
         n_column_rows = len(column_rows)
@@ -469,6 +474,14 @@ class Notebook:
         else:
             plain = self.plain
 
+        if self.unicode is None:
+            if options.legacy_windows or options.ascii_only:
+                unicode = False
+            else:
+                unicode = True
+        else:
+            unicode = self.unicode
+
         grid = table.Table.grid(padding=(1, 1, 1, 0))
 
         pad = self._get_output_pad(plain)
@@ -481,13 +494,15 @@ class Notebook:
                 cell,
                 plain=plain,
                 pad=pad,
-                unicode_border=self.unicode,
+                unicode_border=unicode,
             )
             grid.add_row(*cell_row)
 
             outputs = cell.get("outputs")
             if not self.hide_output and outputs is not None:
-                rendered_outputs = self._render_output(outputs, plain=plain, pad=pad)
+                rendered_outputs = self._render_output(
+                    outputs, plain=plain, pad=pad, unicode=unicode
+                )
                 for rendered_output in rendered_outputs:
                     grid.add_row(*rendered_output)
 
