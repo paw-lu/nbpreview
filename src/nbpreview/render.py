@@ -261,6 +261,7 @@ class Notebook:
             if not plain and dataframe_html and dataframe_html[0].tag == "table":
                 rendered_html = self._render_dataframe(dataframe_html)
                 return rendered_html
+
         if "application/json" in data:
             json_data = json.dumps(data["application/json"])
             return syntax.Syntax(
@@ -269,6 +270,7 @@ class Notebook:
                 theme=self.theme,
                 background_color="default",
             )
+
         if "text/plain" in data:
             return data["text/plain"]
         return None
