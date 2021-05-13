@@ -452,7 +452,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Table, Syntax, Text, str, Table, Markdown],
+        content: Union[Table, Syntax, Text, str, Table, Markdown, Emoji],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],
