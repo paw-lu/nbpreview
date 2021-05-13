@@ -250,9 +250,9 @@ class Notebook:
                 )
             )
 
-    def _render_execute_result(
+    def _render_result(
         self, output: NotebookNode, plain: bool, unicode: bool
-    ) -> Optional[Union[Table, str, Syntax]]:
+    ) -> Optional[Union[Table, str, Syntax, Markdown]]:
         """Render executed result outputs."""
         data: Dict[str, str] = output.get("data", {})
         if "text/html" in data:
@@ -263,24 +263,6 @@ class Notebook:
                 rendered_html = self._render_dataframe(dataframe_html, unicode=unicode)
                 return rendered_html
 
-        if "application/json" in data:
-            json_data = json.dumps(data["application/json"])
-            return syntax.Syntax(
-                json_data,
-                lexer_name="json",
-                theme=self.theme,
-                background_color="default",
-            )
-
-        if "text/plain" in data:
-            return data["text/plain"]
-        return None
-
-    def _render_display_data(
-        self, output: NotebookNode, plain: bool, unicode: bool
-    ) -> Optional[Union[Markdown, str]]:
-        """Render display data outputs."""
-        data: Dict[str, str] = output.get("data", {})
         if "text/markdown" in data:
             markdown_text = data["text/markdown"]
             return markdown.Markdown(markdown_text, inline_code_theme=self.theme)
@@ -294,9 +276,17 @@ class Notebook:
             ).latex_to_text(latex_data)
             return rendered_latex
 
+        if "application/json" in data:
+            json_data = json.dumps(data["application/json"])
+            return syntax.Syntax(
+                json_data,
+                lexer_name="json",
+                theme=self.theme,
+                background_color="default",
+            )
+
         if "text/plain" in data:
             return data["text/plain"]
-
         return None
 
     def _render_output(
@@ -352,19 +342,12 @@ class Notebook:
                 rendered_error = self._render_error(output)
                 rendered_outputs.extend(rendered_error)
 
-            elif output_type == "execute_result":
-                rendered_execute_result = self._render_execute_result(
+            elif output_type == "execute_result" or output_type == "display_data":
+                rendered_execute_result = self._render_result(
                     output, plain=plain, unicode=unicode
                 )
                 if rendered_execute_result:
                     rendered_outputs.append(rendered_execute_result)
-
-            elif output_type == "display_data":
-                rendered_display_data = self._render_display_data(
-                    output, plain=plain, unicode=unicode
-                )
-                if rendered_display_data:
-                    rendered_outputs.append(rendered_display_data)
 
             for rendered_output in rendered_outputs:
                 yield self._arrange_row(
