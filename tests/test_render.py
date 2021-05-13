@@ -857,3 +857,59 @@ def test_render_json_output(rich_output: RichOutput) -> None:
     )
     output = rich_output(json_output_cell)
     assert output == expected_output
+
+
+def test_render_latex_output(rich_output: RichOutput) -> None:
+    """It renders LaTeX output."""
+    latex_output_cell = {
+        "cell_type": "code",
+        "execution_count": 15,
+        "id": "sapphire-harmony",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/latex": "$$\n\\alpha \\sim \\text{Normal}"
+                    " \\\\\n\\beta \\sim \\text{Normal} \\\\\n\\epsilon"
+                    " \\sim \\text{Half-Cauchy} \\\\\n\\mu = \\alpha +"
+                    " X\\beta \\\\\ny \\sim \\text{Normal}(\\mu, \\epsilon)\n$$\n",
+                    "text/plain": "<IPython.core.display.Latex object>",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "      ╭─────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[15]:\x1b[0m │                 "
+        "                                        "
+        "               │\n      ╰────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m     \x1b[0m "
+        "                                        "
+        "                                  \n     "
+        "                                        "
+        "                                   \n    "
+        "       α∼Normal                         "
+        "                                    \n   "
+        "        β∼Normal                        "
+        "                                     \n  "
+        "         ϵ∼Half-Cauchy                  "
+        "                                      \n "
+        "          μ = α + Xβ                    "
+        "                                       \n"
+        "           y ∼Normal(μ, ϵ)              "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n                                      "
+        "                                        "
+        "  \n"
+    )
+    output = rich_output(latex_output_cell)
+    assert expected_output == output
