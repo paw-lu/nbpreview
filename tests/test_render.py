@@ -916,7 +916,7 @@ def test_render_latex_output(rich_output: RichOutput) -> None:
 
 
 def test_render_text_display_data(rich_output: RichOutput) -> None:
-    """It skips rendering an unknown data display type."""
+    """It renders text display data."""
     text_display_data_cell = {
         "cell_type": "code",
         "execution_count": 2,
