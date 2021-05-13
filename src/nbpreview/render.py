@@ -16,6 +16,7 @@ from lxml.html import HtmlElement
 from nbformat.notebooknode import NotebookNode
 from pylatexenc import latex2text
 from rich import box
+from rich import emoji
 from rich import markdown
 from rich import padding
 from rich import panel
@@ -25,6 +26,7 @@ from rich import table
 from rich import text
 from rich.console import Console
 from rich.console import ConsoleOptions
+from rich.emoji import Emoji
 from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.panel import Panel
@@ -255,7 +257,7 @@ class Notebook:
 
     def _render_result(
         self, output: NotebookNode, plain: bool, unicode: bool
-    ) -> Optional[Union[Table, str, Syntax, Markdown]]:
+    ) -> Optional[Union[Table, str, Syntax, Markdown, Emoji]]:
         """Render executed result outputs."""
         data: Dict[str, str] = output.get("data", {})
         if "text/html" in data:
@@ -287,6 +289,12 @@ class Notebook:
                 theme=self.theme,
                 background_color="default",
             )
+
+        if "application/pdf" in data:
+            if self.nerd_font:
+                return ""
+            elif unicode:
+                return emoji.Emoji(name="page_facing_up")
 
         if "text/plain" in data:
             return data["text/plain"]
@@ -329,7 +337,9 @@ class Notebook:
                 The notebook output.
         """
         for output in outputs:
-            rendered_outputs: List[Union[Text, str, Table, Syntax, Markdown]] = []
+            rendered_outputs: List[
+                Union[Text, str, Table, Syntax, Markdown, Emoji]
+            ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
 
