@@ -14,6 +14,7 @@ import pygments
 from lxml import html
 from lxml.html import HtmlElement
 from nbformat.notebooknode import NotebookNode
+from pylatexenc import latex2text
 from rich import box
 from rich import markdown
 from rich import padding
@@ -276,14 +277,22 @@ class Notebook:
         return None
 
     def _render_display_data(
-        self, output: NotebookNode, plain: bool
-    ) -> Optional[Markdown]:
+        self, output: NotebookNode, plain: bool, unicode: bool
+    ) -> Optional[Union[Markdown, str]]:
         """Render display data outputs."""
-        data = output.get("data", {})
+        data: Dict[str, str] = output.get("data", {})
         if "text/markdown" in data:
             markdown_text = data["text/markdown"]
             return markdown.Markdown(markdown_text, inline_code_theme=self.theme)
 
+        if "text/latex" in data and unicode:
+            latex_data = data["text/latex"]
+            rendered_latex: str = latex2text.LatexNodes2Text(
+                math_mode="text",
+                fill_text=True,
+                strict_latex_spaces=False,
+            ).latex_to_text(latex_data)
+            return rendered_latex
         return None
 
     def _render_output(
