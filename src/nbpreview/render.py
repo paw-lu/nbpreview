@@ -251,7 +251,7 @@ class Notebook:
 
     def _render_execute_result(
         self, output: NotebookNode, plain: bool
-    ) -> Optional[Union[Table, str]]:
+    ) -> Optional[Union[Table, str, Syntax]]:
         """Render executed result outputs."""
         data: Dict[str, str] = output.get("data", {})
         if "text/html" in data:
