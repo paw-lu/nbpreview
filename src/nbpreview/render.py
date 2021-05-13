@@ -52,6 +52,8 @@ class Notebook:
             render the notebook. By default will autodetect.
         hide_output (bool): Do not render the notebook outputs. By
             default False.
+        nerd_font (bool): Use nerd fonts when appropriate. By default
+            False.
     """
 
     notebook_node: NotebookNode
@@ -59,6 +61,7 @@ class Notebook:
     plain: Optional[bool] = None
     unicode: Optional[bool] = None
     hide_output: bool = False
+    nerd_font: bool = False
 
     def __post_init__(self) -> None:
         """Constructor."""
