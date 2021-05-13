@@ -29,6 +29,9 @@ class RichOutput(Protocol):
         cell: Union[Dict[str, Any], None],
         plain: bool = False,
         no_wrap: bool = False,
+        unicode: Optional[bool] = None,
+        hide_output: bool = False,
+        nerd_font: bool = False,
     ) -> str:
         """Callable types."""
         ...
@@ -86,6 +89,9 @@ def rich_output(
         cell: Union[Dict[str, Any], None],
         plain: Optional[bool] = None,
         no_wrap: Optional[bool] = None,
+        unicode: Optional[bool] = None,
+        hide_output: bool = False,
+        nerd_font: bool = False,
     ) -> str:
         """Return the rendered output of a notebook containing the cell.
 
@@ -95,12 +101,23 @@ def rich_output(
                 plain style, with no boxes or decorations. Defaults to
                 False.
             no_wrap (bool): Disable word wrapping. Defaults to False.
+            unicode (bool): Whether to render using unicode characters.
+            hide_output (bool): Do not render the notebook outputs. By
+                default False.
+            nerd_font (bool): Use nerd fonts when appropriate. By default
+                False.
 
         Returns:
             str: The rich output as a string.
         """
         notebook_node = make_notebook(cell)
-        notebook = render.Notebook(notebook_node, plain=plain)
+        notebook = render.Notebook(
+            notebook_node,
+            plain=plain,
+            unicode=unicode,
+            hide_output=hide_output,
+            nerd_font=nerd_font,
+        )
         rich_console.print(notebook, no_wrap=no_wrap)
         output: str = rich_console.file.getvalue()  # type: ignore[attr-defined]
         return output
