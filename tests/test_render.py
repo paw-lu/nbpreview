@@ -1,19 +1,28 @@
 """Test cases for render."""
 import io
+import json
+import os
+import pathlib
+import re
 import sys
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import Generator
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from unittest.mock import Mock
 
+import httpx
 import pytest
 from nbformat import NotebookNode
+from pytest_mock import MockerFixture
 from rich import console
 from rich.console import Console
 
 from nbpreview import render
+
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
@@ -32,6 +41,9 @@ class RichOutput(Protocol):
         unicode: Optional[bool] = None,
         hide_output: bool = False,
         nerd_font: bool = False,
+        files: bool = True,
+        hyperlinks: bool = True,
+        hide_hyperlink_hints: bool = False,
     ) -> str:
         """Callable types."""
         ...
@@ -92,6 +104,9 @@ def rich_output(
         unicode: Optional[bool] = None,
         hide_output: bool = False,
         nerd_font: bool = False,
+        files: bool = True,
+        hyperlinks: bool = True,
+        hide_hyperlink_hints: bool = False,
     ) -> str:
         """Return the rendered output of a notebook containing the cell.
 
@@ -106,6 +121,11 @@ def rich_output(
                 default False.
             nerd_font (bool): Use nerd fonts when appropriate. By default
                 False.
+            files (bool): Create files when needed to render HTML content.
+            hyperlinks (bool): Whether to use hyperlinks. If false will
+                explicitly print out path.
+            hide_hyperlink_hints (bool): Hide text hints of when content is
+                clickable.
 
         Returns:
             str: The rich output as a string.
@@ -117,12 +137,38 @@ def rich_output(
             unicode=unicode,
             hide_output=hide_output,
             nerd_font=nerd_font,
+            files=files,
+            hyperlinks=hyperlinks,
+            hide_hyperlink_hints=hide_hyperlink_hints,
         )
         rich_console.print(notebook, no_wrap=no_wrap)
         output: str = rich_console.file.getvalue()  # type: ignore[attr-defined]
         return output
 
     return _rich_output
+
+
+@pytest.fixture
+def mock_tempfile_file(mocker: MockerFixture) -> Generator[Mock, None, None]:
+    """Control where tempfile will write to."""
+    file_path = pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
+    fd = os.open(file_path, flags=2818, mode=0o600)
+    mock = mocker.patch("tempfile._mkstemp_inner")
+    mock.return_value = (fd, str(file_path))
+    yield mock
+    file_path.unlink()
+
+
+@pytest.fixture
+def remove_link_ids() -> Callable[[str], str]:
+    """Remove link ids from rendered hyperlinks."""
+
+    def _remove_link_ids(render: str) -> str:
+        re_link_ids = re.compile(r"id=[\d\.\-]*?;.*?\x1b")
+        subsituted_render = re_link_ids.sub("id=0;foo\x1b", render)
+        return subsituted_render
+
+    return _remove_link_ids
 
 
 def test_automatic_plain(
@@ -1034,4 +1080,824 @@ def test_pdf_nerd_output(rich_output: RichOutput) -> None:
         "                                  \n"
     )
     output = rich_output(pdf_output_cell, nerd_font=True)
+    assert output == expected_output
+
+
+def test_vega_output(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a hyperlink to a rendered Vega plot."""
+    vega_output_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vega.v5+json": {
+                        "$schema": "https://vega.github.io/schema/vega/v5.0.json",
+                        "axes": [
+                            {"orient": "bottom", "scale": "xscale"},
+                            {"orient": "left", "scale": "yscale"},
+                        ],
+                        "data": [
+                            {
+                                "name": "table",
+                                "values": [
+                                    {"amount": 28, "category": "A"},
+                                    {"amount": 55, "category": "B"},
+                                    {"amount": 43, "category": "C"},
+                                    {"amount": 91, "category": "D"},
+                                    {"amount": 81, "category": "E"},
+                                    {"amount": 53, "category": "F"},
+                                    {"amount": 19, "category": "G"},
+                                    {"amount": 87, "category": "H"},
+                                ],
+                            }
+                        ],
+                        "height": 200,
+                        "marks": [
+                            {
+                                "encode": {
+                                    "enter": {
+                                        "width": {"band": 1, "scale": "xscale"},
+                                        "x": {"field": "category", "scale": "xscale"},
+                                        "y": {"field": "amount", "scale": "yscale"},
+                                        "y2": {"scale": "yscale", "value": 0},
+                                    },
+                                    "hover": {"fill": {"value": "red"}},
+                                    "update": {"fill": {"value": "steelblue"}},
+                                },
+                                "from": {"data": "table"},
+                                "type": "rect",
+                            },
+                            {
+                                "encode": {
+                                    "enter": {
+                                        "align": {"value": "center"},
+                                        "baseline": {"value": "bottom"},
+                                        "fill": {"value": "#333"},
+                                    },
+                                    "update": {
+                                        "fillOpacity": [
+                                            {"test": "datum === tooltip", "value": 0},
+                                            {"value": 1},
+                                        ],
+                                        "text": {"signal": "tooltip.amount"},
+                                        "x": {
+                                            "band": 0.5,
+                                            "scale": "xscale",
+                                            "signal": "tooltip.category",
+                                        },
+                                        "y": {
+                                            "offset": -2,
+                                            "scale": "yscale",
+                                            "signal": "tooltip.amount",
+                                        },
+                                    },
+                                },
+                                "type": "text",
+                            },
+                        ],
+                        "padding": 5,
+                        "scales": [
+                            {
+                                "domain": {"data": "table", "field": "category"},
+                                "name": "xscale",
+                                "padding": 0.05,
+                                "range": "width",
+                                "round": True,
+                                "type": "band",
+                            },
+                            {
+                                "domain": {"data": "table", "field": "amount"},
+                                "name": "yscale",
+                                "nice": True,
+                                "range": "height",
+                            },
+                        ],
+                        "signals": [
+                            {
+                                "name": "tooltip",
+                                "on": [
+                                    {"events": "rect:mouseover", "update": "datum"},
+                                    {"events": "rect:mouseout", "update": "{}"},
+                                ],
+                                "value": {},
+                            }
+                        ],
+                        "width": 400,
+                    },
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=0;file://"
+        "link_file.html\x1b\\\x1b[94m\uf080 Click to view Veg"
+        "a chart\x1b[0m\x1b]8;;\x1b\\                      "
+        "                          \n"
+    )
+    output = rich_output(
+        vega_output_cell,
+        nerd_font=True,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vegalite_output(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a hyperlink to a rendered Vega plot."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=1621207824.060063-456106;file:///"
+        "Users/pawlu/Documents/personal/nbpreview"
+        "/tests/link_file.html\x1b\\\x1b[94m\uf080 Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=True,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vegalite_output_no_hints(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a hyperlink to a Vega plot without hints."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=1621211531.6504052-691935;file://"
+        "/Users/pawlu/Documents/personal/nbprevie"
+        "w/tests/link_file.html\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;"
+        "\x1b\\                                      "
+        "                                  \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=True,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=True,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vegalite_output_no_nerd_font(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a hyperlink to a Vega plot without nerd fonts."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=1621208043.989405-275090;file:///"
+        "Users/pawlu/Documents/personal/nbpreview"
+        "/tests/link_file.html\x1b\\\x1b[94m📊 Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vegalite_output_no_nerd_font_no_unicode(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a hyperlink to plot without nerd fonts or unicode."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=1621208210.565259-404317;file:///"
+        "Users/pawlu/Documents/personal/nbpreview"
+        "/tests/link_file.html\x1b\\\x1b[94mClick to vie"
+        "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
+        "                                 \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+        unicode=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vegalite_output_no_files(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders a message representing a Vega plot."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {},
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "📊 Vega chart                            "
+        "                                 \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=False,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+        unicode=True,
+    )
+    link_file_path = pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
+    assert not link_file_path.read_text()
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_write_vega_output(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+) -> None:
+    """It writes the Vega plot to a file."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_contents = (
+        '<html>\n<head>\n    <script src="https://c'
+        'dn.jsdelivr.net/npm/vega@5"></script>\n  '
+        '  <script src="https://cdn.jsdelivr.net/'
+        'npm/vega-lite@5"></script>\n    <script s'
+        'rc="https://cdn.jsdelivr.net/npm/vega-em'
+        'bed@6"></script>\n    <script src="https:'
+        "//cdn.jsdelivr.net/gh/koaning/justcharts"
+        '/justcharts.js"></script>\n    <title>Veg'
+        "a chart</title>\n</head>\n<body>\n    <vega"
+        'chart style="width: 100%">\n        {"$sc'
+        'hema": "https://vega.github.io/schema/ve'
+        'ga-lite/v4.json", "data": {"values": [{"'
+        'a": "A", "b": 28}, {"a": "B", "b": 55}, '
+        '{"a": "C", "b": 43}, {"a": "D", "b": 91}'
+        ', {"a": "E", "b": 81}, {"a": "F", "b": 5'
+        '3}, {"a": "G", "b": 19}, {"a": "H", "b":'
+        ' 87}, {"a": "I", "b": 52}]}, "descriptio'
+        'n": "A simple bar chart with embedded da'
+        'ta.", "encoding": {"x": {"field": "a", "'
+        'type": "ordinal"}, "y": {"field": "b", "'
+        'type": "quantitative"}}, "mark": "bar"}\n'
+        "    </vegachart>\n</body>\n<html></html>\n<"
+        "/html>\n"
+    )
+    rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+        unicode=False,
+    )
+    file_contents = (
+        pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
+    ).read_text()
+    assert file_contents == expected_contents
+
+
+def test_vega_no_icon_no_message(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders subject text when no icons or messages are used."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "\x1b]8;id=1621214780.000055-278457;file:///"
+        "Users/pawlu/Documents/personal/nbpreview"
+        "/tests/link_file.html\x1b\\\x1b[94mVega chart\x1b["
+        "0m\x1b]8;;\x1b\\                               "
+        "                                 \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=True,
+        unicode=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vega_no_hyperlink(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It renders the file path when no hyperlinks are allowed."""
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vegalite.v4+json": {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                        "data": {
+                            "values": [
+                                {"a": "A", "b": 28},
+                                {"a": "B", "b": 55},
+                                {"a": "C", "b": 43},
+                                {"a": "D", "b": 91},
+                                {"a": "E", "b": 81},
+                                {"a": "F", "b": 53},
+                                {"a": "G", "b": 19},
+                                {"a": "H", "b": 87},
+                                {"a": "I", "b": 52},
+                            ]
+                        },
+                        "description": "A simple bar chart with embedded data.",
+                        "encoding": {
+                            "x": {"field": "a", "type": "ordinal"},
+                            "y": {"field": "b", "type": "quantitative"},
+                        },
+                        "mark": "bar",
+                    },
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[4]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "📊 /Users/pawlu/Documents/personal/nbprev"
+        "iew/tests/link_file.html         \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=False,
+        hide_hyperlink_hints=True,
+        unicode=True,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_vega_url(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    mocker: MockerFixture,
+) -> None:
+    """It pulls the JSON data from the URL and writes to file."""
+    mock = mocker.patch("httpx.get")
+    mock.return_value.text = json.dumps(
+        {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "description": "A simple bar chart with embedded data.",
+            "data": {
+                "values": [
+                    {"a": "A", "b": 28},
+                    {"a": "B", "b": 55},
+                    {"a": "C", "b": 43},
+                    {"a": "D", "b": 91},
+                    {"a": "E", "b": 81},
+                    {"a": "F", "b": 53},
+                    {"a": "G", "b": 19},
+                    {"a": "H", "b": 87},
+                    {"a": "I", "b": 52},
+                ]
+            },
+            "mark": "bar",
+            "encoding": {
+                "x": {"field": "a", "type": "nominal", "axis": {"labelAngle": 0}},
+                "y": {"field": "b", "type": "quantitative"},
+            },
+        }
+    )
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vega.v5+json": "https://raw.githubusercontent.com/"
+                    "vega/vega/master/docs/examples/bar-chart.vg.json",
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_contents = (
+        '<html>\n<head>\n    <script src="https://c'
+        'dn.jsdelivr.net/npm/vega@5"></script>\n  '
+        '  <script src="https://cdn.jsdelivr.net/'
+        'npm/vega-lite@5"></script>\n    <script s'
+        'rc="https://cdn.jsdelivr.net/npm/vega-em'
+        'bed@6"></script>\n    <script src="https:'
+        "//cdn.jsdelivr.net/gh/koaning/justcharts"
+        '/justcharts.js"></script>\n    <title>Veg'
+        "a chart</title>\n</head>\n<body>\n    <vega"
+        'chart style="width: 100%">\n        {"$sc'
+        'hema": "https://vega.github.io/schema/ve'
+        'ga-lite/v5.json", "description": "A simp'
+        'le bar chart with embedded data.", "data'
+        '": {"values": [{"a": "A", "b": 28}, {"a"'
+        ': "B", "b": 55}, {"a": "C", "b": 43}, {"'
+        'a": "D", "b": 91}, {"a": "E", "b": 81}, '
+        '{"a": "F", "b": 53}, {"a": "G", "b": 19}'
+        ', {"a": "H", "b": 87}, {"a": "I", "b": 5'
+        '2}]}, "mark": "bar", "encoding": {"x": {'
+        '"field": "a", "type": "nominal", "axis":'
+        ' {"labelAngle": 0}}, "y": {"field": "b",'
+        ' "type": "quantitative"}}}\n    </vegacha'
+        "rt>\n</body>\n<html></html>\n</html>\n"
+    )
+    rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+        unicode=False,
+    )
+    file_contents = (
+        pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
+    ).read_text()
+    mock.assert_called_with(
+        url="https://raw.githubusercontent.com"
+        "/vega/vega/master/docs/examples/bar-chart.vg.json"
+    )
+    assert file_contents == expected_contents
+
+
+def test_vega_url_request_error(
+    rich_output: RichOutput,
+    mocker: MockerFixture,
+) -> None:
+    """It fallsback to rendering a message if there is a RequestError."""
+    mocker.patch("httpx.get", side_effect=httpx.RequestError("Mock"))
+    vegalite_output_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vega.v5+json": "https://raw.githubusercontent.com/"
+                    "vega/vega/master/docs/examples/bar-chart.vg.json",
+                    "image/png": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "Vega chart                              "
+        "                                  \n"
+    )
+    output = rich_output(
+        vegalite_output_cell,
+        nerd_font=False,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+        unicode=False,
+    )
     assert output == expected_output
