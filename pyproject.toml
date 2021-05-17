@@ -27,6 +27,7 @@ ipython = "^7.23.1"
 importlib-metadata = {version = "^4.0.1", python = "<3.8"}
 lxml = "^4.6.3"
 pylatexenc = "^2.10"
+httpx = "^0.18.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
@@ -54,6 +55,7 @@ pdbpp = "^0.10.2"
 Pygments = "^2.9.0"
 ipykernel = "^5.5.4"
 typing-extensions = "^3.10.0"
+pytest-mock = "^3.6.1"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
