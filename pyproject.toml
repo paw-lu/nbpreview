@@ -24,18 +24,19 @@ typer = "^0.3.2"
 nbformat = "^5.1.2"
 Pygments = "^2.9.0"
 ipython = "^7.23.1"
-importlib-metadata = {version = "^4.0.1", python = "<3.8"}
+importlib-metadata = { version = "^4.0.1", python = "<3.8" }
 lxml = "^4.6.3"
 pylatexenc = "^2.10"
 httpx = "^0.18.1"
+Jinja2 = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
-coverage = {extras = ["toml"], version = "^5.4"}
+coverage = { extras = ["toml"], version = "^5.4" }
 safety = "^1.10.3"
 mypy = "^0.812"
 typeguard = "^2.11.1"
-xdoctest = {extras = ["colors"], version = "^0.15.4"}
+xdoctest = { extras = ["colors"], version = "^0.15.4" }
 sphinx = "^3.5.4"
 sphinx-autobuild = "^2021.3.14"
 pre-commit = "^2.12.1"
@@ -77,6 +78,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-markers = [
-    "no_atty_mock: Test where sys.stdout.isatty should not be mocked"
-]
+markers = ["no_atty_mock: Test where sys.stdout.isatty should not be mocked"]
