@@ -9,7 +9,7 @@ from rich import console
 from rich import traceback
 
 from . import __version__
-from . import render
+from . import notebook
 
 app = typer.Typer()
 traceback.install(theme="ansi_dark")
@@ -99,7 +99,7 @@ def main(
     stderr_console = console.Console(file=sys.stderr)
     try:
         notebook_node = nbformat.read(file, as_version=4)
-        notebook = render.Notebook(
+        rendered_notebook = notebook.Notebook(
             notebook_node=notebook_node,
             theme=theme,
             hide_output=hide_output,
@@ -110,7 +110,7 @@ def main(
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1)
 
-    stdout_console.print(notebook)
+    stdout_console.print(rendered_notebook)
 
 
 if __name__ == "__main__":

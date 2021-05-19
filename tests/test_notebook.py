@@ -21,7 +21,7 @@ from pytest_mock import MockerFixture
 from rich import console
 from rich.console import Console
 
-from nbpreview import render
+from nbpreview import notebook
 
 
 if sys.version_info >= (3, 8):
@@ -131,7 +131,7 @@ def rich_output(
             str: The rich output as a string.
         """
         notebook_node = make_notebook(cell)
-        notebook = render.Notebook(
+        rendered_notebook = notebook.Notebook(
             notebook_node,
             plain=plain,
             unicode=unicode,
@@ -141,7 +141,7 @@ def rich_output(
             hyperlinks=hyperlinks,
             hide_hyperlink_hints=hide_hyperlink_hints,
         )
-        rich_console.print(notebook, no_wrap=no_wrap)
+        rich_console.print(rendered_notebook, no_wrap=no_wrap)
         output: str = rich_console.file.getvalue()  # type: ignore[attr-defined]
         return output
 
@@ -191,8 +191,8 @@ def test_automatic_plain(
         force_terminal=False,
     )
     notebook_node = make_notebook(code_cell)
-    notebook = render.Notebook(notebook_node)
-    con.print(notebook)
+    rendered_notebook = notebook.Notebook(notebook_node)
+    con.print(rendered_notebook)
     output = con.file.getvalue()  # type: ignore[attr-defined]
     assert output == (
         "\x1b[49m%%\x1b[0m\x1b[94;49mbash\x1b[0m      "
@@ -1612,7 +1612,7 @@ def test_write_vega_output(
         'type": "ordinal"}, "y": {"field": "b", "'
         'type": "quantitative"}}, "mark": "bar"}\n'
         "    </vegachart>\n</body>\n<html></html>\n<"
-        "/html>\n"
+        "/html>"
     )
     rich_output(
         vegalite_output_cell,
@@ -1836,7 +1836,7 @@ def test_vega_url(
         '"field": "a", "type": "nominal", "axis":'
         ' {"labelAngle": 0}}, "y": {"field": "b",'
         ' "type": "quantitative"}}}\n    </vegacha'
-        "rt>\n</body>\n<html></html>\n</html>\n"
+        "rt>\n</body>\n<html></html>\n</html>"
     )
     rich_output(
         vegalite_output_cell,
