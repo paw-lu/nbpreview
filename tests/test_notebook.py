@@ -1771,7 +1771,7 @@ def test_vega_no_hyperlink(
         hide_hyperlink_hints=True,
         unicode=True,
     )
-    assert remove_link_ids(output) == remove_link_ids(expected_output)
+    assert output.rstrip() == expected_output.rstrip()
 
 
 def test_vega_url(
