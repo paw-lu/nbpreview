@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import sys
+from pathlib import Path
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -149,14 +150,23 @@ def rich_output(
 
 
 @pytest.fixture
-def mock_tempfile_file(mocker: MockerFixture) -> Generator[Mock, None, None]:
-    """Control where tempfile will write to."""
+def tempfile_path() -> Path:
+    """Create the path for the temp file."""
     file_path = pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
-    fd = os.open(file_path, flags=2818, mode=0o600)
+    return file_path
+
+
+@pytest.fixture
+def mock_tempfile_file(
+    mocker: MockerFixture, tempfile_path: Path
+) -> Generator[Mock, None, None]:
+    """Control where tempfile will write to."""
+    tempfile_path.unlink(missing_ok=True)
+    fd = os.open(tempfile_path, flags=2818, mode=0o600)
     mock = mocker.patch("tempfile._mkstemp_inner")
-    mock.return_value = (fd, str(file_path))
+    mock.return_value = (fd, str(tempfile_path))
     yield mock
-    file_path.unlink()
+    tempfile_path.unlink()
 
 
 @pytest.fixture
@@ -1087,6 +1097,7 @@ def test_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vega_output_cell = {
@@ -1207,9 +1218,8 @@ def test_vega_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621482145.367022-895901;file:///"
-        "Users/pawlu/Documents/personal/nbpreview"
-        "/tests/link_file.html\x1b\\\x1b[94m\uf080 Click to v"
+        "\x1b]8;id=1621482145.367022-895901;file://"
+        f"{tempfile_path}\x1b\\\x1b[94m\uf080 Click to v"
         "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
         "                                 \n"
     )
@@ -1227,6 +1237,7 @@ def test_vegalite_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vegalite_output_cell = {
@@ -1276,9 +1287,8 @@ def test_vegalite_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621207824.060063-456106;file:///"
-        "Users/pawlu/Documents/personal/nbpreview"
-        "/tests/link_file.html\x1b\\\x1b[94m\uf080 Click to v"
+        "\x1b]8;id=1621207824.060063-456106;file://"
+        f"{tempfile_path}\x1b\\\x1b[94m\uf080 Click to v"
         "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
         "                                 \n"
     )
@@ -1296,6 +1306,7 @@ def test_vegalite_output_no_hints(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to a Vega plot without hints."""
     vegalite_output_cell = {
@@ -1346,8 +1357,7 @@ def test_vegalite_output_no_hints(
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
         "\x1b]8;id=1621211531.6504052-691935;file://"
-        "/Users/pawlu/Documents/personal/nbprevie"
-        "w/tests/link_file.html\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;"
+        f"{tempfile_path}\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;"
         "\x1b\\                                      "
         "                                  \n"
     )
@@ -1365,6 +1375,7 @@ def test_vegalite_output_no_nerd_font(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to a Vega plot without nerd fonts."""
     vegalite_output_cell = {
@@ -1414,9 +1425,8 @@ def test_vegalite_output_no_nerd_font(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621208043.989405-275090;file:///"
-        "Users/pawlu/Documents/personal/nbpreview"
-        "/tests/link_file.html\x1b\\\x1b[94m📊 Click to v"
+        "\x1b]8;id=1621208043.989405-275090;file://"
+        f"{tempfile_path}\x1b\\\x1b[94m📊 Click to v"
         "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
         "                                \n"
     )
@@ -1434,6 +1444,7 @@ def test_vegalite_output_no_nerd_font_no_unicode(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to plot without nerd fonts or unicode."""
     vegalite_output_cell = {
@@ -1483,9 +1494,8 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621208210.565259-404317;file:///"
-        "Users/pawlu/Documents/personal/nbpreview"
-        "/tests/link_file.html\x1b\\\x1b[94mClick to vie"
+        "\x1b]8;id=1621208210.565259-404317;file://"
+        f"{tempfile_path}\x1b\\\x1b[94mClick to vie"
         "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
         "                                 \n"
     )
@@ -1504,6 +1514,7 @@ def test_vegalite_output_no_files(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders a message representing a Vega plot."""
     vegalite_output_cell = {
@@ -1543,14 +1554,14 @@ def test_vegalite_output_no_files(
         hide_hyperlink_hints=False,
         unicode=True,
     )
-    link_file_path = pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
-    assert not link_file_path.read_text()
+    assert not tempfile_path.read_text()
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_write_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
+    tempfile_path: Path,
 ) -> None:
     """It writes the Vega plot to a file."""
     vegalite_output_cell = {
@@ -1623,9 +1634,7 @@ def test_write_vega_output(
         hide_hyperlink_hints=False,
         unicode=False,
     )
-    file_contents = (
-        pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
-    ).read_text()
+    file_contents = tempfile_path.read_text()
     assert file_contents == expected_contents
 
 
@@ -1633,6 +1642,7 @@ def test_vega_no_icon_no_message(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders subject text when no icons or messages are used."""
     vegalite_output_cell = {
@@ -1682,9 +1692,8 @@ def test_vega_no_icon_no_message(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621214780.000055-278457;file:///"
-        "Users/pawlu/Documents/personal/nbpreview"
-        "/tests/link_file.html\x1b\\\x1b[94mVega chart\x1b["
+        "\x1b]8;id=1621214780.000055-278457;file://"
+        f"{tempfile_path}\x1b\\\x1b[94mVega chart\x1b["
         "0m\x1b]8;;\x1b\\                               "
         "                                 \n"
     )
@@ -1703,6 +1712,7 @@ def test_vega_no_hyperlink(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
     vegalite_output_cell = {
@@ -1752,8 +1762,7 @@ def test_vega_no_hyperlink(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "📊 /Users/pawlu/Documents/personal/nbprev"
-        "iew/tests/link_file.html         \n"
+        f"📊 {tempfile_path}         \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1770,6 +1779,7 @@ def test_vega_url(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     mocker: MockerFixture,
+    tempfile_path: Path,
 ) -> None:
     """It pulls the JSON data from the URL and writes to file."""
     mock = mocker.patch("httpx.get")
@@ -1847,9 +1857,7 @@ def test_vega_url(
         hide_hyperlink_hints=False,
         unicode=False,
     )
-    file_contents = (
-        pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
-    ).read_text()
+    file_contents = tempfile_path.read_text()
     mock.assert_called_with(
         url="https://raw.githubusercontent.com"
         "/vega/vega/master/docs/examples/bar-chart.vg.json"
