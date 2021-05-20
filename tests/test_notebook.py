@@ -164,8 +164,8 @@ def remove_link_ids() -> Callable[[str], str]:
     """Remove link ids from rendered hyperlinks."""
 
     def _remove_link_ids(render: str) -> str:
-        re_link_ids = re.compile(r"id=[\d\.\-]*?;.*?\x1b")
-        subsituted_render = re_link_ids.sub("id=0;foo\x1b", render)
+        re_link_ids = re.compile(r"id=[\d\.\-]*?;")
+        subsituted_render = re_link_ids.sub("id=0;", render)
         return subsituted_render
 
     return _remove_link_ids
@@ -1207,10 +1207,11 @@ def test_vega_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=0;file://"
-        "link_file.html\x1b\\\x1b[94m\uf080 Click to view Veg"
-        "a chart\x1b[0m\x1b]8;;\x1b\\                      "
-        "                          \n"
+        "\x1b]8;id=1621482145.367022-895901;file:///"
+        "Users/pawlu/Documents/personal/nbpreview"
+        "/tests/link_file.html\x1b\\\x1b[94m\uf080 Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
     )
     output = rich_output(
         vega_output_cell,
