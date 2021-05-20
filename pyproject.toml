@@ -28,7 +28,7 @@ importlib-metadata = { version = "^4.0.1", python = "<3.8" }
 lxml = "^4.6.3"
 pylatexenc = "^2.10"
 httpx = "^0.18.1"
-Jinja2 = "^3.0.0"
+Jinja2 = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
