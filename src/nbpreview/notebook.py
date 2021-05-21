@@ -175,11 +175,11 @@ class Notebook:
         output: NotebookNode,
         plain: bool,
         unicode: bool,
-        execution_count: Union[str, None],
+        execution_count: Union[int, None],
         hyperlinks: bool,
     ) -> Union[Table, str, Syntax, Markdown, Emoji, Text, None]:
         """Render executed result outputs."""
-        data: Dict[str, str] = output.get("data", {})
+        data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
         rendered_result: Union[Table, str, Syntax, Markdown, Emoji, Text, None] = None
         if "text/html" in data and rendered_result is None:
             rendered_result = render.render_html(data, unicode=unicode, plain=plain)

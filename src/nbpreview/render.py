@@ -205,7 +205,7 @@ def render_latex(data: Dict[str, str], unicode: bool) -> Union[str, None]:
         return None
 
 
-def render_json(data: Dict[str, str], theme: str) -> Syntax:
+def render_json(data: Dict[str, Union[str, NotebookNode]], theme: str) -> Syntax:
     """Render JSON output.
 
     Args:
@@ -244,10 +244,10 @@ def render_pdf(nerd_font: bool, unicode: bool) -> Union[str, Emoji, None]:
 
 
 def render_vega(
-    data: Dict[str, str],
+    data: Dict[str, Union[str, NotebookNode]],
     unicode: bool,
     hyperlinks: bool,
-    execution_count: Union[str, None],
+    execution_count: Union[int, None],
     nerd_font: bool,
     files: bool,
     hide_hyperlink_hints: bool,
