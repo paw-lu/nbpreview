@@ -161,7 +161,13 @@ def mock_tempfile_file(
     mocker: MockerFixture, tempfile_path: Path
 ) -> Generator[Mock, None, None]:
     """Control where tempfile will write to."""
-    fd = os.open(tempfile_path, flags=2818, mode=0o600)
+    _text_openflags = os.O_RDWR | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        _text_openflags |= os.O_NOFOLLOW
+    _bin_openflags = _text_openflags
+    if hasattr(os, "O_BINARY"):
+        _bin_openflags |= os.O_BINARY
+    fd = os.open(tempfile_path, flags=_bin_openflags, mode=0o600)
     mock = mocker.patch("tempfile._mkstemp_inner")
     mock.return_value = (fd, str(tempfile_path))
     yield mock
