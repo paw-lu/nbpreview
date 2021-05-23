@@ -1,10 +1,10 @@
 """Test cases for render."""
 import io
 import json
-import os
 import pathlib
 import re
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 from typing import Callable
@@ -150,28 +150,41 @@ def rich_output(
 
 
 @pytest.fixture
-def tempfile_path() -> Path:
-    """Create the path for the temp file."""
-    file_path = pathlib.Path(__file__).parent / pathlib.Path("link_file.html")
-    return file_path
+def get_tempfile_path() -> Callable[[str], Path]:
+    """Fixture for function that returns the tempfile path."""
+
+    def _get_tempfile_path(suffix: str) -> Path:
+        """Return tempfile path.
+
+        Args:
+            suffix (str): The suffix of the file.
+
+        Returns:
+            Path: The tempfile path.
+        """
+        file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
+            "tmplink_file"
+        ).with_suffix(suffix)
+        return file_path
+
+    return _get_tempfile_path
 
 
 @pytest.fixture
 def mock_tempfile_file(
-    mocker: MockerFixture, tempfile_path: Path
+    mocker: MockerFixture, get_tempfile_path: Callable[[str], Path]
 ) -> Generator[Mock, None, None]:
     """Control where tempfile will write to."""
-    _text_openflags = os.O_RDWR | os.O_CREAT | os.O_EXCL
-    if hasattr(os, "O_NOFOLLOW"):
-        _text_openflags |= os.O_NOFOLLOW
-    _bin_openflags = _text_openflags
-    if hasattr(os, "O_BINARY"):
-        _bin_openflags |= os.O_BINARY
-    fd = os.open(tempfile_path, flags=_bin_openflags, mode=0o600)
-    mock = mocker.patch("tempfile._mkstemp_inner")
-    mock.return_value = (fd, str(tempfile_path))
+    tempfile_path = get_tempfile_path("")
+    tempfile_stem = tempfile_path.stem
+    tempfile_base_name = tempfile_stem[3:]
+    tempfile_parent = tempfile_path.parent
+    mock = mocker.patch("tempfile._get_candidate_names")
+    mock.return_value = (file_name for file_name in (tempfile_base_name,))
     yield mock
-    tempfile_path.unlink()
+    tempfiles = tempfile_parent.glob(f"{tempfile_stem}.*")
+    for file in tempfiles:
+        file.unlink()
 
 
 @pytest.fixture
@@ -1102,7 +1115,7 @@ def test_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vega_output_cell = {
@@ -1213,6 +1226,7 @@ def test_vega_output(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1242,7 +1256,7 @@ def test_vegalite_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vegalite_output_cell = {
@@ -1282,6 +1296,7 @@ def test_vegalite_output(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1311,7 +1326,7 @@ def test_vegalite_output_no_hints(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a hyperlink to a Vega plot without hints."""
     vegalite_output_cell = {
@@ -1351,6 +1366,7 @@ def test_vegalite_output_no_hints(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1380,7 +1396,7 @@ def test_vegalite_output_no_nerd_font(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a hyperlink to a Vega plot without nerd fonts."""
     vegalite_output_cell = {
@@ -1420,6 +1436,7 @@ def test_vegalite_output_no_nerd_font(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1449,7 +1466,7 @@ def test_vegalite_output_no_nerd_font_no_unicode(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a hyperlink to plot without nerd fonts or unicode."""
     vegalite_output_cell = {
@@ -1489,6 +1506,7 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1519,7 +1537,7 @@ def test_vegalite_output_no_files(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders a message representing a Vega plot."""
     vegalite_output_cell = {
@@ -1559,14 +1577,15 @@ def test_vegalite_output_no_files(
         hide_hyperlink_hints=False,
         unicode=True,
     )
-    assert not tempfile_path.read_text()
+    tempfile_path = get_tempfile_path(".html")
+    assert not tempfile_path.exists()
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_write_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It writes the Vega plot to a file."""
     vegalite_output_cell = {
@@ -1639,6 +1658,7 @@ def test_write_vega_output(
         hide_hyperlink_hints=False,
         unicode=False,
     )
+    tempfile_path = get_tempfile_path(".html")
     file_contents = tempfile_path.read_text()
     assert file_contents == expected_contents
 
@@ -1647,7 +1667,7 @@ def test_vega_no_icon_no_message(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders subject text when no icons or messages are used."""
     vegalite_output_cell = {
@@ -1687,6 +1707,7 @@ def test_vega_no_icon_no_message(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1717,7 +1738,7 @@ def test_vega_no_hyperlink(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
     vegalite_output_cell = {
@@ -1757,6 +1778,7 @@ def test_vega_no_hyperlink(
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1784,7 +1806,7 @@ def test_vega_url(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     mocker: MockerFixture,
-    tempfile_path: Path,
+    get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It pulls the JSON data from the URL and writes to file."""
     mock = mocker.patch("httpx.get")
@@ -1862,6 +1884,7 @@ def test_vega_url(
         hide_hyperlink_hints=False,
         unicode=False,
     )
+    tempfile_path = get_tempfile_path(".html")
     file_contents = tempfile_path.read_text()
     mock.assert_called_with(
         url="https://raw.githubusercontent.com"
