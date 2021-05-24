@@ -162,7 +162,10 @@ def coverage(session: Session) -> None:
         session.run("coverage", *args)
     finally:
         if session.interactive:
-            session.run("coverage", "html")
+            try:
+                session.run("coverage", "html")
+            finally:
+                session.run("coverage", "xml")
 
 
 @session(python=python_versions)

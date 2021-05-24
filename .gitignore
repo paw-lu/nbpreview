@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 .mypy_cache/
 /.coverage
+/coverage.xml
 /.nox/
 /.python-version
 /.pytype/
