@@ -162,8 +162,9 @@ def get_tempfile_path() -> Callable[[str], Path]:
         Returns:
             Path: The tempfile path.
         """
+        prefix = tempfile.template
         file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
-            "tmplink_file"
+            f"{prefix}link_file"
         ).with_suffix(suffix)
         return file_path
 
