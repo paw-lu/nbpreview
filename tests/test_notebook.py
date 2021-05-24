@@ -1151,6 +1151,37 @@ def test_pdf_nerd_output(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
+def test_pdf_no_unicode_no_nerd(rich_output: RichOutput) -> None:
+    """It does not render a PDF icon if no nerd font or unicode."""
+    pdf_output_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "declared-stevens",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "application/pdf": "",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n"
+    )
+    output = rich_output(pdf_output_cell, nerd_font=False, unicode=False)
+    assert output == expected_output
+
+
 def test_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
