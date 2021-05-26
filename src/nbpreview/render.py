@@ -5,6 +5,7 @@ import tempfile
 from typing import Dict
 from typing import Generator
 from typing import List
+from typing import Optional
 from typing import Tuple
 from typing import Union
 
@@ -243,6 +244,56 @@ def render_pdf(nerd_font: bool, unicode: bool) -> Union[str, Emoji, None]:
         return None
 
 
+def render_hyperlink(
+    content: Union[str, bytes, None],
+    file_extension: str,
+    nerd_font: bool,
+    unicode: bool,
+    files: bool,
+    subject: str,
+    nerd_font_icon: str,
+    emoji_name: str,
+    hyperlinks: bool,
+    hide_hyperlink_hints: bool,
+) -> Union[Text, str]:
+    """Render a hyperlink."""
+    rendered_hyperlink: Union[str, Text]
+    if nerd_font:
+        icon = f"{nerd_font_icon} "
+    elif unicode:
+        icon = emoji.Emoji.replace(f":{emoji_name}: ")
+    else:
+        icon = ""
+
+    if files and content is not None:
+
+        file_name = _write_file(content, extension=file_extension)
+        if hyperlinks:
+
+            if hide_hyperlink_hints:
+                message = ""
+            else:
+                message = f"Click to view {subject}"
+
+            if not message and not icon:
+                message = subject
+
+            link_style = console.Console().get_style("markdown.link") + style.Style(
+                link=f"file://{file_name}"
+            )
+            # Append blank string to prevent entire line from being underlined
+            rendered_hyperlink = text.Text.assemble(
+                text.Text.assemble(icon, message, style=link_style), ""
+            )
+        else:
+            rendered_hyperlink = f"{icon}{file_name}"
+
+    else:
+        rendered_hyperlink = f"{icon}{subject}"
+
+    return rendered_hyperlink
+
+
 def render_vega(
     data: Dict[str, Union[str, NotebookNode]],
     unicode: bool,
@@ -253,14 +304,8 @@ def render_vega(
     hide_hyperlink_hints: bool,
 ) -> Union[str, Text]:
     """Render Vega and Vega-Lite output."""
-    if nerd_font:
-        icon = " "
-    elif unicode:
-        icon = emoji.Emoji.replace(":bar_chart: ")
-    else:
-        icon = ""
+    vega_html: Optional[str]
     subject = "Vega chart"
-
     vega_data = data.get(
         "application/vnd.vega.v5+json",
         data.get("application/vnd.vegalite.v4+json", ""),
@@ -289,33 +334,21 @@ def render_vega(
             subject=subject,
             vega_json=vega_json,
         )
-
-        file_name = _write_file(vega_html, extension="html")
-
-        rendered_vega: Union[str, Text]
-        if hyperlinks:
-
-            if hide_hyperlink_hints:
-                message = ""
-            else:
-                message = f"Click to view {subject}"
-
-            if not message and not icon:
-                message = subject
-
-            link_style = console.Console().get_style("markdown.link") + style.Style(
-                link=f"file://{file_name}"
-            )
-            rendered_vega = text.Text.assemble(
-                text.Text.assemble(icon, message, style=link_style), ""
-            )
-
-        else:
-            rendered_vega = f"{icon}{file_name}"
-
     else:
-        rendered_vega = f"{icon}{subject}"
+        vega_html = None
 
+    rendered_vega = render_hyperlink(
+        content=vega_html,
+        file_extension="html",
+        nerd_font=nerd_font,
+        unicode=unicode,
+        files=files,
+        subject=subject,
+        nerd_font_icon="",
+        emoji_name="bar_chart",
+        hyperlinks=hyperlinks,
+        hide_hyperlink_hints=hide_hyperlink_hints,
+    )
     return rendered_vega
 
 
