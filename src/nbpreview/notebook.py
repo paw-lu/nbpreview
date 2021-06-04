@@ -177,32 +177,30 @@ class Notebook:
         unicode: bool,
         execution_count: Union[int, None],
         hyperlinks: bool,
-    ) -> Union[Table, str, Syntax, Markdown, Emoji, Text, None]:
+    ) -> Generator[Union[Table, str, Syntax, Markdown, Emoji, Text], None, None]:
         """Render executed result outputs."""
         data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
-        rendered_result: Union[Table, str, Syntax, Markdown, Emoji, Text, None] = None
-        if "text/html" in data and rendered_result is None:
-            rendered_result = render.render_html(data, unicode=unicode, plain=plain)
+        main_result: Union[Table, str, Syntax, Markdown, Emoji, Text, None] = None
+        if "text/html" in data and main_result is None:
+            main_result = render.render_html(data, unicode=unicode, plain=plain)
 
-        if "text/markdown" in data and rendered_result is None:
-            rendered_result = render.render_markdown(data, theme=self.theme)
+        if "text/markdown" in data and main_result is None:
+            main_result = render.render_markdown(data, theme=self.theme)
 
-        if "text/latex" in data and rendered_result is None:
-            rendered_result = render.render_latex(data, unicode=unicode)
+        if "text/latex" in data and main_result is None:
+            main_result = render.render_latex(data, unicode=unicode)
 
-        if "application/json" in data and rendered_result is None:
-            rendered_result = render.render_json(data, theme=self.theme)
+        if "application/json" in data and main_result is None:
+            main_result = render.render_json(data, theme=self.theme)
 
-        if "application/pdf" in data and rendered_result is None:
-            rendered_result = render.render_pdf(
-                nerd_font=self.nerd_font, unicode=unicode
-            )
+        if "application/pdf" in data and main_result is None:
+            main_result = render.render_pdf(nerd_font=self.nerd_font, unicode=unicode)
 
         if (
             "application/vnd.vega.v5+json" in data
             or "application/vnd.vegalite.v4+json" in data
-        ) and rendered_result is None:
-            rendered_result = render.render_vega(
+        ) and main_result is None:
+            yield render.render_vega_link(
                 data,
                 unicode=unicode,
                 hyperlinks=hyperlinks,
@@ -212,10 +210,11 @@ class Notebook:
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
 
-        if "text/plain" in data and rendered_result is None:
-            rendered_result = data["text/plain"]
+        if "text/plain" in data and main_result is None:
+            main_result = data["text/plain"]
 
-        return rendered_result
+        if main_result:
+            yield main_result
 
     def _render_output(
         self,
@@ -268,7 +267,7 @@ class Notebook:
 
             if output_type == "stream":
                 rendered_stream = render.render_stream(output)
-                rendered_outputs.append(rendered_stream)
+                rendered_outputs.extend(rendered_stream)
 
             elif output_type == "error":
                 rendered_error = render.render_error(output, theme=self.theme)
@@ -283,7 +282,7 @@ class Notebook:
                     hyperlinks=hyperlinks,
                 )
                 if rendered_execute_result:
-                    rendered_outputs.append(rendered_execute_result)
+                    rendered_outputs.extend(rendered_execute_result)
 
             for rendered_output in rendered_outputs:
                 yield self._arrange_row(

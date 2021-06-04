@@ -142,7 +142,6 @@ def render_html(data: Dict[str, str], unicode: bool, plain: bool) -> Union[Table
     # Detect if output is a rendered DataFrame
     datum = data["text/html"]
     dataframe_html = html.fromstring(datum).find_class("dataframe")
-    # TODO: Remove this plain condition
     if not plain and dataframe_html and dataframe_html[0].tag == "table":
         rendered_html = render_dataframe(dataframe_html, unicode=unicode)
         return rendered_html
@@ -294,7 +293,7 @@ def render_hyperlink(
     return rendered_hyperlink
 
 
-def render_vega(
+def render_vega_link(
     data: Dict[str, Union[str, NotebookNode]],
     unicode: bool,
     hyperlinks: bool,
@@ -378,13 +377,13 @@ def render_error(output: NotebookNode, theme: str) -> Generator[Syntax, None, No
         )
 
 
-def render_stream(output: NotebookNode) -> Union[Text, str]:
+def render_stream(output: NotebookNode) -> Generator[Union[Text, str], None, None]:
     """Render a stream type output.
 
     Args:
         output (NotebookNode): The stream output.
 
-    Returns:
+    Yields:
         Union[Test, str]: The rendered stream.
     """
     name = output.get("name")
@@ -396,7 +395,7 @@ def render_stream(output: NotebookNode) -> Union[Text, str]:
 
     else:
         rendered_stream = output_text
-    return rendered_stream
+    yield rendered_stream
 
 
 def render_execution_indicator(
