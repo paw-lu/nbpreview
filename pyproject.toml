@@ -29,6 +29,7 @@ lxml = "^4.6.3"
 pylatexenc = "^2.10"
 httpx = "^0.18.1"
 Jinja2 = "^3.0.1"
+html2text = "^2020.1.16"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
