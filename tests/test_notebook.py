@@ -2018,3 +2018,55 @@ def test_vega_url_request_error(
         unicode=False,
     )
     assert output == expected_output
+
+
+def test_render_html(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    get_tempfile_path: Callable[[str], Path],
+) -> None:
+    """It renders HTML output."""
+    html_cell = {
+        "cell_type": "code",
+        "execution_count": 7,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": " <head>\n"
+                    "        <title>Example</title>\n    </head>\n    "
+                    "<body>\n        <p><strong>Lorep</strong> "
+                    "<em>Ipsum</em> </p>\n    </body>\n",
+                    "text/plain": "<IPython.core.display.HTML object>",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    tempfile_path = get_tempfile_path(".html")
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[7]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        f"\x1b]8;id=1622864957.148536-383092;file://{tempfile_path}"
+        "\x1b\\\x1b[94m🌐 Click "
+        "to view HTML\x1b[0m\x1b]8;;\x1b\\                 "
+        "                                    \n   "
+        "                                        "
+        "                                     \n\x1b["
+        "38;5;247m    \x1b[0m  \x1b[1mLorep\x1b[0m \x1b[3mIps"
+        "um\x1b[0m                                  "
+        "                             \n"
+    )
+    output = rich_output(html_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
