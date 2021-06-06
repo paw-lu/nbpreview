@@ -398,7 +398,12 @@ def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
-def test_render_dataframe(rich_output: RichOutput) -> None:
+def test_render_dataframe(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    get_tempfile_path: Callable[[str], Path],
+) -> None:
     """It renders a DataFrame."""
     code_cell = {
         "cell_type": "code",
@@ -461,54 +466,56 @@ def test_render_dataframe(rich_output: RichOutput) -> None:
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
-        "     ╭────────────────────────"
-        "──────────────────────────────"
-        "───────────────────╮\n\x1b[38;5;24"
-        "7m[2]:\x1b[0m │                  "
-        "                              "
-        "                         │\n   "
-        "  ╰───────────────────────────"
-        "──────────────────────────────"
-        "────────────────╯\n            "
-        "                              "
-        "                              "
-        "        \n\x1b[38;5;247m[2]:\x1b[0m  "
-        " \x1b[1m     \x1b[0m   \x1b[1m      \x1b[0"
-        "m   \x1b[1mlorep\x1b[0m        \x1b[1m "
-        "          hey\x1b[0m   \x1b[1mbye\x1b[0"
-        "m                       \n     "
-        "  \x1b[1m     \x1b[0m   \x1b[1m      \x1b["
-        "0m   \x1b[1mipsum\x1b[0m   \x1b[1mhi\x1b[0"
-        "m   \x1b[1mvery_long_word\x1b[0m   \x1b"
-        "[1m hi\x1b[0m                    "
-        "   \n       \x1b[1mfirst\x1b[0m   \x1b[1"
-        "msecond\x1b[0m   \x1b[1mthird\x1b[0m   "
-        "\x1b[1m  \x1b[0m   \x1b[1m             "
-        " \x1b[0m   \x1b[1m   \x1b[0m           "
-        "            \n      ───────────"
-        "──────────────────────────────"
-        "───────────                   "
-        "   \n       \x1b[1m  bar\x1b[0m   \x1b[1"
-        "m   one\x1b[0m   \x1b[1m    1\x1b[0m   "
-        " 1                2     4     "
-        "                  \n           "
-        "             \x1b[1m   10\x1b[0m    "
-        "3                4    -1      "
-        "                 \n            "
-        "   \x1b[1m three\x1b[0m   \x1b[1m    3\x1b"
-        "[0m    3                4    -"
-        "1                       \n     "
-        "  \x1b[1m  foo\x1b[0m   \x1b[1m   one\x1b["
-        "0m   \x1b[1m    1\x1b[0m    3       "
-        "         4    -1              "
-        "         \n"
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=1622781101.744982-576179;file://{tempfile_path}"
+        "\x1b\\\x1b[94m🌐 Click t"
+        "o view HTML\x1b[0m\x1b]8;;\x1b\\                  "
+        "                                   \n    "
+        "                                        "
+        "                                    \n\x1b[3"
+        "8;5;247m[2]:\x1b[0m   \x1b[1m     \x1b[0m   \x1b[1m "
+        "     \x1b[0m   \x1b[1mlorep\x1b[0m        \x1b[1m   "
+        "        hey\x1b[0m   \x1b[1mbye\x1b[0m           "
+        "            \n       \x1b[1m     \x1b[0m   \x1b[1m"
+        "      \x1b[0m   \x1b[1mipsum\x1b[0m   \x1b[1mhi\x1b[0m "
+        "  \x1b[1mvery_long_word\x1b[0m   \x1b[1m hi\x1b[0m  "
+        "                     \n       \x1b[1mfirst\x1b["
+        "0m   \x1b[1msecond\x1b[0m   \x1b[1mthird\x1b[0m   \x1b["
+        "1m  \x1b[0m   \x1b[1m              \x1b[0m   \x1b[1m"
+        "   \x1b[0m                       \n      ───"
+        "────────────────────────────────────────"
+        "─────────                      \n       \x1b"
+        "[1m  bar\x1b[0m   \x1b[1m   one\x1b[0m   \x1b[1m    "
+        "1\x1b[0m    1                2     4       "
+        "                \n                       "
+        " \x1b[1m   10\x1b[0m    3                4    "
+        "-1                       \n              "
+        " \x1b[1m three\x1b[0m   \x1b[1m    3\x1b[0m    3    "
+        "            4    -1                     "
+        "  \n       \x1b[1m  foo\x1b[0m   \x1b[1m   one\x1b[0m"
+        "   \x1b[1m    1\x1b[0m    3                4  "
+        "  -1                       \n"
     )
     output = rich_output(code_cell)
-    assert output == expected_output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
-def test_render_plain_dataframe(rich_output: RichOutput) -> None:
+def test_render_plain_dataframe(
+    rich_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    get_tempfile_path: Callable[[str], Path],
+) -> None:
     """It renders a DataFrame in a plain style."""
     code_cell = {
         "cell_type": "code",
@@ -571,35 +578,37 @@ def test_render_plain_dataframe(rich_output: RichOutput) -> None:
         ],
         "source": "",
     }
+    tempfile_path = get_tempfile_path(".html")
     expected_output = (
-        "                              "
-        "                              "
-        "                    \n         "
-        "                              "
-        "                              "
-        "           \nlorep             "
-        " hey                bye       "
-        "                              "
-        "  \nipsum               hi very"
-        "_long_word  hi                "
-        "                       \nfirst "
-        "second third                  "
-        "                              "
-        "              \nbar   one    1 "
-        "      1              2   4    "
-        "                              "
-        "     \n             10      3  "
-        "            4  -1             "
-        "                          \n   "
-        "   three  3       3           "
-        "   4  -1                      "
-        "                 \nfoo   one   "
-        " 1       3              4  -1 "
-        "                              "
-        "        \n"
+        "                                        "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n\x1b]8;id=1622781162.971405-220177;file:/"
+        f"/{tempfile_path}"
+        "\x1b\\\x1b[94m🌐 Click"
+        " to view HTML\x1b[0m\x1b]8;;\x1b\\                "
+        "                                        "
+        "   \n                                    "
+        "                                        "
+        "    \nlorep              hey             "
+        "   bye                                  "
+        "     \nipsum               hi very_long_w"
+        "ord  hi                                 "
+        "      \nfirst second third               "
+        "                                        "
+        "       \nbar   one    1       1          "
+        "    2   4                               "
+        "        \n             10      3         "
+        "     4  -1                              "
+        "         \n      three  3       3        "
+        "      4  -1                             "
+        "          \nfoo   one    1       3       "
+        "       4  -1                            "
+        "           \n"
     )
     output = rich_output(code_cell, plain=True)
-    assert output == expected_output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_render_stderr_stream(rich_output: RichOutput) -> None:
