@@ -182,7 +182,18 @@ class Notebook:
         data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
         main_result: Union[Table, str, Syntax, Markdown, Emoji, Text, None] = None
         if "text/html" in data and main_result is None:
-            main_result = render.render_html(data, unicode=unicode, plain=plain)
+            yield render.render_html_link(
+                data,
+                unicode=unicode,
+                hyperlinks=hyperlinks,
+                execution_count=execution_count,
+                nerd_font=self.nerd_font,
+                files=self.files,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+            )
+            main_result = render.render_html(
+                data, unicode=unicode, plain=plain, theme=self.theme
+            )
 
         if "text/markdown" in data and main_result is None:
             main_result = render.render_markdown(data, theme=self.theme)

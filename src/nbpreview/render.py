@@ -9,6 +9,7 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+import html2text
 import httpx
 import jinja2
 import pygments
@@ -127,7 +128,9 @@ def render_dataframe(table_html: List[HtmlElement], unicode: bool) -> Table:
     return dataframe_table
 
 
-def render_html(data: Dict[str, str], unicode: bool, plain: bool) -> Union[Table, None]:
+def render_html(
+    data: Dict[str, str], unicode: bool, plain: bool, theme: str
+) -> Union[Table, Markdown, None]:
     """Render HTML output.
 
     Args:
@@ -135,15 +138,23 @@ def render_html(data: Dict[str, str], unicode: bool, plain: bool) -> Union[Table
         unicode (bool): Whether to use unicode characters when
             rendering.
         plain (bool): Whether to render the output in a plain style.
+        theme (str): The Pygments theme to use for syntax highlighting.
 
     Returns:
         Union[Table, None]: The rendered HTML.
     """
     # Detect if output is a rendered DataFrame
+    rendered_html: Union[Table, Markdown]
     datum = data["text/html"]
     dataframe_html = html.fromstring(datum).find_class("dataframe")
-    if not plain and dataframe_html and dataframe_html[0].tag == "table":
-        rendered_html = render_dataframe(dataframe_html, unicode=unicode)
+    if not plain:
+        if dataframe_html and dataframe_html[0].tag == "table":
+            rendered_html = render_dataframe(dataframe_html, unicode=unicode)
+        else:
+            converted_markdown = html2text.html2text(datum)
+            rendered_html = markdown.Markdown(
+                converted_markdown, inline_code_theme=theme
+            )
         return rendered_html
     else:
         return None
@@ -241,6 +252,32 @@ def render_pdf(nerd_font: bool, unicode: bool) -> Union[str, Emoji, None]:
         return emoji.Emoji(name="page_facing_up")
     else:
         return None
+
+
+def render_html_link(
+    data: Dict[str, Union[str, NotebookNode]],
+    unicode: bool,
+    hyperlinks: bool,
+    execution_count: Union[int, None],
+    nerd_font: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+) -> Union[Text, str]:
+    """Render an html link."""
+    content = data.get("text/html", "")
+    rendered_html_link = render_hyperlink(
+        content=content,
+        file_extension="html",
+        nerd_font=nerd_font,
+        unicode=unicode,
+        files=files,
+        subject="HTML",
+        nerd_font_icon="",
+        emoji_name="globe_with_meridians",
+        hyperlinks=hyperlinks,
+        hide_hyperlink_hints=hide_hyperlink_hints,
+    )
+    return rendered_html_link
 
 
 def render_hyperlink(
