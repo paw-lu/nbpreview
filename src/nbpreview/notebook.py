@@ -292,8 +292,7 @@ class Notebook:
                     execution_count=execution_count,
                     hyperlinks=hyperlinks,
                 )
-                if rendered_execute_result:
-                    rendered_outputs.extend(rendered_execute_result)
+                rendered_outputs.extend(rendered_execute_result)
 
             for rendered_output in rendered_outputs:
                 yield self._arrange_row(
