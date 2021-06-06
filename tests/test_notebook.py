@@ -2070,3 +2070,33 @@ def test_render_html(
     )
     output = rich_output(html_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_unknown_data_type(rich_output: RichOutput) -> None:
+    """It skips rendering an unknown output type."""
+    unknown_data_type = {
+        "cell_type": "code",
+        "execution_count": 11,
+        "id": "intense-middle",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"unkown_data_type": "3"},
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    output = rich_output(unknown_data_type)
+    expected_output = (
+        "      ╭─────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[11]:\x1b[0m │                 "
+        "                                        "
+        "               │\n      ╰────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n"
+    )
+    assert output == expected_output
