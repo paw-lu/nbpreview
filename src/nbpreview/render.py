@@ -1,4 +1,5 @@
 """Functions for rendering notebook components."""
+import base64
 import collections
 import json
 import tempfile
@@ -254,16 +255,45 @@ def render_pdf(nerd_font: bool, unicode: bool) -> Union[str, Emoji, None]:
         return None
 
 
-def render_html_link(
-    data: Dict[str, Union[str, NotebookNode]],
+def render_image_link(
+    data: Dict[str, str],
+    image_type: str,
     unicode: bool,
     hyperlinks: bool,
-    execution_count: Union[int, None],
     nerd_font: bool,
     files: bool,
     hide_hyperlink_hints: bool,
 ) -> Union[Text, str]:
-    """Render an html link."""
+    """Render an image link."""
+    encoded_content = data[image_type]
+    content = base64.b64decode(encoded_content)
+    *_, file_extension = image_type.split("/")
+    if "+" in file_extension:
+        file_extension, *_ = file_extension.split("+")
+    rendered_image_link = render_hyperlink(
+        content=content,
+        file_extension=file_extension,
+        nerd_font=nerd_font,
+        unicode=unicode,
+        files=files,
+        subject="Image",
+        nerd_font_icon="",
+        emoji_name="framed_picture",
+        hyperlinks=hyperlinks,
+        hide_hyperlink_hints=hide_hyperlink_hints,
+    )
+    return rendered_image_link
+
+
+def render_html_link(
+    data: Dict[str, Union[str, NotebookNode]],
+    unicode: bool,
+    hyperlinks: bool,
+    nerd_font: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+) -> Union[Text, str]:
+    """Render an HTML link."""
     content = data.get("text/html", "")
     rendered_html_link = render_hyperlink(
         content=content,

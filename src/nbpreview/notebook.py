@@ -1,5 +1,6 @@
 """Render the notebook."""
 import dataclasses
+import itertools
 from typing import Dict
 from typing import Generator
 from typing import Iterator
@@ -88,6 +89,11 @@ class Notebook:
             explicitly print out path.
         hide_hyperlink_hints (bool): Hide text hints of when content is
             clickable.
+        images (Optional[str]): Whether to render images. If None will
+            attempt to autodetect. By default None.
+        image_type (Optional[str]): How to render images. Options are
+            "sixel" and "iterm". If None will attempt to autodetect. By
+            default None.
     """
 
     notebook_node: NotebookNode
@@ -99,6 +105,8 @@ class Notebook:
     files: bool = True
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
+    images: Optional[bool] = None
+    image_type: Optional[str] = None
 
     def __post_init__(self) -> None:
         """Constructor."""
@@ -170,19 +178,19 @@ class Notebook:
 
         return cell_row
 
-    def _render_result(
+    def _render_link_result(
         self,
-        output: NotebookNode,
-        plain: bool,
+        data: Dict[str, Union[str, NotebookNode]],
         unicode: bool,
-        execution_count: Union[int, None],
         hyperlinks: bool,
-    ) -> Generator[Union[Table, str, Syntax, Markdown, Emoji, Text], None, None]:
-        """Render executed result outputs."""
-        data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
-        main_result: Union[Table, str, Syntax, Markdown, Emoji, Text, None] = None
-        if "text/html" in data and main_result is None:
-            yield render.render_html_link(
+        execution_count: Union[int, None],
+    ) -> Union[Text, str, None]:
+        """Render an output link."""
+        if (
+            "application/vnd.vega.v5+json" in data
+            or "application/vnd.vegalite.v4+json" in data
+        ):
+            link_result = render.render_vega_link(
                 data,
                 unicode=unicode,
                 hyperlinks=hyperlinks,
@@ -191,6 +199,47 @@ class Notebook:
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
+            return link_result
+        image_types = {
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+        }
+        for image_type in image_types:
+            if image_type in data:
+                link_result = render.render_image_link(
+                    data,
+                    image_type=image_type,
+                    unicode=unicode,
+                    hyperlinks=hyperlinks,
+                    nerd_font=self.nerd_font,
+                    files=self.files,
+                    hide_hyperlink_hints=self.hide_hyperlink_hints,
+                )
+                return link_result
+        if "text/html" in data:
+            link_result = render.render_html_link(
+                data,
+                unicode=unicode,
+                hyperlinks=hyperlinks,
+                nerd_font=self.nerd_font,
+                files=self.files,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+            )
+            return link_result
+        return None
+
+    def _render_main_result(
+        self,
+        data: Dict[str, Union[str, NotebookNode]],
+        unicode: bool,
+        plain: bool,
+    ) -> Union[None, Table, Markdown, str, Syntax, Emoji]:
+        """Render the main result."""
+        main_result: Union[None, Table, Markdown, str, Syntax, Emoji] = None
+        if "text/html" in data:
             main_result = render.render_html(
                 data, unicode=unicode, plain=plain, theme=self.theme
             )
@@ -207,25 +256,33 @@ class Notebook:
         if "application/pdf" in data and main_result is None:
             main_result = render.render_pdf(nerd_font=self.nerd_font, unicode=unicode)
 
-        if (
-            "application/vnd.vega.v5+json" in data
-            or "application/vnd.vegalite.v4+json" in data
-        ) and main_result is None:
-            yield render.render_vega_link(
-                data,
-                unicode=unicode,
-                hyperlinks=hyperlinks,
-                execution_count=execution_count,
-                nerd_font=self.nerd_font,
-                files=self.files,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-            )
-
         if "text/plain" in data and main_result is None:
             main_result = data["text/plain"]
 
-        if main_result:
-            yield main_result
+        return main_result
+
+    def _render_result(
+        self,
+        output: NotebookNode,
+        plain: bool,
+        unicode: bool,
+        execution_count: Union[int, None],
+        hyperlinks: bool,
+        images: bool,
+    ) -> Generator[Union[Table, str, Syntax, Markdown, Emoji, Text], None, None]:
+        """Render executed result outputs."""
+        data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
+        link_result = self._render_link_result(
+            data,
+            unicode=unicode,
+            hyperlinks=hyperlinks,
+            execution_count=execution_count,
+        )
+        main_result = self._render_main_result(data=data, unicode=unicode, plain=plain)
+
+        for result in (link_result, main_result):
+            if result is not None:
+                yield result
 
     def _render_output(
         self,
@@ -234,6 +291,7 @@ class Notebook:
         pad: Tuple[int, int, int, int],
         unicode: bool,
         hyperlinks: bool,
+        images: bool,
     ) -> Generator[
         Union[
             Tuple[Padding],
@@ -252,6 +310,7 @@ class Notebook:
             pad (Tuple[int, int, int, int]): The output padding to use.
             unicode (bool): Whether to render using unicode characters.
             hyperlinks (bool): Whether to render hyperlinks.
+            images (bool): Whether to render images in the terminal.
 
         Yields:
             Generator[
@@ -267,7 +326,7 @@ class Notebook:
         """
         for output in outputs:
             rendered_outputs: List[
-                Union[Text, str, Table, Syntax, Markdown, Emoji]
+                Generator[Union[Text, str, Table, Syntax, Markdown, Emoji], None, None]
             ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
@@ -278,11 +337,11 @@ class Notebook:
 
             if output_type == "stream":
                 rendered_stream = render.render_stream(output)
-                rendered_outputs.extend(rendered_stream)
+                rendered_outputs.append(rendered_stream)
 
             elif output_type == "error":
                 rendered_error = render.render_error(output, theme=self.theme)
-                rendered_outputs.extend(rendered_error)
+                rendered_outputs.append(rendered_error)
 
             elif output_type == "execute_result" or output_type == "display_data":
                 rendered_execute_result = self._render_result(
@@ -291,10 +350,11 @@ class Notebook:
                     unicode=unicode,
                     execution_count=execution_count,
                     hyperlinks=hyperlinks,
+                    images=images,
                 )
-                rendered_outputs.extend(rendered_execute_result)
+                rendered_outputs.append(rendered_execute_result)
 
-            for rendered_output in rendered_outputs:
+            for rendered_output in itertools.chain(*rendered_outputs):
                 yield self._arrange_row(
                     rendered_output,
                     plain=plain,
@@ -331,6 +391,7 @@ class Notebook:
         unicode = _pick_option(
             self.unicode, detector=options.legacy_windows or options.ascii_only
         )
+        images = _pick_option(self.images, detector=not options.is_terminal)
         hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
         grid = table.Table.grid(padding=(1, 1, 1, 0))
 
@@ -356,6 +417,7 @@ class Notebook:
                     pad=pad,
                     unicode=unicode,
                     hyperlinks=hyperlinks,
+                    images=images,
                 )
                 for rendered_output in rendered_outputs:
                     grid.add_row(*rendered_output)
