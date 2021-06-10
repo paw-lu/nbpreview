@@ -266,10 +266,13 @@ def render_image_link(
 ) -> Union[Text, str]:
     """Render an image link."""
     encoded_content = data[image_type]
-    content = base64.b64decode(encoded_content)
-    *_, file_extension = image_type.split("/")
-    if "+" in file_extension:
-        file_extension, *_ = file_extension.split("+")
+    content: Union[str, bytes]
+    if image_type == "image/svg+xml":
+        file_extension = "svg"
+        content = encoded_content
+    else:
+        *_, file_extension = image_type.split("/")
+        content = base64.b64decode(encoded_content)
     rendered_image_link = render_hyperlink(
         content=content,
         file_extension=file_extension,
