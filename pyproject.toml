@@ -30,7 +30,7 @@ pylatexenc = "^2.10"
 httpx = "^0.18.2"
 Jinja2 = "^3.0.1"
 html2text = "^2020.1.16"
-types-click = "^7.1.1"
+types-click = "^7.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
