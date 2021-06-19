@@ -21,6 +21,7 @@ except ImportError:
 
 package = "nbpreview"
 python_versions = ["3.9", "3.8", "3.7"]
+nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
     "safety",
@@ -142,20 +143,17 @@ def tests(session: Session) -> None:
         )
     finally:
         if session.interactive:
-            session.notify("coverage")
+            session.notify("coverage", posargs=[])
 
 
 @session
 def coverage(session: Session) -> None:
     """Produce the coverage report."""
-    # Do not use session.posargs unless this is the only session.
-    nsessions = len(session._runner.manifest)
-    has_args = session.posargs and nsessions == 1
-    args = session.posargs if has_args else ["report"]
+    args = session.posargs or ["report"]
 
     session.install("coverage[toml]")
 
-    if not has_args and any(Path().glob(".coverage.*")):
+    if not session.posargs and any(Path().glob(".coverage.*")):
         session.run("coverage", "combine")
 
     try:
@@ -185,7 +183,7 @@ def xdoctest(session: Session) -> None:
     session.run("python", "-m", "xdoctest", package, *args)
 
 
-@session(name="docs-build", python="3.8")
+@session(name="docs-build", python="3.9")
 def docs_build(session: Session) -> None:
     """Build the documentation."""
     args = session.posargs or ["docs", "docs/_build"]
@@ -199,7 +197,7 @@ def docs_build(session: Session) -> None:
     session.run("sphinx-build", *args)
 
 
-@session(python="3.8")
+@session(python="3.9")
 def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
