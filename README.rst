@@ -1,7 +1,7 @@
 nbpreview
 =========
 
-|PyPI| |Python Version| |License|
+|PyPI| |Status| |Python Version| |License|
 
 |Read the Docs| |Tests| |Codecov|
 
@@ -10,6 +10,9 @@ nbpreview
 .. |PyPI| image:: https://img.shields.io/pypi/v/nbpreview.svg
    :target: https://pypi.org/project/nbpreview/
    :alt: PyPI
+.. |Status| image:: https://img.shields.io/pypi/status/nbpreview.svg
+   :target: https://pypi.org/project/nbpreview/
+   :alt: Status
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/nbpreview
    :target: https://pypi.org/project/nbpreview
    :alt: Python Version

@@ -7,5 +7,6 @@
   "license": "MIT",
   "package_name": "nbpreview",
   "project_name": "nbpreview",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "development_status": "Development Status :: 3 - Alpha"
 }
