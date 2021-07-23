@@ -11,21 +11,19 @@ from typing import Union
 
 from nbformat.notebooknode import NotebookNode
 from rich import padding
-from rich import panel
 from rich import table
 from rich.console import Console
 from rich.console import ConsoleOptions
 from rich.emoji import Emoji
 from rich.markdown import Markdown
 from rich.padding import Padding
-from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from . import render
-
-Cell = Union[Panel, Text, Syntax, str, Padding]
+from .component import input
+from .component import render
+from .component.input import Cell
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -119,7 +117,7 @@ class Notebook:
         plain: bool,
         pad: Tuple[int, int, int, int],
         unicode_border: Optional[bool] = None,
-    ) -> Tuple[Cell, ...]:
+    ) -> Tuple[Union[Cell, Text, Padding], ...]:
         """Render a Jupyter Notebook cell.
 
         Args:
@@ -138,34 +136,29 @@ class Notebook:
         cell_type = cell.get("cell_type")
         source = cell.source
         default_lexer_name = "ipython" if self.language == "python" else self.language
+        safe_box = None if unicode_border is None else not unicode_border
 
-        rendered_source: Union[Text, Syntax, str]
         rendered_cell: Optional[Cell] = None
         if cell_type == "markdown":
             execution_count = None
-            rendered_cell = render.render_markdown_cell(
-                source, theme=self.theme, pad=pad
-            )
+            rendered_cell = input.MarkdownCell(source, theme=self.theme, pad=pad)
 
         elif cell_type == "code":
             execution_count = (
                 cell.execution_count if cell.execution_count is not None else 0
             )
-            rendered_source = render.render_code_cell(
-                source, theme=self.theme, default_lexer_name=default_lexer_name
+            rendered_cell = input.CodeCell(
+                source,
+                plain=plain,
+                safe_box=safe_box,
+                theme=self.theme,
+                default_lexer_name=default_lexer_name,
             )
 
         # Includes cell_type == "raw"
         else:
             execution_count = None
-            rendered_source = source
-
-        if rendered_cell is None:
-            if not plain:
-                safe_box = None if unicode_border is None else not unicode_border
-                rendered_cell = panel.Panel(rendered_source, safe_box=safe_box)
-            else:
-                rendered_cell = rendered_source
+            rendered_cell = input.Cell(source, plain=plain, safe_box=safe_box)
 
         execution_count_indicator = render.render_execution_indicator(
             execution_count, top_pad=not plain

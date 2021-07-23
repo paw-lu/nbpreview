@@ -7,13 +7,11 @@ from typing import Dict
 from typing import Generator
 from typing import List
 from typing import Optional
-from typing import Tuple
 from typing import Union
 
 import html2text
 import httpx
 import jinja2
-import pygments
 from lxml import html
 from lxml.html import HtmlElement
 from nbformat import NotebookNode
@@ -497,53 +495,3 @@ def render_execution_indicator(
         execution_indicator = padding.Padding(execution_indicator, pad=(1, 0, 0, 0))
 
     return execution_indicator
-
-
-def render_markdown_cell(
-    source: str, theme: str, pad: Tuple[int, int, int, int]
-) -> Padding:
-    """Render a markdown cell."""
-    rendered_markdown = padding.Padding(
-        markdown.Markdown(source, inline_code_theme=theme),
-        pad=pad,
-    )
-    return rendered_markdown
-
-
-def render_code_cell(
-    source: str, theme: str, default_lexer_name: str
-) -> Union[Syntax, Text]:
-    """Render a code cell."""
-    rendered_code_cell: Union[Syntax, Text]
-    rendered_code_cell = syntax.Syntax(
-        source,
-        lexer_name=default_lexer_name,
-        theme=theme,
-        background_color="default",
-    )
-    if source.startswith("%%"):
-        try:
-            magic, body = source.split("\n", 1)
-            language_name = magic.lstrip("%")
-            body_lexer_name = pygments.lexers.get_lexer_by_name(language_name).name
-            # Syntax needs a string in the init, so pass an
-            # empty string and then pass the actual code to
-            # highlight method
-            magic_syntax = syntax.Syntax(
-                "",
-                lexer_name=default_lexer_name,
-                theme=theme,
-                background_color="default",
-            ).highlight(magic)
-            body_syntax = syntax.Syntax(
-                "",
-                lexer_name=body_lexer_name,
-                theme=theme,
-                background_color="default",
-            ).highlight(body)
-            rendered_code_cell = text.Text().join((magic_syntax, body_syntax))
-
-        except pygments.util.ClassNotFound:
-            pass
-
-    return rendered_code_cell
