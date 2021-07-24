@@ -23,7 +23,10 @@ from rich.text import Text
 
 from .component import input
 from .component import render
+from .component import row
 from .component.input import Cell
+from .component.row import Execution
+from .component.row import Row
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -117,7 +120,7 @@ class Notebook:
         plain: bool,
         pad: Tuple[int, int, int, int],
         unicode_border: Optional[bool] = None,
-    ) -> Tuple[Union[Cell, Text, Padding], ...]:
+    ) -> Row:
         """Render a Jupyter Notebook cell.
 
         Args:
@@ -130,23 +133,21 @@ class Notebook:
                 default.
 
         Returns:
-            Tuple[Text, Cell]: The execution count indicator and cell
+            Row: The execution count indicator and cell
                 content.
         """
         cell_type = cell.get("cell_type")
         source = cell.source
         default_lexer_name = "ipython" if self.language == "python" else self.language
         safe_box = None if unicode_border is None else not unicode_border
-
         rendered_cell: Optional[Cell] = None
+        execution: Union[Execution, None] = None
+        top_pad = not plain
         if cell_type == "markdown":
-            execution_count = None
             rendered_cell = input.MarkdownCell(source, theme=self.theme, pad=pad)
 
         elif cell_type == "code":
-            execution_count = (
-                cell.execution_count if cell.execution_count is not None else 0
-            )
+            execution = row.Execution(cell.execution_count, top_pad=top_pad)
             rendered_cell = input.CodeCell(
                 source,
                 plain=plain,
@@ -157,18 +158,9 @@ class Notebook:
 
         # Includes cell_type == "raw"
         else:
-            execution_count = None
             rendered_cell = input.Cell(source, plain=plain, safe_box=safe_box)
 
-        execution_count_indicator = render.render_execution_indicator(
-            execution_count, top_pad=not plain
-        )
-        cell_row = (
-            (execution_count_indicator, rendered_cell)
-            if not plain
-            else (rendered_cell,)
-        )
-
+        cell_row = row.Row(rendered_cell, plain=plain, execution=execution)
         return cell_row
 
     def _render_link_result(
@@ -400,7 +392,7 @@ class Notebook:
                 pad=pad,
                 unicode_border=unicode,
             )
-            grid.add_row(*cell_row)
+            grid.add_row(*cell_row.to_table_row())
 
             outputs = cell.get("outputs")
             if not self.hide_output and outputs is not None:
