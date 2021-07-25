@@ -67,6 +67,62 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
         return (0, 0, 0, 1)
 
 
+def render_cells(
+    cell: NotebookNode,
+    plain: bool,
+    pad: Tuple[int, int, int, int],
+    language: str,
+    theme: str,
+    unicode_border: Optional[bool] = None,
+) -> Row:
+    """Render a Jupyter Notebook cell.
+
+    Args:
+        cell (NotebookNode): The cell to render.
+        plain (bool): Only show plain style. No decorations such as
+            boxes or execution counts.
+        pad (Tuple[int, int, int, int]): The output padding to use.
+        language (str): The programming language of the notebook. Will
+            be used when highlighting the syntax of code cells.
+        theme (str): The theme to use for syntax highlighting. May be
+            "ansi_light", "ansi_dark", or any Pygments theme. By default
+            "ansi_dark".
+        unicode_border (Optional[bool]): Whether to render the cell
+            borders using unicode characters. Will autodetect by
+            default.
+
+    Returns:
+        Row: The execution count indicator and cell
+            content.
+    """
+    cell_type = cell.get("cell_type")
+    source = cell.source
+    default_lexer_name = "ipython" if language == "python" else language
+    safe_box = None if unicode_border is None else not unicode_border
+    rendered_cell: Optional[Cell] = None
+    execution: Union[Execution, None] = None
+    top_pad = not plain
+    if cell_type == "markdown":
+        rendered_cell = input.MarkdownCell(source, theme=theme, pad=pad)
+
+    elif cell_type == "code":
+        execution = row.Execution(cell.execution_count, top_pad=top_pad)
+        rendered_cell = input.CodeCell(
+            source,
+            plain=plain,
+            safe_box=safe_box,
+            theme=theme,
+            default_lexer_name=default_lexer_name,
+        )
+
+    # Includes cell_type == "raw"
+    else:
+        rendered_cell = input.Cell(source, plain=plain, safe_box=safe_box)
+
+    cell_row = row.Row(rendered_cell, plain=plain, execution=execution)
+    return cell_row
+
+
 @dataclasses.dataclass()
 class Notebook:
     """Construct a Notebook object to render Jupyter Notebooks.
@@ -113,55 +169,6 @@ class Notebook:
         """Constructor."""
         self.cells = self.notebook_node.cells
         self.language = self.notebook_node.metadata.kernelspec.language
-
-    def _render_cells(
-        self,
-        cell: NotebookNode,
-        plain: bool,
-        pad: Tuple[int, int, int, int],
-        unicode_border: Optional[bool] = None,
-    ) -> Row:
-        """Render a Jupyter Notebook cell.
-
-        Args:
-            cell (NotebookNode): The cell to render.
-            plain (bool): Only show plain style. No decorations such as
-                boxes or execution counts.
-            pad (Tuple[int, int, int, int]): The output padding to use.
-            unicode_border (Optional[bool]): Whether to render the cell
-                borders using unicode characters. Will autodetect by
-                default.
-
-        Returns:
-            Row: The execution count indicator and cell
-                content.
-        """
-        cell_type = cell.get("cell_type")
-        source = cell.source
-        default_lexer_name = "ipython" if self.language == "python" else self.language
-        safe_box = None if unicode_border is None else not unicode_border
-        rendered_cell: Optional[Cell] = None
-        execution: Union[Execution, None] = None
-        top_pad = not plain
-        if cell_type == "markdown":
-            rendered_cell = input.MarkdownCell(source, theme=self.theme, pad=pad)
-
-        elif cell_type == "code":
-            execution = row.Execution(cell.execution_count, top_pad=top_pad)
-            rendered_cell = input.CodeCell(
-                source,
-                plain=plain,
-                safe_box=safe_box,
-                theme=self.theme,
-                default_lexer_name=default_lexer_name,
-            )
-
-        # Includes cell_type == "raw"
-        else:
-            rendered_cell = input.Cell(source, plain=plain, safe_box=safe_box)
-
-        cell_row = row.Row(rendered_cell, plain=plain, execution=execution)
-        return cell_row
 
     def _render_link_result(
         self,
@@ -386,10 +393,12 @@ class Notebook:
         grid.add_column()
 
         for cell in self.cells:
-            cell_row = self._render_cells(
+            cell_row = render_cells(
                 cell,
                 plain=plain,
                 pad=pad,
+                language=self.language,
+                theme=self.theme,
                 unicode_border=unicode,
             )
             grid.add_row(*cell_row.to_table_row())
