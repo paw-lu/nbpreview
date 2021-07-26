@@ -22,9 +22,11 @@ from rich.table import Table
 from rich.text import Text
 
 from .component import input
+from .component import link
 from .component import render
 from .component import row
 from .component.input import Cell
+from .component.link import Hyperlink
 from .component.row import Execution
 from .component.row import Row
 
@@ -170,59 +172,6 @@ class Notebook:
         self.cells = self.notebook_node.cells
         self.language = self.notebook_node.metadata.kernelspec.language
 
-    def _render_link_result(
-        self,
-        data: Dict[str, Union[str, NotebookNode]],
-        unicode: bool,
-        hyperlinks: bool,
-        execution_count: Union[int, None],
-    ) -> Union[Text, str, None]:
-        """Render an output link."""
-        if (
-            "application/vnd.vega.v5+json" in data
-            or "application/vnd.vegalite.v4+json" in data
-        ):
-            link_result = render.render_vega_link(
-                data,
-                unicode=unicode,
-                hyperlinks=hyperlinks,
-                execution_count=execution_count,
-                nerd_font=self.nerd_font,
-                files=self.files,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-            )
-            return link_result
-        image_types = {
-            "image/bmp",
-            "image/gif",
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-        }
-        for image_type in image_types:
-            if image_type in data:
-                link_result = render.render_image_link(
-                    data,
-                    image_type=image_type,
-                    unicode=unicode,
-                    hyperlinks=hyperlinks,
-                    nerd_font=self.nerd_font,
-                    files=self.files,
-                    hide_hyperlink_hints=self.hide_hyperlink_hints,
-                )
-                return link_result
-        if "text/html" in data:
-            link_result = render.render_html_link(
-                data,
-                unicode=unicode,
-                hyperlinks=hyperlinks,
-                nerd_font=self.nerd_font,
-                files=self.files,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-            )
-            return link_result
-        return None
-
     def _render_main_result(
         self,
         data: Dict[str, Union[str, NotebookNode]],
@@ -261,14 +210,19 @@ class Notebook:
         execution_count: Union[int, None],
         hyperlinks: bool,
         images: bool,
-    ) -> Generator[Union[Table, str, Syntax, Markdown, Emoji, Text], None, None]:
+    ) -> Generator[
+        Union[Table, str, Syntax, Markdown, Emoji, Text, Hyperlink], None, None
+    ]:
         """Render executed result outputs."""
         data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
-        link_result = self._render_link_result(
+        link_result = link.render_link(
             data,
             unicode=unicode,
             hyperlinks=hyperlinks,
             execution_count=execution_count,
+            nerd_font=self.nerd_font,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
         )
         main_result = self._render_main_result(data=data, unicode=unicode, plain=plain)
 
@@ -318,7 +272,11 @@ class Notebook:
         """
         for output in outputs:
             rendered_outputs: List[
-                Generator[Union[Text, str, Table, Syntax, Markdown, Emoji], None, None]
+                Generator[
+                    Union[Text, str, Table, Syntax, Markdown, Emoji, Hyperlink],
+                    None,
+                    None,
+                ]
             ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
@@ -356,7 +314,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Table, Syntax, Text, str, Table, Markdown, Emoji],
+        content: Union[Table, Syntax, Text, str, Table, Markdown, Emoji, Hyperlink],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],

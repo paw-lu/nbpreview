@@ -1,23 +1,18 @@
 """Functions for rendering notebook components."""
-import base64
 import collections
 import json
 import tempfile
 from typing import Dict
 from typing import Generator
 from typing import List
-from typing import Optional
 from typing import Union
 
 import html2text
-import httpx
-import jinja2
 from lxml import html
 from lxml.html import HtmlElement
 from nbformat import NotebookNode
 from pylatexenc import latex2text
 from rich import box
-from rich import console
 from rich import emoji
 from rich import markdown
 from rich import padding
@@ -251,172 +246,6 @@ def render_pdf(nerd_font: bool, unicode: bool) -> Union[str, Emoji, None]:
         return emoji.Emoji(name="page_facing_up")
     else:
         return None
-
-
-def render_image_link(
-    data: Dict[str, str],
-    image_type: str,
-    unicode: bool,
-    hyperlinks: bool,
-    nerd_font: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-) -> Union[Text, str]:
-    """Render an image link."""
-    encoded_content = data[image_type]
-    content: Union[str, bytes]
-    if image_type == "image/svg+xml":
-        file_extension = "svg"
-        content = encoded_content
-    else:
-        *_, file_extension = image_type.split("/")
-        content = base64.b64decode(encoded_content)
-    rendered_image_link = render_hyperlink(
-        content=content,
-        file_extension=file_extension,
-        nerd_font=nerd_font,
-        unicode=unicode,
-        files=files,
-        subject="Image",
-        nerd_font_icon="",
-        emoji_name="framed_picture",
-        hyperlinks=hyperlinks,
-        hide_hyperlink_hints=hide_hyperlink_hints,
-    )
-    return rendered_image_link
-
-
-def render_html_link(
-    data: Dict[str, Union[str, NotebookNode]],
-    unicode: bool,
-    hyperlinks: bool,
-    nerd_font: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-) -> Union[Text, str]:
-    """Render an HTML link."""
-    content = data.get("text/html", "")
-    rendered_html_link = render_hyperlink(
-        content=content,
-        file_extension="html",
-        nerd_font=nerd_font,
-        unicode=unicode,
-        files=files,
-        subject="HTML",
-        nerd_font_icon="",
-        emoji_name="globe_with_meridians",
-        hyperlinks=hyperlinks,
-        hide_hyperlink_hints=hide_hyperlink_hints,
-    )
-    return rendered_html_link
-
-
-def render_hyperlink(
-    content: Union[str, bytes, None],
-    file_extension: str,
-    nerd_font: bool,
-    unicode: bool,
-    files: bool,
-    subject: str,
-    nerd_font_icon: str,
-    emoji_name: str,
-    hyperlinks: bool,
-    hide_hyperlink_hints: bool,
-) -> Union[Text, str]:
-    """Render a hyperlink."""
-    rendered_hyperlink: Union[str, Text]
-    if nerd_font:
-        icon = f"{nerd_font_icon} "
-    elif unicode:
-        icon = emoji.Emoji.replace(f":{emoji_name}: ")
-    else:
-        icon = ""
-
-    if files and content is not None:
-
-        file_name = _write_file(content, extension=file_extension)
-        if hyperlinks:
-
-            if hide_hyperlink_hints:
-                message = ""
-            else:
-                message = f"Click to view {subject}"
-
-            if not message and not icon:
-                message = subject
-
-            link_style = console.Console().get_style("markdown.link") + style.Style(
-                link=f"file://{file_name}"
-            )
-            # Append blank string to prevent entire line from being underlined
-            rendered_hyperlink = text.Text.assemble(
-                text.Text.assemble(icon, message, style=link_style), ""
-            )
-        else:
-            rendered_hyperlink = f"{icon}{file_name}"
-
-    else:
-        rendered_hyperlink = f"{icon}{subject}"
-
-    return rendered_hyperlink
-
-
-def render_vega_link(
-    data: Dict[str, Union[str, NotebookNode]],
-    unicode: bool,
-    hyperlinks: bool,
-    execution_count: Union[int, None],
-    nerd_font: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-) -> Union[str, Text]:
-    """Render Vega and Vega-Lite output."""
-    vega_html: Optional[str]
-    subject = "Vega chart"
-    vega_data = data.get(
-        "application/vnd.vega.v5+json",
-        data.get("application/vnd.vegalite.v4+json", ""),
-    )
-    if isinstance(vega_data, str) and vega_data.startswith("https://" or "http://"):
-        try:
-            response = httpx.get(url=vega_data)
-            vega_json = response.text
-        except httpx.RequestError:
-            vega_json = ""
-    else:
-        vega_json = json.dumps(vega_data)
-
-    if files and vega_json:
-
-        execution_count_indicator = (
-            f"[{execution_count}]: " if execution_count is not None else ""
-        )
-        env = jinja2.Environment(  # noqa: S701
-            loader=jinja2.PackageLoader("nbpreview"),
-            autoescape=jinja2.select_autoescape(),
-        )
-        vega_template = env.get_template("vega_template.jinja")
-        vega_html = vega_template.render(
-            execution_count_indicator=execution_count_indicator,
-            subject=subject,
-            vega_json=vega_json,
-        )
-    else:
-        vega_html = None
-
-    rendered_vega = render_hyperlink(
-        content=vega_html,
-        file_extension="html",
-        nerd_font=nerd_font,
-        unicode=unicode,
-        files=files,
-        subject=subject,
-        nerd_font_icon="",
-        emoji_name="bar_chart",
-        hyperlinks=hyperlinks,
-        hide_hyperlink_hints=hide_hyperlink_hints,
-    )
-    return rendered_vega
 
 
 def render_error(output: NotebookNode, theme: str) -> Generator[Syntax, None, None]:

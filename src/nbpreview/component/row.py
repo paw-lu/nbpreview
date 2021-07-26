@@ -19,6 +19,7 @@ class Execution:
 
     execution_count: Union[int, None]
     top_pad: bool
+    execution_indicator: Union[Text, Padding] = dataclasses.field(init=False)
 
     def __post_init__(self) -> None:
         """Initialize execution indicator."""
@@ -42,6 +43,11 @@ class Execution:
 TableRow = Union[Tuple[Union[Execution, str], Cell], Tuple[Cell]]
 
 
+def choose_execution(execution: Union[None, Execution]) -> Union[str, Execution]:
+    """Select the execution indicator."""
+    return execution if execution is not None else ""
+
+
 @dataclasses.dataclass
 class Row:
     """A Jupyter notebook row."""
@@ -53,7 +59,7 @@ class Row:
     def __post_init__(self, execution: Optional[Execution]) -> None:
         """Initialize the execution indicator."""
         self.execution: Union[Execution, str]
-        self.execution = execution if execution is not None else ""
+        self.execution = choose_execution(execution)
 
     def to_table_row(self) -> TableRow:
         """Convert to row for table usage."""
