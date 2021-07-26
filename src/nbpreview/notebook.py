@@ -21,14 +21,10 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from .component import input
 from .component import link
 from .component import render
 from .component import row
-from .component.input import Cell
 from .component.link import Hyperlink
-from .component.row import Execution
-from .component.row import Row
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -67,62 +63,6 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
         return (0, 0, 0, 0)
     else:
         return (0, 0, 0, 1)
-
-
-def render_cells(
-    cell: NotebookNode,
-    plain: bool,
-    pad: Tuple[int, int, int, int],
-    language: str,
-    theme: str,
-    unicode_border: Optional[bool] = None,
-) -> Row:
-    """Render a Jupyter Notebook cell.
-
-    Args:
-        cell (NotebookNode): The cell to render.
-        plain (bool): Only show plain style. No decorations such as
-            boxes or execution counts.
-        pad (Tuple[int, int, int, int]): The output padding to use.
-        language (str): The programming language of the notebook. Will
-            be used when highlighting the syntax of code cells.
-        theme (str): The theme to use for syntax highlighting. May be
-            "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "ansi_dark".
-        unicode_border (Optional[bool]): Whether to render the cell
-            borders using unicode characters. Will autodetect by
-            default.
-
-    Returns:
-        Row: The execution count indicator and cell
-            content.
-    """
-    cell_type = cell.get("cell_type")
-    source = cell.source
-    default_lexer_name = "ipython" if language == "python" else language
-    safe_box = None if unicode_border is None else not unicode_border
-    rendered_cell: Optional[Cell] = None
-    execution: Union[Execution, None] = None
-    top_pad = not plain
-    if cell_type == "markdown":
-        rendered_cell = input.MarkdownCell(source, theme=theme, pad=pad)
-
-    elif cell_type == "code":
-        execution = row.Execution(cell.execution_count, top_pad=top_pad)
-        rendered_cell = input.CodeCell(
-            source,
-            plain=plain,
-            safe_box=safe_box,
-            theme=theme,
-            default_lexer_name=default_lexer_name,
-        )
-
-    # Includes cell_type == "raw"
-    else:
-        rendered_cell = input.Cell(source, plain=plain, safe_box=safe_box)
-
-    cell_row = row.Row(rendered_cell, plain=plain, execution=execution)
-    return cell_row
 
 
 @dataclasses.dataclass()
@@ -351,7 +291,7 @@ class Notebook:
         grid.add_column()
 
         for cell in self.cells:
-            cell_row = render_cells(
+            cell_row = row.render_input_row(
                 cell,
                 plain=plain,
                 pad=pad,
