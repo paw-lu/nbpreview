@@ -1,5 +1,6 @@
 """Test cases for render."""
 import io
+import itertools
 import json
 import pathlib
 import re
@@ -68,7 +69,24 @@ def split_string(string: str, sub_length: int = 40) -> Tuple[str, ...]:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
+def parse_link_filepath() -> Callable[[str], Path]:
+    """Return a helper function for parsing filepaths from links."""
+
+    def _parse_link_filepath(output: str) -> Path:
+        """Extract the filepaths of hyperlinks in outputs."""
+        path_re = re.compile(r"(?:file://)(.+)(?:\x1b\\\x1b)")
+        link_filepath_match = re.search(path_re, output)
+        if link_filepath_match is not None:
+            link_filepath = link_filepath_match.group(1)
+            return pathlib.Path(link_filepath)
+        else:
+            raise ValueError("No hyperlink filepath found in output.")
+
+    return _parse_link_filepath
+
+
+@pytest.fixture
 def rich_console() -> Console:
     """Fixture that returns Rich console."""
     con = console.Console(
@@ -81,7 +99,7 @@ def rich_console() -> Console:
     return con
 
 
-@pytest.fixture()
+@pytest.fixture
 def rich_output(
     rich_console: Console,
     make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
@@ -164,7 +182,7 @@ def get_tempfile_path() -> Callable[[str], Path]:
         """
         prefix = tempfile.template
         file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
-            f"{prefix}link_file"
+            f"{prefix}nbpreview_link_file"
         ).with_suffix(suffix)
         return file_path
 
@@ -181,9 +199,11 @@ def mock_tempfile_file(
     tempfile_base_name = tempfile_stem[3:]
     tempfile_parent = tempfile_path.parent
     mock = mocker.patch("tempfile._get_candidate_names")
-    mock.return_value = (file_name for file_name in (tempfile_base_name,))
+    mock.return_value = (
+        f"{tempfile_base_name}{file_suffix}" for file_suffix in itertools.count()
+    )
     yield mock
-    tempfiles = tempfile_parent.glob(f"{tempfile_stem}.*")
+    tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
     for file in tempfiles:
         file.unlink()
 
@@ -466,7 +486,7 @@ def test_render_dataframe(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -477,34 +497,34 @@ def test_render_dataframe(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
-        f"\x1b]8;id=1622781101.744982-576179;file://{tempfile_path}"
-        "\x1b\\\x1b[94m🌐 Click t"
-        "o view HTML\x1b[0m\x1b]8;;\x1b\\                  "
-        "                                   \n    "
+        "\x1b]8;id=1627258210.84976-39532;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b[94"
+        "m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\        "
         "                                        "
-        "                                    \n\x1b[3"
-        "8;5;247m[2]:\x1b[0m   \x1b[1m     \x1b[0m   \x1b[1m "
-        "     \x1b[0m   \x1b[1mlorep\x1b[0m        \x1b[1m   "
-        "        hey\x1b[0m   \x1b[1mbye\x1b[0m           "
-        "            \n       \x1b[1m     \x1b[0m   \x1b[1m"
-        "      \x1b[0m   \x1b[1mipsum\x1b[0m   \x1b[1mhi\x1b[0m "
-        "  \x1b[1mvery_long_word\x1b[0m   \x1b[1m hi\x1b[0m  "
-        "                     \n       \x1b[1mfirst\x1b["
-        "0m   \x1b[1msecond\x1b[0m   \x1b[1mthird\x1b[0m   \x1b["
-        "1m  \x1b[0m   \x1b[1m              \x1b[0m   \x1b[1m"
-        "   \x1b[0m                       \n      ───"
-        "────────────────────────────────────────"
-        "─────────                      \n       \x1b"
-        "[1m  bar\x1b[0m   \x1b[1m   one\x1b[0m   \x1b[1m    "
-        "1\x1b[0m    1                2     4       "
-        "                \n                       "
-        " \x1b[1m   10\x1b[0m    3                4    "
-        "-1                       \n              "
-        " \x1b[1m three\x1b[0m   \x1b[1m    3\x1b[0m    3    "
-        "            4    -1                     "
-        "  \n       \x1b[1m  foo\x1b[0m   \x1b[1m   one\x1b[0m"
-        "   \x1b[1m    1\x1b[0m    3                4  "
-        "  -1                       \n"
+        "     \n                                  "
+        "                                        "
+        "      \n\x1b[38;5;247m[2]:\x1b[0m   \x1b[1m     \x1b["
+        "0m   \x1b[1m      \x1b[0m   \x1b[1mlorep\x1b[0m     "
+        "   \x1b[1m           hey\x1b[0m   \x1b[1mbye\x1b[0m "
+        "                      \n       \x1b[1m     \x1b"
+        "[0m   \x1b[1m      \x1b[0m   \x1b[1mipsum\x1b[0m   \x1b"
+        "[1mhi\x1b[0m   \x1b[1mvery_long_word\x1b[0m   \x1b[1"
+        "m hi\x1b[0m                       \n       \x1b"
+        "[1mfirst\x1b[0m   \x1b[1msecond\x1b[0m   \x1b[1mthir"
+        "d\x1b[0m   \x1b[1m  \x1b[0m   \x1b[1m              \x1b"
+        "[0m   \x1b[1m   \x1b[0m                       "
+        "\n      ─────────────────────────────────"
+        "───────────────────                     "
+        " \n       \x1b[1m  bar\x1b[0m   \x1b[1m   one\x1b[0m "
+        "  \x1b[1m    1\x1b[0m    1                2   "
+        "  4                       \n             "
+        "           \x1b[1m   10\x1b[0m    3           "
+        "     4    -1                       \n    "
+        "           \x1b[1m three\x1b[0m   \x1b[1m    3\x1b[0"
+        "m    3                4    -1           "
+        "            \n       \x1b[1m  foo\x1b[0m   \x1b[1m"
+        "   one\x1b[0m   \x1b[1m    1\x1b[0m    3         "
+        "       4    -1                       \n"
     )
     output = rich_output(code_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
@@ -578,34 +598,33 @@ def test_render_plain_dataframe(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "                                        "
         "                                        "
         "\n                                       "
         "                                        "
-        " \n\x1b]8;id=1622781162.971405-220177;file:/"
-        f"/{tempfile_path}"
-        "\x1b\\\x1b[94m🌐 Click"
-        " to view HTML\x1b[0m\x1b]8;;\x1b\\                "
+        " \n\x1b]8;id=1627258290.675266-113809;file:/"
+        f"/{tempfile_path}1.html\x1b\\"
+        "\x1b[94m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\    "
         "                                        "
-        "   \n                                    "
+        "               \n                        "
         "                                        "
-        "    \nlorep              hey             "
-        "   bye                                  "
-        "     \nipsum               hi very_long_w"
-        "ord  hi                                 "
-        "      \nfirst second third               "
+        "                \nlorep              hey "
+        "               bye                      "
+        "                 \nipsum               hi"
+        " very_long_word  hi                     "
+        "                  \nfirst second third   "
         "                                        "
-        "       \nbar   one    1       1          "
-        "    2   4                               "
-        "        \n             10      3         "
-        "     4  -1                              "
-        "         \n      three  3       3        "
-        "      4  -1                             "
-        "          \nfoo   one    1       3       "
-        "       4  -1                            "
-        "           \n"
+        "                   \nbar   one    1      "
+        " 1              2   4                   "
+        "                    \n             10    "
+        "  3              4  -1                  "
+        "                     \n      three  3    "
+        "   3              4  -1                 "
+        "                      \nfoo   one    1   "
+        "    3              4  -1                "
+        "                       \n"
     )
     output = rich_output(code_cell, plain=True)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
@@ -1306,7 +1325,7 @@ def test_vega_output(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1317,10 +1336,11 @@ def test_vega_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621482145.367022-895901;file://"
-        f"{tempfile_path}\x1b\\\x1b[94m\uf080 Click to v"
-        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
-        "                                 \n"
+        "\x1b]8;id=1627258352.290595-186007;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b["
+        "94m\uf080 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
+        "                                        "
+        "        \n"
     )
     output = rich_output(
         vega_output_cell,
@@ -1376,7 +1396,7 @@ def test_vegalite_output(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1387,10 +1407,11 @@ def test_vegalite_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621207824.060063-456106;file://"
-        f"{tempfile_path}\x1b\\\x1b[94m\uf080 Click to v"
-        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
-        "                                 \n"
+        "\x1b]8;id=1627258413.483745-126941;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b["
+        "94m\uf080 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
+        "                                        "
+        "        \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1446,7 +1467,7 @@ def test_vegalite_output_no_hints(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1457,10 +1478,11 @@ def test_vegalite_output_no_hints(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621211531.6504052-691935;file://"
-        f"{tempfile_path}\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;"
-        "\x1b\\                                      "
-        "                                  \n"
+        "\x1b]8;id=1627258468.7227972-667843;file://"
+        f"{tempfile_path}2.html\x1b\\\x1b"
+        "[94m\uf080 \x1b[0m\x1b]8;;\x1b\\                       "
+        "                                        "
+        "         \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1516,7 +1538,7 @@ def test_vegalite_output_no_nerd_font(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1527,10 +1549,11 @@ def test_vegalite_output_no_nerd_font(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621208043.989405-275090;file://"
-        f"{tempfile_path}\x1b\\\x1b[94m📊 Click to v"
-        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
-        "                                \n"
+        "\x1b]8;id=1627259187.108321-723371;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b["
+        "94m📊 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
+        "                                        "
+        "       \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1586,7 +1609,7 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1597,10 +1620,11 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621208210.565259-404317;file://"
-        f"{tempfile_path}\x1b\\\x1b[94mClick to vie"
-        "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
-        "                                 \n"
+        "\x1b]8;id=1627258616.013172-335482;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b["
+        "94mClick to view Vega chart\x1b[0m\x1b]8;;\x1b\\  "
+        "                                        "
+        "        \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1657,15 +1681,17 @@ def test_vegalite_output_no_files(
         hide_hyperlink_hints=False,
         unicode=True,
     )
-    tempfile_path = get_tempfile_path(".html")
-    assert not tempfile_path.exists()
+    tempfile_path = get_tempfile_path("")
+    tempfile_directory = tempfile_path.parent
+    for file in tempfile_directory.glob(f"{tempfile_path.stem}*.html"):
+        assert not file.exists()
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_write_vega_output(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
-    get_tempfile_path: Callable[[str], Path],
+    parse_link_filepath: Callable[[str], Path],
 ) -> None:
     """It writes the Vega plot to a file."""
     vegalite_output_cell = {
@@ -1730,7 +1756,7 @@ def test_write_vega_output(
         "    </vegachart>\n</body>\n<html></html>\n<"
         "/html>"
     )
-    rich_output(
+    output = rich_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -1738,7 +1764,7 @@ def test_write_vega_output(
         hide_hyperlink_hints=False,
         unicode=False,
     )
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = parse_link_filepath(output)
     file_contents = tempfile_path.read_text()
     assert file_contents == expected_contents
 
@@ -1787,7 +1813,7 @@ def test_vega_no_icon_no_message(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1798,10 +1824,11 @@ def test_vega_no_icon_no_message(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1621214780.000055-278457;file://"
-        f"{tempfile_path}\x1b\\\x1b[94mVega chart\x1b["
-        "0m\x1b]8;;\x1b\\                               "
-        "                                 \n"
+        "\x1b]8;id=1627258727.400486-912476;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b["
+        "94mVega chart\x1b[0m\x1b]8;;\x1b\\                "
+        "                                        "
+        "        \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1858,7 +1885,7 @@ def test_vega_no_hyperlink(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1869,7 +1896,9 @@ def test_vega_no_hyperlink(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        f"📊 {tempfile_path}         \n"
+        f"📊 {tempfile_path}\n      "
+        "2.html                                  "
+        "                                  \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1886,7 +1915,7 @@ def test_vega_url(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     mocker: MockerFixture,
-    get_tempfile_path: Callable[[str], Path],
+    parse_link_filepath: Callable[[str], Path],
 ) -> None:
     """It pulls the JSON data from the URL and writes to file."""
     mock = mocker.patch("httpx.get")
@@ -1956,7 +1985,7 @@ def test_vega_url(
         ' "type": "quantitative"}}}\n    </vegacha'
         "rt>\n</body>\n<html></html>\n</html>"
     )
-    rich_output(
+    output = rich_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -1964,7 +1993,7 @@ def test_vega_url(
         hide_hyperlink_hints=False,
         unicode=False,
     )
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = parse_link_filepath(output)
     file_contents = tempfile_path.read_text()
     mock.assert_called_with(
         url="https://raw.githubusercontent.com"
@@ -2047,7 +2076,7 @@ def test_render_html(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".html")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2058,15 +2087,15 @@ def test_render_html(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        f"\x1b]8;id=1622864957.148536-383092;file://{tempfile_path}"
-        "\x1b\\\x1b[94m🌐 Click "
-        "to view HTML\x1b[0m\x1b]8;;\x1b\\                 "
-        "                                    \n   "
+        "\x1b]8;id=1627258985.68256-224435;"
+        f"file://{tempfile_path}2.html\x1b\\\x1b[9"
+        "4m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\       "
         "                                        "
-        "                                     \n\x1b["
-        "38;5;247m    \x1b[0m  \x1b[1mLorep\x1b[0m \x1b[3mIps"
-        "um\x1b[0m                                  "
-        "                             \n"
+        "      \n                                 "
+        "                                        "
+        "       \n\x1b[38;5;247m    \x1b[0m  \x1b[1mLorep\x1b["
+        "0m \x1b[3mIpsum\x1b[0m                        "
+        "                                       \n"
     )
     output = rich_output(html_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
@@ -2245,7 +2274,7 @@ def test_render_image_link(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path(".png")
+    tempfile_path = get_tempfile_path("")
     output = rich_output(image_cell)
     expected_output = (
         "     ╭──────────────────────────────────"
@@ -2261,15 +2290,16 @@ def test_render_image_link(
         "                                  \n     "
         "                                        "
         "                                   \n\x1b[38"
-        ";5;247m    \x1b[0m  \x1b]8;id=1623210186.09380"
-        f"9-720396;file://{tempfile_path}\x1b\\\x1b"
-        "[94m🖼 Click to view Image\x1b[0m\x1b]8;;\x1b\\"
+        ";5;247m    \x1b[0m  \x1b]8;id=1627259035.13435"
+        f"-956210;file://{tempfile_path}2.png\x1b\\\x1b[94m"
+        "🖼 Click to view Image\x1b"
+        "[0m\x1b]8;;\x1b\\                              "
+        "                       \n                "
         "                                        "
-        "             \n                          "
+        "                        \n\x1b[38;5;247m    "
+        "\x1b[0m  <Figure size 432x288 with 1 Axes> "
         "                                        "
-        "              \n\x1b[38;5;247m    \x1b[0m  <Fig"
-        "ure size 432x288 with 1 Axes>           "
-        "                              \n"
+        "\n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
@@ -2335,7 +2365,7 @@ def test_render_svg_link(
         "source": "",
     }
     output = rich_output(svg_cell)
-    tempfile_path = get_tempfile_path(".svg")
+    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2346,14 +2376,14 @@ def test_render_svg_link(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
-        "\x1b]8;id=1623298299.031459-440008;file://"
-        f"{tempfile_path}\x1b\\\x1b[94m🖼 Click t"
-        "o view Image\x1b[0m\x1b]8;;\x1b\\                 "
-        "                                    \n   "
+        f"\x1b]8;id=1627259094.976956-618609;file://{tempfile_path}2.svg"
+        "\x1b\\\x1b[9"
+        "4m🖼 Click to view Image\x1b[0m\x1b]8;;\x1b\\      "
         "                                        "
-        "                                     \n\x1b["
-        "38;5;247m[2]:\x1b[0m  <graphviz.dot.Digraph"
-        " at 0x108eb9430>                        "
-        "             \n"
+        "       \n                                "
+        "                                        "
+        "        \n\x1b[38;5;247m[2]:\x1b[0m  <graphviz."
+        "dot.Digraph at 0x108eb9430>             "
+        "                        \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
