@@ -1844,7 +1844,6 @@ def test_vega_no_icon_no_message(
 def test_vega_no_hyperlink(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
-    remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
@@ -1885,7 +1884,8 @@ def test_vega_no_hyperlink(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+    tempfile_path = f"{get_tempfile_path('')}2.html"
+    tempfile_path = f"{tempfile_path[:71]}\n{'':>6}{tempfile_path[71:]}"
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1896,9 +1896,7 @@ def test_vega_no_hyperlink(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m    \x1b[0m  "
-        f"📊 {tempfile_path}\n      "
-        "2.html                                  "
-        "                                  \n"
+        f"📊 {tempfile_path}"
     )
     output = rich_output(
         vegalite_output_cell,
