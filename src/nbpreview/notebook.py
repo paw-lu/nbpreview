@@ -14,16 +14,16 @@ from rich import padding
 from rich import table
 from rich.console import Console
 from rich.console import ConsoleOptions
-from rich.emoji import Emoji
-from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
+from .component import display_data
 from .component import link
 from .component import render
 from .component import row
+from .component.display_data import DisplayData
 from .component.link import Hyperlink
 
 
@@ -112,36 +112,6 @@ class Notebook:
         self.cells = self.notebook_node.cells
         self.language = self.notebook_node.metadata.kernelspec.language
 
-    def _render_main_result(
-        self,
-        data: Dict[str, Union[str, NotebookNode]],
-        unicode: bool,
-        plain: bool,
-    ) -> Union[None, Table, Markdown, str, Syntax, Emoji]:
-        """Render the main result."""
-        main_result: Union[None, Table, Markdown, str, Syntax, Emoji] = None
-        if "text/html" in data:
-            main_result = render.render_html(
-                data, unicode=unicode, plain=plain, theme=self.theme
-            )
-
-        if "text/markdown" in data and main_result is None:
-            main_result = render.render_markdown(data, theme=self.theme)
-
-        if "text/latex" in data and main_result is None:
-            main_result = render.render_latex(data, unicode=unicode)
-
-        if "application/json" in data and main_result is None:
-            main_result = render.render_json(data, theme=self.theme)
-
-        if "application/pdf" in data and main_result is None:
-            main_result = render.render_pdf(nerd_font=self.nerd_font, unicode=unicode)
-
-        if "text/plain" in data and main_result is None:
-            main_result = data["text/plain"]
-
-        return main_result
-
     def _render_result(
         self,
         output: NotebookNode,
@@ -150,9 +120,7 @@ class Notebook:
         execution_count: Union[int, None],
         hyperlinks: bool,
         images: bool,
-    ) -> Generator[
-        Union[Table, str, Syntax, Markdown, Emoji, Text, Hyperlink], None, None
-    ]:
+    ) -> Iterator[Union[Hyperlink, DisplayData]]:
         """Render executed result outputs."""
         data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
         link_result = link.render_link(
@@ -164,7 +132,13 @@ class Notebook:
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
         )
-        main_result = self._render_main_result(data=data, unicode=unicode, plain=plain)
+        main_result = display_data.render_display_data(
+            data,
+            unicode=unicode,
+            plain=plain,
+            nerd_font=self.nerd_font,
+            theme=self.theme,
+        )
 
         for result in (link_result, main_result):
             if result is not None:
@@ -212,11 +186,7 @@ class Notebook:
         """
         for output in outputs:
             rendered_outputs: List[
-                Generator[
-                    Union[Text, str, Table, Syntax, Markdown, Emoji, Hyperlink],
-                    None,
-                    None,
-                ]
+                Iterator[Union[Hyperlink, DisplayData, Text, str, Syntax]]
             ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
@@ -254,7 +224,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Table, Syntax, Text, str, Table, Markdown, Emoji, Hyperlink],
+        content: Union[Hyperlink, DisplayData, Text, str, Syntax],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],
