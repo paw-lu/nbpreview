@@ -11,7 +11,6 @@ from typing import Union
 
 import httpx
 import jinja2
-from nbformat import NotebookNode
 from rich import console
 from rich import emoji
 from rich import style
@@ -20,11 +19,12 @@ from rich.emoji import Emoji
 from rich.text import Text
 
 from . import row
+from .data import Data
 from .row import Execution
 
 
 def render_link(
-    data: Dict[str, Union[str, NotebookNode]],
+    data: Data,
     unicode: bool,
     hyperlinks: bool,
     execution_count: Union[int, None],
@@ -219,7 +219,7 @@ class HTMLLink(Hyperlink):
     @classmethod
     def from_data(
         cls,
-        data: Dict[str, Union[str, NotebookNode]],
+        data: Data,
         nerd_font: bool,
         unicode: bool,
         files: bool,
@@ -269,7 +269,7 @@ class VegaLink(Hyperlink):
     @classmethod
     def from_data(
         cls,
-        data: Dict[str, Union[str, NotebookNode]],
+        data: Data,
         nerd_font: bool,
         unicode: bool,
         files: bool,
