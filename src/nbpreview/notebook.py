@@ -23,8 +23,10 @@ from .component import display_data
 from .component import link
 from .component import render
 from .component import row
+from .component import stream
 from .component.display_data import DisplayData
 from .component.link import Hyperlink
+from .component.stream import Stream
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -139,7 +141,7 @@ class Notebook:
             nerd_font=self.nerd_font,
             theme=self.theme,
         )
-
+        # TODO: Refactor from iterator to return
         for result in (link_result, main_result):
             if result is not None:
                 yield result
@@ -186,7 +188,7 @@ class Notebook:
         """
         for output in outputs:
             rendered_outputs: List[
-                Iterator[Union[Hyperlink, DisplayData, Text, str, Syntax]]
+                Iterator[Union[Hyperlink, DisplayData, Stream, Syntax]]
             ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
@@ -196,7 +198,7 @@ class Notebook:
             )
 
             if output_type == "stream":
-                rendered_stream = render.render_stream(output)
+                rendered_stream = stream.render_stream(output)
                 rendered_outputs.append(rendered_stream)
 
             elif output_type == "error":
@@ -224,7 +226,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Hyperlink, DisplayData, Text, str, Syntax],
+        content: Union[Hyperlink, DisplayData, Stream, Syntax],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],

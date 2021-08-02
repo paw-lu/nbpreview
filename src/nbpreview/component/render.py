@@ -4,7 +4,6 @@ from typing import Union
 
 from nbformat import NotebookNode
 from rich import padding
-from rich import style
 from rich import syntax
 from rich import text
 from rich.padding import Padding
@@ -36,27 +35,6 @@ def render_error(output: NotebookNode, theme: str) -> Iterator[Syntax]:
                 background_color="default",
             )
         )
-
-
-def render_stream(output: NotebookNode) -> Iterator[Union[Text, str]]:
-    """Render a stream type output.
-
-    Args:
-        output (NotebookNode): The stream output.
-
-    Yields:
-        Union[Test, str]: The rendered stream.
-    """
-    name = output.get("name")
-    output_text = output.get("text", "")
-    if name == "stderr":
-        rendered_stream = text.Text(
-            output_text, style=style.Style(bgcolor="color(174)")
-        )
-
-    else:
-        rendered_stream = output_text
-    yield rendered_stream
 
 
 def render_execution_indicator(
