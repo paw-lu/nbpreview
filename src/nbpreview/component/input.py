@@ -1,4 +1,4 @@
-"""Render notebook cells."""
+"""Input notebook cells."""
 from __future__ import annotations
 
 import dataclasses

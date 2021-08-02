@@ -1,4 +1,4 @@
-"""Jupyter display data and execute result."""
+"""Notebook display data and execute result."""
 from __future__ import annotations
 
 import collections
@@ -65,7 +65,7 @@ class DisplayData:
     data_type: ClassVar[str]
 
     def __rich__(self) -> Union[ConsoleRenderable, str]:
-        """Render the plain content."""
+        """Render the display."""
         return self.content
 
 
