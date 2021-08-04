@@ -1,40 +1,10 @@
 """Functions for rendering notebook components."""
-from typing import Iterator
 from typing import Union
 
-from nbformat import NotebookNode
 from rich import padding
-from rich import syntax
 from rich import text
 from rich.padding import Padding
-from rich.syntax import Syntax
 from rich.text import Text
-
-
-def render_error(output: NotebookNode, theme: str) -> Iterator[Syntax]:
-    """Render an error type output.
-
-    Args:
-        output (NotebookNode): The error output.
-        theme (str): The Pygments syntax theme to use.
-
-    Yields:
-        Generator[Syntax, None, None]: Generate each row of the
-            traceback.
-    """
-    traceback = output.get("traceback", ())
-    for traceback_line in traceback:
-        lexer_name = "IPython Traceback"
-        # A background here looks odd--highlighting only certain
-        # words.
-        yield (
-            syntax.Syntax(
-                traceback_line,
-                lexer_name=lexer_name,
-                theme=theme,
-                background_color="default",
-            )
-        )
 
 
 def render_execution_indicator(

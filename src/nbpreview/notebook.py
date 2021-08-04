@@ -15,16 +15,17 @@ from rich import table
 from rich.console import Console
 from rich.console import ConsoleOptions
 from rich.padding import Padding
-from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
 from .component import display_data
+from .component import error
 from .component import link
 from .component import render
 from .component import row
 from .component import stream
 from .component.display_data import DisplayData
+from .component.error import Error
 from .component.link import Hyperlink
 from .component.stream import Stream
 
@@ -188,7 +189,7 @@ class Notebook:
         """
         for output in outputs:
             rendered_outputs: List[
-                Iterator[Union[Hyperlink, DisplayData, Stream, Syntax]]
+                Iterator[Union[Hyperlink, DisplayData, Stream, Error]]
             ] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
@@ -202,7 +203,7 @@ class Notebook:
                 rendered_outputs.append(rendered_stream)
 
             elif output_type == "error":
-                rendered_error = render.render_error(output, theme=self.theme)
+                rendered_error = error.render_error(output, theme=self.theme)
                 rendered_outputs.append(rendered_error)
 
             elif output_type == "execute_result" or output_type == "display_data":
@@ -226,7 +227,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Hyperlink, DisplayData, Stream, Syntax],
+        content: Union[Hyperlink, DisplayData, Stream, Error],
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],
