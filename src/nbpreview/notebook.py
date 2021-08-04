@@ -25,9 +25,8 @@ from .component import render
 from .component import row
 from .component import stream
 from .component.display_data import DisplayData
-from .component.error import Error
 from .component.link import Hyperlink
-from .component.stream import Stream
+from .component.row import Output
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -188,9 +187,7 @@ class Notebook:
                 The notebook output.
         """
         for output in outputs:
-            rendered_outputs: List[
-                Iterator[Union[Hyperlink, DisplayData, Stream, Error]]
-            ] = []
+            rendered_outputs: List[Iterator[Output]] = []
             output_type = output.output_type
             execution_count = output.get("execution_count")
 
@@ -227,7 +224,7 @@ class Notebook:
 
     def _arrange_row(
         self,
-        content: Union[Hyperlink, DisplayData, Stream, Error],
+        content: Output,
         plain: bool,
         execution_count_indicator: Union[Text, Padding],
         pad: Tuple[int, int, int, int],

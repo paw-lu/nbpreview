@@ -18,9 +18,9 @@ from rich import text
 from rich.emoji import Emoji
 from rich.text import Text
 
-from . import row
+from . import execution_indicator
 from .data import Data
-from .row import Execution
+from .execution_indicator import Execution
 
 
 def render_link(
@@ -38,7 +38,7 @@ def render_link(
     if execution_count is None:
         execution = None
     else:
-        execution = row.Execution(execution_count, top_pad=False)
+        execution = execution_indicator.Execution(execution_count, top_pad=False)
     if (
         "application/vnd.vega.v5+json" in data
         or "application/vnd.vegalite.v4+json" in data
@@ -294,7 +294,7 @@ class VegaLink(Hyperlink):
 
         if files and vega_json:
 
-            execution_count_indicator = row.choose_execution(execution)
+            execution_count_indicator = execution_indicator.choose_execution(execution)
             env = jinja2.Environment(  # noqa: S701
                 loader=jinja2.PackageLoader("nbpreview"),
                 autoescape=jinja2.select_autoescape(),
