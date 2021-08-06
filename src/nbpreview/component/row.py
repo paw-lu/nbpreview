@@ -6,6 +6,9 @@ from typing import Tuple
 from typing import Union
 
 from nbformat import NotebookNode
+from rich import padding
+from rich.padding import Padding
+from rich.padding import PaddingDimensions
 
 from . import execution_indicator
 from . import input
@@ -17,14 +20,15 @@ from .link import Hyperlink
 from .stream import Stream
 
 Output = Union[DisplayData, Error, Hyperlink, Stream]
-TableRow = Union[Tuple[Union[Execution, str], Cell], Tuple[Cell]]
+Content = Union[Cell, Padding]
+TableRow = Union[Tuple[Union[Execution, str], Content], Tuple[Content]]
 
 
 @dataclasses.dataclass
 class Row:
     """A Jupyter notebook row."""
 
-    cell: Cell
+    content: Content
     plain: bool
     execution: InitVar[Optional[Execution]] = None
 
@@ -37,10 +41,26 @@ class Row:
         """Convert to row for table usage."""
         table_row: TableRow
         if self.plain:
-            table_row = (self.cell,)
+            table_row = (self.content,)
         else:
-            table_row = (self.execution, self.cell)
+            table_row = (self.execution, self.content)
         return table_row
+
+
+@dataclasses.dataclass(init=False)
+class OutputRow(Row):
+    """A Jupyter output row."""
+
+    def __init__(
+        self,
+        content: Output,
+        plain: bool,
+        pad: PaddingDimensions,
+        execution: Optional[Execution] = None,
+    ) -> None:
+        """Constructor."""
+        padded_content = padding.Padding(content, pad=pad)
+        super().__init__(padded_content, plain=plain, execution=execution)
 
 
 def render_input_row(

@@ -663,15 +663,15 @@ def test_render_stderr_stream(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b[48;5;174m<ipython-input-5-bc08279b5148"
-        ">:2: UserWarning: Lorep                 "
-        "     \x1b[0m\n      \x1b[48;5;174m warnings.war"
-        'n("Lorep")                              '
-        "                     \x1b[0m\n      \x1b[48;5;1"
-        "74m                                     "
-        "                                     \x1b[0"
-        "m\n"
+        "                  \n      \x1b[38;5;237;48;5"
+        ";174m<ipython-input-5-bc08279b5148>:2: U"
+        "serWarning: Lorep                      \x1b"
+        "[0m\n      \x1b[38;5;237;48;5;174m warnings."
+        'warn("Lorep")                           '
+        "                        \x1b[0m\n      \x1b[38;"
+        "5;237;48;5;174m                         "
+        "                                        "
+        "         \x1b[0m\n"
     )
     output = rich_output(stderr_cell)
     assert output == expected_output
@@ -688,24 +688,19 @@ def test_render_stream_stdout(rich_output: RichOutput) -> None:
         "source": "",
     }
     expected_output = (
-        "     ╭────────────────────────"
-        "──────────────────────────────"
-        "───────────────────╮\n\x1b[38;5;24"
-        "7m[6]:\x1b[0m │                  "
-        "                              "
-        "                         │\n   "
-        "  ╰───────────────────────────"
-        "──────────────────────────────"
-        "────────────────╯\n            "
-        "                              "
-        "                              "
-        "        \n\x1b[38;5;247m    \x1b[0m  "
-        "Lorep                         "
-        "                              "
-        "              \n               "
-        "                              "
-        "                              "
-        "     \n"
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[6]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n      Lorep          "
+        "                                        "
+        "                   \n                    "
+        "                                        "
+        "                    \n"
     )
     output = rich_output(stdout_cell)
     assert output == expected_output
@@ -748,21 +743,21 @@ def test_render_error_traceback(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b[49m\x1b[1;31m----------------------------"
-        "---------------------------------------…"
-        "\x1b[0m\n      \x1b[49m\x1b[1;31mZeroDivisionError"
-        "\x1b[0m                         Traceback ("
-        "most recent…\x1b[0m\n      \x1b[49m\x1b[1;32m<ipyt"
-        "hon-input-7-9e1622b385b6>\x1b[0m in \x1b[0;36m"
-        "<module>\x1b[1;34m\x1b[0m\x1b[0m        \n      \x1b["
-        "49m\x1b[1;32m----> 1\x1b[1;33m \x1b[1;36m1\x1b[0m\x1b[1"
-        ";33m/\x1b[0m\x1b[1;36m0\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m\x1b"
-        "[0m\x1b[0m\x1b[0m   \n      \x1b[49m\x1b[0m\x1b[0m      "
+        "                  \n      \x1b[49m\x1b[1;31m---"
+        "----------------------------------------"
+        "------------------------…\x1b[0m\n      \x1b[49"
+        "m\x1b[1;31mZeroDivisionError\x1b[0m           "
+        "              Traceback (most recent…\x1b[0"
+        "m\n      \x1b[49m\x1b[1;32m<ipython-input-7-9e1"
+        "622b385b6>\x1b[0m in \x1b[0;36m<module>\x1b[1;34m"
+        "\x1b[0m\x1b[0m        \n      \x1b[49m\x1b[1;32m---->"
+        " 1\x1b[1;33m \x1b[1;36m1\x1b[0m\x1b[1;33m/\x1b[0m\x1b[1;36"
+        "m0\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m\x1b[0m\x1b[0m\x1b[0m   \n"
+        "      \x1b[49m\x1b[0m\x1b[0m                     "
         "                                        "
-        "                         \n      \x1b[49m\x1b[1"
-        ";31mZeroDivisionError\x1b[0m: division by z"
-        "ero\x1b[0m                              \n"
+        "          \n      \x1b[49m\x1b[1;31mZeroDivisio"
+        "nError\x1b[0m: division by zero\x1b[0m        "
+        "                      \n"
     )
     output = rich_output(traceback_cell)
     assert output == expected_output
@@ -858,9 +853,9 @@ def test_render_error_no_traceback(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
+        "                  \n                     "
         "                                        "
-        "                                  \n"
+        "                   \n"
     )
     output = rich_output(traceback_cell)
     assert output == expected_output
@@ -899,10 +894,10 @@ def test_render_markdown_output(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "──────────────────────────╯\n            "
         "                                        "
-        "                            \n\x1b[38;5;247m"
-        "    \x1b[0m  \x1b[1mLorep\x1b[0m \x1b[3mipsum\x1b[0m   "
+        "                            \n      \x1b[1mL"
+        "orep\x1b[0m \x1b[3mipsum\x1b[0m                  "
         "                                        "
-        "                    \n"
+        "     \n"
     )
     output = rich_output(markdown_output_cell)
     assert output == expected_output
@@ -1013,26 +1008,25 @@ def test_render_latex_output(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m     \x1b[0m "
+        "                  \n                     "
         "                                        "
-        "                                  \n     "
+        "                   \n                    "
         "                                        "
-        "                                   \n    "
-        "       α∼Normal                         "
-        "                                    \n   "
-        "        β∼Normal                        "
-        "                                     \n  "
-        "         ϵ∼Half-Cauchy                  "
-        "                                      \n "
-        "          μ = α + Xβ                    "
-        "                                       \n"
-        "           y ∼Normal(μ, ϵ)              "
+        "                    \n           α∼Normal"
         "                                        "
-        "\n                                       "
+        "                     \n           β∼Norma"
+        "l                                       "
+        "                      \n           ϵ∼Half"
+        "-Cauchy                                 "
+        "                       \n           μ = α"
+        " + Xβ                                   "
+        "                        \n           y ∼N"
+        "ormal(μ, ϵ)                             "
+        "                         \n              "
         "                                        "
-        " \n                                      "
+        "                          \n             "
         "                                        "
-        "  \n"
+        "                           \n"
     )
     output = rich_output(latex_output_cell)
     assert expected_output == output
@@ -1069,9 +1063,9 @@ def test_render_latex_output_no_unicode(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m     \x1b[0m "
-        " <IPython.core.display.Latex object>    "
-        "                                  \n"
+        "                  \n       <IPython.core."
+        "display.Latex object>                   "
+        "                   \n"
     )
     output = rich_output(latex_output_cell, unicode=False)
     assert expected_output == output
@@ -1104,9 +1098,9 @@ def test_render_text_display_data(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "Lorep ipsum                             "
-        "                                  \n"
+        "                  \n      Lorep ipsum    "
+        "                                        "
+        "                   \n"
     )
     output = rich_output(text_display_data_cell)
     assert output == expected_output
@@ -1139,9 +1133,9 @@ def test_pdf_emoji_output(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "📄                                       "
-        "                                 \n"
+        "                  \n      📄              "
+        "                                        "
+        "                  \n"
     )
     output = rich_output(pdf_output_cell, unicode=True)
     assert output == expected_output
@@ -1174,9 +1168,9 @@ def test_pdf_nerd_output(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\uf1c1                                       "
-        "                                  \n"
+        "                  \n      \uf1c1              "
+        "                                        "
+        "                   \n"
     )
     output = rich_output(pdf_output_cell, nerd_font=True)
     assert output == expected_output
@@ -1338,12 +1332,11 @@ def test_vega_output(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258352.290595-186007;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b["
-        "94m\uf080 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
-        "                                        "
-        "        \n"
+        "                  \n      \x1b]8;id=16281369"
+        f"58.012196-350876;file://{tempfile_path}2.html\x1b\\\x1b[94m\uf080"
+        " Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
     )
     output = rich_output(
         vega_output_cell,
@@ -1409,12 +1402,10 @@ def test_vegalite_output(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258413.483745-126941;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b["
-        "94m\uf080 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
-        "                                        "
-        "        \n"
+        "                  \n      \x1b]8;id=16281369"
+        f"84.336542-849857;file://{tempfile_path}2.html\x1b\\\x1b[94m\uf080 Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1480,12 +1471,11 @@ def test_vegalite_output_no_hints(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258468.7227972-667843;file://"
-        f"{tempfile_path}2.html\x1b\\\x1b"
-        "[94m\uf080 \x1b[0m\x1b]8;;\x1b\\                       "
-        "                                        "
-        "         \n"
+        "                  \n      \x1b]8;id=16281371"
+        f"23.037426-407407;file://{tempfile_path}2.html\x1b\\\x1b[94m\uf080"
+        " \x1b[0m\x1b]8;;\x1b"
+        "\\                                       "
+        "                                 \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1551,12 +1541,11 @@ def test_vegalite_output_no_nerd_font(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627259187.108321-723371;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b["
-        "94m📊 Click to view Vega chart\x1b[0m\x1b]8;;\x1b\\"
-        "                                        "
-        "       \n"
+        "                  \n      \x1b]8;id=16281371"
+        f"88.406949-328152;file://{tempfile_path}2.html\x1b\\\x1b[94m📊"
+        " Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1622,12 +1611,10 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258616.013172-335482;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b["
-        "94mClick to view Vega chart\x1b[0m\x1b]8;;\x1b\\  "
-        "                                        "
-        "        \n"
+        "                  \n      \x1b]8;id=16281372"
+        f"55.127551-234092;file://{tempfile_path}2.html\x1b\\\x1b[94mClick to vie"
+        "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
+        "                                 \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1672,9 +1659,9 @@ def test_vegalite_output_no_files(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "📊 Vega chart                            "
-        "                                 \n"
+        "                  \n      📊 Vega chart   "
+        "                                        "
+        "                  \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1826,12 +1813,11 @@ def test_vega_no_icon_no_message(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258727.400486-912476;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b["
-        "94mVega chart\x1b[0m\x1b]8;;\x1b\\                "
-        "                                        "
-        "        \n"
+        "                  \n      \x1b]8;id=16281373"
+        f"35.10625-550844;file://{tempfile_path}2.html\x1b\\\x1b[94mVega"
+        " chart\x1b[0"
+        "m\x1b]8;;\x1b\\                                "
+        "                                \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -1898,8 +1884,7 @@ def test_vega_no_hyperlink(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        f"📊 {tempfile_path}"
+        f"                  \n      📊 {tempfile_path}"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -2035,9 +2020,9 @@ def test_vega_url_request_error(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "Vega chart                              "
-        "                                  \n"
+        "                  \n      Vega chart     "
+        "                                        "
+        "                   \n"
     )
     output = rich_output(
         vegalite_output_cell,
@@ -2087,16 +2072,15 @@ def test_render_html(
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n\x1b[38;5;247m    \x1b[0m  "
-        "\x1b]8;id=1627258985.68256-224435;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b[9"
-        "4m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\       "
+        "                  \n      \x1b]8;id=16281375"
+        f"06.111208-917276;file://{tempfile_path}2.html\x1b\\\x1b[94m🌐 Click to v"
+        "iew HTML\x1b[0m\x1b]8;;\x1b\\                     "
+        "                                \n       "
         "                                        "
-        "      \n                                 "
+        "                                 \n      "
+        "\x1b[1mLorep\x1b[0m \x1b[3mIpsum\x1b[0m             "
         "                                        "
-        "       \n\x1b[38;5;247m    \x1b[0m  \x1b[1mLorep\x1b["
-        "0m \x1b[3mIpsum\x1b[0m                        "
-        "                                       \n"
+        "          \n"
     )
     output = rich_output(html_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
@@ -2290,17 +2274,16 @@ def test_render_image_link(
         "<AxesSubplot:>                          "
         "                                  \n     "
         "                                        "
-        "                                   \n\x1b[38"
-        ";5;247m    \x1b[0m  \x1b]8;id=1627259035.13435"
-        f"-956210;file://{tempfile_path}2.png\x1b\\\x1b[94m"
-        "🖼 Click to view Image\x1b"
-        "[0m\x1b]8;;\x1b\\                              "
-        "                       \n                "
+        "                                   \n    "
+        "  \x1b]8;id=1628137556.114246-789762;"
+        f"file://{tempfile_path}2.png\x1b\\\x1b"
+        "[94m🖼 Click to view Image\x1b[0m\x1b]8;;\x1b\\    "
         "                                        "
-        "                        \n\x1b[38;5;247m    "
-        "\x1b[0m  <Figure size 432x288 with 1 Axes> "
+        "         \n                              "
         "                                        "
-        "\n"
+        "          \n      <Figure size 432x288 wi"
+        "th 1 Axes>                              "
+        "           \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 

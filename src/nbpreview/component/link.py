@@ -27,18 +27,13 @@ def render_link(
     data: Data,
     unicode: bool,
     hyperlinks: bool,
-    execution_count: Union[int, None],
+    execution: Union[Execution, None],
     nerd_font: bool,
     files: bool,
     hide_hyperlink_hints: bool,
 ) -> Union[Hyperlink, None]:
     """Render an output link."""
     link_result: Hyperlink
-    # TODO: Temporarily here to smooth refactor transition
-    if execution_count is None:
-        execution = None
-    else:
-        execution = execution_indicator.Execution(execution_count, top_pad=False)
     if (
         "application/vnd.vega.v5+json" in data
         or "application/vnd.vegalite.v4+json" in data

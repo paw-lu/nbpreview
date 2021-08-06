@@ -2,7 +2,6 @@
 import dataclasses
 import itertools
 from typing import Dict
-from typing import Generator
 from typing import Iterator
 from typing import List
 from typing import Optional
@@ -21,12 +20,14 @@ from rich.text import Text
 from .component import display_data
 from .component import error
 from .component import link
-from .component import render
 from .component import row
 from .component import stream
 from .component.display_data import DisplayData
+from .component.execution_indicator import Execution
 from .component.link import Hyperlink
 from .component.row import Output
+from .component.row import OutputRow
+from nbpreview.component import execution_indicator
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -119,7 +120,7 @@ class Notebook:
         output: NotebookNode,
         plain: bool,
         unicode: bool,
-        execution_count: Union[int, None],
+        execution: Union[Execution, None],
         hyperlinks: bool,
         images: bool,
     ) -> Iterator[Union[Hyperlink, DisplayData]]:
@@ -129,7 +130,7 @@ class Notebook:
             data,
             unicode=unicode,
             hyperlinks=hyperlinks,
-            execution_count=execution_count,
+            execution=execution,
             nerd_font=self.nerd_font,
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
@@ -154,14 +155,7 @@ class Notebook:
         unicode: bool,
         hyperlinks: bool,
         images: bool,
-    ) -> Generator[
-        Union[
-            Tuple[Padding],
-            Tuple[Union[Text, Padding], Union[Padding]],
-        ],
-        None,
-        None,
-    ]:
+    ) -> Iterator[OutputRow]:
         """Render the output of a notebook.
 
         Args:
@@ -175,24 +169,17 @@ class Notebook:
             images (bool): Whether to render images in the terminal.
 
         Yields:
-            Generator[
-                Union[
-                    Tuple[Padding],
-                    Tuple[Union[Text, Padding],
-                    Union[Padding]],
-                ],
-                None,
-                None,
-            ]:
+            Iterator[OutputRow]:
                 The notebook output.
         """
         for output in outputs:
             rendered_outputs: List[Iterator[Output]] = []
             output_type = output.output_type
-            execution_count = output.get("execution_count")
-
-            execution_count_indicator = render.render_execution_indicator(
-                execution_count, top_pad=False
+            execution_count = output.get("execution_count", False)
+            execution = (
+                execution_indicator.Execution(execution_count, top_pad=False)
+                if execution_count is not False
+                else None
             )
 
             if output_type == "stream":
@@ -208,18 +195,15 @@ class Notebook:
                     output,
                     plain=plain,
                     unicode=unicode,
-                    execution_count=execution_count,
+                    execution=execution,
                     hyperlinks=hyperlinks,
                     images=images,
                 )
                 rendered_outputs.append(rendered_execute_result)
 
             for rendered_output in itertools.chain(*rendered_outputs):
-                yield self._arrange_row(
-                    rendered_output,
-                    plain=plain,
-                    execution_count_indicator=execution_count_indicator,
-                    pad=pad,
+                yield row.OutputRow(
+                    rendered_output, plain=plain, execution=execution, pad=pad
                 )
 
     def _arrange_row(
@@ -282,6 +266,6 @@ class Notebook:
                     images=images,
                 )
                 for rendered_output in rendered_outputs:
-                    grid.add_row(*rendered_output)
+                    grid.add_row(*rendered_output.to_table_row())
 
         yield grid
