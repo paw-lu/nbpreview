@@ -4,6 +4,7 @@ import itertools
 import json
 import pathlib
 import re
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -51,22 +52,28 @@ class RichOutput(Protocol):
         ...
 
 
-def split_string(string: str, sub_length: int = 40) -> Tuple[str, ...]:
+def split_string(
+    string: str, sub_length: int = 40, copy: bool = False
+) -> Tuple[str, ...]:
     """Split a string into subsections less than or equal to new length.
 
     Args:
         string (str): The long string to split up.
         sub_length (int): The maximum length of the subsections.
             Defaults to 56.
+        copy (bool): Copy output to clipboard.
 
     Returns:
         Tuple[str]: The string split into sections.
     """
     string_length = len(string)
-    return tuple(
+    split = tuple(
         string[begin : begin + sub_length]
         for begin in range(0, string_length, sub_length)
     )
+    if copy is True:
+        subprocess.run("/usr/bin/pbcopy", text=True, input=str(split))  # noqa: S603
+    return split
 
 
 @pytest.fixture
