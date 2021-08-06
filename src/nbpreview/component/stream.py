@@ -67,6 +67,6 @@ class StdErr(Stream):
     def __rich__(self) -> Text:
         """Render a stderr stream."""
         rendered_stderr = text.Text(
-            self.content, style=style.Style(bgcolor="color(174)")
+            self.content, style=style.Style(color="color(237)", bgcolor="color(174)")
         )
         return rendered_stderr
