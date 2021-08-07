@@ -8,8 +8,8 @@ import typer
 from rich import console
 from rich import traceback
 
-from . import __version__
-from . import notebook
+from nbpreview import __version__
+from nbpreview import notebook
 
 app = typer.Typer()
 traceback.install(theme="ansi_dark")

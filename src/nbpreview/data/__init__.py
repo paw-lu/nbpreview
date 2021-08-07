@@ -1,4 +1,4 @@
-"""Notebook data."""
+"""The Jupyter notebook data."""
 from typing import Dict
 from typing import Union
 

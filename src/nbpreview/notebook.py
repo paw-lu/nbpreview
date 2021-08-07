@@ -17,17 +17,17 @@ from rich.padding import Padding
 from rich.table import Table
 from rich.text import Text
 
-from .component import display_data
-from .component import error
-from .component import link
-from .component import row
-from .component import stream
-from .component.display_data import DisplayData
-from .component.execution_indicator import Execution
-from .component.link import Hyperlink
-from .component.row import Output
-from .component.row import OutputRow
-from nbpreview.component import execution_indicator
+from nbpreview.component import row
+from nbpreview.component.content.output import error
+from nbpreview.component.content.output import Output
+from nbpreview.component.content.output import stream
+from nbpreview.component.content.output.result import display_data
+from nbpreview.component.content.output.result import execution_indicator
+from nbpreview.component.content.output.result import link
+from nbpreview.component.content.output.result.display_data import DisplayData
+from nbpreview.component.content.output.result.execution_indicator import Execution
+from nbpreview.component.content.output.result.link import Hyperlink
+from nbpreview.component.row import OutputRow
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:

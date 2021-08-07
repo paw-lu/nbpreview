@@ -27,8 +27,8 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from .data import Data
-from .link import select_icon
+from nbpreview.component.content.output.result import link
+from nbpreview.data import Data
 
 
 def render_display_data(
@@ -300,7 +300,7 @@ class PDFDisplay(DisplayData):
 
     def __rich__(self) -> Union[str, Emoji]:
         """Render the PDF display data."""
-        rendered_pdf = select_icon(
+        rendered_pdf = link.select_icon(
             "",
             emoji_name="page_facing_up",
             nerd_font=self.nerd_font,

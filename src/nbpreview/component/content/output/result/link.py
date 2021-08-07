@@ -18,9 +18,9 @@ from rich import text
 from rich.emoji import Emoji
 from rich.text import Text
 
-from . import execution_indicator
-from .data import Data
-from .execution_indicator import Execution
+from nbpreview.component.content.output.result import execution_indicator
+from nbpreview.component.content.output.result.execution_indicator import Execution
+from nbpreview.data import Data
 
 
 def render_link(

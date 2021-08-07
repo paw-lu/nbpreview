@@ -10,16 +10,12 @@ from rich import padding
 from rich.padding import Padding
 from rich.padding import PaddingDimensions
 
-from . import execution_indicator
-from . import input
-from .display_data import DisplayData
-from .error import Error
-from .execution_indicator import Execution
-from .input import Cell
-from .link import Hyperlink
-from .stream import Stream
+from nbpreview.component.content import input
+from nbpreview.component.content.input import Cell
+from nbpreview.component.content.output import Output
+from nbpreview.component.content.output.result import execution_indicator
+from nbpreview.component.content.output.result.execution_indicator import Execution
 
-Output = Union[DisplayData, Error, Hyperlink, Stream]
 Content = Union[Cell, Padding]
 TableRow = Union[Tuple[Union[Execution, str], Content], Tuple[Content]]
 
