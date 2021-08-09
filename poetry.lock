@@ -1454,7 +1454,7 @@ doc = ["mkdocs (>=1.1.2,<2.0.0)", "mkdocs-material (>=5.4.0,<6.0.0)", "markdown-
 
 [[package]]
 name = "types-click"
-version = "7.1.2"
+version = "7.1.5"
 description = "Typing stubs for click"
 category = "main"
 optional = false
@@ -1551,7 +1551,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.0"
-content-hash = "e3380b9373eb2a2a2ecc55f27233d2623808bd99c90b49dac4582f62c42e4ee1"
+content-hash = "92a50183bd50d979c48ba4a7b5ee28d2326110e1a6f95fc3c91e22f9a0daaf90"
 
 [metadata.files]
 alabaster = [
@@ -2507,8 +2507,8 @@ typer = [
     {file = "typer-0.3.2.tar.gz", hash = "sha256:5455d750122cff96745b0dec87368f56d023725a7ebc9d2e54dd23dc86816303"},
 ]
 types-click = [
-    {file = "types-click-7.1.2.tar.gz", hash = "sha256:040897284e4f9466825c3865f708a985a8e7ba4d8e22cb9198ffb7b522160850"},
-    {file = "types_click-7.1.2-py2.py3-none-any.whl", hash = "sha256:4722746f1ec9fd3fc8b1d7fb8c840604dc22f9e32bcc7a31a36d6d85cc2bce24"},
+    {file = "types-click-7.1.5.tar.gz", hash = "sha256:ced04123d857f5b05df7c6b10e9710e66cf2ec7d99d4ee48d04a07f4c1a83ad4"},
+    {file = "types_click-7.1.5-py3-none-any.whl", hash = "sha256:3547c4346884551d8c5a6320aa26a26f16a3257aebd975843fdeb2cbaf156911"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.0-py2-none-any.whl", hash = "sha256:0ac0f89795dd19de6b97debb0c6af1c70987fd80a2d62d1958f7e56fcc31b497"},
