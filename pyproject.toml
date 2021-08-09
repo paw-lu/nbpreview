@@ -92,11 +92,6 @@ ignore_missing_imports = true
 module = "nbpreview"
 disallow_untyped_calls = false
 
-# TODO: Remove once release Rich > 10.1.0
-[[tool.mypy.overrides]]
-module = "rich.*"
-no_implicit_optional = true
-
 # Might change, see https://github.com/python/mypy/issues/10198
 [tool.mypy-jinja2]
 no_implicit_reexport = false
