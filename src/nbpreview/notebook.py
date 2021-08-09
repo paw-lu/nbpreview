@@ -1,32 +1,23 @@
 """Render the notebook."""
 import dataclasses
 import itertools
-from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import Union
 
 from nbformat.notebooknode import NotebookNode
-from rich import padding
 from rich import table
 from rich.console import Console
 from rich.console import ConsoleOptions
-from rich.padding import Padding
 from rich.table import Table
-from rich.text import Text
 
 from nbpreview.component import row
 from nbpreview.component.content.output import error
 from nbpreview.component.content.output import Output
+from nbpreview.component.content.output import result
 from nbpreview.component.content.output import stream
-from nbpreview.component.content.output.result import display_data
 from nbpreview.component.content.output.result import execution_indicator
-from nbpreview.component.content.output.result import link
-from nbpreview.component.content.output.result.display_data import DisplayData
-from nbpreview.component.content.output.result.execution_indicator import Execution
-from nbpreview.component.content.output.result.link import Hyperlink
 from nbpreview.component.row import OutputRow
 
 
@@ -98,6 +89,8 @@ class Notebook:
             default None.
     """
 
+    # TODO: Fix incorrect docstring
+
     notebook_node: NotebookNode
     theme: str = "ansi_dark"
     plain: Optional[bool] = None
@@ -113,39 +106,8 @@ class Notebook:
     def __post_init__(self) -> None:
         """Constructor."""
         self.cells = self.notebook_node.cells
+        # TODO: what happens if no kernel?
         self.language = self.notebook_node.metadata.kernelspec.language
-
-    def _render_result(
-        self,
-        output: NotebookNode,
-        plain: bool,
-        unicode: bool,
-        execution: Union[Execution, None],
-        hyperlinks: bool,
-        images: bool,
-    ) -> Iterator[Union[Hyperlink, DisplayData]]:
-        """Render executed result outputs."""
-        data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
-        link_result = link.render_link(
-            data,
-            unicode=unicode,
-            hyperlinks=hyperlinks,
-            execution=execution,
-            nerd_font=self.nerd_font,
-            files=self.files,
-            hide_hyperlink_hints=self.hide_hyperlink_hints,
-        )
-        main_result = display_data.render_display_data(
-            data,
-            unicode=unicode,
-            plain=plain,
-            nerd_font=self.nerd_font,
-            theme=self.theme,
-        )
-        # TODO: Refactor from iterator to return
-        for result in (link_result, main_result):
-            if result is not None:
-                yield result
 
     def _render_output(
         self,
@@ -191,13 +153,16 @@ class Notebook:
                 rendered_outputs.append(rendered_error)
 
             elif output_type == "execute_result" or output_type == "display_data":
-                rendered_execute_result = self._render_result(
+                rendered_execute_result = result.render_result(
                     output,
                     plain=plain,
                     unicode=unicode,
                     execution=execution,
                     hyperlinks=hyperlinks,
-                    images=images,
+                    nerd_font=self.nerd_font,
+                    files=self.files,
+                    hide_hyperlink_hints=self.hide_hyperlink_hints,
+                    theme=self.theme,
                 )
                 rendered_outputs.append(rendered_execute_result)
 
@@ -205,19 +170,6 @@ class Notebook:
                 yield row.OutputRow(
                     rendered_output, plain=plain, execution=execution, pad=pad
                 )
-
-    def _arrange_row(
-        self,
-        content: Output,
-        plain: bool,
-        execution_count_indicator: Union[Text, Padding],
-        pad: Tuple[int, int, int, int],
-    ) -> Union[Tuple[Padding], Tuple[Union[Text, Padding], Union[Padding]]]:
-        padded_content = padding.Padding(content, pad=pad)
-        if plain:
-            return (padded_content,)
-        else:
-            return (execution_count_indicator, padded_content)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
