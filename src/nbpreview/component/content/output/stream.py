@@ -28,7 +28,6 @@ def render_stream(output: NotebookNode) -> Iterator[Stream]:
         stream = StdErr.from_output(output)
     else:
         stream = Stream.from_output(output)
-    # TODO: Refactor from generator to return
     yield stream
 
 

@@ -1,8 +1,6 @@
 """Render the notebook."""
 import dataclasses
-import itertools
 from typing import Iterator
-from typing import List
 from typing import Optional
 from typing import Tuple
 
@@ -13,12 +11,6 @@ from rich.console import ConsoleOptions
 from rich.table import Table
 
 from nbpreview.component import row
-from nbpreview.component.content.output import error
-from nbpreview.component.content.output import Output
-from nbpreview.component.content.output import result
-from nbpreview.component.content.output import stream
-from nbpreview.component.content.output.result import execution_indicator
-from nbpreview.component.row import OutputRow
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -109,68 +101,6 @@ class Notebook:
         # TODO: what happens if no kernel?
         self.language = self.notebook_node.metadata.kernelspec.language
 
-    def _render_output(
-        self,
-        outputs: List[NotebookNode],
-        plain: bool,
-        pad: Tuple[int, int, int, int],
-        unicode: bool,
-        hyperlinks: bool,
-        images: bool,
-    ) -> Iterator[OutputRow]:
-        """Render the output of a notebook.
-
-        Args:
-            outputs (List[NotebookNode]): The output nodes of a
-                notebook.
-            plain (bool): Whether to render the notebook in a plain
-                format.
-            pad (Tuple[int, int, int, int]): The output padding to use.
-            unicode (bool): Whether to render using unicode characters.
-            hyperlinks (bool): Whether to render hyperlinks.
-            images (bool): Whether to render images in the terminal.
-
-        Yields:
-            Iterator[OutputRow]:
-                The notebook output.
-        """
-        for output in outputs:
-            rendered_outputs: List[Iterator[Output]] = []
-            output_type = output.output_type
-            execution_count = output.get("execution_count", False)
-            execution = (
-                execution_indicator.Execution(execution_count, top_pad=False)
-                if execution_count is not False
-                else None
-            )
-
-            if output_type == "stream":
-                rendered_stream = stream.render_stream(output)
-                rendered_outputs.append(rendered_stream)
-
-            elif output_type == "error":
-                rendered_error = error.render_error(output, theme=self.theme)
-                rendered_outputs.append(rendered_error)
-
-            elif output_type == "execute_result" or output_type == "display_data":
-                rendered_execute_result = result.render_result(
-                    output,
-                    plain=plain,
-                    unicode=unicode,
-                    execution=execution,
-                    hyperlinks=hyperlinks,
-                    nerd_font=self.nerd_font,
-                    files=self.files,
-                    hide_hyperlink_hints=self.hide_hyperlink_hints,
-                    theme=self.theme,
-                )
-                rendered_outputs.append(rendered_execute_result)
-
-            for rendered_output in itertools.chain(*rendered_outputs):
-                yield row.OutputRow(
-                    rendered_output, plain=plain, execution=execution, pad=pad
-                )
-
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> Iterator[Table]:
@@ -187,7 +117,7 @@ class Notebook:
         unicode = _pick_option(
             self.unicode, detector=options.legacy_windows or options.ascii_only
         )
-        images = _pick_option(self.images, detector=not options.is_terminal)
+        # images = _pick_option(self.images, detector=not options.is_terminal)
         hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
         grid = table.Table.grid(padding=(1, 1, 1, 0))
 
@@ -209,13 +139,16 @@ class Notebook:
 
             outputs = cell.get("outputs")
             if not self.hide_output and outputs is not None:
-                rendered_outputs = self._render_output(
+                rendered_outputs = row.render_output_row(
                     outputs,
                     plain=plain,
                     pad=pad,
                     unicode=unicode,
                     hyperlinks=hyperlinks,
-                    images=images,
+                    nerd_font=self.nerd_font,
+                    files=self.files,
+                    hide_hyperlink_hints=self.hide_hyperlink_hints,
+                    theme=self.theme,
                 )
                 for rendered_output in rendered_outputs:
                     grid.add_row(*rendered_output.to_table_row())

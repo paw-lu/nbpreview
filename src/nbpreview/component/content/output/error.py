@@ -25,7 +25,6 @@ def render_error(output: NotebookNode, theme: str) -> Iterator[Error]:
     """
     if "traceback" in output:
         error = Traceback.from_output(output, theme=theme)
-        # TODO: Change from iterator to return
         yield error
 
 

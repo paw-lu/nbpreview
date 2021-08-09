@@ -1,6 +1,9 @@
 """Jupyter notebook rows."""
 import dataclasses
+import itertools
 from dataclasses import InitVar
+from typing import Iterator
+from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
@@ -12,7 +15,10 @@ from rich.padding import PaddingDimensions
 
 from nbpreview.component.content import input
 from nbpreview.component.content.input import Cell
+from nbpreview.component.content.output import error
 from nbpreview.component.content.output import Output
+from nbpreview.component.content.output import result
+from nbpreview.component.content.output import stream
 from nbpreview.component.content.output.result import execution_indicator
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
@@ -113,3 +119,51 @@ def render_input_row(
 
     cell_row = Row(rendered_cell, plain=plain, execution=execution)
     return cell_row
+
+
+def render_output_row(
+    outputs: List[NotebookNode],
+    plain: bool,
+    unicode: bool,
+    hyperlinks: bool,
+    nerd_font: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    theme: str,
+    pad: PaddingDimensions,
+) -> Iterator[OutputRow]:
+    """Render the output row of a notebook."""
+    for output in outputs:
+        rendered_outputs: List[Iterator[Output]] = []
+        output_type = output.output_type
+        execution_count = output.get("execution_count", False)
+        execution = (
+            execution_indicator.Execution(execution_count, top_pad=False)
+            if execution_count is not False
+            else None
+        )
+
+        if output_type == "stream":
+            rendered_stream = stream.render_stream(output)
+            rendered_outputs.append(rendered_stream)
+
+        elif output_type == "error":
+            rendered_error = error.render_error(output, theme=theme)
+            rendered_outputs.append(rendered_error)
+
+        elif output_type == "execute_result" or output_type == "display_data":
+            rendered_execute_result = result.render_result(
+                output,
+                plain=plain,
+                unicode=unicode,
+                execution=execution,
+                hyperlinks=hyperlinks,
+                nerd_font=nerd_font,
+                files=files,
+                hide_hyperlink_hints=hide_hyperlink_hints,
+                theme=theme,
+            )
+            rendered_outputs.append(rendered_execute_result)
+
+        for rendered_output in itertools.chain(*rendered_outputs):
+            yield OutputRow(rendered_output, plain=plain, execution=execution, pad=pad)
