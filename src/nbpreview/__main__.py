@@ -98,10 +98,8 @@ def main(
     stdout_console = console.Console(file=sys.stdout, width=width)
     stderr_console = console.Console(file=sys.stderr)
     try:
-        # TODO: Add from_node classmethod to Notebook
-        notebook_node = nbformat.read(file, as_version=4)
-        rendered_notebook = notebook.Notebook(
-            notebook_node=notebook_node,
+        rendered_notebook = notebook.Notebook.from_file(
+            file,
             theme=theme,
             hide_output=hide_output,
             plain=plain,

@@ -1,10 +1,14 @@
 """Render the notebook."""
+from __future__ import annotations
+
 import dataclasses
+from pathlib import Path
 from typing import Iterator
 from typing import List
 from typing import Optional
 from typing import Tuple
 
+import nbformat
 from nbformat.notebooknode import NotebookNode
 from rich import table
 from rich.console import Console
@@ -150,6 +154,37 @@ class Notebook:
         self.cells = self.notebook_node.cells
         # TODO: what happens if no kernel?
         self.language = self.notebook_node.metadata.kernelspec.language
+
+    @classmethod
+    def from_file(
+        cls,
+        file: Path,
+        theme: str = "ansi_dark",
+        plain: Optional[bool] = None,
+        unicode: Optional[bool] = None,
+        hide_output: bool = False,
+        nerd_font: bool = False,
+        files: bool = True,
+        hyperlinks: Optional[bool] = None,
+        hide_hyperlink_hints: bool = False,
+        images: Optional[bool] = None,
+        image_type: Optional[str] = None,
+    ) -> Notebook:
+        """Create Notebook from notebook file."""
+        notebook_node = nbformat.read(file, as_version=4)
+        return cls(
+            notebook_node,
+            theme=theme,
+            plain=plain,
+            unicode=unicode,
+            hide_output=hide_output,
+            nerd_font=nerd_font,
+            files=files,
+            hyperlinks=hyperlinks,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            images=images,
+            image_type=image_type,
+        )
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
