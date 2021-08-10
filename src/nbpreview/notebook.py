@@ -151,9 +151,11 @@ class Notebook:
 
     def __post_init__(self) -> None:
         """Constructor."""
-        self.cells = self.notebook_node.cells
-        # TODO: what happens if no kernel?
-        self.language = self.notebook_node.metadata.kernelspec.language
+        self.cells = self.notebook_node.get("cells", nbformat.from_dict([]))
+        try:
+            self.language = self.notebook_node.metadata.kernelspec.language
+        except AttributeError:
+            self.language = "python"
 
     @classmethod
     def from_file(
@@ -186,6 +188,7 @@ class Notebook:
             image_type=image_type,
         )
 
+    # TODO: Add rich_measure
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> Iterator[Table]:

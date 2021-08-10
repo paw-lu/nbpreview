@@ -55,7 +55,7 @@ def make_notebook() -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
         }
         if cell is not None:
             notebook["cells"] = [cell]
-        nbformat.validate(notebook)
+        nbformat.validate(notebook, version=4)
 
         return nbformat.from_dict(notebook)
 

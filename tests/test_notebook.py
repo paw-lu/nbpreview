@@ -18,6 +18,7 @@ from typing import Union
 from unittest.mock import Mock
 
 import httpx
+import nbformat
 import pytest
 from nbformat import NotebookNode
 from pytest_mock import MockerFixture
@@ -2371,3 +2372,19 @@ def test_render_svg_link(
         "                        \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_unknown_language() -> None:
+    """It sets the language to Python when it cannot be parsed."""
+    notebook_node = nbformat.from_dict(
+        {
+            "cells": [],
+            "metadata": {},
+            "nbformat": 4,
+            "nbformat_minor": 5,
+        }
+    )
+    rendered_notebook = notebook.Notebook(notebook_node)
+    expected_output = "python"
+    acutal_output = rendered_notebook.language
+    assert acutal_output == expected_output
