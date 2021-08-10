@@ -51,6 +51,55 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
         return (0, 0, 0, 1)
 
 
+def _render_notebook(
+    cells: NotebookNode,
+    plain: bool,
+    unicode: bool,
+    hyperlinks: bool,
+    theme: str,
+    nerd_font: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    hide_output: bool,
+    language: str,
+) -> Table:
+    """Create a table representing a notebook."""
+    grid = table.Table.grid(padding=(1, 1, 1, 0))
+
+    pad = _get_output_pad(plain)
+    if not plain:
+        grid.add_column(justify="right")
+    grid.add_column()
+
+    for cell in cells:
+        cell_row = row.render_input_row(
+            cell,
+            plain=plain,
+            pad=pad,
+            language=language,
+            theme=theme,
+            unicode_border=unicode,
+        )
+        grid.add_row(*cell_row.to_table_row())
+
+        outputs = cell.get("outputs")
+        if not hide_output and outputs is not None:
+            rendered_outputs = row.render_output_row(
+                outputs,
+                plain=plain,
+                pad=pad,
+                unicode=unicode,
+                hyperlinks=hyperlinks,
+                nerd_font=nerd_font,
+                files=files,
+                hide_hyperlink_hints=hide_hyperlink_hints,
+                theme=theme,
+            )
+            for rendered_output in rendered_outputs:
+                grid.add_row(*rendered_output.to_table_row())
+    return grid
+
+
 @dataclasses.dataclass()
 class Notebook:
     """Construct a Notebook object to render Jupyter Notebooks.
@@ -119,38 +168,16 @@ class Notebook:
         )
         # images = _pick_option(self.images, detector=not options.is_terminal)
         hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
-        grid = table.Table.grid(padding=(1, 1, 1, 0))
-
-        pad = _get_output_pad(plain)
-        if not plain:
-            grid.add_column(justify="right")
-        grid.add_column()
-
-        for cell in self.cells:
-            cell_row = row.render_input_row(
-                cell,
-                plain=plain,
-                pad=pad,
-                language=self.language,
-                theme=self.theme,
-                unicode_border=unicode,
-            )
-            grid.add_row(*cell_row.to_table_row())
-
-            outputs = cell.get("outputs")
-            if not self.hide_output and outputs is not None:
-                rendered_outputs = row.render_output_row(
-                    outputs,
-                    plain=plain,
-                    pad=pad,
-                    unicode=unicode,
-                    hyperlinks=hyperlinks,
-                    nerd_font=self.nerd_font,
-                    files=self.files,
-                    hide_hyperlink_hints=self.hide_hyperlink_hints,
-                    theme=self.theme,
-                )
-                for rendered_output in rendered_outputs:
-                    grid.add_row(*rendered_output.to_table_row())
-
-        yield grid
+        rendered_notebook = _render_notebook(
+            self.cells,
+            plain=plain,
+            unicode=unicode,
+            hyperlinks=hyperlinks,
+            theme=self.theme,
+            nerd_font=self.nerd_font,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
+            hide_output=self.hide_output,
+            language=self.language,
+        )
+        yield rendered_notebook
