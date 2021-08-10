@@ -1,6 +1,7 @@
 """Render the notebook."""
 import dataclasses
 from typing import Iterator
+from typing import List
 from typing import Optional
 from typing import Tuple
 
@@ -52,7 +53,7 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 
 def _render_notebook(
-    cells: NotebookNode,
+    cells: List[NotebookNode],
     plain: bool,
     unicode: bool,
     hyperlinks: bool,
