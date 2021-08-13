@@ -58,7 +58,7 @@ sphinx-rtd-theme = "^0.5.1"
 sphinx-click = "^2.6.0"
 pdbpp = "^0.10.3"
 Pygments = "^2.9.0"
-ipykernel = "^5.5.5"
+ipykernel = "^6.1.0"
 typing-extensions = "^3.10.0"
 pytest-mock = "^3.6.1"
 
