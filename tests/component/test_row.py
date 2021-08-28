@@ -18,6 +18,8 @@ def test_render_unknown_output_type() -> None:
         hide_hyperlink_hints=True,
         theme="ansi_dark",
         pad=(0, 1, 0, 0),
+        images=False,
+        image_drawing=None,
     )
     with pytest.raises(StopIteration):
         next(rendered_output_row)
