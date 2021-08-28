@@ -1,11 +1,16 @@
 """Package-wide test fixtures."""
+import contextlib
 from typing import Any
 from typing import Callable
+from typing import ContextManager
 from typing import Dict
+from typing import Iterator
 from typing import Optional
 
 import nbformat
 import pytest
+from _pytest.config import _PluggyPlugin
+from _pytest.config import Config
 from nbformat.notebooknode import NotebookNode
 
 
@@ -60,3 +65,21 @@ def make_notebook() -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
         return nbformat.from_dict(notebook)
 
     return _make_notebook
+
+
+@pytest.fixture
+def disable_capture(pytestconfig: Config) -> ContextManager[_PluggyPlugin]:
+    """Disable pytest's capture."""
+    # https://github.com/pytest-dev/pytest/issues/
+    # 1599?utm_source=pocket_mylist#issuecomment-556327594
+    @contextlib.contextmanager
+    def _disable_capture() -> Iterator[_PluggyPlugin]:
+        """Disable pytest's capture."""
+        capmanager = pytestconfig.pluginmanager.getplugin("capturemanager")
+        try:
+            capmanager.suspend_global_capture(in_=True)
+            yield capmanager
+        finally:
+            capmanager.resume_global_capture()
+
+    return _disable_capture()
