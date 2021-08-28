@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+import sys
 from pathlib import Path
 from typing import Iterator
 from typing import List
@@ -16,6 +17,11 @@ from rich.console import ConsoleOptions
 from rich.table import Table
 
 from nbpreview.component import row
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:  # pragma: no cover
+    from typing_extensions import Literal
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -56,6 +62,32 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
         return (0, 0, 0, 1)
 
 
+def _pick_image_drawing(
+    option: Literal["block", None], is_terminal: bool, plain: bool, unicode: bool
+) -> Literal["block", None]:
+    """Pick an image render option.
+
+    Args:
+        option (Literal["block", None]): The inputted option which can
+            override detections. If None, will autodetect.
+        is_terminal (bool): Whether the program is being used in a
+            terminal.
+        plain (bool): Whether to render the image in a plain style. Will
+            prevent autodetection of image style, typically leading to
+            returning None.
+        unicode (bool): Whether to use unicode characters to
+            render the notebook. By default will autodetect.
+
+    Returns:
+        Literal["block", None]: The image type to render.
+    """
+    image_render = option
+    if option is None and is_terminal and not plain:
+        if unicode:
+            image_render = "block"
+    return image_render
+
+
 def _render_notebook(
     cells: List[NotebookNode],
     plain: bool,
@@ -67,6 +99,8 @@ def _render_notebook(
     hide_hyperlink_hints: bool,
     hide_output: bool,
     language: str,
+    images: bool,
+    image_drawing: Literal["block", None],
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -99,6 +133,8 @@ def _render_notebook(
                 files=files,
                 hide_hyperlink_hints=hide_hyperlink_hints,
                 theme=theme,
+                images=images,
+                image_drawing=image_drawing,
             )
             for rendered_output in rendered_outputs:
                 grid.add_row(*rendered_output.to_table_row())
@@ -130,8 +166,8 @@ class Notebook:
             clickable.
         images (Optional[str]): Whether to render images. If None will
             attempt to autodetect. By default None.
-        image_type (Optional[str]): How to render images. Options are
-            "sixel" and "iterm". If None will attempt to autodetect. By
+        image_drawing (Optional[str]): How to render images. Options are
+            "block" or None. If None will attempt to autodetect. By
             default None.
     """
 
@@ -147,7 +183,7 @@ class Notebook:
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
     images: Optional[bool] = None
-    image_type: Optional[str] = None
+    image_drawing: Optional[Literal["block"]] = None
 
     def __post_init__(self) -> None:
         """Constructor."""
@@ -170,7 +206,7 @@ class Notebook:
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_type: Optional[str] = None,
+        image_drawing: Literal["block", None] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
         notebook_node = nbformat.read(file, as_version=4)
@@ -185,7 +221,7 @@ class Notebook:
             hyperlinks=hyperlinks,
             hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
-            image_type=image_type,
+            image_drawing=image_drawing,
         )
 
     # TODO: Add rich_measure
@@ -205,8 +241,15 @@ class Notebook:
         unicode = _pick_option(
             self.unicode, detector=options.legacy_windows or options.ascii_only
         )
-        # images = _pick_option(self.images, detector=not options.is_terminal)
         hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
+        images = _pick_option(self.images, detector=not options.is_terminal)
+        image_drawing = _pick_image_drawing(
+            self.image_drawing,
+            is_terminal=options.is_terminal,
+            plain=plain,
+            unicode=unicode,
+        )
+
         rendered_notebook = _render_notebook(
             self.cells,
             plain=plain,
@@ -218,5 +261,7 @@ class Notebook:
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             hide_output=self.hide_output,
             language=self.language,
+            images=images,
+            image_drawing=image_drawing,
         )
         yield rendered_notebook

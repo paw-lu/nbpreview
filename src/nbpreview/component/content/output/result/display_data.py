@@ -4,6 +4,7 @@ from __future__ import annotations
 import collections
 import dataclasses
 import json
+import sys
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -27,34 +28,92 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
+from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result import link
+from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.data import Data
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:  # pragma: no cover
+    from typing_extensions import Literal
+
+
+def _render_html(
+    data: Data, unicode: bool, theme: str
+) -> Union[DataFrameDisplay, HTMLDisplay]:
+    """Render HTML output."""
+    display_data: Union[DataFrameDisplay, HTMLDisplay]
+    html_data = data["text/html"]
+    if DataFrameDisplay.is_dataframe(html_data):
+        display_data = DataFrameDisplay.from_data(data, unicode=unicode)
+    else:
+        display_data = HTMLDisplay.from_data(data, theme=theme)
+    return display_data
+
+
+def _choose_basic_renderer(
+    data: Data, unicode: bool, nerd_font: bool, theme: str
+) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
+    display_data: DisplayData
+    if "text/markdown" in data:
+        display_data = MarkdownDisplay.from_data(data, theme=theme)
+        return display_data
+    elif unicode and "text/latex" in data:
+        display_data = LaTeXDisplay.from_data(data)
+        return display_data
+    elif "application/json" in data:
+        display_data = JSONDisplay.from_data(data, theme=theme)
+        return display_data
+    elif (unicode or nerd_font) and "application/pdf" in data:
+        display_data = PDFDisplay.from_data(data, nerd_font=nerd_font, unicode=unicode)
+        return display_data
+    elif "text/plain" in data:
+        display_data = PlainDisplay.from_data(data)
+        return display_data
+    else:
+        return None
 
 
 def render_display_data(
-    data: Data, unicode: bool, plain: bool, nerd_font: bool, theme: str
-) -> Union[DisplayData, None]:
+    data: Data,
+    unicode: bool,
+    plain: bool,
+    nerd_font: bool,
+    theme: str,
+    images: bool,
+    image_drawing: Literal["block", None],
+) -> Union[DisplayData, None, Drawing]:
     """Render the notebook display data."""
-    display_data: Union[DisplayData, None]
+    display_data: Union[DisplayData, None, Drawing]
+    if images:
+        image_types = (
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+        )
+        for image_type in image_types:
+            if image_type in data:
+                display_data = drawing.render_drawing(
+                    data,
+                    image_drawing=image_drawing,
+                    image_type=image_type,
+                    unicode=unicode,
+                    nerd_font=nerd_font,
+                )
+                if display_data is not None:
+                    return display_data
+
     if not plain and "text/html" in data:
-        html_data = data["text/html"]
-        if DataFrameDisplay.is_dataframe(html_data):
-            display_data = DataFrameDisplay.from_data(data, unicode=unicode)
-        else:
-            display_data = HTMLDisplay.from_data(data, theme=theme)
-    elif "text/markdown" in data:
-        display_data = MarkdownDisplay.from_data(data, theme=theme)
-    elif unicode and "text/latex" in data:
-        display_data = LaTeXDisplay.from_data(data)
-    elif "application/json" in data:
-        display_data = JSONDisplay.from_data(data, theme=theme)
-    elif (unicode or nerd_font) and "application/pdf" in data:
-        display_data = PDFDisplay.from_data(data, nerd_font=nerd_font, unicode=unicode)
-    elif "text/plain" in data:
-        display_data = PlainDisplay.from_data(data)
+        display_data = _render_html(data, unicode=unicode, theme=theme)
+        return display_data
     else:
-        display_data = None
-    return display_data
+        display_data = _choose_basic_renderer(
+            data, unicode=unicode, nerd_font=nerd_font, theme=theme
+        )
+        return display_data
 
 
 @dataclasses.dataclass

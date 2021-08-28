@@ -1,6 +1,7 @@
 """Jupyter notebook rows."""
 import dataclasses
 import itertools
+import sys
 from dataclasses import InitVar
 from typing import Iterator
 from typing import List
@@ -21,6 +22,11 @@ from nbpreview.component.content.output import result
 from nbpreview.component.content.output import stream
 from nbpreview.component.content.output.result import execution_indicator
 from nbpreview.component.content.output.result.execution_indicator import Execution
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:  # pragma: no cover
+    from typing_extensions import Literal
 
 Content = Union[Cell, Padding]
 TableRow = Union[Tuple[Union[Execution, str], Content], Tuple[Content]]
@@ -131,6 +137,8 @@ def render_output_row(
     hide_hyperlink_hints: bool,
     theme: str,
     pad: PaddingDimensions,
+    images: bool,
+    image_drawing: Literal["block", None],
 ) -> Iterator[OutputRow]:
     """Render the output row of a notebook."""
     for output in outputs:
@@ -162,6 +170,8 @@ def render_output_row(
                 files=files,
                 hide_hyperlink_hints=hide_hyperlink_hints,
                 theme=theme,
+                images=images,
+                image_drawing=image_drawing,
             )
             rendered_outputs.append(rendered_execute_result)
 
