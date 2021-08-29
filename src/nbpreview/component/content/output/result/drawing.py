@@ -13,9 +13,9 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
-import PIL
+import PIL.Image
 import terminedia
-from PIL import Image
+from PIL.Image import Image
 from rich import ansi
 from rich import measure
 from rich import style
@@ -134,7 +134,7 @@ def _render_block_drawing(
 ) -> Tuple[Text, ...]:
     """Render a representation on an image with unicode characters."""
     try:
-        pil_image = Image.open(io.BytesIO(image))
+        pil_image = PIL.Image.open(io.BytesIO(image))
     except PIL.UnidentifiedImageError:
         pil_image = None
 

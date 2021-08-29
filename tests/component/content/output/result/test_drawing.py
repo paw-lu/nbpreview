@@ -1,6 +1,7 @@
 """Test for nbpreview.component.content.output.result.drawing."""
+import PIL.Image
 import pytest
-from PIL import Image
+from PIL.Image import Image
 
 from nbpreview.component.content.output.result import drawing
 
@@ -8,7 +9,7 @@ from nbpreview.component.content.output.result import drawing
 @pytest.fixture
 def image() -> Image:
     """Create dummy Pillow Image."""
-    image = Image.new("RGB", size=(80, 50))
+    image = PIL.Image.new("RGB", size=(80, 50))
     return image
 
 
