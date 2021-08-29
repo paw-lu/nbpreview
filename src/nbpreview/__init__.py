@@ -3,7 +3,7 @@ import sys
 
 if sys.version_info >= (3, 8):
     from importlib.metadata import version, PackageNotFoundError
-else:  # pragma: no cover
+else:
     from importlib_metadata import version, PackageNotFoundError
 
 try:

@@ -28,7 +28,7 @@ from nbpreview.__main__ import app
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
-else:  # pragma: no cover
+else:
     from typing_extensions import Protocol
 
 

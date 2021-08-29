@@ -15,7 +15,7 @@ from nbpreview.component.content.output.result.link import Hyperlink
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:  # pragma: no cover
+else:
     from typing_extensions import Literal
 
 Result = Union[Hyperlink, DisplayData, Drawing]

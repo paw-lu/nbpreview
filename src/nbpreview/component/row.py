@@ -25,7 +25,7 @@ from nbpreview.component.content.output.result.execution_indicator import Execut
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:  # pragma: no cover
+else:
     from typing_extensions import Literal
 
 Content = Union[Cell, Padding]

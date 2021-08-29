@@ -33,7 +33,7 @@ from nbpreview import notebook
 if sys.version_info >= (3, 8):
     from typing import Literal
     from typing import Protocol
-else:  # pragma: no cover
+else:
     from typing_extensions import Literal
     from typing_extensions import Protocol
 

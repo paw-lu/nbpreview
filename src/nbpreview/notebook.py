@@ -20,7 +20,7 @@ from nbpreview.component import row
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:  # pragma: no cover
+else:
     from typing_extensions import Literal
 
 
