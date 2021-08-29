@@ -34,6 +34,7 @@ html2text = "^2020.1.16"
 types-click = "^7.1.5"
 Pillow = "^8.3.1"
 terminedia = "^0.4.1"
+typing-extensions = "^3.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
@@ -60,7 +61,6 @@ sphinx-click = "^2.6.0"
 pdbpp = "^0.10.3"
 Pygments = "^2.9.0"
 ipykernel = "^5.5.5"
-typing-extensions = "^3.10.0"
 pytest-mock = "^3.6.1"
 
 [tool.poetry.scripts]
@@ -86,7 +86,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "lxml.*,nbformat.*,PIL,pygments,pylatexenc,pytest_mock,terminedia"
+module = "lxml.*,nbformat.*,PIL.*,pygments,pylatexenc,pytest_mock,terminedia"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
