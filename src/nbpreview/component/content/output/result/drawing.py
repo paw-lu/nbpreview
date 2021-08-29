@@ -14,7 +14,6 @@ from typing import Tuple
 from typing import Union
 
 import PIL.Image
-import terminedia
 from PIL.Image import Image
 from rich import ansi
 from rich import measure
@@ -30,8 +29,14 @@ from nbpreview.data import Data
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:  # pragma: no cover
+else:
     from typing_extensions import Literal
+
+# terminedia depends on fcntl, which is not present on Windows platforms
+try:
+    import terminedia
+except ModuleNotFoundError:
+    pass
 
 
 def render_drawing(
@@ -42,7 +47,11 @@ def render_drawing(
     nerd_font: bool,
 ) -> Union[Drawing, None]:
     """Render a drawing of an image."""
-    if image_drawing == "block" and image_type != "image/svg+xml":
+    if (
+        image_drawing == "block"
+        and image_type != "image/svg+xml"
+        and "terminedia" in sys.modules
+    ):
         rendered_image = UnicodeDrawing.from_data(data, image_type=image_type)
         return rendered_image
     return None
@@ -128,6 +137,14 @@ class Drawing(abc.ABC):
         """Define the dimensions of the rendered drawing."""
 
 
+def render_fallback_text(fallback_text: str) -> Text:
+    """Render the fallback text representing an image."""
+    rendered_fallback_text = text.Text(
+        fallback_text, style=style.Style(color="#BB86FC")
+    )
+    return rendered_fallback_text
+
+
 @functools.lru_cache(maxsize=2 ** 12)
 def _render_block_drawing(
     image: bytes, max_width: int, max_height: int, fallback_text: str
@@ -158,9 +175,7 @@ def _render_block_drawing(
         decoder = ansi.AnsiDecoder()
         rendered_unicode_drawing = tuple(decoder.decode(string_image))
     else:
-        rendered_unicode_drawing = (
-            text.Text(fallback_text, style=style.Style(color="#BB86FC")),
-        )
+        rendered_unicode_drawing = (render_fallback_text(fallback_text=fallback_text),)
     return rendered_unicode_drawing
 
 

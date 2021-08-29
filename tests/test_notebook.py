@@ -84,6 +84,27 @@ def split_string(
 
 
 @pytest.fixture
+def adjust_for_fallback() -> Callable[[str, int], str]:
+    """Fixture to automatically adjust expected outputs for fallback."""
+
+    def _adjust_for_fallback(rendered_output: str, newlines: int) -> str:
+        """Add fallback text to end of output if import succeeds."""
+        fallback_text = newlines * f"{' ':>80}\n" + (
+            "      \x1b[38;2;187;134"
+            ";252mImage                              "
+            "                                       \x1b"
+            "[0m\n"
+        )
+        if "terminedia" in sys.modules:
+            adjusted_output = rendered_output + fallback_text
+        else:
+            adjusted_output = rendered_output
+        return adjusted_output
+
+    return _adjust_for_fallback
+
+
+@pytest.fixture
 def parse_link_filepath() -> Callable[[str], Path]:
     """Return a helper function for parsing filepaths from links."""
 
@@ -1344,6 +1365,7 @@ def test_vegalite_output(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
+    adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vegalite_output_cell = {
@@ -1397,13 +1419,9 @@ def test_vegalite_output(
         f"ile://{tempfile_path}2.h"
         "tml\x1b\\\x1b[94m\uf080 Click to view Vega chart\x1b[0m"
         "\x1b]8;;\x1b\\                                 "
-        "               \n                        "
-        "                                        "
-        "                \n      \x1b[38;2;187;134;25"
-        "2mImage                                 "
-        "                                    \x1b[0m"
-        "\n"
+        "               \n"
     )
+    adjusted_expected_output = adjust_for_fallback(expected_output, 1)
     output = rich_output(
         vegalite_output_cell,
         nerd_font=True,
@@ -1411,7 +1429,7 @@ def test_vegalite_output(
         hyperlinks=True,
         hide_hyperlink_hints=False,
     )
-    assert remove_link_ids(output) == remove_link_ids(expected_output)
+    assert remove_link_ids(output) == remove_link_ids(adjusted_expected_output)
 
 
 def test_vegalite_output_no_hints(
@@ -1419,6 +1437,7 @@ def test_vegalite_output_no_hints(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
+    adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a Vega plot without hints."""
     vegalite_output_cell = {
@@ -1472,12 +1491,9 @@ def test_vegalite_output_no_hints(
         f"le://{tempfile_path}2.ht"
         "ml\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;\x1b\\                  "
         "                                        "
-        "              \n                         "
-        "                                        "
-        "               \n      \x1b[38;2;187;134;252"
-        "mImage                                  "
-        "                                   \x1b[0m\n"
+        "              \n"
     )
+    adjusted_expected_output = adjust_for_fallback(expected_output, 1)
     output = rich_output(
         vegalite_output_cell,
         nerd_font=True,
@@ -1485,7 +1501,7 @@ def test_vegalite_output_no_hints(
         hyperlinks=True,
         hide_hyperlink_hints=True,
     )
-    assert remove_link_ids(output) == remove_link_ids(expected_output)
+    assert remove_link_ids(output) == remove_link_ids(adjusted_expected_output)
 
 
 def test_vegalite_output_no_nerd_font(
@@ -1493,6 +1509,7 @@ def test_vegalite_output_no_nerd_font(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
+    adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a Vega plot without nerd fonts."""
     vegalite_output_cell = {
@@ -1546,12 +1563,9 @@ def test_vegalite_output_no_nerd_font(
         f"e://{tempfile_path}2.htm"
         "l\x1b\\\x1b[94m📊 Click to view Vega chart\x1b[0m\x1b]"
         "8;;\x1b\\                                   "
-        "            \n                           "
-        "                                        "
-        "             \n      \x1b[38;2;187;134;252mI"
-        "mage                                    "
-        "                                 \x1b[0m\n"
+        "            \n"
     )
+    adjusted_expected_output = adjust_for_fallback(expected_output, 1)
     output = rich_output(
         vegalite_output_cell,
         nerd_font=False,
@@ -1559,7 +1573,7 @@ def test_vegalite_output_no_nerd_font(
         hyperlinks=True,
         hide_hyperlink_hints=False,
     )
-    assert remove_link_ids(output) == remove_link_ids(expected_output)
+    assert remove_link_ids(output) == remove_link_ids(adjusted_expected_output)
 
 
 def test_vegalite_output_no_nerd_font_no_unicode(
@@ -1637,6 +1651,7 @@ def test_vegalite_output_no_files(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
+    adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a message representing a Vega plot."""
     vegalite_output_cell = {
@@ -1666,13 +1681,9 @@ def test_vegalite_output_no_files(
         "                                        "
         "                  \n      📊 Vega chart   "
         "                                        "
-        "                  \n                     "
-        "                                        "
-        "                   \n      \x1b[38;2;187;134"
-        ";252mImage                              "
-        "                                       \x1b"
-        "[0m\n"
+        "                  \n"
     )
+    adjusted_expected_output = adjust_for_fallback(expected_output, 1)
     output = rich_output(
         vegalite_output_cell,
         nerd_font=False,
@@ -1685,7 +1696,7 @@ def test_vegalite_output_no_files(
     tempfile_directory = tempfile_path.parent
     for file in tempfile_directory.glob(f"{tempfile_path.stem}*.html"):
         assert not file.exists()
-    assert remove_link_ids(output) == remove_link_ids(expected_output)
+    assert remove_link_ids(output) == remove_link_ids(adjusted_expected_output)
 
 
 def test_write_vega_output(
@@ -1844,6 +1855,7 @@ def test_vega_no_hyperlink(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     get_tempfile_path: Callable[[str], Path],
+    adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
     vegalite_output_cell = {
@@ -1903,11 +1915,8 @@ def test_vega_no_hyperlink(
         "                                        "
         f"                  \n{wrapped_file_path}\n"
         f"{'':<80}\n"
-        "      \x1b[38;2;187;13"
-        "4;252mImage                             "
-        "                                        "
-        "\x1b[0m\n"
     )
+    adjusted_expected_output = adjust_for_fallback(expected_output, 0)
     output = rich_output(
         vegalite_output_cell,
         nerd_font=False,
@@ -1916,7 +1925,7 @@ def test_vega_no_hyperlink(
         hide_hyperlink_hints=True,
         unicode=True,
     )
-    assert output.rstrip() == expected_output.rstrip()
+    assert output.rstrip() == adjusted_expected_output.rstrip()
 
 
 def test_vega_url(
@@ -2138,14 +2147,20 @@ def test_render_unknown_data_type(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
-def test_render_image_link(
+@pytest.mark.skipif(
+    "terminedia" not in sys.modules,
+    reason="terminedia is used to draw the images using block"
+    " characters, and is not importable on some systems due to a"
+    " dependency on fcntl.",
+)
+def test_render_block_image(
     rich_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
     get_tempfile_path: Callable[[str], Path],
     disable_capture: ContextManager[_PluggyPlugin],
 ) -> None:
-    """It renders a link to an image."""
+    """It renders a block drawing of an image."""
     image_cell = {
         "cell_type": "code",
         "execution_count": 1,
