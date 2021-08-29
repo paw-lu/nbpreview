@@ -71,22 +71,22 @@ class DrawingDimension:
         image_width, image_height = image.size
         image_ratio = image_width / image_height
 
-        if (max_ratio is None and self.max_width is not None) or (
-            max_ratio is not None and max_ratio < image_ratio
+        if self.max_width is not None and (
+            (max_ratio is None) or (max_ratio is not None and max_ratio < image_ratio)
         ):
             drawing_width = self.max_width
             drawing_height = int(drawing_width / image_ratio)
-        elif (max_ratio is None and self.max_height is not None) or (
-            max_ratio is not None and image_ratio < max_ratio
+        elif self.max_height is not None and (
+            max_ratio is None or (max_ratio is not None and image_ratio < max_ratio)
         ):
             drawing_height = self.max_height
             drawing_width = int(drawing_height * image_ratio)
-        elif max_ratio is None:
-            drawing_width = image_width
-            drawing_height = image_height
-        else:
+        elif self.max_width is not None and self.max_height is not None:
             drawing_width = self.max_width
             drawing_height = self.max_height
+        else:
+            drawing_width = image_width
+            drawing_height = image_height
 
         self.drawing_width = drawing_width
         self.drawing_height = drawing_height
