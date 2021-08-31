@@ -21,7 +21,7 @@ Changelog = "https://github.com/paw-lu/nbpreview/releases"
 [tool.poetry.dependencies]
 python = "^3.7.0"
 rich = "^10.9.0"
-typer = "^0.3.2"
+typer = "^0.4.0"
 nbformat = "^5.1.2"
 Pygments = "^2.10.0"
 ipython = "^7.27.0"
