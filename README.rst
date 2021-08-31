@@ -35,17 +35,19 @@ nbpreview
    :target: https://github.com/psf/black
    :alt: Black
 
+A terminal viewer for Jupyter notebooks.
 
 Features
 --------
 
-* TODO
+* Render accurate(ish) Jupyter notebooks in your terminal.
+  Like cat (or bat) for ipynb files.
 
 
 Requirements
 ------------
 
-* TODO
+* Python 3.7
 
 
 Installation
