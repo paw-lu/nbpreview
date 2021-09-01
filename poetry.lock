@@ -523,7 +523,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipykernel"
-version = "6.3.0"
+version = "6.3.1"
 description = "IPython Kernel for Jupyter"
 category = "dev"
 optional = false
@@ -535,6 +535,7 @@ argcomplete = {version = ">=1.12.3", markers = "python_version < \"3.8.0\""}
 debugpy = ">=1.0.0,<2.0"
 importlib-metadata = {version = "<5", markers = "python_version < \"3.8.0\""}
 ipython = ">=7.23.1,<8.0"
+ipython-genutils = "*"
 jupyter-client = "<8.0"
 matplotlib-inline = ">=0.1.0,<0.2.0"
 tornado = ">=4.2,<7.0"
@@ -1606,7 +1607,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.0"
-content-hash = "f013bc5a05cff31350afd70c461c80064e524d22bbb92f126155dca94da9131a"
+content-hash = "5a5f29d3c12311488d29a70ba10b259f553151d436b9a8548572796561688278"
 
 [metadata.files]
 alabaster = [
@@ -1948,8 +1949,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 ipykernel = [
-    {file = "ipykernel-6.3.0-py3-none-any.whl", hash = "sha256:e87cff7dff9a04453e1f21921d937a5ce57b978698cfd0d6b1c1e00c865fa0f6"},
-    {file = "ipykernel-6.3.0.tar.gz", hash = "sha256:5314690a638f893e2cc3bf3d25042920e9fbb873f7d8263033390264caeb95f4"},
+    {file = "ipykernel-6.3.1-py3-none-any.whl", hash = "sha256:3d34530e031067f04e88b72715e92c27871368c15998692d665d57027ceb18d9"},
+    {file = "ipykernel-6.3.1.tar.gz", hash = "sha256:6dd4b107ab755ed9286c820b2f69c2cd895046ef2a25c878929ac8b5540477a1"},
 ]
 ipython = [
     {file = "ipython-7.27.0-py3-none-any.whl", hash = "sha256:75b5e060a3417cf64f138e0bb78e58512742c57dc29db5a5058a2b1f0c10df02"},
