@@ -104,3 +104,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 markers = ["no_atty_mock: Test where sys.stdout.isatty should not be mocked"]
+
+[tool.interrogate]
+verbose = 2
+fail-under = 100
+color = true
