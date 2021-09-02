@@ -62,6 +62,7 @@ pdbpp = "^0.10.3"
 Pygments = "^2.10.0"
 ipykernel = "^6.3.1"
 pytest-mock = "^3.6.1"
+interrogate = "^1.4.0"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
@@ -103,3 +104,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 markers = ["no_atty_mock: Test where sys.stdout.isatty should not be mocked"]
+
+[tool.interrogate]
+verbose = 2
+fail-under = 100
+color = true

@@ -229,9 +229,10 @@ def mock_tempfile_file(
 
 @pytest.fixture
 def remove_link_ids() -> Callable[[str], str]:
-    """Remove link ids from rendered hyperlinks."""
+    """Create function to remove link ids from rendered hyperlinks."""
 
     def _remove_link_ids(render: str) -> str:
+        """Remove link ids from rendered hyperlinks."""
         re_link_ids = re.compile(r"id=[\d\.\-]*?;")
         subsituted_render = re_link_ids.sub("id=0;", render)
         return subsituted_render
