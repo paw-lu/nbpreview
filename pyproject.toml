@@ -62,6 +62,7 @@ pdbpp = "^0.10.3"
 Pygments = "^2.10.0"
 ipykernel = "^6.3.1"
 pytest-mock = "^3.6.1"
+interrogate = "^1.4.0"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
