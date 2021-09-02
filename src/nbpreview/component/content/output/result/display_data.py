@@ -55,6 +55,7 @@ def _render_html(
 def _choose_basic_renderer(
     data: Data, unicode: bool, nerd_font: bool, theme: str
 ) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
+    """Render straightforward text data."""
     display_data: DisplayData
     if "text/markdown" in data:
         display_data = MarkdownDisplay.from_data(data, theme=theme)
