@@ -34,6 +34,10 @@ nbpreview
 .. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: Black
+.. |tryceratops| image:: https://img.shields.io/badge/try%2Fexcept%20style-tryceratops%20%F0%9F%A6%96%E2%9C%A8-black
+   :target: https://github.com/guilatrova/tryceratops
+   :alt: tryceratops
+
 
 A terminal viewer for Jupyter notebooks.
 
