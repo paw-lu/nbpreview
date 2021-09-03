@@ -56,6 +56,12 @@ repos:
         language: system
         types: [text]
         stages: [commit, push, manual]
+      - id: tryceratops
+        name: tryceratops
+        entry: tryceratops
+        language: system
+        require_serial: true
+        types: [python]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.3.0
     hooks:
