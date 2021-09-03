@@ -38,6 +38,12 @@ repos:
         entry: interrogate
         language: system
         types: [python]
+      - id: pyupgrade
+        name: pyupgrade
+        entry: pyupgrade
+        language: system
+        types: [python]
+        args: [--keep-runtime-typing, --py37-plus]
       - id: reorder-python-imports
         name: Reorder python imports
         entry: reorder-python-imports
