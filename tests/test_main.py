@@ -12,7 +12,6 @@ from typing import IO
 from typing import Iterable
 from typing import Mapping
 from typing import Optional
-from typing import Text
 from typing import Union
 
 import nbformat
@@ -39,7 +38,7 @@ class RunCli(Protocol):
         self,
         cell: Optional[Dict[str, Any]] = None,
         args: Optional[Union[str, Iterable[str]]] = None,
-        input: Optional[Union[bytes, Text, IO[Any]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
         env: Optional[Mapping[str, str]] = None,
         catch_exceptions: bool = True,
         color: bool = False,
@@ -139,7 +138,7 @@ def run_cli(
     def _run_cli(
         cell: Optional[Dict[str, Any]] = None,
         args: Optional[Union[str, Iterable[str]]] = None,
-        input: Optional[Union[bytes, Text, IO[Any]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
         env: Optional[Mapping[str, str]] = None,
         catch_exceptions: bool = True,
         color: bool = False,
