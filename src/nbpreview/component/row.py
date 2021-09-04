@@ -1,10 +1,10 @@
 """Jupyter notebook rows."""
 import dataclasses
 import itertools
-import sys
 from dataclasses import InitVar
 from typing import Iterator
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Tuple
 from typing import Union
@@ -22,11 +22,6 @@ from nbpreview.component.content.output import result
 from nbpreview.component.content.output import stream
 from nbpreview.component.content.output.result import execution_indicator
 from nbpreview.component.content.output.result.execution_indicator import Execution
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 Content = Union[Cell, Padding]
 TableRow = Union[Tuple[Union[Execution, str], Content], Tuple[Content]]

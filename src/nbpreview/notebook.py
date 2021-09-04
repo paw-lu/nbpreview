@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import dataclasses
-import sys
 from pathlib import Path
 from typing import Iterator
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Tuple
 
@@ -17,11 +17,6 @@ from rich.console import ConsoleOptions
 from rich.table import Table
 
 from nbpreview.component import row
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:

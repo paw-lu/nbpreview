@@ -9,6 +9,7 @@ import io
 import sys
 from dataclasses import InitVar
 from typing import Iterator
+from typing import Literal
 from typing import Optional
 from typing import Tuple
 from typing import Union
@@ -26,11 +27,6 @@ from rich.measure import Measurement
 from rich.text import Text
 
 from nbpreview.data import Data
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 # terminedia depends on fcntl, which is not present on Windows platforms
 try:

@@ -1,7 +1,7 @@
 """Execution results from Jupyter notebooks."""
-import sys
 from typing import Dict
 from typing import Iterator
+from typing import Literal
 from typing import Union
 
 from nbformat import NotebookNode
@@ -12,11 +12,6 @@ from nbpreview.component.content.output.result.display_data import DisplayData
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
 from nbpreview.component.content.output.result.link import Hyperlink
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 Result = Union[Hyperlink, DisplayData, Drawing]
 
