@@ -13,7 +13,9 @@ from typing import Callable
 from typing import ContextManager
 from typing import Dict
 from typing import Generator
+from typing import Literal
 from typing import Optional
+from typing import Protocol
 from typing import Tuple
 from typing import Union
 from unittest.mock import Mock
@@ -28,14 +30,6 @@ from rich import console
 from rich.console import Console
 
 from nbpreview import notebook
-
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-    from typing import Protocol
-else:
-    from typing_extensions import Literal
-    from typing_extensions import Protocol
 
 
 class RichOutput(Protocol):

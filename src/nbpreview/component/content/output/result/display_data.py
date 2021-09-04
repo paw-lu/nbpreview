@@ -4,10 +4,10 @@ from __future__ import annotations
 import collections
 import dataclasses
 import json
-import sys
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Union
 
 import html2text
@@ -32,11 +32,6 @@ from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result import link
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.data import Data
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 def _render_html(

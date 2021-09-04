@@ -1,7 +1,6 @@
 """Test cases for the __main__ module."""
 import pathlib
 import shlex
-import sys
 import tempfile
 import textwrap
 from typing import Any
@@ -12,6 +11,7 @@ from typing import IO
 from typing import Iterable
 from typing import Mapping
 from typing import Optional
+from typing import Protocol
 from typing import Union
 
 import nbformat
@@ -24,11 +24,6 @@ from typer.testing import CliRunner
 
 import nbpreview
 from nbpreview.__main__ import app
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol
 
 
 class RunCli(Protocol):
