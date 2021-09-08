@@ -20,6 +20,8 @@ def test_render_unknown_output_type() -> None:
         pad=(0, 1, 0, 0),
         images=False,
         image_drawing=None,
+        color=True,
+        negative_space=True,
     )
     with pytest.raises(StopIteration):
         next(rendered_output_row)

@@ -111,3 +111,52 @@ def test_limited_height_dimensions(image: Image) -> None:
     height = dimensions.drawing_height
     assert width == expected_width
     assert height == expected_height
+
+
+def test_character_drawing_repr(image: Image) -> None:
+    """It has a string representation."""
+    character_drawing = drawing.CharacterDrawing(
+        b"sefi", fallback_text="Hey", color=True, negative_space=True
+    )
+    output = repr(character_drawing)
+    expected_output = (
+        "CharacterDrawing(image=sefi, fallback_text=Hey,"
+        " color=True, negative_space=True, characters= :!?PG@)"
+    )
+    assert output == expected_output
+
+
+def test_render_character_drawing_invalid_image() -> None:
+    """It uses the fallback text when it fails to read the image."""
+    fallback_text = "Fallback"
+    output = drawing._render_character_drawing(
+        image=b"", color=True, max_width=10, max_height=30, fallback_text=fallback_text
+    )
+    expected_output = (drawing.render_fallback_text(fallback_text),)
+    assert output == expected_output
+
+
+def test_bottlenecked_height_character_dimensions(image: Image) -> None:
+    """It sets the width to 0 when bottlenecked by height."""
+    max_height = 80
+    character_dimensions = drawing.CharacterDimensions(
+        drawing.Bottleneck.HEIGHT, max_width=30, max_height=max_height
+    )
+    character_width = character_dimensions.width
+    character_height = character_dimensions.height
+    expected_width = 0
+    assert character_width == expected_width
+    assert character_height == max_height
+
+
+def test_no_bottleneck_character_dimensions(image: Image) -> None:
+    """It sets the width to 0 when bottlenecked by height."""
+    max_width = 30
+    max_height = 80
+    character_dimensions = drawing.CharacterDimensions(
+        drawing.Bottleneck.BOTH, max_width=max_width, max_height=max_height
+    )
+    character_width = character_dimensions.width
+    character_height = character_dimensions.height
+    assert character_width == max_width
+    assert character_height == max_height
