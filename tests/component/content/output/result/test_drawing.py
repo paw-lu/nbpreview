@@ -160,3 +160,25 @@ def test_no_bottleneck_character_dimensions(image: Image) -> None:
     character_height = character_dimensions.height
     assert character_width == max_width
     assert character_height == max_height
+
+
+def test_render_braille_drawing_invalid_image() -> None:
+    """It uses the fallback text when it fails to read the image."""
+    fallback_text = "Fallback"
+    output = drawing._render_braille_drawing(
+        image=b"", color=True, max_width=10, max_height=30, fallback_text=fallback_text
+    )
+    expected_output = (drawing.render_fallback_text(fallback_text),)
+    assert output == expected_output
+
+
+def test_braille_drawing_repr(image: Image) -> None:
+    """It has a string representation."""
+    character_drawing = drawing.BrailleDrawing(
+        b"sefi",
+        fallback_text="Hey",
+        color=True,
+    )
+    output = repr(character_drawing)
+    expected_output = "BrailleDrawing(image=sefi, fallback_text=Hey, color=True)"
+    assert output == expected_output
