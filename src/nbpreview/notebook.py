@@ -58,16 +58,17 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 
 def _pick_image_drawing(
-    option: Literal["block", "character", None],
+    option: Literal["block", "character", "braille", None],
     is_terminal: bool,
     plain: bool,
     unicode: bool,
-) -> Literal["block", "character", None]:
+) -> Literal["block", "character", "braille", None]:
     """Pick an image render option.
 
     Args:
-        option (Literal["block", "character", None]): The inputted option which can
-            override detections. If None, will autodetect.
+        option (Literal["block", "character", "braille", None]): The
+            inputted option which can override detections. If None, will
+            autodetect.
         is_terminal (bool): Whether the program is being used in a
             terminal.
         plain (bool): Whether to render the image in a plain style. Will
@@ -77,7 +78,7 @@ def _pick_image_drawing(
             render the notebook. By default will autodetect.
 
     Returns:
-        Literal["block", "character", None]: The image type to render.
+        Literal["block", "character", "braille", None]: The image type to render.
     """
     image_render = option
     if option is None and is_terminal and not plain:
@@ -98,7 +99,7 @@ def _render_notebook(
     hide_output: bool,
     language: str,
     images: bool,
-    image_drawing: Literal["block", "character", None],
+    image_drawing: Literal["block", "character", "braille", None],
     color: bool,
     negative_space: bool,
 ) -> Table:
@@ -186,7 +187,7 @@ class Notebook:
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
     images: Optional[bool] = None
-    image_drawing: Optional[Literal["block", "character"]] = None
+    image_drawing: Optional[Literal["block", "character", "braille"]] = None
     color: Optional[bool] = None
 
     def __post_init__(self) -> None:
@@ -210,7 +211,7 @@ class Notebook:
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Literal["block", "character", None] = None,
+        image_drawing: Literal["block", "character", "braille", None] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
         notebook_node = nbformat.read(file, as_version=4)

@@ -40,7 +40,7 @@ except ModuleNotFoundError:
 
 def render_drawing(
     data: Data,
-    image_drawing: Literal["block", "character", None],
+    image_drawing: Literal["block", "character", "braille", None],
     image_type: str,
     unicode: bool,
     color: bool,
@@ -58,6 +58,15 @@ def render_drawing(
         ):
             rendered_image = UnicodeDrawing.from_data(data, image_type=image_type)
             return rendered_image
+
+        elif image_drawing == "braille" and unicode:
+            rendered_image = BrailleDrawing.from_data(
+                data,
+                image_type=image_type,
+                color=color,
+            )
+            return rendered_image
+
         elif image_drawing == "character":
             rendered_image = CharacterDrawing.from_data(
                 data,
@@ -403,4 +412,108 @@ class CharacterDrawing(Drawing):
             negative_space=self.negative_space,
         )
         minimum = max(len(line) for line in rendered_character_drawing)
+        return measure.Measurement(minimum=minimum, maximum=options.max_width)
+
+
+@functools.lru_cache(maxsize=2 ** 12)
+def _render_braille_drawing(
+    image: bytes,
+    color: bool,
+    max_width: int,
+    max_height: int,
+    fallback_text: str,
+    negative_space: bool = True,
+) -> Tuple[Text, ...]:
+    """Render a representation of an image with braille characters."""
+    rendered_character_drawing: Tuple[Text, ...]
+    try:
+        pil_image = PIL.Image.open(io.BytesIO(image))
+
+    except PIL.UnidentifiedImageError:
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
+        dimensions = DrawingDimension(
+            image=pil_image, max_width=max_width, max_height=max_height
+        )
+        character_dimensions = CharacterDimensions(
+            bottleneck=dimensions.bottleneck, max_width=max_width, max_height=max_height
+        )
+        drawer = picharsso.new_drawer(
+            style="braille",
+            width=character_dimensions.width,
+            height=character_dimensions.height,
+            colorize=color,
+        )
+        drawing = drawer(pil_image)
+
+        decoder = ansi.AnsiDecoder()
+        rendered_character_drawing = tuple(decoder.decode(drawing))
+
+    return rendered_character_drawing
+
+
+class BrailleDrawing(Drawing):
+    """A representation of an image using braille characters."""
+
+    def __init__(
+        self,
+        image: bytes,
+        fallback_text: str,
+        color: bool,
+    ) -> None:
+        """Constructor."""
+        super().__init__(image=image, fallback_text=fallback_text)
+        self.color = color
+
+    def __repr__(self) -> str:
+        """String representation of BrailleDrawing."""
+        return (
+            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f" fallback_text={self.fallback_text},"
+            f" color={self.color})"
+        )
+
+    @classmethod
+    def from_data(
+        cls,
+        data: Data,
+        image_type: str,
+        color: bool,
+    ) -> BrailleDrawing:
+        """Create a braille drawing from notebook data."""
+        encoded_image = data[image_type]
+        fallback_text = data.get("text/plain", "Image")
+        decoded_image = base64.b64decode(encoded_image)
+        return cls(
+            decoded_image,
+            fallback_text=fallback_text,
+            color=color,
+        )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Iterator[Text]:
+        """Render a braille drawing of an image."""
+        rendered_braille_drawing = _render_braille_drawing(
+            image=self.image,
+            color=self.color,
+            max_width=options.max_width,
+            max_height=options.max_height,
+            fallback_text=self.fallback_text,
+        )
+        yield from rendered_braille_drawing
+
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered unicode drawing."""
+        rendered_braille_drawing = _render_braille_drawing(
+            image=self.image,
+            color=self.color,
+            max_width=options.max_width,
+            max_height=options.max_height,
+            fallback_text=self.fallback_text,
+        )
+        minimum = max(len(line) for line in rendered_braille_drawing)
         return measure.Measurement(minimum=minimum, maximum=options.max_width)

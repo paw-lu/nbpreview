@@ -133,7 +133,7 @@ def render_output_row(
     theme: str,
     pad: PaddingDimensions,
     images: bool,
-    image_drawing: Literal["block", "character", None],
+    image_drawing: Literal["block", "character", "braille", None],
     color: bool,
     negative_space: bool,
 ) -> Iterator[OutputRow]:
