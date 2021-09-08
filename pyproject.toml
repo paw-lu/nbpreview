@@ -86,7 +86,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "lxml.*,nbformat.*,PIL.*,pygments,pylatexenc,pytest_mock,terminedia"
+module = "lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,terminedia"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
