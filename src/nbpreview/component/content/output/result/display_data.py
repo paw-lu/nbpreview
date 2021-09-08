@@ -78,7 +78,9 @@ def render_display_data(
     nerd_font: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", None],
+    image_drawing: Literal["block", "character", None],
+    color: bool,
+    negative_space: bool,
 ) -> Union[DisplayData, None, Drawing]:
     """Render the notebook display data."""
     display_data: Union[DisplayData, None, Drawing]
@@ -97,7 +99,8 @@ def render_display_data(
                     image_drawing=image_drawing,
                     image_type=image_type,
                     unicode=unicode,
-                    nerd_font=nerd_font,
+                    color=color,
+                    negative_space=negative_space,
                 )
                 if display_data is not None:
                     return display_data

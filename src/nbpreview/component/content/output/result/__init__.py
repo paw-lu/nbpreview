@@ -27,7 +27,9 @@ def render_result(
     hide_hyperlink_hints: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", None],
+    image_drawing: Literal["block", "character", None],
+    color: bool,
+    negative_space: bool,
 ) -> Iterator[Result]:
     """Render executed result outputs."""
     data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
@@ -48,6 +50,8 @@ def render_result(
         theme=theme,
         images=images,
         image_drawing=image_drawing,
+        color=color,
+        negative_space=negative_space,
     )
     for result in (link_result, main_result):
         if result is not None:

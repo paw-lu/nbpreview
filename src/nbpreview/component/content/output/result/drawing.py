@@ -4,6 +4,7 @@ from __future__ import annotations
 import abc
 import base64
 import dataclasses
+import enum
 import functools
 import io
 import sys
@@ -14,7 +15,9 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+import picharsso
 import PIL.Image
+from picharsso.draw import gradient
 from PIL.Image import Image
 from rich import ansi
 from rich import measure
@@ -37,20 +40,73 @@ except ModuleNotFoundError:
 
 def render_drawing(
     data: Data,
-    image_drawing: Literal["block", None],
+    image_drawing: Literal["block", "character", None],
     image_type: str,
     unicode: bool,
-    nerd_font: bool,
+    color: bool,
+    negative_space: bool,
+    characters: str = gradient.DEFAULT_CHARSET,
 ) -> Union[Drawing, None]:
     """Render a drawing of an image."""
-    if (
-        image_drawing == "block"
-        and image_type != "image/svg+xml"
-        and "terminedia" in sys.modules
-    ):
-        rendered_image = UnicodeDrawing.from_data(data, image_type=image_type)
-        return rendered_image
+    rendered_image: Drawing
+    if image_type != "image/svg+xml":
+        if (
+            image_drawing == "block"
+            and unicode
+            and "terminedia" in sys.modules
+            and color
+        ):
+            rendered_image = UnicodeDrawing.from_data(data, image_type=image_type)
+            return rendered_image
+        elif image_drawing == "character":
+            rendered_image = CharacterDrawing.from_data(
+                data,
+                image_type=image_type,
+                color=color,
+                negative_space=negative_space,
+                characters=characters,
+            )
+            return rendered_image
+
     return None
+
+
+class Bottleneck(str, enum.Enum):
+    """The bottleneck when rendering a drawing."""
+
+    WIDTH = enum.auto()
+    HEIGHT = enum.auto()
+    BOTH = enum.auto()
+    NEITHER = enum.auto()
+
+
+def _detect_image_bottleneck(
+    image_width: int,
+    image_height: int,
+    max_width: Union[int, None],
+    max_height: Union[int, None],
+) -> Bottleneck:
+    """Detect which dimension the image is bottlenecked on."""
+    image_ratio = image_width / image_height
+    max_ratio = (
+        max_width / max_height
+        if max_width is not None and max_height is not None
+        else None
+    )
+    if max_width is not None and (
+        (max_ratio is None) or (max_ratio is not None and max_ratio < image_ratio)
+    ):
+        bottleneck = Bottleneck.WIDTH
+    elif max_height is not None and (
+        max_ratio is None or (max_ratio is not None and image_ratio < max_ratio)
+    ):
+        bottleneck = Bottleneck.HEIGHT
+    elif max_width is not None and max_height is not None:
+        bottleneck = Bottleneck.NEITHER
+    else:
+        bottleneck = Bottleneck.BOTH
+
+    return bottleneck
 
 
 @dataclasses.dataclass
@@ -65,28 +121,28 @@ class DrawingDimension:
         """Constructor."""
         image_width, image_height = image.size
         image_ratio = image_width / image_height
-        image_width = image
 
-        max_ratio = (
-            self.max_width / self.max_height
-            if self.max_width is not None and self.max_height is not None
-            else None
+        self.bottleneck = _detect_image_bottleneck(
+            image_width=image_width,
+            image_height=image_height,
+            max_width=self.max_width,
+            max_height=self.max_height,
         )
 
         image_width, image_height = image.size
         image_ratio = image_width / image_height
 
-        if self.max_width is not None and (
-            (max_ratio is None) or (max_ratio is not None and max_ratio < image_ratio)
-        ):
+        if self.bottleneck == Bottleneck.WIDTH and self.max_width is not None:
             drawing_width = self.max_width
             drawing_height = int(drawing_width / image_ratio)
-        elif self.max_height is not None and (
-            max_ratio is None or (max_ratio is not None and image_ratio < max_ratio)
-        ):
+        elif self.bottleneck == Bottleneck.HEIGHT and self.max_height is not None:
             drawing_height = self.max_height
             drawing_width = int(drawing_height * image_ratio)
-        elif self.max_width is not None and self.max_height is not None:
+        elif (
+            self.bottleneck == Bottleneck.NEITHER
+            and self.max_width is not None
+            and self.max_height is not None
+        ):
             drawing_width = self.max_width
             drawing_height = self.max_height
         else:
@@ -111,14 +167,6 @@ class Drawing(abc.ABC):
             f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
             f" fallback_text={self.fallback_text})"
         )
-
-    @classmethod
-    def from_data(cls, data: Data, image_type: str) -> Drawing:
-        """Create a drawing from notebook data."""
-        encoded_image = data[image_type]
-        fallback_text = data.get("text/plain", "Image")
-        decoded_image = base64.b64decode(encoded_image)
-        return cls(decoded_image, fallback_text=fallback_text)
 
     @abc.abstractmethod
     def __rich_console__(
@@ -146,13 +194,14 @@ def _render_block_drawing(
     image: bytes, max_width: int, max_height: int, fallback_text: str
 ) -> Tuple[Text, ...]:
     """Render a representation on an image with unicode characters."""
+    rendered_unicode_drawing: Tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
+
     except PIL.UnidentifiedImageError:
-        pil_image = None
+        rendered_unicode_drawing = (render_fallback_text(fallback_text=fallback_text),)
 
-    if pil_image is not None:
-
+    else:
         dimensions = DrawingDimension(
             pil_image, max_width=max_width, max_height=max_height
         )
@@ -170,8 +219,7 @@ def _render_block_drawing(
         string_image = output.getvalue()
         decoder = ansi.AnsiDecoder()
         rendered_unicode_drawing = tuple(decoder.decode(string_image))
-    else:
-        rendered_unicode_drawing = (render_fallback_text(fallback_text=fallback_text),)
+
     return rendered_unicode_drawing
 
 
@@ -190,6 +238,14 @@ class UnicodeDrawing(Drawing):
         )
         yield from rendered_unicode_drawing
 
+    @classmethod
+    def from_data(cls, data: Data, image_type: str) -> UnicodeDrawing:
+        """Create a drawing from notebook data."""
+        encoded_image = data[image_type]
+        fallback_text = data.get("text/plain", "Image")
+        decoded_image = base64.b64decode(encoded_image)
+        return cls(decoded_image, fallback_text=fallback_text)
+
     def __rich_measure__(
         self, console: Console, options: ConsoleOptions
     ) -> Measurement:
@@ -202,3 +258,149 @@ class UnicodeDrawing(Drawing):
         )
         minimum = max(len(line) for line in rendered_unicode_drawing)
         return measure.Measurement(minimum, maximum=options.max_width)
+
+
+@dataclasses.dataclass
+class CharacterDimensions:
+    """Dimensions for a character drawing."""
+
+    bottleneck: Bottleneck
+    max_width: int
+    max_height: int
+
+    def __post_init__(self) -> None:
+        """Constructor."""
+        if self.bottleneck == Bottleneck.WIDTH:
+            width = self.max_width
+            height = 0
+        elif self.bottleneck == Bottleneck.HEIGHT:
+            width = 0
+            height = self.max_height
+        else:
+            width = self.max_width
+            height = self.max_height
+
+        self.width = width
+        self.height = height
+
+
+@functools.lru_cache(maxsize=2 ** 12)
+def _render_character_drawing(
+    image: bytes,
+    color: bool,
+    max_width: int,
+    max_height: int,
+    fallback_text: str,
+    characters: str = gradient.DEFAULT_CHARSET,
+    negative_space: bool = True,
+) -> Tuple[Text, ...]:
+    """Render a representation of an image with text characters."""
+    rendered_character_drawing: Tuple[Text, ...]
+    try:
+        pil_image = PIL.Image.open(io.BytesIO(image))
+
+    except PIL.UnidentifiedImageError:
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
+        dimensions = DrawingDimension(
+            image=pil_image, max_width=max_width, max_height=max_height
+        )
+        character_dimensions = CharacterDimensions(
+            bottleneck=dimensions.bottleneck, max_width=max_width, max_height=max_height
+        )
+
+        drawer = picharsso.new_drawer(
+            style="gradient",
+            width=character_dimensions.width,
+            height=character_dimensions.height,
+            colorize=color,
+            charset=characters,
+            negative=negative_space,
+        )
+        drawing = drawer(pil_image)
+
+        decoder = ansi.AnsiDecoder()
+        rendered_character_drawing = tuple(decoder.decode(drawing))
+
+    return rendered_character_drawing
+
+
+class CharacterDrawing(Drawing):
+    """A representation of an image using text characters."""
+
+    def __init__(
+        self,
+        image: bytes,
+        fallback_text: str,
+        color: bool,
+        negative_space: bool,
+        characters: str = gradient.DEFAULT_CHARSET,
+    ) -> None:
+        """Constructor."""
+        super().__init__(image=image, fallback_text=fallback_text)
+        self.negative_space = negative_space
+        self.characters = characters
+        self.color = color
+
+    def __repr__(self) -> str:
+        """String representation of CharacterDrawing."""
+        return (
+            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f" fallback_text={self.fallback_text},"
+            f" color={self.color},"
+            f" negative_space={self.negative_space},"
+            f" characters={self.characters})"
+        )
+
+    @classmethod
+    def from_data(
+        cls,
+        data: Data,
+        image_type: str,
+        color: bool,
+        negative_space: bool,
+        characters: str = gradient.DEFAULT_CHARSET,
+    ) -> CharacterDrawing:
+        """Create a drawing from notebook data."""
+        encoded_image = data[image_type]
+        fallback_text = data.get("text/plain", "Image")
+        decoded_image = base64.b64decode(encoded_image)
+        return cls(
+            decoded_image,
+            fallback_text=fallback_text,
+            color=color,
+            negative_space=negative_space,
+            characters=characters,
+        )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Iterator[Text]:
+        """Render a character drawing of an image."""
+        rendered_character_drawing = _render_character_drawing(
+            image=self.image,
+            characters=self.characters,
+            color=self.color,
+            max_width=options.max_width,
+            max_height=options.max_height,
+            fallback_text=self.fallback_text,
+            negative_space=self.negative_space,
+        )
+        yield from rendered_character_drawing
+
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered unicode drawing."""
+        rendered_character_drawing = _render_character_drawing(
+            image=self.image,
+            characters=self.characters,
+            color=self.color,
+            max_width=options.max_width,
+            max_height=options.max_height,
+            fallback_text=self.fallback_text,
+            negative_space=self.negative_space,
+        )
+        minimum = max(len(line) for line in rendered_character_drawing)
+        return measure.Measurement(minimum=minimum, maximum=options.max_width)

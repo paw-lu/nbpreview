@@ -58,12 +58,15 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 
 def _pick_image_drawing(
-    option: Literal["block", None], is_terminal: bool, plain: bool, unicode: bool
-) -> Literal["block", None]:
+    option: Literal["block", "character", None],
+    is_terminal: bool,
+    plain: bool,
+    unicode: bool,
+) -> Literal["block", "character", None]:
     """Pick an image render option.
 
     Args:
-        option (Literal["block", None]): The inputted option which can
+        option (Literal["block", "character", None]): The inputted option which can
             override detections. If None, will autodetect.
         is_terminal (bool): Whether the program is being used in a
             terminal.
@@ -74,7 +77,7 @@ def _pick_image_drawing(
             render the notebook. By default will autodetect.
 
     Returns:
-        Literal["block", None]: The image type to render.
+        Literal["block", "character", None]: The image type to render.
     """
     image_render = option
     if option is None and is_terminal and not plain:
@@ -95,7 +98,9 @@ def _render_notebook(
     hide_output: bool,
     language: str,
     images: bool,
-    image_drawing: Literal["block", None],
+    image_drawing: Literal["block", "character", None],
+    color: bool,
+    negative_space: bool,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -130,6 +135,8 @@ def _render_notebook(
                 theme=theme,
                 images=images,
                 image_drawing=image_drawing,
+                color=color,
+                negative_space=negative_space,
             )
             for rendered_output in rendered_outputs:
                 grid.add_row(*rendered_output.to_table_row())
@@ -175,10 +182,12 @@ class Notebook:
     hide_output: bool = False
     nerd_font: bool = False
     files: bool = True
+    negative_space: bool = True
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
     images: Optional[bool] = None
-    image_drawing: Optional[Literal["block"]] = None
+    image_drawing: Optional[Literal["block", "character"]] = None
+    color: Optional[bool] = None
 
     def __post_init__(self) -> None:
         """Constructor."""
@@ -201,7 +210,7 @@ class Notebook:
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Literal["block", None] = None,
+        image_drawing: Literal["block", "character", None] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
         notebook_node = nbformat.read(file, as_version=4)
@@ -238,6 +247,7 @@ class Notebook:
         )
         hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
         images = _pick_option(self.images, detector=not options.is_terminal)
+        color = _pick_option(self.color, detector=not options.is_terminal)
         image_drawing = _pick_image_drawing(
             self.image_drawing,
             is_terminal=options.is_terminal,
@@ -258,5 +268,7 @@ class Notebook:
             language=self.language,
             images=images,
             image_drawing=image_drawing,
+            color=color,
+            negative_space=self.negative_space,
         )
         yield rendered_notebook
