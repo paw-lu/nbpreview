@@ -133,7 +133,9 @@ def render_output_row(
     theme: str,
     pad: PaddingDimensions,
     images: bool,
-    image_drawing: Literal["block", None],
+    image_drawing: Literal["block", "character", "braille", None],
+    color: bool,
+    negative_space: bool,
 ) -> Iterator[OutputRow]:
     """Render the output row of a notebook."""
     for output in outputs:
@@ -167,6 +169,8 @@ def render_output_row(
                 theme=theme,
                 images=images,
                 image_drawing=image_drawing,
+                color=color,
+                negative_space=negative_space,
             )
             rendered_outputs.append(rendered_execute_result)
 
