@@ -255,7 +255,6 @@ class Notebook:
             plain=plain,
             unicode=unicode,
         )
-
         rendered_notebook = _render_notebook(
             self.cells,
             plain=plain,
