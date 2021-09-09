@@ -153,7 +153,7 @@ def render_output_row(
             rendered_outputs.append(rendered_stream)
 
         elif output_type == "error":
-            rendered_error = error.render_error(output, theme=theme)
+            rendered_error = error.render_error(output)
             rendered_outputs.append(rendered_error)
 
         elif output_type == "execute_result" or output_type == "display_data":
