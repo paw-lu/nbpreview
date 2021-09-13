@@ -500,7 +500,7 @@ python-versions = "*"
 
 [[package]]
 name = "interrogate"
-version = "1.4.0"
+version = "1.5.0"
 description = "Interrogate a codebase for docstring coverage."
 category = "dev"
 optional = false
@@ -508,7 +508,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 attrs = "*"
-click = "*"
+click = ">=7.1"
 colorama = "*"
 py = "*"
 tabulate = "*"
@@ -1646,7 +1646,7 @@ tests = ["codecov", "scikit-build", "cmake", "ninja", "pybind11", "pytest", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "10dda3911e1aa66026a47dd42180f39b371070c6136d318cc827536ad788f3a6"
+content-hash = "e51f4681464de92a38d862634735bd9cf72560b9a7115572caace3a1b2b48d98"
 
 [metadata.files]
 alabaster = [
@@ -1976,8 +1976,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 interrogate = [
-    {file = "interrogate-1.4.0-py3-none-any.whl", hash = "sha256:306d44c8557352a64ded253ddec6bc5d2dc05a7b9bb68ca950be4357b399195e"},
-    {file = "interrogate-1.4.0.tar.gz", hash = "sha256:5fdef4704ee9afff5e7ef5649fc85df4d927853836ef6572776c480307fe4927"},
+    {file = "interrogate-1.5.0-py3-none-any.whl", hash = "sha256:a4ccc5cbd727c74acc98dee6f5e79ef264c0bcfa66b68d4e123069b2af89091a"},
+    {file = "interrogate-1.5.0.tar.gz", hash = "sha256:b6f325f0aa84ac3ac6779d8708264d366102226c5af7d69058cecffcff7a6d6c"},
 ]
 ipykernel = [
     {file = "ipykernel-6.4.0-py3-none-any.whl", hash = "sha256:72d62a362777ee91eb990b90e55bf4375621aac478a34bf49c0ed1f3ae64167f"},
