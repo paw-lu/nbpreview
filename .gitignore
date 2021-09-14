@@ -1,5 +1,6 @@
 .ipynb_checkpoints/
 .mypy_cache/
+.tryceratops-errors.log
 /.coverage
 /.coverage.*
 /coverage.xml

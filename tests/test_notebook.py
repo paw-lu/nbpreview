@@ -1,4 +1,5 @@
 """Test cases for render."""
+import dataclasses
 import io
 import itertools
 import json
@@ -100,6 +101,17 @@ def adjust_for_fallback() -> Callable[[str, int], str]:
     return _adjust_for_fallback
 
 
+@dataclasses.dataclass
+class LinkFilePathNotFoundError(Exception):
+    """No hyperlink filepath found in output."""
+
+    def __post_init__(
+        self,
+    ) -> None:
+        """Constructor."""
+        super().__init__("No hyperlink filepath found in output")
+
+
 @pytest.fixture
 def parse_link_filepath() -> Callable[[str], Path]:
     """Return a helper function for parsing filepaths from links."""
@@ -112,7 +124,7 @@ def parse_link_filepath() -> Callable[[str], Path]:
             link_filepath = link_filepath_match.group(1)
             return pathlib.Path(link_filepath)
         else:
-            raise ValueError("No hyperlink filepath found in output.")
+            raise LinkFilePathNotFoundError()
 
     return _parse_link_filepath
 
