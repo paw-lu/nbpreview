@@ -28,7 +28,7 @@ def test_unlimited_width_dimensions(image: Image) -> None:
         max_width=None,
         max_height=30,
     )
-    expected_width = 48
+    expected_width = 102
     expected_height = 30
     width = dimensions.drawing_width
     height = dimensions.drawing_height
@@ -44,7 +44,7 @@ def test_unlimited_height_dimensions(image: Image) -> None:
         max_height=None,
     )
     expected_width = 30
-    expected_height = 18
+    expected_height = 9
     width = dimensions.drawing_width
     height = dimensions.drawing_height
     assert width == expected_width
@@ -76,7 +76,7 @@ def test_perfect_fit_dimensions(image: Image) -> None:
         max_height=max_height,
     )
     expected_width = max_width
-    expected_height = max_height
+    expected_height = round(max_height / 2.125)
     width = dimensions.drawing_width
     height = dimensions.drawing_height
     assert width == expected_width
@@ -91,7 +91,7 @@ def test_limited_width_dimensions(image: Image) -> None:
         max_height=10,
     )
     expected_width = 8
-    expected_height = 5
+    expected_height = 2
     width = dimensions.drawing_width
     height = dimensions.drawing_height
     assert width == expected_width
@@ -105,7 +105,7 @@ def test_limited_height_dimensions(image: Image) -> None:
         max_width=18,
         max_height=5,
     )
-    expected_width = 8
+    expected_width = 17
     expected_height = 5
     width = dimensions.drawing_width
     height = dimensions.drawing_height

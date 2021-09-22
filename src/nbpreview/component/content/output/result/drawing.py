@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import abc
 import base64
+import binascii
 import dataclasses
 import enum
 import functools
@@ -38,6 +39,64 @@ except ModuleNotFoundError:
     pass
 
 
+def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
+    """Extract an image in bytes from data."""
+    encoded_image = data[image_type]
+    try:
+        decoded_image = base64.b64decode(encoded_image)
+    except binascii.Error:
+        decoded_image = None
+    return decoded_image
+
+
+def _get_fallback_text(data: Data) -> str:
+    """Get a fallback text from data."""
+    return data.get("text/plain", "Image")
+
+
+def choose_drawing(
+    image: bytes,
+    fallback_text: str,
+    image_type: str,
+    image_drawing: Literal["block", "character", "braille", None],
+    unicode: bool,
+    color: bool,
+    negative_space: bool,
+    characters: str = gradient.DEFAULT_CHARSET,
+) -> Union[Drawing, None]:
+    """Choose which drawing to render an image with."""
+    rendered_image: Drawing
+    # TODO this is duplicate logic with notebook._pick_image_drawing
+    if image_type != "image/svg+xml":
+        if (
+            image_drawing == "block"
+            and unicode
+            and "terminedia" in sys.modules
+            and color
+        ):
+            rendered_image = UnicodeDrawing(image=image, fallback_text=fallback_text)
+            return rendered_image
+
+        elif image_drawing == "braille" and unicode:
+            rendered_image = BrailleDrawing(
+                image=image,
+                fallback_text=fallback_text,
+                color=color,
+            )
+            return rendered_image
+
+        elif image_drawing == "character":
+            rendered_image = CharacterDrawing(
+                image=image,
+                fallback_text=fallback_text,
+                color=color,
+                negative_space=negative_space,
+                characters=characters,
+            )
+            return rendered_image
+    return None
+
+
 def render_drawing(
     data: Data,
     image_drawing: Literal["block", "character", "braille", None],
@@ -48,36 +107,19 @@ def render_drawing(
     characters: str = gradient.DEFAULT_CHARSET,
 ) -> Union[Drawing, None]:
     """Render a drawing of an image."""
-    rendered_image: Drawing
-    if image_type != "image/svg+xml":
-        if (
-            image_drawing == "block"
-            and unicode
-            and "terminedia" in sys.modules
-            and color
-        ):
-            rendered_image = UnicodeDrawing.from_data(data, image_type=image_type)
-            return rendered_image
-
-        elif image_drawing == "braille" and unicode:
-            rendered_image = BrailleDrawing.from_data(
-                data,
-                image_type=image_type,
-                color=color,
-            )
-            return rendered_image
-
-        elif image_drawing == "character":
-            rendered_image = CharacterDrawing.from_data(
-                data,
-                image_type=image_type,
-                color=color,
-                negative_space=negative_space,
-                characters=characters,
-            )
-            return rendered_image
-
-    return None
+    image = _get_image(data, image_type=image_type)
+    fallback_text = _get_fallback_text(data)
+    rendered_drawing = choose_drawing(
+        image=image,
+        fallback_text=fallback_text,
+        image_drawing=image_drawing,
+        image_type=image_type,
+        unicode=unicode,
+        color=color,
+        negative_space=negative_space,
+        characters=characters,
+    )
+    return rendered_drawing
 
 
 class Bottleneck(str, enum.Enum):
@@ -94,9 +136,10 @@ def _detect_image_bottleneck(
     image_height: int,
     max_width: Union[int, None],
     max_height: Union[int, None],
+    scaling_factor: float = 2.125,
 ) -> Bottleneck:
     """Detect which dimension the image is bottlenecked on."""
-    image_ratio = image_width / image_height
+    image_ratio = scaling_factor * image_width / image_height
     max_ratio = (
         max_width / max_height
         if max_width is not None and max_height is not None
@@ -125,25 +168,24 @@ class DrawingDimension:
     image: InitVar[Image]
     max_width: Optional[int] = None
     max_height: Optional[int] = None
+    scaling_factor: float = 2.125
 
     def __post_init__(self, image: Image) -> None:
         """Constructor."""
         image_width, image_height = image.size
-        image_ratio = image_width / image_height
+        image_ratio = self.scaling_factor * image_width / image_height
 
         self.bottleneck = _detect_image_bottleneck(
             image_width=image_width,
             image_height=image_height,
             max_width=self.max_width,
             max_height=self.max_height,
+            scaling_factor=self.scaling_factor,
         )
-
-        image_width, image_height = image.size
-        image_ratio = image_width / image_height
 
         if self.bottleneck == Bottleneck.WIDTH and self.max_width is not None:
             drawing_width = self.max_width
-            drawing_height = int(drawing_width / image_ratio)
+            drawing_height = round(drawing_width / image_ratio)
         elif self.bottleneck == Bottleneck.HEIGHT and self.max_height is not None:
             drawing_height = self.max_height
             drawing_width = int(drawing_height * image_ratio)
@@ -214,7 +256,10 @@ def _render_block_drawing(
         dimensions = DrawingDimension(
             pil_image, max_width=max_width, max_height=max_height
         )
-        size = terminedia.V2(x=dimensions.drawing_width, y=dimensions.drawing_height)
+        size = terminedia.V2(
+            x=dimensions.drawing_width,
+            y=dimensions.drawing_height * dimensions.scaling_factor,
+        )
 
         shape = terminedia.shape(
             pil_image,
@@ -222,6 +267,7 @@ def _render_block_drawing(
             promote=True,
             resolution="square",
         )
+        pil_image.close()
 
         output = io.StringIO()
         shape.render(output=output, backend="ANSI")
@@ -265,7 +311,7 @@ class UnicodeDrawing(Drawing):
             max_width=options.max_width,
             fallback_text=self.fallback_text,
         )
-        minimum = max(len(line) for line in rendered_unicode_drawing)
+        minimum = max(line.cell_len for line in rendered_unicode_drawing)
         return measure.Measurement(minimum, maximum=options.max_width)
 
 
@@ -318,7 +364,6 @@ def _render_character_drawing(
         character_dimensions = CharacterDimensions(
             bottleneck=dimensions.bottleneck, max_width=max_width, max_height=max_height
         )
-
         drawer = picharsso.new_drawer(
             style="gradient",
             width=character_dimensions.width,
@@ -328,6 +373,7 @@ def _render_character_drawing(
             negative=negative_space,
         )
         drawing = drawer(pil_image)
+        pil_image.close()
 
         decoder = ansi.AnsiDecoder()
         rendered_character_drawing = tuple(decoder.decode(drawing))
@@ -411,7 +457,7 @@ class CharacterDrawing(Drawing):
             fallback_text=self.fallback_text,
             negative_space=self.negative_space,
         )
-        minimum = max(len(line) for line in rendered_character_drawing)
+        minimum = max(line.cell_len for line in rendered_character_drawing)
         return measure.Measurement(minimum=minimum, maximum=options.max_width)
 
 
@@ -446,6 +492,7 @@ def _render_braille_drawing(
             colorize=color,
         )
         drawing = drawer(pil_image)
+        pil_image.close()
 
         decoder = ansi.AnsiDecoder()
         rendered_character_drawing = tuple(decoder.decode(drawing))
@@ -515,5 +562,5 @@ class BrailleDrawing(Drawing):
             max_height=options.max_height,
             fallback_text=self.fallback_text,
         )
-        minimum = max(len(line) for line in rendered_braille_drawing)
+        minimum = max(line.cell_len for line in rendered_braille_drawing)
         return measure.Measurement(minimum=minimum, maximum=options.max_width)
