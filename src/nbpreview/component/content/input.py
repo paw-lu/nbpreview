@@ -6,7 +6,6 @@ from typing import Optional
 from typing import Union
 
 import pygments
-from rich import markdown
 from rich import padding
 from rich import panel
 from rich import syntax
@@ -16,6 +15,8 @@ from rich.padding import Padding
 from rich.padding import PaddingDimensions
 from rich.syntax import Syntax
 from rich.text import Text
+
+from nbpreview.component import markdown
 
 
 def box_cell(
@@ -60,7 +61,8 @@ class MarkdownCell(Cell):
     def __rich__(self) -> Padding:
         """Render the markdown cell."""
         rendered_markdown = padding.Padding(
-            markdown.Markdown(self.source, inline_code_theme=self.theme), pad=self.pad
+            markdown.CustomMarkdown(self.source, inline_code_theme=self.theme),
+            pad=self.pad,
         )
         return rendered_markdown
 

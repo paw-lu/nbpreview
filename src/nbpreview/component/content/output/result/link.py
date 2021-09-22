@@ -117,7 +117,7 @@ def _write_file(content: Union[str, bytes], extension: str) -> str:
 
 
 def _create_hyperlink_message(
-    hyperlinks: bool, subject: str, hide_hyperlink_hints: bool, icon: Union[str, Emoji]
+    subject: str, hide_hyperlink_hints: bool, icon: Union[str, Emoji]
 ) -> str:
     """Create the text on the hyperlink."""
     if hide_hyperlink_hints:
@@ -155,7 +155,6 @@ class Hyperlink:
             unicode=self.unicode,
         )
         self.message = _create_hyperlink_message(
-            self.hyperlinks,
             subject=self.subject,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             icon=self.icon,
@@ -327,6 +326,7 @@ class ImageLink(Hyperlink):
         nerd_font: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        subject: str = "Image",
     ) -> None:
         """Constructor."""
         super().__init__(
@@ -335,7 +335,7 @@ class ImageLink(Hyperlink):
             nerd_font=nerd_font,
             unicode=unicode,
             files=files,
-            subject="Image",
+            subject=subject,
             nerd_font_icon="",
             emoji_name="framed_picture",
             hyperlinks=hyperlinks,
