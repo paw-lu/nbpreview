@@ -1,17 +1,20 @@
 """Package-wide test fixtures."""
 import contextlib
+import io
 from typing import Any
 from typing import Callable
 from typing import ContextManager
 from typing import Dict
 from typing import Iterator
 from typing import Optional
+from typing import Union
 
 import nbformat
 import pytest
 from _pytest.config import _PluggyPlugin
 from _pytest.config import Config
 from nbformat.notebooknode import NotebookNode
+from rich import console
 
 
 @pytest.fixture
@@ -83,3 +86,24 @@ def disable_capture(pytestconfig: Config) -> ContextManager[_PluggyPlugin]:
             capmanager.resume_global_capture()
 
     return _disable_capture()
+
+
+@pytest.fixture
+def rich_console() -> Callable[[Any, Union[bool, None]], str]:
+    """Fixture that returns Rich console."""
+
+    def _rich_console(renderable: Any, no_wrap: Optional[bool] = None) -> str:
+        """Render an object using rich."""
+        con = console.Console(
+            file=io.StringIO(),
+            width=80,
+            height=120,
+            color_system="truecolor",
+            legacy_windows=False,
+            force_terminal=True,
+        )
+        con.print(renderable, no_wrap=no_wrap)
+        output: str = con.file.getvalue()  # type: ignore[attr-defined]
+        return output
+
+    return _rich_console
