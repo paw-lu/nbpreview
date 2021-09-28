@@ -31,9 +31,9 @@ def render_link(
     nerd_font: bool,
     files: bool,
     hide_hyperlink_hints: bool,
-) -> Union[Hyperlink, None]:
+) -> Union[FileLink, None]:
     """Render an output link."""
-    link_result: Hyperlink
+    link_result: FileLink
     if (
         "application/vnd.vega.v5+json" in data
         or "application/vnd.vegalite.v4+json" in data
@@ -132,14 +132,12 @@ def _create_hyperlink_message(
 
 
 @dataclasses.dataclass
-class Hyperlink:
-    """A hyperlink to additional content."""
+class Link:
+    """A hyperlink."""
 
-    content: Union[str, bytes, None]
-    file_extension: str
+    path: Union[str, None]
     nerd_font: bool
     unicode: bool
-    files: bool
     subject: str
     nerd_font_icon: str
     emoji_name: str
@@ -160,31 +158,63 @@ class Hyperlink:
             icon=self.icon,
         )
 
-    def __rich__(self) -> Union[Text, str]:
+    def __rich__(self) -> Text:
         """Render the hyperlink."""
-        rendered_hyperlink: Union[str, Text]
-        if self.files is True and self.content is not None:
-            file_name = _write_file(self.content, extension=self.file_extension)
-            if self.hyperlinks:
-                link_style = console.Console().get_style("markdown.link") + style.Style(
-                    link=f"file://{file_name}"
-                )
-                # Append blank string to prevent entire line from being underlined
-                rendered_hyperlink = text.Text.assemble(
-                    text.Text.assemble(self.icon, self.message, style=link_style), ""
-                )
-            else:
-                rendered_hyperlink = text.Text(
-                    f"{self.icon}{file_name}", overflow="fold"
-                )
+        if self.hyperlinks and self.path:
+            link_style = console.Console().get_style("markdown.link") + style.Style(
+                link=self.path
+            )
+            # Append blank string to prevent entire line from being underlined
+            rendered_hyperlink = text.Text.assemble(
+                text.Text.assemble(self.icon, self.message, style=link_style), ""
+            )
+        elif self.path is not None:
+            rendered_hyperlink = text.Text(f"{self.icon}{self.path}", overflow="fold")
         else:
-            rendered_hyperlink = f"{self.icon}{self.subject}"
-
+            rendered_hyperlink = text.Text(f"{self.icon}{self.subject}")
         return rendered_hyperlink
 
 
 @dataclasses.dataclass(init=False)
-class HTMLLink(Hyperlink):
+class FileLink(Link):
+    """A hyperlink to a generated temporary file."""
+
+    def __init__(
+        self,
+        content: Union[str, bytes, None],
+        file_extension: str,
+        files: bool,
+        hyperlinks: bool,
+        hide_hyperlink_hints: bool,
+        nerd_font: bool,
+        unicode: bool,
+        subject: str,
+        emoji_name: str = "page_facing_up",
+        nerd_font_icon: str = "",
+    ) -> None:
+        """Constructor."""
+        path: Union[str, None]
+        if files is True and content is not None:
+            path = f"file://{_write_file(content, extension=file_extension)}"
+        else:
+            path = None
+        self.files = files
+        self.content = content
+        self.file_extension = file_extension
+        super().__init__(
+            path=path,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            subject=subject,
+            nerd_font_icon=nerd_font_icon,
+            emoji_name=emoji_name,
+            hyperlinks=hyperlinks,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+        )
+
+
+@dataclasses.dataclass(init=False)
+class HTMLLink(FileLink):
     """A link to HTML content."""
 
     def __init__(
@@ -234,7 +264,7 @@ class HTMLLink(Hyperlink):
 
 
 @dataclasses.dataclass(init=False)
-class VegaLink(Hyperlink):
+class VegaLink(FileLink):
     """Hyperlink to Vega charts."""
 
     def __init__(
@@ -314,7 +344,7 @@ class VegaLink(Hyperlink):
 
 
 @dataclasses.dataclass(init=False)
-class ImageLink(Hyperlink):
+class ImageLink(FileLink):
     """Hyperlink to images."""
 
     def __init__(
