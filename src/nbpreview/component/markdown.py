@@ -12,6 +12,7 @@ from typing import Optional
 from typing import Union
 
 import httpx
+import PIL
 import validators
 import yarl
 from picharsso.draw import gradient
@@ -140,7 +141,7 @@ class CustomListItem(markdown.ListItem):
         new_line = segment.Segment("\n")
         padding = segment.Segment(" " * number_width, number_style)
         numeral = segment.Segment(
-            f"{number}".rjust(number_width - 1) + " ", number_style
+            f"{number}.".rjust(number_width - 1) + " ", number_style
         )
         for first, line in _loop.loop_first(lines):
             yield numeral if first else padding
@@ -153,8 +154,8 @@ class CustomImageItem(markdown.ImageItem):
 
     nerd_font: bool = False
     unicode: bool = True
-    image: bool = True
-    image_type: Literal["block", "character", "braille", None] = "block"
+    images: bool = True
+    image_drawing: Literal["block", "character", "braille", None] = "block"
     color: bool = True
     negative_space: bool = True
     characters: str = gradient.DEFAULT_CHARSET
@@ -165,27 +166,39 @@ class CustomImageItem(markdown.ImageItem):
     def __init__(self, destination: str, hyperlinks: bool) -> None:
         """Constructor."""
         content: Union[None, Path, BytesIO]
-        if not validators.url(destination):
-            self.path = pathlib.Path(destination).resolve()
-            destination = f"file://{os.fsdecode(self.path)}"
+        self.image_data: Union[None, bytes]
+        self.destination = destination
+        if not validators.url(self.destination):
+            self.path = pathlib.Path(self.destination).resolve()
+            self.destination = os.fsdecode(self.path)
             content = self.path
+            self.is_url = False
         else:
-            self.path = pathlib.Path(yarl.URL(destination).path)
+            self.is_url = True
+            self.path = pathlib.Path(yarl.URL(self.destination).path)
             try:
-                response = httpx.get(destination)
+                response = httpx.get(self.destination)
             except httpx.RequestError:
                 content = None
             else:
                 content = io.BytesIO(response.content)
         self.extension = self.path.suffix.lstrip(".")
-
         if content is not None:
-            with Image.open(content) as image:
-                with io.BytesIO() as output:
-                    image.save(output, format=self.extension)
-                    self.image_data = output.getvalue()
+            try:
+                with Image.open(content) as image:
+                    with io.BytesIO() as output:
+                        try:
+                            format = Image.EXTENSION[f".{self.extension}"]
+                        except KeyError:
+                            self.image_data = None
+                        else:
+                            image.save(output, format=format)
+                            self.image_data = output.getvalue()
+            except (FileNotFoundError, PIL.UnidentifiedImageError):
+                self.image_data = None
+
         else:
-            self.image_data = b""
+            self.image_data = None
 
         super().__init__(destination=destination, hyperlinks=hyperlinks)
 
@@ -194,33 +207,44 @@ class CustomImageItem(markdown.ImageItem):
     ) -> RenderResult:
         """Render the image."""
         title = self.text.plain or self.destination
-        image_link = link.ImageLink(
-            content=self.image_data,
-            file_extension=self.extension,
-            unicode=self.unicode,
-            hyperlinks=self.hyperlinks_,
-            nerd_font=self.nerd_font,
-            files=self.files,
-            hide_hyperlink_hints=self.hide_hyperlink_hints,
-            subject=title,
-        )
-        yield image_link
-
-        if self.image:
-            fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
-            rendered_drawing = drawing.choose_drawing(
-                image=self.image_data,
-                fallback_text=self.text.plain or fallback_title,
-                image_type=f"image/{self.extension}",
-                image_drawing=self.image_type,
+        if self.is_url:
+            rendered_link = link.Link(
+                path=self.destination,
+                nerd_font=self.nerd_font,
                 unicode=self.unicode,
-                color=self.color,
-                negative_space=self.negative_space,
-                characters=self.characters,
+                subject=title,
+                emoji_name="globe_with_meridians",
+                nerd_font_icon="爵",
+                hyperlinks=self.hyperlinks_,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
-            if rendered_drawing is not None:
-                yield text.Text("")
-                yield rendered_drawing
+        else:
+            rendered_link = link.ImageLink(
+                content=self.image_data,
+                file_extension=self.extension,
+                unicode=self.unicode,
+                hyperlinks=self.hyperlinks_,
+                nerd_font=self.nerd_font,
+                files=self.files,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+                subject=title,
+            )
+        yield rendered_link
+
+        fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
+        rendered_drawing = drawing.choose_drawing(
+            image=self.image_data,
+            fallback_text=self.text.plain or fallback_title,
+            image_type=f"image/{self.extension}",
+            image_drawing=self.image_drawing,
+            unicode=self.unicode,
+            color=self.color,
+            negative_space=self.negative_space,
+            characters=self.characters,
+        )
+        if rendered_drawing is not None:
+            yield text.Text("")
+            yield rendered_drawing
 
 
 class CustomMarkdown(markdown.Markdown):
@@ -237,8 +261,8 @@ class CustomMarkdown(markdown.Markdown):
         inline_code_theme: Optional[str] = None,
         nerd_font: bool = False,
         unicode: bool = True,
-        image: bool = True,
-        image_type: Literal["block", "character", "braille", None] = "block",
+        images: bool = True,
+        image_drawing: Literal["block", "character", "braille", None] = "block",
         color: bool = True,
         negative_space: bool = True,
         characters: str = gradient.DEFAULT_CHARSET,
@@ -255,16 +279,15 @@ class CustomMarkdown(markdown.Markdown):
         self.elements["image"] = CustomImageItem
 
         CustomImageItem.nerd_font = nerd_font
-        CustomImageItem.image = image
+        CustomImageItem.images = images
         CustomImageItem.unicode = unicode
-        CustomImageItem.image_type = image_type
+        CustomImageItem.image_drawing = image_drawing
         CustomImageItem.color = color
         CustomImageItem.negative_space = negative_space
         CustomImageItem.characters = characters
         CustomImageItem.hyperlinks_ = hyperlinks_
         CustomImageItem.files = files
         CustomImageItem.hide_hyperlink_hints = hide_hyperlink_hints
-
         super().__init__(
             markup=markup,
             code_theme=code_theme,

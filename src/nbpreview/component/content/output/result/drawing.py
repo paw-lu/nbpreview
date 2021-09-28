@@ -42,6 +42,7 @@ except ModuleNotFoundError:
 def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
     """Extract an image in bytes from data."""
     encoded_image = data[image_type]
+    decoded_image: Union[bytes, None]
     try:
         decoded_image = base64.b64decode(encoded_image)
     except binascii.Error:
@@ -55,7 +56,7 @@ def _get_fallback_text(data: Data) -> str:
 
 
 def choose_drawing(
-    image: bytes,
+    image: Union[bytes, None],
     fallback_text: str,
     image_type: str,
     image_drawing: Literal["block", "character", "braille", None],
@@ -67,7 +68,7 @@ def choose_drawing(
     """Choose which drawing to render an image with."""
     rendered_image: Drawing
     # TODO this is duplicate logic with notebook._pick_image_drawing
-    if image_type != "image/svg+xml":
+    if image is not None and image_type != "image/svg+xml":
         if (
             image_drawing == "block"
             and unicode
