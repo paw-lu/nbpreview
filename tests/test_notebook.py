@@ -5034,13 +5034,18 @@ def test_vega_no_hyperlink(
     }
     tempfile_path = f"📊 file://{get_tempfile_path('')}0.html"
     line_width = 80 - 6
-    wrapped_file_path = "\n".join(
-        [f"{'':>6}{tempfile_path[:line_width - 1]:<73}"]
-        + [
-            f"{'':>6}{tempfile_path[i: i + line_width]:<74}"
-            for i in range(line_width - 1, len(tempfile_path), line_width)
-        ]
-    )
+    if line_width - 1 < len(tempfile_path) < line_width + 2:
+        wrapped_file_path = "\n".join(
+            f"{'':>6}{section:<74}" for section in tempfile_path.split()
+        )
+    else:
+        wrapped_file_path = "\n".join(
+            [f"{'':>6}{tempfile_path[:line_width - 1]:<73}"]
+            + [
+                f"{'':>6}{tempfile_path[i: i + line_width]:<74}"
+                for i in range(line_width - 1, len(tempfile_path), line_width)
+            ]
+        )
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
