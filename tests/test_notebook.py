@@ -5035,8 +5035,9 @@ def test_vega_no_hyperlink(
     tempfile_path = f"📊 file://{get_tempfile_path('')}0.html"
     line_width = 80 - 6
     if line_width - 1 < len(tempfile_path) < line_width + 2:
+        first_line, second_line = tempfile_path.split(maxsplit=1)
         wrapped_file_path = "\n".join(
-            f"{'':>6}{section:<74}" for section in tempfile_path.split()
+            (f"{'':>6}{first_line:<73}", f"{'':>6}{second_line:<74}")
         )
     else:
         wrapped_file_path = "\n".join(
