@@ -11,6 +11,7 @@ from typing import Union
 
 import httpx
 import jinja2
+from jinja2 import select_autoescape
 from rich import console
 from rich import emoji
 from rich import style
@@ -319,9 +320,9 @@ class VegaLink(FileLink):
         if files and vega_json:
 
             execution_count_indicator = execution_indicator.choose_execution(execution)
-            env = jinja2.Environment(  # noqa: S701
+            env = jinja2.Environment(
                 loader=jinja2.PackageLoader("nbpreview"),
-                autoescape=jinja2.select_autoescape(),
+                autoescape=select_autoescape(),
             )
             vega_template = env.get_template("vega_template.jinja")
             vega_html = vega_template.render(
