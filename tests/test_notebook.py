@@ -2508,19 +2508,19 @@ def test_vega_no_hyperlink(
         ],
         "source": "",
     }
-    tempfile_path = f"📊 file://{tempfile_path}0.html"
+    tempfile_text = f"📊 file://{tempfile_path}0.html"
     line_width = 80 - 6
-    if line_width - 1 < len(tempfile_path) < line_width + 2:
-        first_line, second_line = tempfile_path.split(maxsplit=1)
+    if line_width - 1 < len(tempfile_text) < line_width + 2:
+        first_line, second_line = tempfile_text.split(maxsplit=1)
         wrapped_file_path = "\n".join(
             (f"{'':>6}{first_line:<73}", f"{'':>6}{second_line:<74}")
         )
     else:
         wrapped_file_path = "\n".join(
-            [f"{'':>6}{tempfile_path[:line_width - 1]:<73}"]
+            [f"{'':>6}{tempfile_text[:line_width - 1]:<73}"]
             + [
-                f"{'':>6}{tempfile_path[i: i + line_width]:<74}"
-                for i in range(line_width - 1, len(tempfile_path), line_width)
+                f"{'':>6}{tempfile_text[i: i + line_width]:<74}"
+                for i in range(line_width - 1, len(tempfile_text), line_width)
             ]
         )
     expected_output = (
