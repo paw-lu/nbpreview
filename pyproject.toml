@@ -38,7 +38,7 @@ yarl = "^1.6.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-coverage = { extras = ["toml"], version = "^5.4" }
+coverage = { extras = ["toml"], version = "^6.0" }
 safety = "^1.10.3"
 mypy = "^0.910"
 typeguard = "^2.12.1"
