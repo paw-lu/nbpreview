@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Literal
 from typing import Optional
 from typing import Union
+from urllib import parse
 
 import httpx
 import PIL
@@ -169,7 +170,11 @@ class CustomImageItem(markdown.ImageItem):
         self.image_data: Union[None, bytes]
         self.destination = destination
         if not validators.url(self.destination):
-            self.path = pathlib.Path(self.destination).resolve()
+            # destination comes in a url quoted format, which will turn
+            # Windows-like paths into %5c, unquote here to that pathlib
+            # understands correctly
+            unquoted_destination = parse.unquote(self.destination)
+            self.path = pathlib.Path(unquoted_destination).resolve()
             self.destination = os.fsdecode(self.path)
             content = self.path
             self.is_url = False
