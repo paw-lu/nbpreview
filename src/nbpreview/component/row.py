@@ -10,6 +10,7 @@ from typing import Tuple
 from typing import Union
 
 from nbformat import NotebookNode
+from picharsso.draw import gradient
 from rich import padding
 from rich.padding import Padding
 from rich.padding import PaddingDimensions
@@ -72,6 +73,16 @@ def render_input_row(
     pad: Tuple[int, int, int, int],
     language: str,
     theme: str,
+    nerd_font: bool,
+    unicode: bool,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille", None],
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: str = gradient.DEFAULT_CHARSET,
     unicode_border: Optional[bool] = None,
 ) -> Row:
     """Render a Jupyter Notebook cell.
@@ -86,6 +97,24 @@ def render_input_row(
         theme (str): The theme to use for syntax highlighting. May be
             "ansi_light", "ansi_dark", or any Pygments theme. By default
             "ansi_dark".
+        nerd_font (bool): Whether to use nerd fonts as an icon.
+        unicode (bool): Whether to use unicode characters as an icon.
+        images (bool): Whether to render images in the output.
+        image_drawing (Literal["block", "character", "braille", None]):
+            The type of characters to draw images with.
+        color (bool):
+            Whether to draw images using color.
+        negative_space (bool):
+            Whether to draw only the dark areas of an image with
+                characters.
+        hyperlinks (bool):
+            Whether to render terminal hyperlinks.
+        files (bool):
+            Whether to write temporary files.
+        hide_hyperlink_hints (bool):
+            Whether to hide hyperlink hints.
+        characters (str):
+            The characters to draw images with.
         unicode_border (Optional[bool]): Whether to render the cell
             borders using unicode characters. Will autodetect by
             default.
@@ -102,7 +131,21 @@ def render_input_row(
     execution: Union[Execution, None] = None
     top_pad = not plain
     if cell_type == "markdown":
-        rendered_cell = input.MarkdownCell(source, theme=theme, pad=pad)
+        rendered_cell = input.MarkdownCell(
+            source,
+            theme=theme,
+            pad=pad,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
 
     elif cell_type == "code":
         execution = Execution(cell.execution_count, top_pad=top_pad)

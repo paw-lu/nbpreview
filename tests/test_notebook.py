@@ -3,6 +3,7 @@ import dataclasses
 import io
 import itertools
 import json
+import os
 import pathlib
 import re
 import subprocess
@@ -22,19 +23,21 @@ from typing import Union
 from unittest.mock import Mock
 
 import httpx
+import jinja2
 import nbformat
 import pytest
 from _pytest.config import _PluggyPlugin
+from _pytest.fixtures import FixtureRequest
+from jinja2 import select_autoescape
 from nbformat import NotebookNode
 from pytest_mock import MockerFixture
 from rich import console
-from rich.console import Console
 
 from nbpreview import notebook
 
 
 class RichOutput(Protocol):
-    """Typing protocol for _rich_output."""
+    """Typing protocol for _rich_notebook_output."""
 
     def __call__(
         self,
@@ -76,8 +79,44 @@ def split_string(
         for begin in range(0, string_length, sub_length)
     )
     if copy is True:
-        subprocess.run("/usr/bin/pbcopy", text=True, input=str(split))  # noqa: S603
+        string = str(split)
+        copy_string(string)
     return split
+
+
+def copy_string(string: str) -> None:
+    """Copies the string to clipboard.
+
+    Uses pbcopy, so for now only works with macOS.
+    """
+    subprocess.run("/usr/bin/pbcopy", text=True, input=string)  # noqa: S603
+
+
+def write_output(string: str, test_name: str) -> None:
+    """Write the output to the expected outptus file."""
+    output_directory = pathlib.Path(__file__).parent / pathlib.Path("expected_outputs")
+    expected_output_file = output_directory / pathlib.Path(test_name).with_suffix(
+        ".txt"
+    )
+    expected_output_file.write_text(string)
+
+
+@pytest.fixture
+def expected_output(
+    request: FixtureRequest, tempfile_path: Path, remove_link_ids: Callable[[str], str]
+) -> str:
+    """Get the expected output for a test."""
+    output_directory = pathlib.Path(__file__).parent / pathlib.Path("expected_outputs")
+    test_name = request.node.name
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(output_directory),
+        autoescape=select_autoescape(),
+        keep_trailing_newline=True,
+    )
+    expected_output_file = f"{test_name}.txt"
+    expected_output_template = env.get_template(expected_output_file)
+    expected_output = expected_output_template.render(tempfile_path=tempfile_path)
+    return remove_link_ids(expected_output)
 
 
 @pytest.fixture
@@ -130,29 +169,15 @@ def parse_link_filepath() -> Callable[[str], Path]:
 
 
 @pytest.fixture
-def rich_console() -> Console:
-    """Fixture that returns Rich console."""
-    con = console.Console(
-        file=io.StringIO(),
-        width=80,
-        height=120,
-        color_system="truecolor",
-        legacy_windows=False,
-        force_terminal=True,
-    )
-    return con
-
-
-@pytest.fixture
-def rich_output(
-    rich_console: Console,
+def rich_notebook_output(
+    rich_console: Callable[[Any, Union[bool, None]], str],
     make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
 ) -> RichOutput:
     """Fixture returning a function that returns the rendered output.
 
     Args:
-        rich_console (Console): Pytest fixture that returns a rich
-            console.
+        rich_console (Callable[[Any, Union[bool, None]], str]): Pytest
+            fixture that returns a rich console.
         make_notebook (Callable[[Optional[Dict[str, Any]]], NotebookNode]):
             A fixture that creates a notebook node.
 
@@ -160,7 +185,7 @@ def rich_output(
         RichOutput: The output generating function.
     """
 
-    def _rich_output(
+    def _rich_notebook_output(
         cell: Union[Dict[str, Any], None],
         plain: Optional[bool] = None,
         no_wrap: Optional[bool] = None,
@@ -191,41 +216,27 @@ def rich_output(
             color=color,
             negative_space=negative_space,
         )
-        rich_console.print(rendered_notebook, no_wrap=no_wrap)
-        output: str = rich_console.file.getvalue()  # type: ignore[attr-defined]
+        output = rich_console(rendered_notebook, no_wrap)
         return output
 
-    return _rich_output
+    return _rich_notebook_output
 
 
 @pytest.fixture
-def get_tempfile_path() -> Callable[[str], Path]:
-    """Fixture for function that returns the tempfile path."""
-
-    def _get_tempfile_path(suffix: str) -> Path:
-        """Return tempfile path.
-
-        Args:
-            suffix (str): The suffix of the file.
-
-        Returns:
-            Path: The tempfile path.
-        """
-        prefix = tempfile.template
-        file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
-            f"{prefix}nbpreview_link_file"
-        ).with_suffix(suffix)
-        return file_path
-
-    return _get_tempfile_path
+def tempfile_path() -> Path:
+    """Fixture that returns the tempfile path."""
+    prefix = tempfile.template
+    file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
+        f"{prefix}nbpreview_link_file"
+    )
+    return file_path
 
 
 @pytest.fixture
 def mock_tempfile_file(
-    mocker: MockerFixture, get_tempfile_path: Callable[[str], Path]
+    mocker: MockerFixture, tempfile_path: Path
 ) -> Generator[Mock, None, None]:
     """Control where tempfile will write to."""
-    tempfile_path = get_tempfile_path("")
     tempfile_stem = tempfile_path.stem
     tempfile_base_name = tempfile_stem[3:]
     tempfile_parent = tempfile_path.parent
@@ -282,7 +293,7 @@ def test_automatic_plain(
     )
 
 
-def test_notebook_markdown_cell(rich_output: RichOutput) -> None:
+def test_notebook_markdown_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a markdown cell."""
     markdown_cell = {
         "cell_type": "markdown",
@@ -290,23 +301,331 @@ def test_notebook_markdown_cell(rich_output: RichOutput) -> None:
         "metadata": {},
         "source": "### Lorep ipsum\n\n**dolor** _sit_ `amet`",
     }
-    output = rich_output(markdown_cell)
+    output = rich_notebook_output(markdown_cell)
     expected_output = (
-        "                              "
-        "     \x1b[1mLorep ipsum\x1b[0m      "
-        "                            \n "
-        "                              "
-        "                              "
-        "                   \n  \x1b[1mdolo"
-        "r\x1b[0m \x1b[3msit\x1b[0m \x1b[97;40mamet"
-        "\x1b[0m                          "
-        "                              "
-        "        \n"
+        "                                        "
+        "                                        "
+        "\n  \x1b[1;38;2;3;218;197m### \x1b[0m\x1b[1;38;2;3"
+        ";218;197mLorep ipsum\x1b[0m\x1b[1;38;2;3;218;1"
+        "97m                                     "
+        "                          \x1b[0m\n         "
+        "                                        "
+        "                               \n  \x1b[1mdo"
+        "lor\x1b[0m \x1b[3msit\x1b[0m \x1b[97;40mamet\x1b[0m    "
+        "                                        "
+        "                    \n"
     )
     assert output == expected_output
 
 
-def test_notebook_code_cell(rich_output: RichOutput) -> None:
+def test_image_link_markdown_cell_request_error(
+    rich_notebook_output: RichOutput,
+    mocker: MockerFixture,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It falls back to rendering a message if RequestError occurs."""
+    mock = mocker.patch("httpx.get", side_effect=httpx.RequestError("Mock"))
+    mock.return_value.content = (
+        pathlib.Path(__file__).parent
+        / pathlib.Path("assets", "outline_article_white_48dp.png")
+    ).read_bytes()
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Azores](https://github.com/paw-lu/nbpreview/tests/"
+        "assets/outline_article_white_48dp.png)",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="braille")
+    expected_output = (
+        "  \x1b]8;id=724062;https://github.com/paw-l"
+        "u/nbpreview/tests/assets/outline_article_white_48dp.png"
+        "\x1b\\\x1b[94m🌐 Click "
+        "to view Azores\x1b[0m\x1b]8;;\x1b\\               "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_image_link_markdown_cell(
+    rich_notebook_output: RichOutput,
+    mocker: MockerFixture,
+    remove_link_ids: Callable[[str], str],
+    expected_output: str,
+) -> None:
+    """It renders a markdown cell with an image."""
+    mock = mocker.patch("httpx.get")
+    mock.return_value.content = (
+        pathlib.Path(__file__).parent
+        / pathlib.Path("assets", "outline_article_white_48dp.png")
+    ).read_bytes()
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Azores](https://github.com/paw-lu/nbpreview/tests"
+        "/assets/outline_article_white_48dp.png)",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="braille")
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_image_markdown_cell(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+    expected_output: str,
+) -> None:
+    """It renders a markdown cell with an image."""
+    image_path = os.fsdecode(
+        pathlib.Path(__file__).parent
+        / pathlib.Path("assets", "outline_article_white_48dp.png")
+    )
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": f"![Azores]({image_path})",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="braille")
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_code_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with code."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "```python\nfor i in range(20):\n    print(i)\n```",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[38;2;248;248;242;49m    \x1b[0m\x1b[38;2;1"
+        "02;217;239;49mfor\x1b[0m\x1b[38;2;248;248;242;"
+        "49m \x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;"
+        "2;248;248;242;49m \x1b[0m\x1b[38;2;249;38;114;"
+        "49min\x1b[0m\x1b[38;2;248;248;242;49m \x1b[0m\x1b[38"
+        ";2;248;248;242;49mrange\x1b[0m\x1b[38;2;248;24"
+        "8;242;49m(\x1b[0m\x1b[38;2;174;129;255;49m20\x1b["
+        "0m\x1b[38;2;248;248;242;49m)\x1b[0m\x1b[38;2;248;"
+        "248;242;49m:\x1b[0m                        "
+        "                               \n  \x1b[38;2"
+        ";248;248;242;49m        \x1b[0m\x1b[38;2;248;2"
+        "48;242;49mprint\x1b[0m\x1b[38;2;248;248;242;49"
+        "m(\x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;2;"
+        "248;248;242;49m)\x1b[0m                    "
+        "                                        "
+        "  \n"
+    )
+    assert output == expected_output
+
+
+def test_heading_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with headings."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "# Heading 1\n## Heading 2\n### Heading 3\n#### Heading 4\n",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[1;38;2;255;255;255;48;2;96;2;238m \x1b["
+        "0m\x1b[1;38;2;255;255;255;48;2;96;2;238mHea"
+        "ding 1\x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m \x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m                                   "
+        "                                \x1b[0m\n  \x1b"
+        "[2;38;2;96;2;238m───────────────────────"
+        "────────────────────────────────────────"
+        "───────────────\x1b[0m\n                    "
+        "                                        "
+        "                    \n                   "
+        "                                        "
+        "                     \n  \x1b[1;38;2;3;218;1"
+        "97m## \x1b[0m\x1b[1;38;2;3;218;197mHeading 2\x1b["
+        "0m\x1b[1;38;2;3;218;197m                   "
+        "                                        "
+        "       \x1b[0m\n  \x1b[2;38;2;3;218;197m───────"
+        "────────────────────────────────────────"
+        "───────────────────────────────\x1b[0m\n    "
+        "                                        "
+        "                                    \n   "
+        "                                        "
+        "                                     \n  "
+        "\x1b[1;38;2;3;218;197m### \x1b[0m\x1b[1;38;2;3;21"
+        "8;197mHeading 3\x1b[0m\x1b[1;38;2;3;218;197m  "
+        "                                        "
+        "                       \x1b[0m\n            "
+        "                                        "
+        "                            \n  \x1b[1;38;2;"
+        "3;218;197m#### \x1b[0m\x1b[1;38;2;3;218;197mHe"
+        "ading 4\x1b[0m\x1b[1;38;2;3;218;197m          "
+        "                                        "
+        "              \x1b[0m\n"
+    )
+    assert output == expected_output
+
+
+def test_wide_heading_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It reduced the padding if the heading is long."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "# " + "A" * 80,
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[1;38;2;255;255;255;48;2;96;2;238mAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA…\x1b[0m\n"
+        "  \x1b[2;38;2;96;2;238m────────────────────"
+        "────────────────────────────────────────"
+        "──────────────────\x1b[0m\n"
+    )
+    assert output == expected_output
+
+
+def test_ruler_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with a ruler."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "Section 1\n\n---\n\nsection 2\n",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  Section 1                             "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n  ────────────────────────────────────"
+        "────────────────────────────────────────"
+        "──\n  section 2                          "
+        "                                        "
+        "   \n"
+    )
+    assert output == expected_output
+
+
+def test_bullet_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with bullets."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "- Item 1\n- Item 2\n  - Item 3\n",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "                                        "
+        "                                        "
+        "\n   • Item 1                            "
+        "                                        "
+        " \n   • Item 2                           "
+        "                                        "
+        "  \n      • Item 3                       "
+        "                                        "
+        "   \n"
+    )
+    assert output == expected_output
+
+
+def test_number_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with numbers."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "1. Item 1\n2. Item 2\n3. Item 3\n",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "                                        "
+        "                                        "
+        "\n  1. Item 1                            "
+        "                                        "
+        " \n  2. Item 2                           "
+        "                                        "
+        "  \n  3. Item 3                          "
+        "                                        "
+        "   \n"
+    )
+    assert output == expected_output
+
+
+def test_image_file_link_not_image_markdown_cell(
+    rich_notebook_output: RichOutput,
+) -> None:
+    """It does not render an image link when file is not an image."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![This is a weird file extension]"
+        f"({pathlib.Path(__file__).parent / pathlib.Path('assets', 'bad_image.xyz')})",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  🖼 This is a weird file extension      "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n"
+    )
+    assert output == expected_output
+
+
+def test_image_file_link_bad_extension_markdown_cell(
+    rich_notebook_output: RichOutput,
+) -> None:
+    """It does not render an image link when extension is unknown."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": f"![This isn't even a image]({__file__})",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  🖼 This isn't even a image             "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n"
+    )
+    assert output == expected_output
+
+
+def test_image_file_link_not_exist_markdown_cell(
+    rich_notebook_output: RichOutput,
+) -> None:
+    """It does not render an image link when the file does not exist."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![This image does not exist](i_do_not_exists.xyz)",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  🖼 This image does not exist           "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n"
+    )
+    assert output == expected_output
+
+
+def test_notebook_code_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a code cell."""
     code_cell = {
         "cell_type": "code",
@@ -316,7 +635,7 @@ def test_notebook_code_cell(rich_output: RichOutput) -> None:
         "outputs": [],
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
-    output = rich_output(code_cell)
+    output = rich_notebook_output(code_cell)
     expected_output = (
         "     ╭────────────────────────"
         "──────────────────────────────"
@@ -343,7 +662,7 @@ def test_notebook_code_cell(rich_output: RichOutput) -> None:
     assert output == expected_output
 
 
-def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
+def test_notebook_magic_code_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a code cell in a language specified by cell magic."""
     code_cell = {
         "cell_type": "code",
@@ -361,11 +680,11 @@ def test_notebook_magic_code_cell(rich_output: RichOutput) -> None:
         "m'lorep'\x1b[0m │\n     │         "
         "     │\n     ╰──────────────╯\n"
     )
-    output = rich_output(code_cell)
+    output = rich_notebook_output(code_cell)
     assert output == expected_output
 
 
-def test_notebook_raw_cell(rich_output: RichOutput) -> None:
+def test_notebook_raw_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a raw cell as plain text."""
     code_cell = {
         "cell_type": "raw",
@@ -375,11 +694,11 @@ def test_notebook_raw_cell(rich_output: RichOutput) -> None:
     }
     expected_output = " ╭─────────────╮\n │ Lorep ipsum │\n ╰─────────────╯\n"
 
-    output = rich_output(code_cell)
+    output = rich_notebook_output(code_cell)
     assert output == expected_output
 
 
-def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
+def test_notebook_non_syntax_magic_code_cell(rich_notebook_output: RichOutput) -> None:
     """It uses the default highlighting when magic is not a syntax."""
     code_cell = {
         "cell_type": "code",
@@ -415,11 +734,11 @@ def test_notebook_non_syntax_magic_code_cell(rich_output: RichOutput) -> None:
         "──────────────────────────────"
         "─────────────────────────╯\n"
     )
-    output = rich_output(code_cell)
+    output = rich_notebook_output(code_cell)
     assert output == expected_output
 
 
-def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
+def test_notebook_plain_code_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a code cell with plain formatting."""
     code_cell = {
         "cell_type": "code",
@@ -429,7 +748,7 @@ def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
         "outputs": [],
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
-    output = rich_output(code_cell, plain=True)
+    output = rich_notebook_output(code_cell, plain=True)
     expected_output = (
         "\x1b[94;49mdef\x1b[0m\x1b[49m \x1b[0m\x1b[92;"
         "49mfoo\x1b[0m\x1b[49m(\x1b[0m\x1b[49mx\x1b[0m"
@@ -451,10 +770,10 @@ def test_notebook_plain_code_cell(rich_output: RichOutput) -> None:
 
 
 def test_render_dataframe(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a DataFrame."""
     code_cell = {
@@ -518,7 +837,6 @@ def test_render_dataframe(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -530,7 +848,7 @@ def test_render_dataframe(
         "                                        "
         "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
         "\x1b]8;id=1627258210.84976-39532;"
-        f"file://{tempfile_path}2.html\x1b\\\x1b[94"
+        f"file://{tempfile_path}0.html\x1b\\\x1b[94"
         "m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\        "
         "                                        "
         "     \n                                  "
@@ -558,15 +876,15 @@ def test_render_dataframe(
         "   one\x1b[0m   \x1b[1m    1\x1b[0m    3         "
         "       4    -1                       \n"
     )
-    output = rich_output(code_cell)
+    output = rich_notebook_output(code_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_render_plain_dataframe(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a DataFrame in a plain style."""
     code_cell = {
@@ -630,14 +948,13 @@ def test_render_plain_dataframe(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
     expected_output = (
         "                                        "
         "                                        "
         "\n                                       "
         "                                        "
         " \n\x1b]8;id=1627258290.675266-113809;file:/"
-        f"/{tempfile_path}1.html\x1b\\"
+        f"/{tempfile_path}0.html\x1b\\"
         "\x1b[94m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\    "
         "                                        "
         "               \n                        "
@@ -658,11 +975,11 @@ def test_render_plain_dataframe(
         "    3              4  -1                "
         "                       \n"
     )
-    output = rich_output(code_cell, plain=True)
+    output = rich_notebook_output(code_cell, plain=True)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
-def test_render_stderr_stream(rich_output: RichOutput) -> None:
+def test_render_stderr_stream(rich_notebook_output: RichOutput) -> None:
     """It renders the stderr stream."""
     stderr_cell = {
         "cell_type": "code",
@@ -698,11 +1015,11 @@ def test_render_stderr_stream(rich_output: RichOutput) -> None:
         "                                        "
         "         \x1b[0m\n"
     )
-    output = rich_output(stderr_cell)
+    output = rich_notebook_output(stderr_cell)
     assert output == expected_output
 
 
-def test_render_stream_stdout(rich_output: RichOutput) -> None:
+def test_render_stream_stdout(rich_notebook_output: RichOutput) -> None:
     """It renders stdout."""
     stdout_cell = {
         "cell_type": "code",
@@ -727,11 +1044,11 @@ def test_render_stream_stdout(rich_output: RichOutput) -> None:
         "                                        "
         "                    \n"
     )
-    output = rich_output(stdout_cell)
+    output = rich_notebook_output(stdout_cell)
     assert output == expected_output
 
 
-def test_render_error_traceback(rich_output: RichOutput) -> None:
+def test_render_error_traceback(rich_notebook_output: RichOutput) -> None:
     """It renders the traceback from an error."""
     traceback_cell = {
         "cell_type": "code",
@@ -787,11 +1104,11 @@ def test_render_error_traceback(rich_output: RichOutput) -> None:
         "vision by zero                          "
         "             \n"
     )
-    output = rich_output(traceback_cell)
+    output = rich_notebook_output(traceback_cell)
     assert output == expected_output
 
 
-def test_render_error_traceback_no_hang(rich_output: RichOutput) -> None:
+def test_render_error_traceback_no_hang(rich_notebook_output: RichOutput) -> None:
     """It renders the traceback from an error without hanging."""
     traceback_cell = {
         "cell_type": "code",
@@ -1068,11 +1385,11 @@ def test_render_error_traceback_no_hang(rich_output: RichOutput) -> None:
         ": Command 'b'ech\\n'' returned non-zero e"
         "xit status 127. \n"
     )
-    output = rich_output(traceback_cell)
+    output = rich_notebook_output(traceback_cell)
     assert output == expected_output
 
 
-def test_render_result(rich_output: RichOutput) -> None:
+def test_render_result(rich_notebook_output: RichOutput) -> None:
     """It renders a result."""
     output_cell = {
         "cell_type": "code",
@@ -1102,11 +1419,11 @@ def test_render_result(rich_output: RichOutput) -> None:
         "3                                       "
         "                                  \n"
     )
-    output = rich_output(output_cell)
+    output = rich_notebook_output(output_cell)
     assert output == expected_output
 
 
-def test_render_unknown_data_format(rich_output: RichOutput) -> None:
+def test_render_unknown_data_format(rich_notebook_output: RichOutput) -> None:
     """It passes on rendering an unknown data format."""
     output_cell = {
         "cell_type": "code",
@@ -1132,11 +1449,11 @@ def test_render_unknown_data_format(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n"
     )
-    output = rich_output(output_cell)
+    output = rich_notebook_output(output_cell)
     assert output == expected_output
 
 
-def test_render_error_no_traceback(rich_output: RichOutput) -> None:
+def test_render_error_no_traceback(rich_notebook_output: RichOutput) -> None:
     """It skips rendering an error with no traceback."""
     traceback_cell = {
         "cell_type": "code",
@@ -1166,11 +1483,11 @@ def test_render_error_no_traceback(rich_output: RichOutput) -> None:
         "                                        "
         "                   \n"
     )
-    output = rich_output(traceback_cell)
+    output = rich_notebook_output(traceback_cell)
     assert output == expected_output
 
 
-def test_render_markdown_output(rich_output: RichOutput) -> None:
+def test_render_markdown_output(rich_notebook_output: RichOutput) -> None:
     """It renders a markdown output."""
     markdown_output_cell = {
         "cell_type": "code",
@@ -1208,11 +1525,11 @@ def test_render_markdown_output(rich_output: RichOutput) -> None:
         "                                        "
         "     \n"
     )
-    output = rich_output(markdown_output_cell)
+    output = rich_notebook_output(markdown_output_cell)
     assert output == expected_output
 
 
-def test_render_unknown_display_data(rich_output: RichOutput) -> None:
+def test_render_unknown_display_data(rich_notebook_output: RichOutput) -> None:
     """It skips rendering an unknown data display type."""
     unknown_display_data_cell = {
         "cell_type": "code",
@@ -1239,11 +1556,11 @@ def test_render_unknown_display_data(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n"
     )
-    output = rich_output(unknown_display_data_cell)
+    output = rich_notebook_output(unknown_display_data_cell)
     assert output == expected_output
 
 
-def test_render_json_output(rich_output: RichOutput) -> None:
+def test_render_json_output(rich_notebook_output: RichOutput) -> None:
     """It renders a JSON output."""
     json_output_cell = {
         "cell_type": "code",
@@ -1282,11 +1599,11 @@ def test_render_json_output(rich_output: RichOutput) -> None:
         "4;49m2\x1b[0m\x1b[49m}\x1b[0m                    "
         "             \n"
     )
-    output = rich_output(json_output_cell)
+    output = rich_notebook_output(json_output_cell)
     assert output == expected_output
 
 
-def test_render_latex_output(rich_output: RichOutput) -> None:
+def test_render_latex_output(rich_notebook_output: RichOutput) -> None:
     """It renders LaTeX output."""
     latex_output_cell = {
         "cell_type": "code",
@@ -1337,11 +1654,11 @@ def test_render_latex_output(rich_output: RichOutput) -> None:
         "                                        "
         "                           \n"
     )
-    output = rich_output(latex_output_cell)
+    output = rich_notebook_output(latex_output_cell)
     assert expected_output == output
 
 
-def test_render_latex_output_no_unicode(rich_output: RichOutput) -> None:
+def test_render_latex_output_no_unicode(rich_notebook_output: RichOutput) -> None:
     """It does not render LaTeX output if unicode is False."""
     latex_output_cell = {
         "cell_type": "code",
@@ -1376,11 +1693,11 @@ def test_render_latex_output_no_unicode(rich_output: RichOutput) -> None:
         "display.Latex object>                   "
         "                   \n"
     )
-    output = rich_output(latex_output_cell, unicode=False)
+    output = rich_notebook_output(latex_output_cell, unicode=False)
     assert expected_output == output
 
 
-def test_render_text_display_data(rich_output: RichOutput) -> None:
+def test_render_text_display_data(rich_notebook_output: RichOutput) -> None:
     """It renders text display data."""
     text_display_data_cell = {
         "cell_type": "code",
@@ -1411,11 +1728,11 @@ def test_render_text_display_data(rich_output: RichOutput) -> None:
         "                                        "
         "                   \n"
     )
-    output = rich_output(text_display_data_cell)
+    output = rich_notebook_output(text_display_data_cell)
     assert output == expected_output
 
 
-def test_pdf_emoji_output(rich_output: RichOutput) -> None:
+def test_pdf_emoji_output(rich_notebook_output: RichOutput) -> None:
     """It renders an emoji for PDF output."""
     pdf_output_cell = {
         "cell_type": "code",
@@ -1446,11 +1763,11 @@ def test_pdf_emoji_output(rich_output: RichOutput) -> None:
         "                                        "
         "                  \n"
     )
-    output = rich_output(pdf_output_cell, unicode=True)
+    output = rich_notebook_output(pdf_output_cell, unicode=True)
     assert output == expected_output
 
 
-def test_pdf_nerd_output(rich_output: RichOutput) -> None:
+def test_pdf_nerd_output(rich_notebook_output: RichOutput) -> None:
     """It renders a nerd font icon for PDF output."""
     pdf_output_cell = {
         "cell_type": "code",
@@ -1481,11 +1798,11 @@ def test_pdf_nerd_output(rich_output: RichOutput) -> None:
         "                                        "
         "                   \n"
     )
-    output = rich_output(pdf_output_cell, nerd_font=True)
+    output = rich_notebook_output(pdf_output_cell, nerd_font=True)
     assert output == expected_output
 
 
-def test_pdf_no_unicode_no_nerd(rich_output: RichOutput) -> None:
+def test_pdf_no_unicode_no_nerd(rich_notebook_output: RichOutput) -> None:
     """It does not render a PDF icon if no nerd font or unicode."""
     pdf_output_cell = {
         "cell_type": "code",
@@ -1512,15 +1829,15 @@ def test_pdf_no_unicode_no_nerd(rich_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n"
     )
-    output = rich_output(pdf_output_cell, nerd_font=False, unicode=False)
+    output = rich_notebook_output(pdf_output_cell, nerd_font=False, unicode=False)
     assert output == expected_output
 
 
 def test_vega_output(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vega_output_cell = {
@@ -1631,7 +1948,6 @@ def test_vega_output(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1642,12 +1958,12 @@ def test_vega_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=16281369"
-        f"58.012196-350876;file://{tempfile_path}2.html\x1b\\\x1b[94m\uf080"
+        f"58.012196-350876;file://{tempfile_path}0.html\x1b\\\x1b[94m\uf080"
         " Click to v"
         "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
         "                                 \n"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vega_output_cell,
         nerd_font=True,
         files=True,
@@ -1658,10 +1974,10 @@ def test_vega_output(
 
 
 def test_vegalite_output(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
@@ -1702,7 +2018,7 @@ def test_vegalite_output(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1713,13 +2029,13 @@ def test_vegalite_output(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=304082;f"
-        f"ile://{tempfile_path}2.h"
+        f"ile://{tempfile_path}0.h"
         "tml\x1b\\\x1b[94m\uf080 Click to view Vega chart\x1b[0m"
         "\x1b]8;;\x1b\\                                 "
         "               \n"
     )
     adjusted_expected_output = adjust_for_fallback(expected_output, 1)
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=True,
         files=True,
@@ -1730,10 +2046,10 @@ def test_vegalite_output(
 
 
 def test_vegalite_output_no_hints(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a Vega plot without hints."""
@@ -1774,7 +2090,7 @@ def test_vegalite_output_no_hints(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1785,13 +2101,13 @@ def test_vegalite_output_no_hints(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=90200;fi"
-        f"le://{tempfile_path}2.ht"
+        f"le://{tempfile_path}0.ht"
         "ml\x1b\\\x1b[94m\uf080 \x1b[0m\x1b]8;;\x1b\\                  "
         "                                        "
         "              \n"
     )
     adjusted_expected_output = adjust_for_fallback(expected_output, 1)
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=True,
         files=True,
@@ -1802,10 +2118,10 @@ def test_vegalite_output_no_hints(
 
 
 def test_vegalite_output_no_nerd_font(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a hyperlink to a Vega plot without nerd fonts."""
@@ -1846,7 +2162,7 @@ def test_vegalite_output_no_nerd_font(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1857,13 +2173,13 @@ def test_vegalite_output_no_nerd_font(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=2129;fil"
-        f"e://{tempfile_path}2.htm"
+        f"e://{tempfile_path}0.htm"
         "l\x1b\\\x1b[94m📊 Click to view Vega chart\x1b[0m\x1b]"
         "8;;\x1b\\                                   "
         "            \n"
     )
     adjusted_expected_output = adjust_for_fallback(expected_output, 1)
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -1874,10 +2190,10 @@ def test_vegalite_output_no_nerd_font(
 
 
 def test_vegalite_output_no_nerd_font_no_unicode(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a hyperlink to plot without nerd fonts or unicode."""
     vegalite_output_cell = {
@@ -1917,7 +2233,7 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -1928,11 +2244,11 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=16281372"
-        f"55.127551-234092;file://{tempfile_path}2.html\x1b\\\x1b[94mClick to vie"
+        f"55.127551-234092;file://{tempfile_path}0.html\x1b\\\x1b[94mClick to vie"
         "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
         "                                 \n"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -1944,10 +2260,10 @@ def test_vegalite_output_no_nerd_font_no_unicode(
 
 
 def test_vegalite_output_no_files(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders a message representing a Vega plot."""
@@ -1981,7 +2297,7 @@ def test_vegalite_output_no_files(
         "                  \n"
     )
     adjusted_expected_output = adjust_for_fallback(expected_output, 1)
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=False,
@@ -1989,7 +2305,7 @@ def test_vegalite_output_no_files(
         hide_hyperlink_hints=False,
         unicode=True,
     )
-    tempfile_path = get_tempfile_path("")
+
     tempfile_directory = tempfile_path.parent
     for file in tempfile_directory.glob(f"{tempfile_path.stem}*.html"):
         assert not file.exists()
@@ -1997,7 +2313,7 @@ def test_vegalite_output_no_files(
 
 
 def test_write_vega_output(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     parse_link_filepath: Callable[[str], Path],
 ) -> None:
@@ -2064,7 +2380,7 @@ def test_write_vega_output(
         "    </vegachart>\n</body>\n<html></html>\n<"
         "/html>"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -2078,10 +2394,10 @@ def test_write_vega_output(
 
 
 def test_vega_no_icon_no_message(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders subject text when no icons or messages are used."""
     vegalite_output_cell = {
@@ -2121,7 +2437,7 @@ def test_vega_no_icon_no_message(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2132,12 +2448,12 @@ def test_vega_no_icon_no_message(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=16281373"
-        f"35.10625-550844;file://{tempfile_path}2.html\x1b\\\x1b[94mVega"
+        f"35.10625-550844;file://{tempfile_path}0.html\x1b\\\x1b[94mVega"
         " chart\x1b[0"
         "m\x1b]8;;\x1b\\                                "
         "                                \n"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -2149,9 +2465,9 @@ def test_vega_no_icon_no_message(
 
 
 def test_vega_no_hyperlink(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
@@ -2192,15 +2508,21 @@ def test_vega_no_hyperlink(
         ],
         "source": "",
     }
-    tempfile_path = f"📊 {get_tempfile_path('')}2.html"
+    tempfile_text = f"📊 file://{tempfile_path}0.html"
     line_width = 80 - 6
-    wrapped_file_path = "\n".join(
-        [f"{'':>6}{tempfile_path[:line_width - 1]:<73}"]
-        + [
-            f"{'':>6}{tempfile_path[i: i + line_width]:<74}"
-            for i in range(line_width - 1, len(tempfile_path), line_width)
-        ]
-    )
+    if line_width - 1 < len(tempfile_text) < line_width + 2:
+        first_line, second_line = tempfile_text.split(maxsplit=1)
+        wrapped_file_path = "\n".join(
+            (f"{'':>6}{first_line:<73}", f"{'':>6}{second_line:<74}")
+        )
+    else:
+        wrapped_file_path = "\n".join(
+            [f"{'':>6}{tempfile_text[:line_width - 1]:<73}"]
+            + [
+                f"{'':>6}{tempfile_text[i: i + line_width]:<74}"
+                for i in range(line_width - 1, len(tempfile_text), line_width)
+            ]
+        )
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2214,7 +2536,7 @@ def test_vega_no_hyperlink(
         f"{'':<80}\n"
     )
     adjusted_expected_output = adjust_for_fallback(expected_output, 0)
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -2226,7 +2548,7 @@ def test_vega_no_hyperlink(
 
 
 def test_vega_url(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     mocker: MockerFixture,
     parse_link_filepath: Callable[[str], Path],
@@ -2299,7 +2621,7 @@ def test_vega_url(
         ' "type": "quantitative"}}}\n    </vegacha'
         "rt>\n</body>\n<html></html>\n</html>"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -2317,10 +2639,10 @@ def test_vega_url(
 
 
 def test_vega_url_request_error(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mocker: MockerFixture,
 ) -> None:
-    """It fallsback to rendering a message if there is a RequestError."""
+    """It falls back to rendering a message if there is a RequestError."""
     mocker.patch("httpx.get", side_effect=httpx.RequestError("Mock"))
     vegalite_output_cell = {
         "cell_type": "code",
@@ -2352,7 +2674,7 @@ def test_vega_url_request_error(
         "                                        "
         "                   \n"
     )
-    output = rich_output(
+    output = rich_notebook_output(
         vegalite_output_cell,
         nerd_font=False,
         files=True,
@@ -2364,10 +2686,10 @@ def test_vega_url_request_error(
 
 
 def test_render_html(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders HTML output."""
     html_cell = {
@@ -2390,7 +2712,7 @@ def test_render_html(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2401,7 +2723,7 @@ def test_render_html(
         "────────────────╯\n                      "
         "                                        "
         "                  \n      \x1b]8;id=16281375"
-        f"06.111208-917276;file://{tempfile_path}2.html\x1b\\\x1b[94m🌐 Click to v"
+        f"06.111208-917276;file://{tempfile_path}0.html\x1b\\\x1b[94m🌐 Click to v"
         "iew HTML\x1b[0m\x1b]8;;\x1b\\                     "
         "                                \n       "
         "                                        "
@@ -2410,11 +2732,11 @@ def test_render_html(
         "                                        "
         "          \n"
     )
-    output = rich_output(html_cell)
+    output = rich_notebook_output(html_cell)
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
-def test_render_unknown_data_type(rich_output: RichOutput) -> None:
+def test_render_unknown_data_type(rich_notebook_output: RichOutput) -> None:
     """It skips rendering an unknown output type."""
     unknown_data_type = {
         "cell_type": "code",
@@ -2431,7 +2753,7 @@ def test_render_unknown_data_type(rich_output: RichOutput) -> None:
         ],
         "source": "",
     }
-    output = rich_output(unknown_data_type)
+    output = rich_notebook_output(unknown_data_type)
     expected_output = (
         "      ╭─────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2451,10 +2773,10 @@ def test_render_unknown_data_type(rich_output: RichOutput) -> None:
     " dependency on fcntl.",
 )
 def test_render_block_image(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     disable_capture: ContextManager[_PluggyPlugin],
 ) -> None:
     """It renders a block drawing of an image."""
@@ -2594,9 +2916,9 @@ def test_render_block_image(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     with disable_capture:
-        output = rich_output(image_cell, images=True, image_drawing="block")
+        output = rich_notebook_output(image_cell, images=True, image_drawing="block")
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -2611,64 +2933,153 @@ def test_render_block_image(
         "                                  \n     "
         "                                        "
         "                                   \n    "
-        f"  \x1b]8;id=646742;file://{tempfile_path}2.png"
-        "\x1b\\\x1b[94m🖼 Click to vie"
+        f"  \x1b]8;id=857429;file://{tempfile_path}0.png\x1b\\\x1b"
+        "[94m🖼 Click to vie"
         "w Image\x1b[0m\x1b]8;;\x1b\\                      "
         "                               \n        "
         "                                        "
         "                                \n      \x1b"
-        "[39;49m███████\x1b[0m\x1b[38;2;255;255;255;49m"
-        "█████████\x1b[0m\x1b[38;2;247;247;247;48;2;255"
-        ";255;255m▄\x1b[0m\x1b[38;2;253;253;253;48;2;25"
-        "5;255;255m▄\x1b[0m\x1b[38;2;255;255;255;49m███"
-        "██████\x1b[0m\x1b[38;2;253;253;253;48;2;255;25"
-        "5;255m▄\x1b[0m\x1b[38;2;249;249;249;48;2;255;2"
-        "55;255m▄\x1b[0m\x1b[38;2;255;255;255;49m██████"
-        "████\x1b[0m\x1b[38;2;249;249;249;48;2;255;255;"
-        "255m▄\x1b[0m\x1b[38;2;252;252;252;48;2;255;255"
-        ";255m▄\x1b[0m\x1b[38;2;255;255;255;49m████████"
-        "██\x1b[0m\x1b[38;2;247;247;247;48;2;255;255;25"
-        "5m▄\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b"
+        "[39;49m███████\x1b[0m\x1b[38;2;255;255;255;48;"
+        "2;0;0;0m▄\x1b[0m\x1b[38;2;255;255;255;49m█████"
+        "███\x1b[0m\x1b[38;2;248;248;248;48;2;255;255;2"
+        "55m▄\x1b[0m\x1b[38;2;253;253;253;48;2;255;255;"
+        "255m▄\x1b[0m\x1b[38;2;255;255;255;49m█████████"
+        "\x1b[0m\x1b[38;2;253;253;253;48;2;255;255;255m"
+        "▄\x1b[0m\x1b[38;2;250;250;250;48;2;255;255;255"
+        "m▄\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b["
+        "0m\x1b[38;2;250;250;250;48;2;255;255;255m▄\x1b"
         "[0m\x1b[38;2;252;252;252;48;2;255;255;255m▄"
-        "\x1b[0m\x1b[38;2;249;249;249;48;2;255;255;255m"
-        "▄\x1b[0m\x1b[38;2;255;255;255;49m████████\x1b[0m\x1b"
-        "[38;2;255;255;255;48;2;0;0;0m▄\x1b[0m \n    "
-        "  \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;114;114;11"
-        "4;48;2;121;121;121m▄\x1b[0m\x1b[38;2;117;117;1"
-        "17;48;2;115;115;115m▄\x1b[0m\x1b[38;2;116;116;"
-        "116;48;2;118;118;118m▄\x1b[0m\x1b[38;2;116;116"
-        ";116;48;2;115;115;115m▄\x1b[0m\x1b[38;2;0;0;0;"
-        "49m██\x1b[0m\x1b[38;2;249;249;249;48;2;255;255"
-        ";255m▄▄\x1b[0m\x1b[38;2;251;251;251;48;2;255;2"
-        "55;255m▄\x1b[0m\x1b[38;2;250;250;250;48;2;255;"
-        "255;255m▄▄▄▄▄▄\x1b[0m\x1b[38;2;244;244;244;48;"
-        "2;250;250;250m▄\x1b[0m\x1b[38;2;249;249;249;48"
-        ";2;255;255;255m▄\x1b[0m\x1b[38;2;250;250;250;4"
-        "8;2;255;255;255m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;"
-        "248;248;48;2;255;255;255m▄\x1b[0m\x1b[38;2;245"
-        ";245;245;48;2;251;251;251m▄\x1b[0m\x1b[38;2;25"
-        "0;250;250;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0"
-        "m\x1b[38;2;245;245;245;48;2;251;251;251m▄\x1b["
-        "0m\x1b[38;2;248;248;248;48;2;254;254;254m▄\x1b"
-        "[0m\x1b[38;2;250;250;250;48;2;255;255;255m▄"
-        "▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;244;244;244;48;2;249"
-        ";249;249m▄\x1b[0m\x1b[38;2;250;250;250;48;2;25"
-        "5;255;255m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;250;249;25"
-        "0;48;2;255;255;255m▄\x1b[0m\x1b[38;2;239;234;2"
-        "47;48;2;255;255;254m▄\x1b[0m\x1b[38;2;235;229;"
-        "244;48;2;252;253;251m▄\x1b[0m\x1b[38;2;240;234"
-        ";249;48;2;255;255;255m▄▄\x1b[0m\x1b[38;2;241;2"
-        "36;249;48;2;255;255;255m▄\x1b[0m\x1b[38;2;250;"
-        "249;250;48;2;255;255;255m▄\x1b[0m\x1b[38;2;248"
-        ";248;247;48;2;255;255;255m▄\x1b[0m\x1b[38;2;24"
-        "2;242;242;48;2;255;255;255m▄\x1b[0m\x1b[38;2;2"
-        "52;252;252;48;2;255;255;255m▄\x1b[0m\x1b[38;2;"
-        "250;250;250;48;2;251;251;251m▄\x1b[0m\x1b[38;2"
-        ";255;255;255;49m█\x1b[0m \n      \x1b[38;2;0;0;"
-        "0;49m█\x1b[0m\x1b[38;2;0;0;0;48;2;115;115;115m"
-        "▄\x1b[0m\x1b[38;2;0;0;0;48;2;114;114;114m▄\x1b[0m"
-        "\x1b[38;2;0;0;0;48;2;117;117;117m▄\x1b[0m\x1b[38;"
-        "2;0;0;0;48;2;109;109;109m▄\x1b[0m\x1b[38;2;0;0"
+        "\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b[0m"
+        "\x1b[38;2;247;247;247;48;2;255;255;255m▄\x1b[0"
+        "m\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b[3"
+        "8;2;252;252;252;48;2;255;255;255m▄\x1b[0m\x1b["
+        "38;2;250;250;250;48;2;255;255;255m▄\x1b[0m\x1b"
+        "[38;2;255;255;255;49m████████\x1b[0m\x1b[38;2;"
+        "255;255;255;48;2;0;0;0m▄\x1b[0m \n      \x1b[38"
+        ";2;0;0;0;49m█\x1b[0m\x1b[38;2;122;122;122;48;2"
+        ";114;114;114m▄\x1b[0m\x1b[38;2;117;117;117;49m"
+        "█\x1b[0m\x1b[38;2;116;116;116;48;2;117;117;117"
+        "m▄\x1b[0m\x1b[38;2;115;115;115;48;2;117;117;11"
+        "7m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;249;"
+        "249;249;48;2;255;255;255m▄\x1b[0m\x1b[38;2;248"
+        ";248;248;48;2;255;255;255m▄\x1b[0m\x1b[38;2;24"
+        "9;249;249;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b["
+        "38;2;243;243;243;48;2;252;252;252m▄\x1b[0m\x1b"
+        "[38;2;247;247;247;48;2;255;255;255m▄\x1b[0m"
+        "\x1b[38;2;249;249;249;48;2;255;255;255m▄▄▄▄"
+        "▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247;48;2;255;255"
+        ";255m▄\x1b[0m\x1b[38;2;244;244;244;48;2;253;25"
+        "3;253m▄\x1b[0m\x1b[38;2;249;249;249;48;2;255;2"
+        "55;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;244;244;244;"
+        "48;2;253;253;253m▄\x1b[0m\x1b[38;2;247;247;247"
+        ";48;2;255;255;255m▄\x1b[0m\x1b[38;2;249;249;24"
+        "9;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;"
+        "243;243;243;48;2;251;251;251m▄\x1b[0m\x1b[38;2"
+        ";249;249;249;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄"
+        "\x1b[0m\x1b[38;2;246;246;246;48;2;255;255;255m"
+        "▄\x1b[0m\x1b[38;2;243;243;244;48;2;253;253;253"
+        "m▄\x1b[0m\x1b[38;2;248;248;249;48;2;255;255;25"
+        "5m▄▄▄\x1b[0m\x1b[38;2;249;249;249;48;2;255;255"
+        ";255m▄\x1b[0m\x1b[38;2;248;248;248;48;2;255;25"
+        "5;255m▄\x1b[0m\x1b[38;2;246;246;246;48;2;255;2"
+        "55;255m▄\x1b[0m\x1b[38;2;251;251;251;48;2;255;"
+        "255;255m▄\x1b[0m\x1b[38;2;248;248;248;48;2;252"
+        ";252;252m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0"
+        "m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;0;0"
+        ";0;48;2;113;113;113m▄\x1b[0m\x1b[38;2;0;0;0;48"
+        ";2;119;119;119m▄\x1b[0m\x1b[38;2;0;0;0;48;2;11"
+        "6;116;116m▄\x1b[0m\x1b[38;2;0;0;0;48;2;109;109"
+        ";109m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;2"
+        "55;255;255;49m█████████\x1b[0m\x1b[38;2;248;24"
+        "8;248;49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0"
+        "m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b[38"
+        ";2;253;253;253;48;2;254;254;254m▄\x1b[0m\x1b[3"
+        "8;2;249;249;249;49m█\x1b[0m\x1b[38;2;255;255;2"
+        "55;49m██████████\x1b[0m\x1b[38;2;249;249;249;4"
+        "9m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2"
+        ";255;255;255;49m██████████\x1b[0m\x1b[38;2;247"
+        ";247;247;49m█\x1b[0m\x1b[38;2;255;255;255;49m█"
+        "████████\x1b[0m\x1b[38;2;255;255;255;48;2;251;"
+        "247;255m▄\x1b[0m\x1b[38;2;249;246;252;48;2;190"
+        ";149;247m▄\x1b[0m\x1b[38;2;245;243;249;48;2;18"
+        "0;134;244m▄\x1b[0m\x1b[38;2;251;249;255;48;2;1"
+        "84;139;248m▄\x1b[0m\x1b[38;2;251;248;255;48;2;"
+        "183;137;248m▄\x1b[0m\x1b[38;2;252;249;255;48;2"
+        ";192;151;249m▄\x1b[0m\x1b[38;2;255;255;255;48;"
+        "2;252;249;255m▄\x1b[0m\x1b[38;2;245;245;245;48"
+        ";2;239;240;238m▄\x1b[0m\x1b[38;2;229;229;229;4"
+        "8;2;207;207;207m▄\x1b[0m\x1b[38;2;255;255;255;"
+        "49m███\x1b[0m \n      \x1b[38;2;0;0;0;49m██████"
+        "█\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0m"
+        "\x1b[38;2;248;248;248;49m█\x1b[0m\x1b[38;2;253;25"
+        "3;253;49m█\x1b[0m\x1b[38;2;255;255;255;49m████"
+        "█████\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38"
+        ";2;249;249;249;49m█\x1b[0m\x1b[38;2;255;255;25"
+        "5;49m██████████\x1b[0m\x1b[38;2;249;249;249;49"
+        "m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;"
+        "255;255;255;49m██████████\x1b[0m\x1b[38;2;247;"
+        "247;247;49m█\x1b[0m\x1b[38;2;255;255;255;49m██"
+        "███████\x1b[0m\x1b[38;2;252;254;254;48;2;255;2"
+        "55;255m▄\x1b[0m\x1b[38;2;220;240;242;48;2;255;"
+        "254;253m▄\x1b[0m\x1b[38;2;213;236;238;48;2;253"
+        ";251;250m▄\x1b[0m\x1b[38;2;218;242;243;48;2;25"
+        "5;255;255m▄\x1b[0m\x1b[38;2;218;241;243;48;2;2"
+        "55;255;255m▄\x1b[0m\x1b[38;2;222;243;244;48;2;"
+        "255;255;255m▄\x1b[0m\x1b[38;2;253;255;255;48;2"
+        ";255;255;255m▄\x1b[0m\x1b[38;2;236;236;236;48;"
+        "2;255;255;255m▄\x1b[0m\x1b[38;2;232;232;232;48"
+        ";2;255;255;255m▄\x1b[0m\x1b[38;2;255;255;255;4"
+        "9m███\x1b[0m \n      \x1b[38;2;0;0;0;49m███████"
+        "\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b"
+        "[38;2;248;248;248;49m█\x1b[0m\x1b[38;2;253;253"
+        ";253;49m█\x1b[0m\x1b[38;2;255;255;255;49m█████"
+        "████\x1b[0m\x1b[38;2;254;254;254;48;2;253;253;"
+        "253m▄\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38"
+        ";2;255;255;255;49m██████████\x1b[0m\x1b[38;2;2"
+        "49;249;249;49m█\x1b[0m\x1b[38;2;252;252;252;49"
+        "m█\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b["
+        "0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[38;2;255;"
+        "255;255;49m█████████\x1b[0m\x1b[38;2;255;255;2"
+        "55;48;2;248;252;253m▄\x1b[0m\x1b[38;2;255;255;"
+        "255;48;2;166;221;224m▄\x1b[0m\x1b[38;2;255;252"
+        ";252;48;2;152;215;219m▄\x1b[0m\x1b[38;2;255;25"
+        "5;255;48;2;157;219;223m▄\x1b[0m\x1b[38;2;255;2"
+        "55;255;48;2;156;219;222m▄\x1b[0m\x1b[38;2;255;"
+        "255;255;48;2;168;223;226m▄\x1b[0m\x1b[38;2;255"
+        ";255;255;48;2;250;254;254m▄\x1b[0m\x1b[38;2;25"
+        "2;252;252;48;2;233;233;233m▄\x1b[0m\x1b[38;2;2"
+        "47;247;247;48;2;209;209;209m▄\x1b[0m\x1b[38;2;"
+        "255;255;255;49m███\x1b[0m \n      \x1b[38;2;0;0"
+        ";0;49m█\x1b[0m\x1b[38;2;106;106;106;48;2;121;1"
+        "21;121m▄\x1b[0m\x1b[38;2;118;118;118;48;2;117;"
+        "117;117m▄\x1b[0m\x1b[38;2;115;115;115;48;2;119"
+        ";119;119m▄\x1b[0m\x1b[38;2;116;116;116;48;2;11"
+        "4;114;114m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[3"
+        "8;2;255;255;255;48;2;249;249;249m▄\x1b[0m\x1b["
+        "38;2;251;251;251;48;2;249;249;249m▄\x1b[0m\x1b"
+        "[38;2;252;252;252;48;2;250;250;250m▄▄▄▄▄"
+        "▄▄\x1b[0m\x1b[38;2;245;245;245;48;2;244;244;24"
+        "4m▄\x1b[0m\x1b[38;2;250;250;250;48;2;248;248;2"
+        "48m▄\x1b[0m\x1b[38;2;252;252;252;48;2;250;250;"
+        "250m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;250;250;250;48;2"
+        ";248;248;248m▄\x1b[0m\x1b[38;2;246;246;246;48;"
+        "2;245;245;245m▄\x1b[0m\x1b[38;2;252;252;252;48"
+        ";2;250;250;250m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;246;"
+        "246;246;48;2;245;245;245m▄\x1b[0m\x1b[38;2;249"
+        ";249;249;48;2;247;247;247m▄\x1b[0m\x1b[38;2;25"
+        "2;252;252;48;2;250;250;250m▄▄▄▄▄▄▄▄▄▄\x1b[0"
+        "m\x1b[38;2;245;245;245;48;2;243;243;243m▄\x1b["
+        "0m\x1b[38;2;252;252;252;48;2;250;250;250m▄▄"
+        "▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;249;249;249;48;2;247;"
+        "247;247m▄\x1b[0m\x1b[38;2;246;246;246;48;2;245"
+        ";245;245m▄\x1b[0m\x1b[38;2;252;252;252;48;2;25"
+        "0;250;250m▄▄▄▄▄\x1b[0m\x1b[38;2;252;252;252;48"
+        ";2;251;251;251m▄\x1b[0m\x1b[38;2;253;253;253;4"
+        "8;2;252;252;252m▄\x1b[0m\x1b[38;2;251;251;251;"
+        "48;2;248;248;248m▄\x1b[0m\x1b[38;2;255;255;255"
+        ";49m█\x1b[0m \n      \x1b[38;2;0;0;0;49m██\x1b[0m\x1b"
+        "[38;2;0;0;0;48;2;102;102;102m▄\x1b[0m\x1b[38;2"
+        ";0;0;0;48;2;127;127;127m▄▄\x1b[0m\x1b[38;2;0;0"
         ";0;49m██\x1b[0m\x1b[38;2;255;255;255;49m██████"
         "███\x1b[0m\x1b[38;2;248;248;248;49m█\x1b[0m\x1b[38;2"
         ";253;253;253;49m█\x1b[0m\x1b[38;2;255;255;255;"
@@ -2678,176 +3089,140 @@ def test_render_block_image(
         ";249;49m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m"
         "\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b[38"
         ";2;247;247;247;49m█\x1b[0m\x1b[38;2;255;255;25"
-        "5;49m█████████\x1b[0m\x1b[38;2;255;255;255;48;"
-        "2;251;248;255m▄\x1b[0m\x1b[38;2;254;255;252;48"
-        ";2;194;157;247m▄\x1b[0m\x1b[38;2;252;253;249;4"
-        "8;2;185;143;244m▄\x1b[0m\x1b[38;2;255;255;255;"
-        "48;2;189;147;248m▄\x1b[0m\x1b[38;2;255;255;255"
-        ";48;2;188;146;248m▄\x1b[0m\x1b[38;2;255;255;25"
-        "5;48;2;196;159;249m▄\x1b[0m\x1b[38;2;255;255;2"
-        "55;48;2;252;249;255m▄\x1b[0m\x1b[38;2;250;250;"
-        "250;48;2;237;238;237m▄\x1b[0m\x1b[38;2;241;241"
-        ";241;48;2;203;203;203m▄\x1b[0m\x1b[38;2;255;25"
-        "5;255;49m███\x1b[0m \n      \x1b[38;2;0;0;0;49m"
-        "███████\x1b[0m\x1b[38;2;255;255;255;49m███████"
-        "██\x1b[0m\x1b[38;2;248;248;248;49m█\x1b[0m\x1b[38;2;"
-        "253;253;253;49m█\x1b[0m\x1b[38;2;255;255;255;4"
-        "9m█████████\x1b[0m\x1b[38;2;253;253;253;49m█\x1b["
-        "0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;255;"
-        "255;255;49m██████████\x1b[0m\x1b[38;2;249;249;"
-        "249;49m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b"
-        "[38;2;255;255;255;49m██████████\x1b[0m\x1b[38;"
-        "2;247;247;247;49m█\x1b[0m\x1b[38;2;255;255;255"
-        ";49m█████████\x1b[0m\x1b[38;2;249;253;253;48;2"
-        ";255;255;255m▄\x1b[0m\x1b[38;2;178;226;228;48;"
-        "2;255;254;254m▄\x1b[0m\x1b[38;2;166;220;223;48"
-        ";2;255;252;251m▄\x1b[0m\x1b[38;2;171;224;228;4"
-        "8;2;255;255;255m▄\x1b[0m\x1b[38;2;170;224;227;"
-        "48;2;255;255;255m▄\x1b[0m\x1b[38;2;180;228;231"
-        ";48;2;255;255;255m▄\x1b[0m\x1b[38;2;250;254;25"
-        "4;48;2;255;255;255m▄\x1b[0m\x1b[38;2;232;231;2"
-        "31;48;2;252;252;252m▄\x1b[0m\x1b[38;2;219;219;"
-        "219;48;2;255;255;255m▄\x1b[0m\x1b[38;2;255;255"
-        ";255;49m███\x1b[0m \n      \x1b[38;2;0;0;0;49m█"
-        "\x1b[0m\x1b[38;2;127;127;127;48;2;0;0;0m▄\x1b[0m\x1b"
-        "[38;2;115;115;115;48;2;0;0;0m▄\x1b[0m\x1b[38;2"
-        ";120;120;120;48;2;0;0;0m▄\x1b[0m\x1b[38;2;127;"
-        "127;127;48;2;0;0;0m▄\x1b[0m\x1b[38;2;0;0;0;49m"
-        "██\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0"
-        "m\x1b[38;2;248;248;248;49m█\x1b[0m\x1b[38;2;253;2"
-        "53;253;49m█\x1b[0m\x1b[38;2;255;255;255;49m███"
-        "██████\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[3"
-        "8;2;249;249;249;49m█\x1b[0m\x1b[38;2;255;255;2"
-        "55;49m██████████\x1b[0m\x1b[38;2;249;249;249;4"
-        "9m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2"
-        ";255;255;255;49m██████████\x1b[0m\x1b[38;2;247"
-        ";247;247;49m█\x1b[0m\x1b[38;2;255;255;255;49m█"
-        "████████\x1b[0m\x1b[38;2;255;255;255;48;2;252;"
-        "254;254m▄\x1b[0m\x1b[38;2;255;253;253;48;2;211"
-        ";237;239m▄\x1b[0m\x1b[38;2;254;251;250;48;2;20"
-        "2;233;234m▄\x1b[0m\x1b[38;2;255;255;255;48;2;2"
-        "08;238;240m▄\x1b[0m\x1b[38;2;255;255;255;48;2;"
-        "207;238;239m▄\x1b[0m\x1b[38;2;255;255;255;48;2"
-        ";213;240;241m▄\x1b[0m\x1b[38;2;255;255;255;48;"
-        "2;252;254;255m▄\x1b[0m\x1b[38;2;255;255;255;48"
-        ";2;238;238;238m▄\x1b[0m\x1b[38;2;255;255;255;4"
-        "8;2;219;219;219m▄\x1b[0m\x1b[38;2;255;255;255;"
-        "49m███\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b"
-        "[38;2;102;102;102;48;2;115;115;115m▄\x1b[0m"
-        "\x1b[38;2;122;122;122;48;2;114;114;114m▄\x1b[0"
-        "m\x1b[38;2;119;119;119;48;2;115;115;115m▄\x1b["
-        "0m\x1b[38;2;117;117;117;49m█\x1b[0m\x1b[38;2;0;0;"
-        "0;49m██\x1b[0m\x1b[38;2;255;255;255;48;2;249;2"
-        "49;249m▄\x1b[0m\x1b[38;2;255;255;255;48;2;247;"
-        "247;247m▄\x1b[0m\x1b[38;2;255;255;255;48;2;248"
-        ";248;248m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;248;248;4"
-        "8;2;242;242;242m▄\x1b[0m\x1b[38;2;253;253;253;"
-        "48;2;246;246;246m▄\x1b[0m\x1b[38;2;255;255;255"
-        ";48;2;248;248;248m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;25"
-        "3;253;253;48;2;246;246;246m▄\x1b[0m\x1b[38;2;2"
-        "49;249;249;48;2;243;243;243m▄\x1b[0m\x1b[38;2;"
-        "255;255;255;48;2;248;248;248m▄▄▄▄▄▄▄▄▄▄\x1b"
-        "[0m\x1b[38;2;249;249;249;48;2;243;243;243m▄"
-        "\x1b[0m\x1b[38;2;252;252;252;48;2;245;245;245m"
-        "▄\x1b[0m\x1b[38;2;255;255;255;48;2;248;248;248"
-        "m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247;48;2;2"
-        "42;242;242m▄\x1b[0m\x1b[38;2;255;255;255;48;2;"
-        "248;248;248m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;252;252"
-        ";252;48;2;245;245;245m▄\x1b[0m\x1b[38;2;249;24"
-        "9;249;48;2;243;243;243m▄\x1b[0m\x1b[38;2;255;2"
-        "55;255;48;2;248;248;248m▄▄▄▄▄▄\x1b[0m\x1b[38;2"
-        ";255;255;255;48;2;250;250;250m▄\x1b[0m\x1b[38;"
-        "2;255;255;255;48;2;246;246;246m▄\x1b[0m\x1b[38"
-        ";2;255;255;255;49m█\x1b[0m \n      \x1b[38;2;0;"
-        "0;0;49m███████\x1b[0m\x1b[38;2;255;255;255;49m"
-        "█████████\x1b[0m\x1b[38;2;248;248;248;49m█\x1b[0m"
-        "\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;255;25"
-        "5;255;49m█████████\x1b[0m\x1b[38;2;253;253;253"
-        ";49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38"
-        ";2;255;255;255;49m██████████\x1b[0m\x1b[38;2;2"
-        "49;249;249;49m█\x1b[0m\x1b[38;2;252;252;252;49"
-        "m█\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b["
-        "0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[38;2;255;"
-        "255;255;49m██████████\x1b[0m\x1b[38;2;252;252;"
-        "252;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b"
-        "[38;2;255;255;255;49m█████████\x1b[0m \n    "
-        "  \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;255;"
-        "255;255;49m█████████\x1b[0m\x1b[38;2;248;248;2"
-        "48;49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b["
-        "38;2;255;255;255;49m█████████\x1b[0m\x1b[38;2;"
-        "253;253;253;49m█\x1b[0m\x1b[38;2;249;249;249;4"
-        "9m█\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b"
-        "[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;252"
-        ";252;252;49m█\x1b[0m\x1b[38;2;255;255;255;49m█"
-        "█████████\x1b[0m\x1b[38;2;247;247;247;49m█\x1b[0m"
-        "\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b[38"
-        ";2;252;252;252;49m█\x1b[0m\x1b[38;2;249;249;24"
-        "9;49m█\x1b[0m\x1b[38;2;255;255;255;49m████████"
-        "█\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2"
-        ";116;116;116;48;2;85;85;85m▄\x1b[0m\x1b[38;2;1"
-        "19;119;119;48;2;170;170;170m▄\x1b[0m\x1b[38;2;"
-        "117;117;117;48;2;127;127;127m▄\x1b[0m\x1b[38;2"
-        ";119;119;119;48;2;127;127;127m▄\x1b[0m\x1b[38;"
-        "2;0;0;0;49m██\x1b[0m\x1b[38;2;249;249;249;48;2"
-        ";255;255;255m▄\x1b[0m\x1b[38;2;247;247;247;48;"
-        "2;255;255;255m▄\x1b[0m\x1b[38;2;249;249;249;48"
-        ";2;255;255;255m▄\x1b[0m\x1b[38;2;248;248;248;4"
-        "8;2;255;255;255m▄▄▄▄▄▄\x1b[0m\x1b[38;2;243;243"
-        ";243;48;2;248;248;248m▄\x1b[0m\x1b[38;2;247;24"
-        "7;247;48;2;253;253;253m▄\x1b[0m\x1b[38;2;248;2"
-        "48;248;48;2;255;255;255m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[3"
-        "8;2;247;247;247;48;2;253;253;253m▄\x1b[0m\x1b["
-        "38;2;243;243;243;48;2;249;249;249m▄\x1b[0m\x1b"
-        "[38;2;248;248;248;48;2;255;255;255m▄▄▄▄▄"
-        "▄▄▄▄▄\x1b[0m\x1b[38;2;243;243;243;48;2;249;249"
-        ";249m▄\x1b[0m\x1b[38;2;246;246;246;48;2;252;25"
-        "2;252m▄\x1b[0m\x1b[38;2;248;248;248;48;2;255;2"
-        "55;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;242;242;242;"
-        "48;2;247;247;247m▄\x1b[0m\x1b[38;2;248;248;248"
-        ";48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;2"
-        "46;246;246;48;2;252;252;252m▄\x1b[0m\x1b[38;2;"
-        "243;243;243;48;2;249;249;249m▄\x1b[0m\x1b[38;2"
-        ";248;248;248;48;2;255;255;255m▄▄▄▄▄▄\x1b[0m"
-        "\x1b[38;2;251;251;251;48;2;255;255;255m▄\x1b[0"
-        "m\x1b[38;2;247;247;247;48;2;255;255;255m▄\x1b["
-        "0m\x1b[38;2;255;255;255;49m█\x1b[0m \n      \x1b[3"
-        "8;2;0;0;0;49m█\x1b[0m\x1b[38;2;0;0;0;48;2;127;"
-        "127;127m▄\x1b[0m\x1b[38;2;0;0;0;48;2;116;116;1"
-        "16m▄\x1b[0m\x1b[38;2;0;0;0;48;2;118;118;118m▄\x1b"
-        "[0m\x1b[38;2;0;0;0;48;2;114;114;114m▄\x1b[0m\x1b["
-        "38;2;0;0;0;49m██\x1b[0m\x1b[38;2;255;255;255;4"
-        "9m█\x1b[0m\x1b[38;2;255;255;255;48;2;253;253;2"
-        "53m▄\x1b[0m\x1b[38;2;255;255;255;48;2;254;254;"
-        "254m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;248;248;48;2;2"
-        "47;247;247m▄\x1b[0m\x1b[38;2;253;253;253;48;2;"
-        "252;252;252m▄\x1b[0m\x1b[38;2;255;255;255;48;2"
-        ";254;254;254m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;253;253"
-        ";253;48;2;252;252;252m▄\x1b[0m\x1b[38;2;249;24"
-        "9;249;48;2;248;248;248m▄\x1b[0m\x1b[38;2;255;2"
-        "55;255;48;2;254;254;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b["
-        "38;2;249;249;249;48;2;248;248;248m▄\x1b[0m\x1b"
-        "[38;2;252;252;252;48;2;251;251;251m▄\x1b[0m"
-        "\x1b[38;2;255;255;255;48;2;254;254;254m▄▄▄▄"
-        "▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247;48;2;246;24"
-        "6;246m▄\x1b[0m\x1b[38;2;255;255;255;48;2;254;2"
-        "54;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;252;252;252;"
-        "48;2;251;251;251m▄\x1b[0m\x1b[38;2;249;249;249"
-        ";48;2;248;248;248m▄\x1b[0m\x1b[38;2;255;255;25"
-        "5;48;2;254;254;254m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;255"
-        ";255;255;48;2;253;253;253m▄\x1b[0m\x1b[38;2;25"
-        "5;255;255;49m█\x1b[0m \n      \x1b[38;2;0;0;0;4"
-        "9m███████\x1b[0m\x1b[38;2;255;255;255;49m█████"
-        "████\x1b[0m\x1b[38;2;248;248;248;49m█\x1b[0m\x1b[38;"
-        "2;253;253;253;49m█\x1b[0m\x1b[38;2;255;255;255"
-        ";49m█████████\x1b[0m\x1b[38;2;253;253;253;49m█"
-        "\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;25"
-        "5;255;255;49m██████████\x1b[0m\x1b[38;2;249;24"
-        "9;249;49m█\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0"
+        "5;49m██████████\x1b[0m\x1b[38;2;252;252;252;49"
+        "m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;"
+        "255;255;255;49m█████████\x1b[0m \n      \x1b[38"
+        ";2;0;0;0;49m███████\x1b[0m\x1b[38;2;255;255;25"
+        "5;49m█████████\x1b[0m\x1b[38;2;248;248;248;49m"
+        "█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;2"
+        "55;255;255;49m█████████\x1b[0m\x1b[38;2;253;25"
+        "3;253;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0"
         "m\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b[3"
-        "8;2;247;247;247;49m█\x1b[0m\x1b[38;2;255;255;2"
-        "55;49m██████████\x1b[0m\x1b[38;2;252;252;252;4"
-        "9m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2"
-        ";255;255;255;49m█████████\x1b[0m \n      \x1b[3"
+        "8;2;249;249;249;49m█\x1b[0m\x1b[38;2;252;252;2"
+        "52;49m█\x1b[0m\x1b[38;2;255;255;255;49m███████"
+        "███\x1b[0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[38;2"
+        ";255;255;255;49m██████████\x1b[0m\x1b[38;2;252"
+        ";252;252;49m█\x1b[0m\x1b[38;2;249;249;249;49m█"
+        "\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0m "
+        "\n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;127;1"
+        "27;127;48;2;0;0;0m▄▄\x1b[0m\x1b[38;2;109;109;1"
+        "09;48;2;0;0;0m▄▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b["
+        "0m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b[3"
+        "8;2;248;248;248;49m█\x1b[0m\x1b[38;2;253;253;2"
+        "53;49m█\x1b[0m\x1b[38;2;255;255;255;49m███████"
+        "██\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;"
+        "249;249;249;49m█\x1b[0m\x1b[38;2;255;255;255;4"
+        "9m██████████\x1b[0m\x1b[38;2;249;249;249;49m█\x1b"
+        "[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;255"
+        ";255;255;49m██████████\x1b[0m\x1b[38;2;247;247"
+        ";247;49m█\x1b[0m\x1b[38;2;255;255;255;49m█████"
+        "█████\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38"
+        ";2;249;249;249;49m█\x1b[0m\x1b[38;2;255;255;25"
+        "5;49m█████████\x1b[0m \n      \x1b[38;2;0;0;0;4"
+        "9m█\x1b[0m\x1b[38;2;102;102;102;48;2;115;115;1"
+        "15m▄\x1b[0m\x1b[38;2;117;117;117;49m█\x1b[0m\x1b[38;"
+        "2;118;118;118;48;2;117;117;117m▄\x1b[0m\x1b[38"
+        ";2;113;113;113;48;2;115;115;115m▄\x1b[0m\x1b[3"
+        "8;2;0;0;0;49m██\x1b[0m\x1b[38;2;255;255;255;48"
+        ";2;249;249;249m▄\x1b[0m\x1b[38;2;255;255;255;4"
+        "8;2;246;246;246m▄\x1b[0m\x1b[38;2;255;255;255;"
+        "48;2;248;248;248m▄\x1b[0m\x1b[38;2;255;255;255"
+        ";48;2;247;247;247m▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;2"
+        "48;248;48;2;242;242;242m▄\x1b[0m\x1b[38;2;253;"
+        "253;253;48;2;246;246;246m▄\x1b[0m\x1b[38;2;255"
+        ";255;255;48;2;247;247;247m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b"
+        "[38;2;253;253;253;48;2;246;246;246m▄\x1b[0m"
+        "\x1b[38;2;249;249;249;48;2;243;243;243m▄\x1b[0"
+        "m\x1b[38;2;255;255;255;48;2;247;247;247m▄▄▄"
+        "▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;249;249;249;48;2;243;2"
+        "43;243m▄\x1b[0m\x1b[38;2;252;252;252;48;2;245;"
+        "245;245m▄\x1b[0m\x1b[38;2;255;255;255;48;2;247"
+        ";247;247m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;24"
+        "7;48;2;242;242;242m▄\x1b[0m\x1b[38;2;255;255;2"
+        "55;48;2;247;247;247m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2"
+        ";252;252;252;48;2;245;245;245m▄\x1b[0m\x1b[38;"
+        "2;249;249;249;48;2;243;243;243m▄\x1b[0m\x1b[38"
+        ";2;255;255;255;48;2;247;247;247m▄▄▄▄▄▄\x1b["
+        "0m\x1b[38;2;255;255;255;48;2;250;250;250m▄\x1b"
+        "[0m\x1b[38;2;255;255;255;48;2;246;246;246m▄"
+        "\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m \n      \x1b"
+        "[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;255;255"
+        ";255;49m█████████\x1b[0m\x1b[38;2;248;248;248;"
+        "49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;"
+        "2;255;255;255;49m█████████\x1b[0m\x1b[38;2;253"
+        ";253;253;49m█\x1b[0m\x1b[38;2;249;249;249;49m█"
+        "\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b[0m"
+        "\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;252;25"
+        "2;252;49m█\x1b[0m\x1b[38;2;255;255;255;49m████"
+        "██████\x1b[0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[3"
+        "8;2;255;255;255;49m██████████\x1b[0m\x1b[38;2;"
+        "252;252;252;49m█\x1b[0m\x1b[38;2;249;249;249;4"
+        "9m█\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b["
+        "0m \n      \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[3"
+        "8;2;255;255;255;49m█████████\x1b[0m\x1b[38;2;2"
+        "48;248;248;49m█\x1b[0m\x1b[38;2;253;253;253;49"
+        "m█\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0"
+        "m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;249;2"
+        "49;249;49m█\x1b[0m\x1b[38;2;255;255;255;49m███"
+        "███████\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b["
+        "38;2;252;252;252;49m█\x1b[0m\x1b[38;2;255;255;"
+        "255;49m██████████\x1b[0m\x1b[38;2;247;247;247;"
+        "49m█\x1b[0m\x1b[38;2;255;255;255;49m██████████"
+        "\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;24"
+        "9;249;249;49m█\x1b[0m\x1b[38;2;255;255;255;49m"
+        "█████████\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b["
+        "0m\x1b[38;2;113;113;113;48;2;0;0;0m▄\x1b[0m\x1b[3"
+        "8;2;118;118;118;48;2;0;0;0m▄\x1b[0m\x1b[38;2;1"
+        "15;115;115;48;2;0;0;0m▄\x1b[0m\x1b[38;2;117;11"
+        "7;117;48;2;0;0;0m▄\x1b[0m\x1b[38;2;0;0;0;49m██"
+        "\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m\x1b[38;2;25"
+        "1;251;251;48;2;255;255;255m▄\x1b[0m\x1b[38;2;2"
+        "52;252;252;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b"
+        "[38;2;246;246;246;48;2;248;248;248m▄\x1b[0m"
+        "\x1b[38;2;251;251;251;48;2;253;253;253m▄\x1b[0"
+        "m\x1b[38;2;252;252;252;48;2;255;255;255m▄▄▄"
+        "▄▄▄▄▄▄\x1b[0m\x1b[38;2;250;250;250;48;2;253;25"
+        "3;253m▄\x1b[0m\x1b[38;2;247;247;247;48;2;249;2"
+        "49;249m▄\x1b[0m\x1b[38;2;252;252;252;48;2;255;"
+        "255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247"
+        ";48;2;249;249;249m▄\x1b[0m\x1b[38;2;250;250;25"
+        "0;48;2;252;252;252m▄\x1b[0m\x1b[38;2;252;252;2"
+        "52;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2"
+        ";245;245;245;48;2;247;247;247m▄\x1b[0m\x1b[38;"
+        "2;252;252;252;48;2;255;255;255m▄▄▄▄▄▄▄▄▄"
+        "▄\x1b[0m\x1b[38;2;250;250;250;48;2;252;252;252"
+        "m▄\x1b[0m\x1b[38;2;247;247;247;48;2;249;249;24"
+        "9m▄\x1b[0m\x1b[38;2;252;252;252;48;2;255;255;2"
+        "55m▄▄▄▄▄▄\x1b[0m\x1b[38;2;253;253;253;48;2;255"
+        ";255;255m▄\x1b[0m\x1b[38;2;252;252;252;48;2;25"
+        "5;255;255m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b["
+        "0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;12"
+        "7;127;127;48;2;120;120;120m▄\x1b[0m\x1b[38;2;1"
+        "09;109;109;48;2;119;119;119m▄\x1b[0m\x1b[38;2;"
+        "127;127;127;48;2;116;116;116m▄\x1b[0m\x1b[38;2"
+        ";115;115;115;48;2;118;118;118m▄\x1b[0m\x1b[38;"
+        "2;0;0;0;49m██\x1b[0m\x1b[38;2;255;255;255;48;2"
+        ";249;249;249m▄\x1b[0m\x1b[38;2;255;255;255;48;"
+        "2;248;248;248m▄\x1b[0m\x1b[38;2;255;255;255;48"
+        ";2;249;249;249m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;248"
+        ";248;48;2;243;243;243m▄\x1b[0m\x1b[38;2;254;25"
+        "4;254;48;2;248;248;248m▄\x1b[0m\x1b[38;2;255;2"
+        "55;255;48;2;249;249;249m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[3"
+        "8;2;254;254;254;48;2;247;247;247m▄\x1b[0m\x1b["
+        "38;2;249;249;249;48;2;244;244;244m▄\x1b[0m\x1b"
+        "[38;2;255;255;255;48;2;249;249;249m▄▄▄▄▄"
+        "▄▄▄▄▄\x1b[0m\x1b[38;2;249;249;249;48;2;244;244"
+        ";244m▄\x1b[0m\x1b[38;2;252;252;252;48;2;247;24"
+        "7;247m▄\x1b[0m\x1b[38;2;255;255;255;48;2;249;2"
+        "49;249m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247;"
+        "48;2;243;243;243m▄\x1b[0m\x1b[38;2;255;255;255"
+        ";48;2;249;249;249m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;2"
+        "52;252;252;48;2;247;247;247m▄\x1b[0m\x1b[38;2;"
+        "249;249;249;48;2;244;244;244m▄\x1b[0m\x1b[38;2"
+        ";255;255;255;48;2;249;249;249m▄▄▄▄▄▄\x1b[0m"
+        "\x1b[38;2;255;255;255;48;2;251;251;251m▄\x1b[0"
+        "m\x1b[38;2;255;255;255;48;2;248;248;248m▄\x1b["
+        "0m\x1b[38;2;255;255;255;49m█\x1b[0m \n      \x1b[3"
         "8;2;0;0;0;49m███████\x1b[0m\x1b[38;2;255;255;2"
         "55;49m█████████\x1b[0m\x1b[38;2;248;248;248;49"
         "m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;"
@@ -2860,259 +3235,216 @@ def test_render_block_image(
         "2;255;255;255;49m██████████\x1b[0m\x1b[38;2;25"
         "2;252;252;49m█\x1b[0m\x1b[38;2;249;249;249;49m"
         "█\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0m"
-        " \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;111;"
-        "111;111;48;2;120;120;120m▄\x1b[0m\x1b[38;2;113"
-        ";113;113;48;2;118;118;118m▄\x1b[0m\x1b[38;2;11"
-        "5;115;115;48;2;116;116;116m▄\x1b[0m\x1b[38;2;1"
-        "16;116;116;48;2;113;113;113m▄\x1b[0m\x1b[38;2;"
-        "0;0;0;49m██\x1b[0m\x1b[38;2;249;249;249;48;2;2"
-        "55;255;255m▄\x1b[0m\x1b[38;2;249;249;249;48;2;"
-        "251;251;251m▄\x1b[0m\x1b[38;2;250;250;250;48;2"
-        ";252;252;252m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;244;244;2"
-        "44;48;2;246;246;246m▄\x1b[0m\x1b[38;2;248;248;"
-        "248;48;2;250;250;250m▄\x1b[0m\x1b[38;2;250;250"
-        ";250;48;2;252;252;252m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;"
-        "2;248;248;248;48;2;250;250;250m▄\x1b[0m\x1b[38"
-        ";2;245;245;245;48;2;246;246;246m▄\x1b[0m\x1b[3"
-        "8;2;250;250;250;48;2;252;252;252m▄▄▄▄▄▄▄"
-        "▄▄▄\x1b[0m\x1b[38;2;245;245;245;48;2;246;246;2"
-        "46m▄\x1b[0m\x1b[38;2;247;247;247;48;2;249;249;"
-        "249m▄\x1b[0m\x1b[38;2;250;250;250;48;2;252;252"
-        ";252m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;243;243;243;48"
-        ";2;245;245;245m▄\x1b[0m\x1b[38;2;250;250;250;4"
-        "8;2;252;252;252m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247"
-        ";247;247;48;2;249;249;249m▄\x1b[0m\x1b[38;2;24"
-        "5;245;245;48;2;246;246;246m▄\x1b[0m\x1b[38;2;2"
-        "50;250;250;48;2;252;252;252m▄▄▄▄▄▄\x1b[0m\x1b["
-        "38;2;252;252;252;48;2;253;253;253m▄\x1b[0m\x1b"
-        "[38;2;248;248;248;48;2;251;251;251m▄\x1b[0m"
-        "\x1b[38;2;255;255;255;49m█\x1b[0m \n      \x1b[38;"
-        "2;0;0;0;49m█\x1b[0m\x1b[38;2;0;0;0;48;2;127;12"
-        "7;127m▄▄\x1b[0m\x1b[38;2;0;0;0;48;2;109;109;10"
-        "9m▄\x1b[0m\x1b[38;2;0;0;0;48;2;95;95;95m▄\x1b[0m\x1b"
-        "[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;255;255;255;"
-        "49m█████████\x1b[0m\x1b[38;2;248;248;248;49m█\x1b"
-        "[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;255"
-        ";255;255;49m█████████\x1b[0m\x1b[38;2;253;253;"
-        "253;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b"
-        "[38;2;255;255;255;49m██████████\x1b[0m\x1b[38;"
-        "2;249;249;249;49m█\x1b[0m\x1b[38;2;252;252;252"
-        ";49m█\x1b[0m\x1b[38;2;255;255;255;49m█████████"
-        "█\x1b[0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[38;2;2"
-        "55;255;255;49m██████████\x1b[0m\x1b[38;2;252;2"
-        "52;252;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b["
-        "0m\x1b[38;2;255;255;255;49m█████████\x1b[0m \n "
-        "     \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;2"
-        "55;255;255;49m█████████\x1b[0m\x1b[38;2;248;24"
-        "8;248;49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0"
-        "m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b[38"
-        ";2;253;253;253;49m█\x1b[0m\x1b[38;2;249;249;24"
-        "9;49m█\x1b[0m\x1b[38;2;255;255;255;49m████████"
-        "██\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;"
-        "252;252;252;49m█\x1b[0m\x1b[38;2;255;255;255;4"
-        "9m██████████\x1b[0m\x1b[38;2;247;247;247;49m█\x1b"
-        "[0m\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b"
-        "[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;249;249"
+        " \n      \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;"
+        "2;255;255;255;49m█████████\x1b[0m\x1b[38;2;248"
+        ";248;248;49m█\x1b[0m\x1b[38;2;253;253;253;49m█"
+        "\x1b[0m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b"
+        "[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;249;249"
         ";249;49m█\x1b[0m\x1b[38;2;255;255;255;49m█████"
-        "████\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[3"
-        "8;2;127;127;127;48;2;0;0;0m▄\x1b[0m\x1b[38;2;1"
-        "13;113;113;48;2;0;0;0m▄\x1b[0m\x1b[38;2;122;12"
-        "2;122;48;2;0;0;0m▄\x1b[0m\x1b[38;2;120;120;120"
-        ";48;2;0;0;0m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b"
-        "[38;2;255;255;255;49m█\x1b[0m\x1b[38;2;253;253"
-        ";253;48;2;255;255;255m▄\x1b[0m\x1b[38;2;254;25"
-        "4;254;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2"
-        ";247;247;247;48;2;248;248;248m▄\x1b[0m\x1b[38;"
-        "2;252;252;252;48;2;253;253;253m▄\x1b[0m\x1b[38"
-        ";2;254;254;254;48;2;255;255;255m▄▄▄▄▄▄▄▄"
-        "▄\x1b[0m\x1b[38;2;252;252;252;48;2;253;253;253"
-        "m▄\x1b[0m\x1b[38;2;248;248;248;48;2;249;249;24"
-        "9m▄\x1b[0m\x1b[38;2;254;254;254;48;2;255;255;2"
-        "55m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;248;248;48;2"
-        ";249;249;249m▄\x1b[0m\x1b[38;2;251;251;251;48;"
-        "2;252;252;252m▄\x1b[0m\x1b[38;2;254;254;254;48"
-        ";2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;246;"
-        "246;246;48;2;247;247;247m▄\x1b[0m\x1b[38;2;254"
-        ";254;254;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m"
-        "\x1b[38;2;251;251;251;48;2;252;252;252m▄\x1b[0"
-        "m\x1b[38;2;248;248;248;48;2;249;249;249m▄\x1b["
-        "0m\x1b[38;2;254;254;254;48;2;255;255;255m▄▄"
-        "▄▄▄▄▄\x1b[0m\x1b[38;2;253;253;253;48;2;255;255"
-        ";255m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m \n "
-        "     \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;170;170"
-        ";170;48;2;114;114;114m▄\x1b[0m\x1b[38;2;120;12"
-        "0;120;48;2;117;117;117m▄\x1b[0m\x1b[38;2;114;1"
-        "14;114;48;2;119;119;119m▄\x1b[0m\x1b[38;2;120;"
-        "120;120;48;2;117;117;117m▄\x1b[0m\x1b[38;2;0;0"
-        ";0;49m██\x1b[0m\x1b[38;2;255;255;255;48;2;249;"
-        "249;249m▄\x1b[0m\x1b[38;2;255;255;255;48;2;247"
-        ";247;247m▄\x1b[0m\x1b[38;2;255;255;255;48;2;24"
-        "8;248;248m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;248;248;248;"
-        "48;2;243;243;243m▄\x1b[0m\x1b[38;2;253;253;253"
-        ";48;2;247;247;247m▄\x1b[0m\x1b[38;2;255;255;25"
-        "5;48;2;248;248;248m▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;2"
-        "53;253;253;48;2;246;246;246m▄\x1b[0m\x1b[38;2;"
-        "249;249;249;48;2;243;243;243m▄\x1b[0m\x1b[38;2"
-        ";255;255;255;48;2;248;248;248m▄▄▄▄▄▄▄▄▄▄"
-        "\x1b[0m\x1b[38;2;249;249;249;48;2;243;243;243m"
-        "▄\x1b[0m\x1b[38;2;252;252;252;48;2;246;246;246"
-        "m▄\x1b[0m\x1b[38;2;255;255;255;48;2;248;248;24"
-        "8m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;247;247;48;2;"
-        "242;242;242m▄\x1b[0m\x1b[38;2;255;255;255;48;2"
-        ";248;248;248m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;252;25"
-        "2;252;48;2;246;246;246m▄\x1b[0m\x1b[38;2;249;2"
-        "49;249;48;2;243;243;243m▄\x1b[0m\x1b[38;2;255;"
-        "255;255;48;2;248;248;248m▄▄▄▄▄▄\x1b[0m\x1b[38;"
-        "2;255;255;255;48;2;250;250;250m▄\x1b[0m\x1b[38"
-        ";2;255;255;255;48;2;247;247;247m▄\x1b[0m\x1b[3"
-        "8;2;255;255;255;49m█\x1b[0m \n      \x1b[38;2;0"
-        ";0;0;49m███████\x1b[0m\x1b[38;2;255;255;255;49"
-        "m█████████\x1b[0m\x1b[38;2;248;248;248;49m█\x1b[0"
-        "m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;255;2"
-        "55;255;49m█████████\x1b[0m\x1b[38;2;253;253;25"
-        "3;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[3"
-        "8;2;255;255;255;49m██████████\x1b[0m\x1b[38;2;"
-        "249;249;249;49m█\x1b[0m\x1b[38;2;252;252;252;4"
-        "9m█\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b"
-        "[0m\x1b[38;2;247;247;247;49m█\x1b[0m\x1b[38;2;255"
-        ";255;255;49m██████████\x1b[0m\x1b[38;2;252;252"
-        ";252;49m█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m"
-        "\x1b[38;2;255;255;255;49m█████████\x1b[0m \n   "
-        "   \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;255"
-        ";255;255;49m█████████\x1b[0m\x1b[38;2;248;248;"
-        "248;49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b"
-        "[38;2;255;255;255;49m█████████\x1b[0m\x1b[38;2"
-        ";253;253;253;49m█\x1b[0m\x1b[38;2;249;249;249;"
-        "49m█\x1b[0m\x1b[38;2;255;255;255;49m██████████"
-        "\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;25"
-        "2;252;252;49m█\x1b[0m\x1b[38;2;255;255;255;49m"
-        "██████████\x1b[0m\x1b[38;2;247;247;247;49m█\x1b[0"
-        "m\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b[3"
-        "8;2;252;252;252;49m█\x1b[0m\x1b[38;2;249;249;2"
-        "49;49m█\x1b[0m\x1b[38;2;255;255;255;49m███████"
-        "██\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;"
-        "2;116;116;116;48;2;127;127;127m▄▄▄\x1b[0m\x1b["
-        "38;2;118;118;118;48;2;127;127;127m▄\x1b[0m\x1b"
-        "[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;249;249;249;"
-        "48;2;255;255;255m▄\x1b[0m\x1b[38;2;248;248;248"
-        ";48;2;255;255;255m▄\x1b[0m\x1b[38;2;249;249;24"
-        "9;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;243"
-        ";243;243;48;2;248;248;248m▄\x1b[0m\x1b[38;2;24"
-        "7;247;247;48;2;253;253;253m▄\x1b[0m\x1b[38;2;2"
-        "49;249;249;48;2;255;255;255m▄▄▄▄▄▄▄▄▄\x1b[0"
-        "m\x1b[38;2;247;247;247;48;2;253;253;253m▄\x1b["
-        "0m\x1b[38;2;244;244;244;48;2;249;249;249m▄\x1b"
-        "[0m\x1b[38;2;249;249;249;48;2;255;255;255m▄"
-        "▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;244;244;244;48;2;249"
-        ";249;249m▄\x1b[0m\x1b[38;2;246;246;246;48;2;25"
-        "2;252;252m▄\x1b[0m\x1b[38;2;249;249;249;48;2;2"
-        "55;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;242;242;"
-        "242;48;2;247;247;247m▄\x1b[0m\x1b[38;2;249;249"
-        ";249;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38"
-        ";2;246;246;246;48;2;252;252;252m▄\x1b[0m\x1b[3"
-        "8;2;244;244;244;48;2;249;249;249m▄\x1b[0m\x1b["
-        "38;2;249;249;249;48;2;255;255;255m▄▄▄▄▄▄"
-        "\x1b[0m\x1b[38;2;251;251;251;48;2;255;255;255m"
-        "▄\x1b[0m\x1b[38;2;247;247;247;48;2;255;255;255"
-        "m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m \n     "
-        " \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;0;0;0;48;2;"
-        "113;113;113m▄\x1b[0m\x1b[38;2;0;0;0;48;2;120;1"
-        "20;120m▄\x1b[0m\x1b[38;2;0;0;0;48;2;118;118;11"
-        "8m▄\x1b[0m\x1b[38;2;0;0;0;48;2;117;117;117m▄\x1b["
-        "0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;205;205;2"
-        "05;48;2;255;255;255m▄\x1b[0m\x1b[38;2;211;211;"
-        "211;48;2;255;255;255m▄\x1b[0m\x1b[38;2;210;210"
-        ";210;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;"
-        "206;206;206;48;2;255;255;255m▄\x1b[0m\x1b[38;2"
-        ";209;209;209;48;2;255;255;255m▄\x1b[0m\x1b[38;"
-        "2;210;210;210;48;2;255;255;255m▄▄▄▄▄▄▄▄▄"
-        "\x1b[0m\x1b[38;2;209;209;209;48;2;255;255;255m"
-        "▄\x1b[0m\x1b[38;2;206;206;206;48;2;255;255;255"
-        "m▄\x1b[0m\x1b[38;2;210;210;210;48;2;255;255;25"
-        "5m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;206;206;206;48;2;"
-        "255;255;255m▄\x1b[0m\x1b[38;2;209;209;209;48;2"
-        ";255;255;255m▄\x1b[0m\x1b[38;2;210;210;210;48;"
-        "2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;204;2"
-        "04;204;48;2;255;255;255m▄\x1b[0m\x1b[38;2;210;"
-        "210;210;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b"
-        "[38;2;209;209;209;48;2;255;255;255m▄\x1b[0m"
-        "\x1b[38;2;206;206;206;48;2;255;255;255m▄\x1b[0"
-        "m\x1b[38;2;210;210;210;48;2;255;255;255m▄▄▄"
-        "▄▄▄\x1b[0m\x1b[38;2;211;211;211;48;2;255;255;2"
-        "55m▄\x1b[0m\x1b[38;2;206;206;206;48;2;255;255;"
-        "255m▄\x1b[0m\x1b[38;2;127;127;127;48;2;255;255"
-        ";255m▄\x1b[0m \n      \x1b[38;2;0;0;0;49m██████"
-        "████████████████████████████████████████"
-        "███████████████████████████\x1b[0m \n      \x1b"
-        "[38;2;0;0;0;49m█████████████\x1b[0m\x1b[38;2;1"
-        "02;102;102;48;2;0;0;0m▄\x1b[0m\x1b[38;2;117;11"
-        "7;117;48;2;127;127;127m▄\x1b[0m\x1b[38;2;118;1"
-        "18;118;48;2;116;116;116m▄\x1b[0m\x1b[38;2;119;"
-        "119;119;48;2;127;127;127m▄\x1b[0m\x1b[38;2;116"
-        ";116;116;48;2;119;119;119m▄\x1b[0m\x1b[38;2;11"
+        "█████\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38"
+        ";2;252;252;252;49m█\x1b[0m\x1b[38;2;255;255;25"
+        "5;49m██████████\x1b[0m\x1b[38;2;247;247;247;49"
+        "m█\x1b[0m\x1b[38;2;255;255;255;49m██████████\x1b["
+        "0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;249;"
+        "249;249;49m█\x1b[0m\x1b[38;2;255;255;255;49m██"
+        "███████\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m"
+        "\x1b[38;2;116;116;116;48;2;127;127;127m▄\x1b[0"
+        "m\x1b[38;2;119;119;119;48;2;127;127;127m▄\x1b["
+        "0m\x1b[38;2;119;119;119;48;2;113;113;113m▄\x1b"
+        "[0m\x1b[38;2;117;117;117;48;2;102;102;102m▄"
+        "\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;249;249"
+        ";249;48;2;255;255;255m▄\x1b[0m\x1b[38;2;247;24"
+        "7;247;48;2;255;255;255m▄\x1b[0m\x1b[38;2;248;2"
+        "48;248;48;2;255;255;255m▄▄▄▄▄▄▄\x1b[0m\x1b[38;"
+        "2;242;242;242;48;2;248;248;248m▄\x1b[0m\x1b[38"
+        ";2;247;247;247;48;2;253;253;253m▄\x1b[0m\x1b[3"
+        "8;2;248;248;248;48;2;255;255;255m▄▄▄▄▄▄▄"
+        "▄▄\x1b[0m\x1b[38;2;246;246;246;48;2;253;253;25"
+        "3m▄\x1b[0m\x1b[38;2;243;243;243;48;2;249;249;2"
+        "49m▄\x1b[0m\x1b[38;2;248;248;248;48;2;255;255;"
+        "255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;243;243;243;48;"
+        "2;249;249;249m▄\x1b[0m\x1b[38;2;246;246;246;48"
+        ";2;252;252;252m▄\x1b[0m\x1b[38;2;248;248;248;4"
+        "8;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;242"
+        ";242;242;48;2;247;247;247m▄\x1b[0m\x1b[38;2;24"
+        "8;248;248;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0"
+        "m\x1b[38;2;246;246;246;48;2;252;252;252m▄\x1b["
+        "0m\x1b[38;2;243;243;243;48;2;249;249;249m▄\x1b"
+        "[0m\x1b[38;2;248;248;248;48;2;255;255;255m▄"
+        "▄▄▄▄▄\x1b[0m\x1b[38;2;250;250;250;48;2;255;255"
+        ";255m▄\x1b[0m\x1b[38;2;247;247;247;48;2;255;25"
+        "5;255m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m \n"
+        "      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2;0;0;0;"
+        "48;2;127;127;127m▄\x1b[0m\x1b[38;2;0;0;0;48;2;"
+        "120;120;120m▄\x1b[0m\x1b[38;2;85;85;85;48;2;11"
+        "6;116;116m▄\x1b[0m\x1b[38;2;255;255;255;48;2;1"
+        "14;114;114m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b["
+        "38;2;255;255;255;49m█\x1b[0m\x1b[38;2;255;255;"
+        "255;48;2;253;253;253m▄\x1b[0m\x1b[38;2;255;255"
+        ";255;48;2;254;254;254m▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;"
+        "248;248;248;48;2;247;247;247m▄\x1b[0m\x1b[38;2"
+        ";253;253;253;48;2;252;252;252m▄\x1b[0m\x1b[38;"
+        "2;255;255;255;48;2;254;254;254m▄▄▄▄▄▄▄▄▄"
+        "\x1b[0m\x1b[38;2;253;253;253;48;2;252;252;252m"
+        "▄\x1b[0m\x1b[38;2;249;249;249;48;2;248;248;248"
+        "m▄\x1b[0m\x1b[38;2;255;255;255;48;2;254;254;25"
+        "4m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;249;249;249;48;2;"
+        "248;248;248m▄\x1b[0m\x1b[38;2;252;252;252;48;2"
+        ";251;251;251m▄\x1b[0m\x1b[38;2;255;255;255;48;"
+        "2;254;254;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;247;2"
+        "47;247;48;2;246;246;246m▄\x1b[0m\x1b[38;2;255;"
+        "255;255;48;2;254;254;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b"
+        "[38;2;252;252;252;48;2;251;251;251m▄\x1b[0m"
+        "\x1b[38;2;249;249;249;48;2;248;248;248m▄\x1b[0"
+        "m\x1b[38;2;255;255;255;48;2;254;254;254m▄▄▄"
+        "▄▄▄▄\x1b[0m\x1b[38;2;255;255;255;48;2;253;253;"
+        "253m▄\x1b[0m\x1b[38;2;255;255;255;49m█\x1b[0m \n  "
+        "    \x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;25"
+        "5;255;255;49m█████████\x1b[0m\x1b[38;2;248;248"
+        ";248;49m█\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m"
+        "\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b[38;"
+        "2;253;253;253;49m█\x1b[0m\x1b[38;2;249;249;249"
+        ";49m█\x1b[0m\x1b[38;2;255;255;255;49m█████████"
+        "█\x1b[0m\x1b[38;2;249;249;249;49m█\x1b[0m\x1b[38;2;2"
+        "52;252;252;49m█\x1b[0m\x1b[38;2;255;255;255;49"
+        "m██████████\x1b[0m\x1b[38;2;247;247;247;49m█\x1b["
+        "0m\x1b[38;2;255;255;255;49m██████████\x1b[0m\x1b["
+        "38;2;252;252;252;49m█\x1b[0m\x1b[38;2;249;249;"
+        "249;49m█\x1b[0m\x1b[38;2;255;255;255;49m██████"
+        "███\x1b[0m \n      \x1b[38;2;0;0;0;49m███████\x1b["
+        "0m\x1b[38;2;255;255;255;49m█████████\x1b[0m\x1b[3"
+        "8;2;248;248;248;49m█\x1b[0m\x1b[38;2;253;253;2"
+        "53;49m█\x1b[0m\x1b[38;2;255;255;255;49m███████"
+        "██\x1b[0m\x1b[38;2;253;253;253;49m█\x1b[0m\x1b[38;2;"
+        "249;249;249;49m█\x1b[0m\x1b[38;2;255;255;255;4"
+        "9m██████████\x1b[0m\x1b[38;2;249;249;249;49m█\x1b"
+        "[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38;2;255"
+        ";255;255;49m██████████\x1b[0m\x1b[38;2;247;247"
+        ";247;49m█\x1b[0m\x1b[38;2;255;255;255;49m█████"
+        "█████\x1b[0m\x1b[38;2;252;252;252;49m█\x1b[0m\x1b[38"
+        ";2;249;249;249;49m█\x1b[0m\x1b[38;2;255;255;25"
+        "5;49m█████████\x1b[0m \n      \x1b[38;2;0;0;0;4"
+        "9m█\x1b[0m\x1b[38;2;121;121;121;48;2;115;115;1"
+        "15m▄\x1b[0m\x1b[38;2;117;117;117;48;2;111;111;"
+        "111m▄\x1b[0m\x1b[38;2;116;116;116;48;2;115;115"
+        ";115m▄\x1b[0m\x1b[38;2;119;119;119;48;2;109;10"
+        "9;109m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38;2;"
+        "249;249;249;48;2;255;255;255m▄\x1b[0m\x1b[38;2"
+        ";247;247;247;48;2;253;253;253m▄\x1b[0m\x1b[38;"
+        "2;248;248;248;48;2;254;254;254m▄▄▄▄▄▄▄\x1b["
+        "0m\x1b[38;2;242;242;242;48;2;248;248;248m▄\x1b"
+        "[0m\x1b[38;2;247;247;247;48;2;252;252;252m▄"
+        "\x1b[0m\x1b[38;2;248;248;248;48;2;254;254;254m"
+        "▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;246;246;246;48;2;252"
+        ";252;252m▄\x1b[0m\x1b[38;2;243;243;243;48;2;24"
+        "9;249;249m▄\x1b[0m\x1b[38;2;248;248;248;48;2;2"
+        "54;254;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;243;243;"
+        "243;48;2;249;249;249m▄\x1b[0m\x1b[38;2;246;246"
+        ";246;48;2;251;251;251m▄\x1b[0m\x1b[38;2;248;24"
+        "8;248;48;2;254;254;254m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[3"
+        "8;2;242;242;242;48;2;247;247;247m▄\x1b[0m\x1b["
+        "38;2;248;248;248;48;2;254;254;254m▄▄▄▄▄▄"
+        "▄▄▄▄\x1b[0m\x1b[38;2;246;246;246;48;2;251;251;"
+        "251m▄\x1b[0m\x1b[38;2;243;243;243;48;2;249;249"
+        ";249m▄\x1b[0m\x1b[38;2;248;248;248;48;2;254;25"
+        "4;254m▄▄▄▄▄▄\x1b[0m\x1b[38;2;250;250;250;48;2;"
+        "255;255;255m▄\x1b[0m\x1b[38;2;247;247;247;48;2"
+        ";253;253;253m▄\x1b[0m\x1b[38;2;255;255;255;49m"
+        "█\x1b[0m \n      \x1b[38;2;0;0;0;49m█\x1b[0m\x1b[38;2"
+        ";0;0;0;48;2;102;102;102m▄\x1b[0m\x1b[38;2;0;0;"
+        "0;48;2;112;112;112m▄\x1b[0m\x1b[38;2;0;0;0;48;"
+        "2;118;118;118m▄\x1b[0m\x1b[38;2;0;0;0;48;2;110"
+        ";110;110m▄\x1b[0m\x1b[38;2;0;0;0;49m██\x1b[0m\x1b[38"
+        ";2;180;180;180;48;2;249;249;249m▄\x1b[0m\x1b[3"
+        "8;2;185;185;185;48;2;255;255;255m▄▄▄▄▄▄▄"
+        "▄\x1b[0m\x1b[38;2;183;183;183;48;2;254;254;254"
+        "m▄\x1b[0m\x1b[38;2;185;185;185;48;2;255;255;25"
+        "5m▄▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;183;183;183;48;2"
+        ";255;255;255m▄\x1b[0m\x1b[38;2;185;185;185;48;"
+        "2;255;255;255m▄▄▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;183;1"
+        "83;183;48;2;255;255;255m▄\x1b[0m\x1b[38;2;185;"
+        "185;185;48;2;255;255;255m▄▄▄▄▄▄▄▄▄▄▄\x1b[0m"
+        "\x1b[38;2;183;183;183;48;2;253;253;253m▄\x1b[0"
+        "m\x1b[38;2;185;185;185;48;2;255;255;255m▄▄▄"
+        "▄▄▄▄▄▄▄▄\x1b[0m\x1b[38;2;183;183;183;48;2;255;"
+        "255;255m▄\x1b[0m\x1b[38;2;185;185;185;48;2;255"
+        ";255;255m▄▄▄▄▄▄\x1b[0m\x1b[38;2;188;188;188;48"
+        ";2;255;255;255m▄\x1b[0m\x1b[38;2;181;181;181;4"
+        "8;2;249;249;249m▄\x1b[0m\x1b[38;2;113;113;113;"
+        "48;2;255;255;255m▄\x1b[0m \n      \x1b[38;2;0;0"
+        ";0;49m██████████████████████████████████"
+        "███████████████████████████████████████\x1b"
+        "[0m \n      \x1b[38;2;0;0;0;49m█████████████"
+        "\x1b[0m\x1b[38;2;102;102;102;48;2;0;0;0m▄\x1b[0m\x1b"
+        "[38;2;115;115;115;48;2;127;127;127m▄\x1b[0m"
+        "\x1b[38;2;115;115;115;48;2;116;116;116m▄\x1b[0"
+        "m\x1b[38;2;119;119;119;49m█\x1b[0m\x1b[38;2;116;1"
+        "16;116;48;2;118;118;118m▄\x1b[0m\x1b[38;2;115;"
+        "115;115;49m█\x1b[0m\x1b[38;2;114;114;114;48;2;"
+        "111;111;111m▄\x1b[0m\x1b[38;2;0;0;0;49m█████\x1b["
+        "0m\x1b[38;2;113;113;113;48;2;255;255;255m▄\x1b"
+        "[0m\x1b[38;2;118;118;118;48;2;121;121;121m▄"
+        "\x1b[0m\x1b[38;2;114;114;114;49m█\x1b[0m\x1b[38;2;11"
         "5;115;115;48;2;121;121;121m▄\x1b[0m\x1b[38;2;1"
-        "17;117;117;48;2;115;115;115m▄\x1b[0m\x1b[38;2;"
-        "0;0;0;49m█████\x1b[0m\x1b[38;2;113;113;113;48;"
-        "2;0;0;0m▄\x1b[0m\x1b[38;2;114;114;114;48;2;119"
-        ";119;119m▄\x1b[0m\x1b[38;2;118;118;118;49m█\x1b[0"
-        "m\x1b[38;2;118;118;118;48;2;120;120;120m▄\x1b["
-        "0m\x1b[38;2;116;116;116;48;2;120;120;120m▄\x1b"
-        "[0m\x1b[38;2;118;118;118;48;2;115;115;115m▄"
-        "\x1b[0m\x1b[38;2;102;102;102;48;2;127;127;127m"
-        "▄\x1b[0m\x1b[38;2;0;0;0;49m█████\x1b[0m\x1b[38;2;120"
-        ";120;120;48;2;115;115;115m▄\x1b[0m\x1b[38;2;11"
-        "7;117;117;48;2;115;115;115m▄\x1b[0m\x1b[38;2;1"
-        "17;117;117;48;2;121;121;121m▄\x1b[0m\x1b[38;2;"
-        "118;118;118;48;2;112;112;112m▄\x1b[0m\x1b[38;2"
-        ";117;117;117;48;2;115;115;115m▄\x1b[0m\x1b[38;"
-        "2;127;127;127;48;2;0;0;0m▄\x1b[0m\x1b[38;2;0;0"
-        ";0;49m██████\x1b[0m\x1b[38;2;115;115;115;48;2;"
-        "122;122;122m▄\x1b[0m\x1b[38;2;115;115;115;48;2"
-        ";109;109;109m▄\x1b[0m\x1b[38;2;115;115;115;49m"
-        "█\x1b[0m\x1b[38;2;115;115;115;48;2;112;112;112"
-        "m▄\x1b[0m\x1b[38;2;112;112;112;48;2;121;121;12"
-        "1m▄\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b[38;2;"
-        "106;106;106;48;2;127;127;127m▄\x1b[0m\x1b[38;2"
-        ";118;118;118;48;2;112;112;112m▄\x1b[0m\x1b[38;"
-        "2;119;119;119;48;2;111;111;111m▄\x1b[0m\x1b[38"
-        ";2;118;118;118;48;2;115;115;115m▄\x1b[0m\x1b[3"
-        "8;2;116;116;116;48;2;121;121;121m▄\x1b[0m\x1b["
-        "38;2;112;112;112;48;2;109;109;109m▄\x1b[0m\x1b"
-        "[38;2;0;0;0;49m███████\x1b[0m \n      \x1b[38;2"
-        ";0;0;0;49m██████████████\x1b[0m\x1b[38;2;0;0;0"
-        ";48;2;170;170;170m▄\x1b[0m\x1b[38;2;0;0;0;48;2"
-        ";120;120;120m▄▄\x1b[0m\x1b[38;2;0;0;0;48;2;112"
-        ";112;112m▄▄\x1b[0m\x1b[38;2;0;0;0;48;2;127;127"
-        ";127m▄\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b[38"
-        ";2;0;0;0;48;2;119;119;119m▄▄\x1b[0m\x1b[38;2;0"
+        "16;116;116;49m█\x1b[0m\x1b[38;2;116;116;116;48"
+        ";2;115;115;115m▄\x1b[0m\x1b[38;2;102;102;102;4"
+        "8;2;85;85;85m▄\x1b[0m\x1b[38;2;0;0;0;49m█████\x1b"
+        "[0m\x1b[38;2;120;120;120;48;2;111;111;111m▄"
+        "\x1b[0m\x1b[38;2;117;117;117;48;2;115;115;115m"
+        "▄\x1b[0m\x1b[38;2;115;115;115;48;2;114;114;114"
+        "m▄\x1b[0m\x1b[38;2;115;115;115;48;2;116;116;11"
+        "6m▄\x1b[0m\x1b[38;2;117;117;117;48;2;115;115;1"
+        "15m▄\x1b[0m\x1b[38;2;127;127;127;48;2;255;255;"
+        "255m▄\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b[38;"
+        "2;115;115;115;48;2;120;120;120m▄\x1b[0m\x1b[38"
+        ";2;117;117;117;48;2;114;114;114m▄\x1b[0m\x1b[3"
+        "8;2;117;117;117;48;2;118;118;118m▄\x1b[0m\x1b["
+        "38;2;115;115;115;49m█\x1b[0m\x1b[38;2;118;118;"
+        "118;49m█\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b["
+        "38;2;106;106;106;48;2;85;85;85m▄\x1b[0m\x1b[38"
+        ";2;116;116;116;48;2;119;119;119m▄\x1b[0m\x1b[3"
+        "8;2;117;117;117;48;2;116;116;116m▄\x1b[0m\x1b["
+        "38;2;116;116;116;48;2;118;118;118m▄\x1b[0m\x1b"
+        "[38;2;117;117;117;48;2;116;116;116m▄\x1b[0m"
+        "\x1b[38;2;122;122;122;48;2;127;127;127m▄\x1b[0"
+        "m\x1b[38;2;0;0;0;49m███████\x1b[0m \n      \x1b[38"
+        ";2;0;0;0;49m███████████████\x1b[0m\x1b[38;2;0;"
+        "0;0;48;2;114;114;114m▄\x1b[0m\x1b[38;2;0;0;0;4"
+        "8;2;127;127;127m▄\x1b[0m\x1b[38;2;0;0;0;48;2;1"
+        "14;114;114m▄\x1b[0m\x1b[38;2;0;0;0;48;2;113;11"
+        "3;113m▄\x1b[0m\x1b[38;2;0;0;0;48;2;102;102;102"
+        "m▄\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b[38;2;0"
         ";0;0;48;2;115;115;115m▄\x1b[0m\x1b[38;2;0;0;0;"
-        "48;2;120;120;120m▄▄\x1b[0m\x1b[38;2;0;0;0;48;2"
-        ";127;127;127m▄\x1b[0m\x1b[38;2;0;0;0;49m█████\x1b"
-        "[0m\x1b[38;2;0;0;0;48;2;115;115;115m▄\x1b[0m\x1b["
-        "38;2;0;0;0;48;2;120;120;120m▄\x1b[0m\x1b[38;2;"
-        "0;0;0;48;2;117;117;117m▄\x1b[0m\x1b[38;2;0;0;0"
-        ";48;2;119;119;119m▄\x1b[0m\x1b[38;2;0;0;0;48;2"
-        ";115;115;115m▄\x1b[0m\x1b[38;2;0;0;0;49m██████"
-        "█\x1b[0m\x1b[38;2;0;0;0;48;2;112;112;112m▄\x1b[0m"
-        "\x1b[38;2;0;0;0;48;2;113;113;113m▄\x1b[0m\x1b[38;"
-        "2;0;0;0;48;2;115;115;115m▄\x1b[0m\x1b[38;2;0;0"
-        ";0;48;2;121;121;121m▄▄\x1b[0m\x1b[38;2;0;0;0;4"
-        "9m██████\x1b[0m\x1b[38;2;0;0;0;48;2;127;127;12"
-        "7m▄\x1b[0m\x1b[38;2;0;0;0;48;2;120;120;120m▄\x1b["
-        "0m\x1b[38;2;0;0;0;48;2;110;110;110m▄\x1b[0m\x1b[3"
-        "8;2;0;0;0;48;2;115;115;115m▄\x1b[0m\x1b[38;2;0"
-        ";0;0;48;2;117;117;117m▄\x1b[0m\x1b[38;2;0;0;0;"
-        "48;2;113;113;113m▄\x1b[0m\x1b[38;2;0;0;0;49m██"
-        "█████\x1b[0m \n"
+        "48;2;117;117;117m▄\x1b[0m\x1b[38;2;0;0;0;48;2;"
+        "113;113;113m▄\x1b[0m\x1b[38;2;0;0;0;48;2;115;1"
+        "15;115m▄\x1b[0m\x1b[38;2;0;0;0;48;2;120;120;12"
+        "0m▄\x1b[0m\x1b[38;2;0;0;0;48;2;127;127;127m▄\x1b["
+        "0m\x1b[38;2;0;0;0;49m█████\x1b[0m\x1b[38;2;0;0;0;"
+        "48;2;127;127;127m▄\x1b[0m\x1b[38;2;0;0;0;48;2;"
+        "114;114;114m▄\x1b[0m\x1b[38;2;0;0;0;48;2;115;1"
+        "15;115m▄\x1b[0m\x1b[38;2;0;0;0;48;2;113;113;11"
+        "3m▄\x1b[0m\x1b[38;2;0;0;0;48;2;117;117;117m▄\x1b["
+        "0m\x1b[38;2;0;0;0;49m███████\x1b[0m\x1b[38;2;0;0;"
+        "0;48;2;109;109;109m▄\x1b[0m\x1b[38;2;0;0;0;48;"
+        "2;121;121;121m▄\x1b[0m\x1b[38;2;0;0;0;48;2;117"
+        ";117;117m▄\x1b[0m\x1b[38;2;0;0;0;48;2;116;116;"
+        "116m▄\x1b[0m\x1b[38;2;0;0;0;48;2;120;120;120m▄"
+        "\x1b[0m\x1b[38;2;0;0;0;49m██████\x1b[0m\x1b[38;2;0;0"
+        ";0;48;2;255;255;255m▄\x1b[0m\x1b[38;2;0;0;0;48"
+        ";2;114;114;114m▄\x1b[0m\x1b[38;2;0;0;0;48;2;12"
+        "0;120;120m▄\x1b[0m\x1b[38;2;0;0;0;48;2;122;122"
+        ";122m▄\x1b[0m\x1b[38;2;0;0;0;48;2;113;113;113m"
+        "▄\x1b[0m\x1b[38;2;0;0;0;48;2;109;109;109m▄\x1b[0m"
+        "\x1b[38;2;0;0;0;49m███████\x1b[0m \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_render_image_link(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     disable_capture: ContextManager[_PluggyPlugin],
 ) -> None:
     """It renders a link to an image."""
@@ -3252,9 +3584,9 @@ def test_render_image_link(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     with disable_capture:
-        output = rich_output(image_cell, images=False)
+        output = rich_notebook_output(image_cell, images=False)
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -3269,7 +3601,7 @@ def test_render_image_link(
         "                                  \n     "
         "                                        "
         "                                   \n    "
-        f"  \x1b]8;id=42532;file://{tempfile_path}2.png"
+        f"  \x1b]8;id=42532;file://{tempfile_path}0.png"
         "\x1b\\\x1b[94m🖼 Click to view"
         " Image\x1b[0m\x1b]8;;\x1b\\                       "
         "                              \n         "
@@ -3282,10 +3614,10 @@ def test_render_image_link(
 
 
 def test_charater_drawing(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a block drawing of an image."""
     image_cell = {
@@ -3424,7 +3756,7 @@ def test_charater_drawing(
         ],
         "source": "",
     }
-    output = rich_output(
+    output = rich_notebook_output(
         image_cell, images=True, image_drawing="character", files=False
     )
     expected_output = (
@@ -4520,10 +4852,10 @@ def test_charater_drawing(
 
 
 def test_braille_drawing(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a block drawing of an image."""
     image_cell = {
@@ -4662,7 +4994,9 @@ def test_braille_drawing(
         ],
         "source": "",
     }
-    output = rich_output(image_cell, images=True, image_drawing="braille", files=False)
+    output = rich_notebook_output(
+        image_cell, images=True, image_drawing="braille", files=False
+    )
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -5801,10 +6135,10 @@ def test_braille_drawing(
 
 
 def test_render_image_link_no_image(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
     disable_capture: ContextManager[_PluggyPlugin],
 ) -> None:
     """It renders a link to an image."""
@@ -5944,9 +6278,9 @@ def test_render_image_link_no_image(
         ],
         "source": "",
     }
-    tempfile_path = get_tempfile_path("")
+
     with disable_capture:
-        output = rich_output(image_cell, images=False)
+        output = rich_notebook_output(image_cell, images=False)
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -5961,7 +6295,7 @@ def test_render_image_link_no_image(
         "                                  \n     "
         "                                        "
         "                                   \n    "
-        f"  \x1b]8;id=236660;file://{tempfile_path}2.png"
+        f"  \x1b]8;id=236660;file://{tempfile_path}0.png"
         "\x1b\\\x1b[94m🖼 Click to vie"
         "w Image\x1b[0m\x1b]8;;\x1b\\                      "
         "                               \n        "
@@ -5974,10 +6308,10 @@ def test_render_image_link_no_image(
 
 
 def test_render_svg_link(
-    rich_output: RichOutput,
+    rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    get_tempfile_path: Callable[[str], Path],
+    tempfile_path: Path,
 ) -> None:
     """It renders a link to an image."""
     svg_cell = {
@@ -6033,8 +6367,8 @@ def test_render_svg_link(
         ],
         "source": "",
     }
-    output = rich_output(svg_cell)
-    tempfile_path = get_tempfile_path("")
+    output = rich_notebook_output(svg_cell)
+
     expected_output = (
         "     ╭──────────────────────────────────"
         "───────────────────────────────────────╮"
@@ -6045,7 +6379,7 @@ def test_render_svg_link(
         "────────────────╯\n                      "
         "                                        "
         "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
-        f"\x1b]8;id=1627259094.976956-618609;file://{tempfile_path}2.svg"
+        f"\x1b]8;id=1627259094.976956-618609;file://{tempfile_path}0.svg"
         "\x1b\\\x1b[9"
         "4m🖼 Click to view Image\x1b[0m\x1b]8;;\x1b\\      "
         "                                        "

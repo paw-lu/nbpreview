@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Literal
 from typing import Optional
 from typing import Union
 
 import pygments
-from rich import markdown
+from picharsso.draw import gradient
 from rich import padding
 from rich import panel
 from rich import syntax
@@ -16,6 +17,8 @@ from rich.padding import Padding
 from rich.padding import PaddingDimensions
 from rich.syntax import Syntax
 from rich.text import Text
+
+from nbpreview.component import markdown
 
 
 def box_cell(
@@ -51,16 +54,50 @@ class MarkdownCell(Cell):
         source: str,
         theme: str,
         pad: PaddingDimensions,
+        nerd_font: bool,
+        unicode: bool,
+        images: bool,
+        image_drawing: Literal["block", "character", "braille", None],
+        color: bool,
+        negative_space: bool,
+        hyperlinks: bool,
+        files: bool,
+        hide_hyperlink_hints: bool,
+        characters: str = gradient.DEFAULT_CHARSET,
     ) -> None:
         """Constructor."""
         super().__init__(source, plain=True)
         self.theme = theme
         self.pad = pad
+        self.nerd_font = nerd_font
+        self.unicode = unicode
+        self.images = images
+        self.image_drawing = image_drawing
+        self.color = color
+        self.negative_space = negative_space
+        self.hyperlinks = hyperlinks
+        self.files = files
+        self.hide_hyperlink_hints = hide_hyperlink_hints
+        self.characters = characters
 
     def __rich__(self) -> Padding:
         """Render the markdown cell."""
         rendered_markdown = padding.Padding(
-            markdown.Markdown(self.source, inline_code_theme=self.theme), pad=self.pad
+            markdown.CustomMarkdown(
+                self.source,
+                inline_code_theme=self.theme,
+                nerd_font=self.nerd_font,
+                unicode=self.unicode,
+                images=self.images,
+                image_drawing=self.image_drawing,
+                color=self.color,
+                negative_space=self.negative_space,
+                hyperlinks_=self.hyperlinks,
+                files=self.files,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+                characters=self.characters,
+            ),
+            pad=self.pad,
         )
         return rendered_markdown
 

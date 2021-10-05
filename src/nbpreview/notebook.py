@@ -11,6 +11,7 @@ from typing import Tuple
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
+from picharsso.draw import gradient
 from rich import table
 from rich.console import Console
 from rich.console import ConsoleOptions
@@ -102,6 +103,7 @@ def _render_notebook(
     image_drawing: Literal["block", "character", "braille", None],
     color: bool,
     negative_space: bool,
+    characters: str = gradient.DEFAULT_CHARSET,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -119,6 +121,16 @@ def _render_notebook(
             language=language,
             theme=theme,
             unicode_border=unicode,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
         )
         grid.add_row(*cell_row.to_table_row())
 

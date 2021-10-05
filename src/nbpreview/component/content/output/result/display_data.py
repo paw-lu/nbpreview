@@ -95,7 +95,7 @@ def render_display_data(
         for image_type in image_types:
             if image_type in data:
                 display_data = drawing.render_drawing(
-                    data,
+                    data=data,
                     image_drawing=image_drawing,
                     image_type=image_type,
                     unicode=unicode,

@@ -33,6 +33,8 @@ types-click = "^7.1.5"
 Pillow = "^8.3.1"
 terminedia = "^0.4.1"
 picharsso = "^2.0.1"
+validators = "^0.18.2"
+yarl = "^1.6.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -87,7 +89,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,terminedia"
+module = "lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,terminedia,validators"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

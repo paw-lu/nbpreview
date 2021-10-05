@@ -11,9 +11,9 @@ from nbpreview.component.content.output.result import link
 from nbpreview.component.content.output.result.display_data import DisplayData
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
-from nbpreview.component.content.output.result.link import Hyperlink
+from nbpreview.component.content.output.result.link import FileLink
 
-Result = Union[Hyperlink, DisplayData, Drawing]
+Result = Union[FileLink, DisplayData, Drawing]
 
 
 def render_result(
