@@ -1477,7 +1477,7 @@ widechars = ["wcwidth"]
 
 [[package]]
 name = "terminedia"
-version = "0.4.1"
+version = "0.4.2"
 description = "Utilities for drawing and interactiveness at the terminal"
 category = "main"
 optional = false
@@ -2684,7 +2684,7 @@ tabulate = [
     {file = "tabulate-0.8.9.tar.gz", hash = "sha256:eb1d13f25760052e8931f2ef80aaf6045a6cceb47514db8beab24cded16f13a7"},
 ]
 terminedia = [
-    {file = "terminedia-0.4.1.tar.gz", hash = "sha256:d9a033b35c9991cfb186e6dcd665162a179224acf21a93f981a8ba97f5a51de0"},
+    {file = "terminedia-0.4.2.tar.gz", hash = "sha256:51f1a05e49f229d744df63db36162626390094ef79fea335cb16306e2a48a6ee"},
 ]
 tokenize-rt = [
     {file = "tokenize_rt-4.1.0-py2.py3-none-any.whl", hash = "sha256:b37251fa28c21e8cce2e42f7769a35fba2dd2ecafb297208f9a9a8add3ca7793"},
