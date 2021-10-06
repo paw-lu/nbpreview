@@ -257,9 +257,18 @@ def _render_block_drawing(
         dimensions = DrawingDimension(
             pil_image, max_width=max_width, max_height=max_height
         )
+        character_dimensions = CharacterDimensions(
+            bottleneck=dimensions.bottleneck, max_width=max_width, max_height=max_height
+        )
+        # terminedia takes a scaled versions of y
+        scaled_y = (
+            character_dimensions.height * dimensions.scaling_factor
+            if character_dimensions.height is not None
+            else None
+        )
         size = terminedia.V2(
-            x=dimensions.drawing_width,
-            y=dimensions.drawing_height * dimensions.scaling_factor,
+            x=character_dimensions.width,
+            y=scaled_y,
         )
 
         shape = terminedia.shape(
@@ -321,16 +330,16 @@ class CharacterDimensions:
     """Dimensions for a character drawing."""
 
     bottleneck: Bottleneck
-    max_width: int
-    max_height: int
+    max_width: Union[int, None]
+    max_height: Union[int, None]
 
     def __post_init__(self) -> None:
         """Constructor."""
         if self.bottleneck == Bottleneck.WIDTH:
             width = self.max_width
-            height = 0
+            height = None
         elif self.bottleneck == Bottleneck.HEIGHT:
-            width = 0
+            width = None
             height = self.max_height
         else:
             width = self.max_width
@@ -367,8 +376,8 @@ def _render_character_drawing(
         )
         drawer = picharsso.new_drawer(
             style="gradient",
-            width=character_dimensions.width,
-            height=character_dimensions.height,
+            width=character_dimensions.width or 0,
+            height=character_dimensions.height or 0,
             colorize=color,
             charset=characters,
             negative=negative_space,
@@ -469,7 +478,6 @@ def _render_braille_drawing(
     max_width: int,
     max_height: int,
     fallback_text: str,
-    negative_space: bool = True,
 ) -> Tuple[Text, ...]:
     """Render a representation of an image with braille characters."""
     rendered_character_drawing: Tuple[Text, ...]
@@ -488,8 +496,8 @@ def _render_braille_drawing(
         )
         drawer = picharsso.new_drawer(
             style="braille",
-            width=character_dimensions.width,
-            height=character_dimensions.height,
+            width=character_dimensions.width or 0,
+            height=character_dimensions.height or 0,
             colorize=color,
         )
         drawing = drawer(pil_image)

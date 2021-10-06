@@ -156,7 +156,7 @@ def test_bottlenecked_height_character_dimensions(image: Image) -> None:
     )
     character_width = character_dimensions.width
     character_height = character_dimensions.height
-    expected_width = 0
+    expected_width = None
     assert character_width == expected_width
     assert character_height == max_height
 
