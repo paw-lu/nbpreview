@@ -377,7 +377,6 @@ def test_image_markdown_cell(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
     expected_output: str,
 ) -> None:
     """It renders a markdown cell with an image."""
@@ -2776,7 +2775,6 @@ def test_render_block_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
     disable_capture: ContextManager[_PluggyPlugin],
     expected_output: str,
 ) -> None:
@@ -3100,7 +3098,6 @@ def test_charater_drawing(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
 ) -> None:
     """It renders a block drawing of an image."""
     image_cell = {
@@ -4338,7 +4335,6 @@ def test_braille_drawing(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    tempfile_path: Path,
 ) -> None:
     """It renders a block drawing of an image."""
     image_cell = {
