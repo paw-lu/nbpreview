@@ -7,9 +7,7 @@ import pathlib
 import textwrap
 from io import BytesIO
 from pathlib import Path
-from typing import Literal
-from typing import Optional
-from typing import Union
+from typing import Literal, Optional, Union
 from urllib import parse
 
 import httpx
@@ -18,21 +16,11 @@ import validators
 import yarl
 from picharsso.draw import gradient
 from PIL import Image
-from rich import _loop
-from rich import markdown
-from rich import rule
-from rich import segment
-from rich import style
-from rich import syntax
-from rich import text
-from rich.console import Console
-from rich.console import ConsoleOptions
-from rich.console import JustifyMethod
-from rich.console import RenderResult
+from rich import _loop, markdown, rule, segment, style, syntax, text
+from rich.console import Console, ConsoleOptions, JustifyMethod, RenderResult
 from rich.style import Style
 
-from nbpreview.component.content.output.result import drawing
-from nbpreview.component.content.output.result import link
+from nbpreview.component.content.output.result import drawing, link
 
 
 class CustomCodeBlock(markdown.CodeBlock):

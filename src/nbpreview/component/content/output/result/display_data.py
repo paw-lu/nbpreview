@@ -4,22 +4,13 @@ from __future__ import annotations
 import collections
 import dataclasses
 import json
-from typing import ClassVar
-from typing import Dict
-from typing import List
-from typing import Literal
-from typing import Union
+from typing import ClassVar, Dict, List, Literal, Union
 
 import html2text
 from lxml import html
 from lxml.html import HtmlElement
 from pylatexenc import latex2text
-from rich import box
-from rich import markdown
-from rich import style
-from rich import syntax
-from rich import table
-from rich import text
+from rich import box, markdown, style, syntax, table, text
 from rich.console import ConsoleRenderable
 from rich.emoji import Emoji
 from rich.markdown import Markdown
@@ -28,8 +19,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from nbpreview.component.content.output.result import drawing
-from nbpreview.component.content.output.result import link
+from nbpreview.component.content.output.result import drawing, link
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.data import Data
 

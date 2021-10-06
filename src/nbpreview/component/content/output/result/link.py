@@ -5,17 +5,12 @@ import base64
 import dataclasses
 import json
 import tempfile
-from typing import Dict
-from typing import Optional
-from typing import Union
+from typing import Dict, Optional, Union
 
 import httpx
 import jinja2
 from jinja2 import select_autoescape
-from rich import console
-from rich import emoji
-from rich import style
-from rich import text
+from rich import console, emoji, style, text
 from rich.emoji import Emoji
 from rich.text import Text
 

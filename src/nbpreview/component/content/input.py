@@ -2,19 +2,13 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Literal
-from typing import Optional
-from typing import Union
+from typing import Literal, Optional, Union
 
 import pygments
 from picharsso.draw import gradient
-from rich import padding
-from rich import panel
-from rich import syntax
-from rich import text
+from rich import padding, panel, syntax, text
 from rich.console import RenderableType
-from rich.padding import Padding
-from rich.padding import PaddingDimensions
+from rich.padding import Padding, PaddingDimensions
 from rich.syntax import Syntax
 from rich.text import Text
 

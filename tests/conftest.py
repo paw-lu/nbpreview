@@ -1,18 +1,11 @@
 """Package-wide test fixtures."""
 import contextlib
 import io
-from typing import Any
-from typing import Callable
-from typing import ContextManager
-from typing import Dict
-from typing import Iterator
-from typing import Optional
-from typing import Union
+from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
 
 import nbformat
 import pytest
-from _pytest.config import _PluggyPlugin
-from _pytest.config import Config
+from _pytest.config import Config, _PluggyPlugin
 from nbformat.notebooknode import NotebookNode
 from rich import console
 

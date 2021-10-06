@@ -2,8 +2,7 @@
 import dataclasses
 from typing import Union
 
-from rich import padding
-from rich import text
+from rich import padding, text
 from rich.padding import Padding
 from rich.text import Text
 

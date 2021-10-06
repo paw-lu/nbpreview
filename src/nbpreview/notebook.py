@@ -3,18 +3,13 @@ from __future__ import annotations
 
 import dataclasses
 from pathlib import Path
-from typing import Iterator
-from typing import List
-from typing import Literal
-from typing import Optional
-from typing import Tuple
+from typing import Iterator, List, Literal, Optional, Tuple
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
 from picharsso.draw import gradient
 from rich import table
-from rich.console import Console
-from rich.console import ConsoleOptions
+from rich.console import Console, ConsoleOptions
 from rich.table import Table
 
 from nbpreview.component import row

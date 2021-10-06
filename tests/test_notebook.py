@@ -10,16 +10,18 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any
-from typing import Callable
-from typing import ContextManager
-from typing import Dict
-from typing import Generator
-from typing import Literal
-from typing import Optional
-from typing import Protocol
-from typing import Tuple
-from typing import Union
+from typing import (
+    Any,
+    Callable,
+    ContextManager,
+    Dict,
+    Generator,
+    Literal,
+    Optional,
+    Protocol,
+    Tuple,
+    Union,
+)
 from unittest.mock import Mock
 
 import httpx

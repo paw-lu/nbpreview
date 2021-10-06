@@ -2,15 +2,11 @@
 from __future__ import annotations
 
 import abc
-from typing import Iterator
-from typing import List
+from typing import Iterator, List
 
 from nbformat.notebooknode import NotebookNode
-from rich import ansi
-from rich import measure
-from rich.console import Console
-from rich.console import ConsoleOptions
-from rich.console import RenderResult
+from rich import ansi, measure
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
