@@ -38,6 +38,11 @@ repos:
         entry: interrogate
         language: system
         types: [python]
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        types: [python]
       - id: pyupgrade
         name: pyupgrade
         entry: pyupgrade

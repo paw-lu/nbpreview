@@ -97,6 +97,7 @@ def precommit(session: Session) -> None:
         "flake8-docstrings",
         "flake8-rst-docstrings",
         "interrogate",
+        "isort",
         "pep8-naming",
         "pre-commit",
         "pre-commit-hooks",
