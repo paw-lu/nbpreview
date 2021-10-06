@@ -111,3 +111,6 @@ markers = ["no_atty_mock: Test where sys.stdout.isatty should not be mocked"]
 verbose = 2
 fail-under = 100
 color = true
+
+[tool.isort]
+profile = "black"
