@@ -3,16 +3,18 @@ import pathlib
 import shlex
 import tempfile
 import textwrap
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Generator
-from typing import IO
-from typing import Iterable
-from typing import Mapping
-from typing import Optional
-from typing import Protocol
-from typing import Union
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    Mapping,
+    Optional,
+    Protocol,
+    Union,
+)
 
 import nbformat
 import pytest

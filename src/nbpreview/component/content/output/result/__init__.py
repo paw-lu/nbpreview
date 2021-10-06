@@ -1,13 +1,9 @@
 """Execution results from Jupyter notebooks."""
-from typing import Dict
-from typing import Iterator
-from typing import Literal
-from typing import Union
+from typing import Dict, Iterator, Literal, Union
 
 from nbformat import NotebookNode
 
-from nbpreview.component.content.output.result import display_data
-from nbpreview.component.content.output.result import link
+from nbpreview.component.content.output.result import display_data, link
 from nbpreview.component.content.output.result.display_data import DisplayData
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.component.content.output.result.execution_indicator import Execution

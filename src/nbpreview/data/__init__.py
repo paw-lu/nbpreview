@@ -1,6 +1,5 @@
 """The Jupyter notebook data."""
-from typing import Dict
-from typing import Union
+from typing import Dict, Union
 
 from nbformat import NotebookNode
 

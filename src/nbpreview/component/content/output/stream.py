@@ -2,13 +2,10 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import ClassVar
-from typing import Iterator
-from typing import Union
+from typing import ClassVar, Iterator, Union
 
 from nbformat import NotebookNode
-from rich import style
-from rich import text
+from rich import style, text
 from rich.console import ConsoleRenderable
 from rich.text import Text
 

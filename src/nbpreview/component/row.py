@@ -2,25 +2,16 @@
 import dataclasses
 import itertools
 from dataclasses import InitVar
-from typing import Iterator
-from typing import List
-from typing import Literal
-from typing import Optional
-from typing import Tuple
-from typing import Union
+from typing import Iterator, List, Literal, Optional, Tuple, Union
 
 from nbformat import NotebookNode
 from picharsso.draw import gradient
 from rich import padding
-from rich.padding import Padding
-from rich.padding import PaddingDimensions
+from rich.padding import Padding, PaddingDimensions
 
 from nbpreview.component.content import input
 from nbpreview.component.content.input import Cell
-from nbpreview.component.content.output import error
-from nbpreview.component.content.output import Output
-from nbpreview.component.content.output import result
-from nbpreview.component.content.output import stream
+from nbpreview.component.content.output import Output, error, result, stream
 from nbpreview.component.content.output.result import execution_indicator
 from nbpreview.component.content.output.result.execution_indicator import Execution
 

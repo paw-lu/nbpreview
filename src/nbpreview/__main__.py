@@ -5,11 +5,9 @@ from typing import Optional
 
 import nbformat
 import typer
-from rich import console
-from rich import traceback
+from rich import console, traceback
 
-from nbpreview import __version__
-from nbpreview import notebook
+from nbpreview import __version__, notebook
 
 app = typer.Typer()
 traceback.install(theme="ansi_dark")

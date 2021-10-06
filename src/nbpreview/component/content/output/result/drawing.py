@@ -10,23 +10,14 @@ import functools
 import io
 import sys
 from dataclasses import InitVar
-from typing import Iterator
-from typing import Literal
-from typing import Optional
-from typing import Tuple
-from typing import Union
+from typing import Iterator, Literal, Optional, Tuple, Union
 
 import picharsso
 import PIL.Image
 from picharsso.draw import gradient
 from PIL.Image import Image
-from rich import ansi
-from rich import measure
-from rich import style
-from rich import text
-from rich.console import Console
-from rich.console import ConsoleOptions
-from rich.console import RenderResult
+from rich import ansi, measure, style, text
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
