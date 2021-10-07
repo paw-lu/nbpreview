@@ -133,10 +133,7 @@ def adjust_for_fallback() -> Callable[[str, int], str]:
             "                                       \x1b"
             "[0m\n"
         )
-        if "terminedia" in sys.modules:
-            adjusted_output = rendered_output + fallback_text
-        else:
-            adjusted_output = rendered_output
+        adjusted_output = rendered_output + fallback_text
         return adjusted_output
 
     return _adjust_for_fallback
@@ -371,7 +368,7 @@ def test_image_link_markdown_cell(
         "source": "![Azores](https://github.com/paw-lu/nbpreview/tests"
         "/assets/outline_article_white_48dp.png)",
     }
-    output = rich_notebook_output(markdown_cell, image_drawing="braille")
+    output = rich_notebook_output(markdown_cell, image_drawing="character")
     assert remove_link_ids(output) == expected_output
 
 
@@ -2108,6 +2105,10 @@ def test_vegalite_output_no_nerd_font_no_unicode(
         f"55.127551-234092;file://{tempfile_path}0.html\x1b\\\x1b[94mClick to vie"
         "w Vega chart\x1b[0m\x1b]8;;\x1b\\                 "
         "                                 \n"
+        "                                                              "
+        "                  \n      \x1b[38;2;187;134;252mImage         "
+        "                                                            "
+        "\x1b[0m\n"
     )
     output = rich_notebook_output(
         vegalite_output_cell,
@@ -2313,6 +2314,10 @@ def test_vega_no_icon_no_message(
         " chart\x1b[0"
         "m\x1b]8;;\x1b\\                                "
         "                                \n"
+        "                                                              "
+        "                  \n      \x1b[38;2;187;134;252mImage         "
+        "                                                            "
+        "\x1b[0m\n"
     )
     output = rich_notebook_output(
         vegalite_output_cell,
@@ -2534,6 +2539,10 @@ def test_vega_url_request_error(
         "                  \n      Vega chart     "
         "                                        "
         "                   \n"
+        "                                                              "
+        "                  \n      \x1b[38;2;187;134;252mImage         "
+        "                                                            "
+        "\x1b[0m\n"
     )
     output = rich_notebook_output(
         vegalite_output_cell,
