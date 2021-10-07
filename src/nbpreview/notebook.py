@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+import sys
 from pathlib import Path
 from typing import Iterator, List, Literal, Optional, Tuple
 
@@ -14,6 +15,12 @@ from rich.table import Table
 
 from nbpreview.component import row
 
+# terminedia depends on fcntl, which is not present on Windows platforms
+try:
+    import terminedia  # noqa: F401
+except ModuleNotFoundError:
+    pass
+
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
     """Select a render option.
@@ -23,14 +30,14 @@ def _pick_option(option: Optional[bool], detector: bool) -> bool:
             detections. By default None, which leaves the decision to
             ``detector``.
         detector (bool): A detector based on terminal properties to set
-            the option to False. Will be ignored if ``option`` is a
+            the option to True. Will be ignored if ``option`` is a
             boolean.
 
     Returns:
         bool: The option value.
     """
     if option is None:
-        pick = not detector
+        pick = detector
     else:
         pick = option
 
@@ -55,31 +62,33 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 def _pick_image_drawing(
     option: Literal["block", "character", "braille", None],
-    is_terminal: bool,
-    plain: bool,
     unicode: bool,
-) -> Literal["block", "character", "braille", None]:
+    color: bool,
+) -> Literal["block", "character", "braille"]:
     """Pick an image render option.
 
     Args:
         option (Literal["block", "character", "braille", None]): The
             inputted option which can override detections. If None, will
             autodetect.
-        is_terminal (bool): Whether the program is being used in a
-            terminal.
-        plain (bool): Whether to render the image in a plain style. Will
-            prevent autodetection of image style, typically leading to
-            returning None.
         unicode (bool): Whether to use unicode characters to
             render the notebook. By default will autodetect.
+        color (bool): Whether to use color.
 
     Returns:
-        Literal["block", "character", "braille", None]: The image type to render.
+        Literal["block", "character", "braille", None]: The image type
+        to render.
     """
-    image_render = option
-    if option is None and is_terminal and not plain:
-        if unicode:
+    image_render: Literal["block", "character", "braille"]
+    if option is None:
+        if unicode and "terminedia" in sys.modules and color:
             image_render = "block"
+        elif unicode:
+            image_render = "braille"
+        else:
+            image_render = "character"
+    else:
+        image_render = option
     return image_render
 
 
@@ -95,7 +104,7 @@ def _render_notebook(
     hide_output: bool,
     language: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
     characters: str = gradient.DEFAULT_CHARSET,
@@ -179,9 +188,9 @@ class Notebook:
         image_drawing (Optional[str]): How to render images. Options are
             "block" or None. If None will attempt to autodetect. By
             default None.
+        color (Optional[bool]): Whether to use color. If None will
+            attempt to autodetect. By default None
     """
-
-    # TODO: Fix incorrect docstring
 
     notebook_node: NotebookNode
     theme: str = "ansi_dark"
@@ -236,7 +245,6 @@ class Notebook:
             image_drawing=image_drawing,
         )
 
-    # TODO: Add rich_measure
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> Iterator[Table]:
@@ -249,18 +257,17 @@ class Notebook:
         Yields:
             Iterator[RenderResult]: The
         """
-        plain = _pick_option(self.plain, detector=options.is_terminal)
+        plain = _pick_option(self.plain, detector=not options.is_terminal)
         unicode = _pick_option(
-            self.unicode, detector=options.legacy_windows or options.ascii_only
+            self.unicode, detector=not options.legacy_windows and not options.ascii_only
         )
-        hyperlinks = _pick_option(self.hyperlinks, detector=options.legacy_windows)
-        images = _pick_option(self.images, detector=not options.is_terminal)
-        color = _pick_option(self.color, detector=not options.is_terminal)
+        hyperlinks = _pick_option(
+            self.hyperlinks, detector=not options.legacy_windows and not plain
+        )
+        images = _pick_option(self.images, detector=options.is_terminal and not plain)
+        color = _pick_option(self.color, detector=options.is_terminal and not plain)
         image_drawing = _pick_image_drawing(
-            self.image_drawing,
-            is_terminal=options.is_terminal,
-            plain=plain,
-            unicode=unicode,
+            self.image_drawing, unicode=unicode, color=color
         )
         rendered_notebook = _render_notebook(
             self.cells,

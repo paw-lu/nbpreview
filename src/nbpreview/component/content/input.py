@@ -51,7 +51,7 @@ class MarkdownCell(Cell):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille", None],
+        image_drawing: Literal["block", "character", "braille"],
         color: bool,
         negative_space: bool,
         hyperlinks: bool,

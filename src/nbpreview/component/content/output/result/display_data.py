@@ -68,7 +68,7 @@ def render_display_data(
     nerd_font: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
 ) -> Union[DisplayData, None, Drawing]:
@@ -88,7 +88,6 @@ def render_display_data(
                     data=data,
                     image_drawing=image_drawing,
                     image_type=image_type,
-                    unicode=unicode,
                     color=color,
                     negative_space=negative_space,
                 )

@@ -67,7 +67,7 @@ def render_input_row(
     nerd_font: bool,
     unicode: bool,
     images: bool,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
@@ -91,7 +91,7 @@ def render_input_row(
         nerd_font (bool): Whether to use nerd fonts as an icon.
         unicode (bool): Whether to use unicode characters as an icon.
         images (bool): Whether to render images in the output.
-        image_drawing (Literal["block", "character", "braille", None]):
+        image_drawing (Literal["block", "character", "braille"]):
             The type of characters to draw images with.
         color (bool):
             Whether to draw images using color.
@@ -167,7 +167,7 @@ def render_output_row(
     theme: str,
     pad: PaddingDimensions,
     images: bool,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
 ) -> Iterator[OutputRow]:

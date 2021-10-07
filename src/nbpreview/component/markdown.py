@@ -144,13 +144,13 @@ class CustomImageItem(markdown.ImageItem):
     nerd_font: bool = False
     unicode: bool = True
     images: bool = True
-    image_drawing: Literal["block", "character", "braille", None] = "block"
+    image_drawing: Literal["block", "character", "braille"] = "block"
     color: bool = True
-    negative_space: bool = True
     characters: str = gradient.DEFAULT_CHARSET
     hyperlinks_: bool = True
     files: bool = True
     hide_hyperlink_hints: bool = False
+    negative_space: bool = True
 
     def __init__(self, destination: str, hyperlinks: bool) -> None:
         """Constructor."""
@@ -230,7 +230,6 @@ class CustomImageItem(markdown.ImageItem):
             fallback_text=self.text.plain or fallback_title,
             image_type=f"image/{self.extension}",
             image_drawing=self.image_drawing,
-            unicode=self.unicode,
             color=self.color,
             negative_space=self.negative_space,
             characters=self.characters,
@@ -255,7 +254,7 @@ class CustomMarkdown(markdown.Markdown):
         nerd_font: bool = False,
         unicode: bool = True,
         images: bool = True,
-        image_drawing: Literal["block", "character", "braille", None] = "block",
+        image_drawing: Literal["block", "character", "braille"] = "block",
         color: bool = True,
         negative_space: bool = True,
         characters: str = gradient.DEFAULT_CHARSET,

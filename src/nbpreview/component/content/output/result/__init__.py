@@ -23,7 +23,7 @@ def render_result(
     hide_hyperlink_hints: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
 ) -> Iterator[Result]:
