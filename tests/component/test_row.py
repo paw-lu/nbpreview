@@ -19,7 +19,7 @@ def test_render_unknown_output_type() -> None:
         theme="ansi_dark",
         pad=(0, 1, 0, 0),
         images=False,
-        image_drawing=None,
+        image_drawing="braille",
         color=True,
         negative_space=True,
     )

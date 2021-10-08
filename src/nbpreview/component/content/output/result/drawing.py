@@ -8,7 +8,6 @@ import dataclasses
 import enum
 import functools
 import io
-import sys
 from dataclasses import InitVar
 from typing import Iterator, Literal, Optional, Tuple, Union
 
@@ -50,33 +49,25 @@ def choose_drawing(
     image: Union[bytes, None],
     fallback_text: str,
     image_type: str,
-    image_drawing: Literal["block", "character", "braille", None],
-    unicode: bool,
+    image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
     characters: str = gradient.DEFAULT_CHARSET,
 ) -> Union[Drawing, None]:
     """Choose which drawing to render an image with."""
     rendered_image: Drawing
-    # TODO this is duplicate logic with notebook._pick_image_drawing
     if image is not None and image_type != "image/svg+xml":
-        if (
-            image_drawing == "block"
-            and unicode
-            and "terminedia" in sys.modules
-            and color
-        ):
+        if image_drawing == "block":
             rendered_image = UnicodeDrawing(image=image, fallback_text=fallback_text)
             return rendered_image
 
-        elif image_drawing == "braille" and unicode:
+        elif image_drawing == "braille":
             rendered_image = BrailleDrawing(
                 image=image,
                 fallback_text=fallback_text,
                 color=color,
             )
             return rendered_image
-
         elif image_drawing == "character":
             rendered_image = CharacterDrawing(
                 image=image,
@@ -86,14 +77,18 @@ def choose_drawing(
                 characters=characters,
             )
             return rendered_image
+        else:
+            raise ValueError(
+                f"{image_drawing} is an invalid image_drawing,"
+                " expected 'block', 'character', or 'braille'"
+            )
     return None
 
 
 def render_drawing(
     data: Data,
-    image_drawing: Literal["block", "character", "braille", None],
+    image_drawing: Literal["block", "character", "braille"],
     image_type: str,
-    unicode: bool,
     color: bool,
     negative_space: bool,
     characters: str = gradient.DEFAULT_CHARSET,
@@ -106,7 +101,6 @@ def render_drawing(
         fallback_text=fallback_text,
         image_drawing=image_drawing,
         image_type=image_type,
-        unicode=unicode,
         color=color,
         negative_space=negative_space,
         characters=characters,

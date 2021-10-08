@@ -63,7 +63,7 @@ ipykernel = "^6.4.1"
 pytest-mock = "^3.6.1"
 interrogate = "^1.5.0"
 pyupgrade = "^2.29.0"
-tryceratops = {version = "^0.6.0", python = "^3.8"}
+tryceratops = { version = "^0.6.0", python = "^3.8" }
 isort = "^5.9.3"
 
 [tool.poetry.scripts]
@@ -105,7 +105,10 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-markers = ["no_atty_mock: Test where sys.stdout.isatty should not be mocked"]
+markers = [
+    "no_atty_mock: Test where sys.stdout.isatty should not be mocked",
+    "no_typeguard: Tests typeguard should ignore",
+]
 
 [tool.interrogate]
 verbose = 2
