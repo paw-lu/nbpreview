@@ -243,6 +243,7 @@ def test_braille_drawing_from_data(image_data: Data) -> None:
     assert output.__dict__ == expected_output.__dict__
 
 
+@pytest.mark.no_typeguard
 def test_raises_value_error_on_bad_image_drawing() -> None:
     """It raises a value error when invalid image_drawing is passed."""
     with pytest.raises(ValueError):
