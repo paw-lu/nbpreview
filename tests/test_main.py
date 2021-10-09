@@ -1,4 +1,5 @@
 """Test cases for the __main__ module."""
+import json
 import pathlib
 import shlex
 import tempfile
@@ -283,3 +284,36 @@ def test_force_plain(
         "                                      \n"
     )
     assert result.output == expected_output
+
+
+def test_raise_no_source(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if there is no source."""
+    no_source_cell = {
+        "cell_type": "code",
+        "outputs": [],
+    }
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output
+
+
+def test_raise_no_output(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if no output in a code cell."""
+    no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output

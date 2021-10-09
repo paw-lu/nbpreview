@@ -11,19 +11,11 @@ from rich import console
 
 
 @pytest.fixture
-def make_notebook() -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
-    """Fixture that returns a function that creates a base notebook."""
+def make_notebook_dict() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]:
+    """Fixture that returns function that constructs notebook dict."""
 
-    def _make_notebook(cell: Optional[Dict[str, Any]] = None) -> NotebookNode:
-        """Create a NotebookNode.
-
-        Args:
-            cell (Optional[Dict[str, Any]], optional): The cell for the
-                NotebookNode. Defaults to None.
-
-        Returns:
-            NotebookNode: The NotebookNode containing the inputted cell.
-        """
+    def _make_notebook_dict(cell: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Create valid notebook dictionary around single cell."""
         notebook = {
             "cells": [
                 {
@@ -56,7 +48,28 @@ def make_notebook() -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
         }
         if cell is not None:
             notebook["cells"] = [cell]
+        return notebook
 
+    return _make_notebook_dict
+
+
+@pytest.fixture
+def make_notebook(
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]
+) -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
+    """Fixture that returns a function that creates a base notebook."""
+
+    def _make_notebook(cell: Optional[Dict[str, Any]] = None) -> NotebookNode:
+        """Create a NotebookNode.
+
+        Args:
+            cell (Optional[Dict[str, Any]], optional): The cell for the
+                NotebookNode. Defaults to None.
+
+        Returns:
+            NotebookNode: The NotebookNode containing the inputted cell.
+        """
+        notebook = make_notebook_dict(cell)
         return nbformat.from_dict(notebook)
 
     return _make_notebook
