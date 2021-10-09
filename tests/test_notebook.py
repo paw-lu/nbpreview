@@ -3559,3 +3559,31 @@ def test_skip_no_cell_type(rich_notebook_output: RichOutput) -> None:
     output = rich_notebook_output(markdown_cell)
     expected_output = ""
     assert output == expected_output
+
+
+def test_image_link_not_image(
+    rich_notebook_output: RichOutput,
+    mocker: MockerFixture,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It falls back to skipping drawing if content is not an image."""
+    mock = mocker.patch("httpx.get")
+    mock.return_value.content = "Bad image"
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Azores](https://github.com/paw-lu/nbpreview/tests"
+        "/assets/outline_article_white_48dp.png)",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="character")
+    expected_output = (
+        "  \x1b]8;id=246597;https://github.com/paw-l"
+        "u/nbpreview/tests/assets/outline_article"
+        "_white_48dp.png\x1b\\\x1b[94m🌐 Click to view Az"
+        "ores\x1b[0m\x1b]8;;\x1b\\                         "
+        "                              \n         "
+        "                                        "
+        "                               \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
