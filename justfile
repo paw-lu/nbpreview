@@ -5,3 +5,7 @@ merge_dependabot:
     | jq 'select(.author.login == "dependabot")' \
     | jq '.number' \
     | parallel "gh pr comment --body='@dependabot merge'"
+
+# Run the test in the clipboad in debug mode
+debug_test:
+    poetry run pytest --pdb -k $(pbpaste)
