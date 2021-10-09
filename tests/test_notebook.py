@@ -3548,3 +3548,14 @@ def test_skip_unknown_cell_type(rich_notebook_output: RichOutput) -> None:
     output = rich_notebook_output(markdown_cell)
     expected_output = ""
     assert output == expected_output
+
+
+def test_skip_no_cell_type(rich_notebook_output: RichOutput) -> None:
+    """It skips rendering a cell if there is not cell type."""
+    markdown_cell = {
+        "metadata": {"no"},
+        "source": "### Lorep ipsum\n\n**dolor** _sit_ `amet`",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = ""
+    assert output == expected_output
