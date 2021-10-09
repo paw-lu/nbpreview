@@ -75,7 +75,7 @@ def render_input_row(
     hide_hyperlink_hints: bool,
     characters: str = gradient.DEFAULT_CHARSET,
     unicode_border: Optional[bool] = None,
-) -> Row:
+) -> Union[Row, None]:
     """Render a Jupyter Notebook cell.
 
     Args:
@@ -111,8 +111,8 @@ def render_input_row(
             default.
 
     Returns:
-        Row: The execution count indicator and cell
-            content.
+        Row: The execution count indicator and cell content if cell type
+            is known, else None.
     """
     cell_type = cell.get("cell_type")
     source = cell.source
@@ -148,9 +148,11 @@ def render_input_row(
             default_lexer_name=default_lexer_name,
         )
 
-    # Includes cell_type == "raw"
-    else:
+    elif cell_type == "raw":
         rendered_cell = Cell(source, plain=plain, safe_box=safe_box)
+
+    else:
+        return None
 
     cell_row = Row(rendered_cell, plain=plain, execution=execution)
     return cell_row

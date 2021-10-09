@@ -136,7 +136,8 @@ def _render_notebook(
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
         )
-        grid.add_row(*cell_row.to_table_row())
+        if cell_row is not None:
+            grid.add_row(*cell_row.to_table_row())
 
         outputs = cell.get("outputs")
         if not hide_output and outputs is not None:
