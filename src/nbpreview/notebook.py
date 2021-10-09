@@ -13,6 +13,7 @@ from rich import table
 from rich.console import Console, ConsoleOptions
 from rich.table import Table
 
+from nbpreview import errors
 from nbpreview.component import row
 
 # terminedia depends on fcntl, which is not present on Windows platforms
@@ -231,7 +232,11 @@ class Notebook:
         image_drawing: Literal["block", "character", "braille", None] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
-        notebook_node = nbformat.read(file, as_version=4)
+        try:
+            notebook_node = nbformat.read(file, as_version=4)
+        except AttributeError as exception:
+            raise errors.InvalidNotebookError from exception
+
         return cls(
             notebook_node,
             theme=theme,
