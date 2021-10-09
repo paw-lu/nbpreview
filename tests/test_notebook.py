@@ -3535,3 +3535,16 @@ def test_unknown_language() -> None:
     expected_output = "python"
     acutal_output = rendered_notebook.language
     assert acutal_output == expected_output
+
+
+def test_skip_unknown_cell_type(rich_notebook_output: RichOutput) -> None:
+    """It skips rendering a cell if the type is not known."""
+    markdown_cell = {
+        "cell_type": "unknown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "### Lorep ipsum\n\n**dolor** _sit_ `amet`",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = ""
+    assert output == expected_output
