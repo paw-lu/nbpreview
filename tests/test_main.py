@@ -254,11 +254,11 @@ def test_render_markdown(run_cli: RunCli) -> None:
 
 
 @pytest.mark.parametrize(
-    "args, env",
+    "arg, env",
     (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
 )
 def test_force_plain(
-    args: Optional[str],
+    arg: Optional[str],
     env: Optional[Mapping[str, str]],
     runner: CliRunner,
     write_notebook: Callable[[Union[Dict[str, Any], None]], str],
@@ -273,9 +273,10 @@ def test_force_plain(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    result = runner.invoke(
-        app, args=["--unicode", "--width=80", notebook_path], env=env
-    )
+    args = ["--unicode", "--width=80", notebook_path]
+    if arg is not None:
+        args = [arg] + args
+    result = runner.invoke(app, args=args, env=env)
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
         "                  \n    return x + y                          "
