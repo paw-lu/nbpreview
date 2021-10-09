@@ -103,7 +103,7 @@ def main(
             plain=plain,
             unicode=unicode,
         )
-    except nbformat.reader.NotJSONError as exception:
+    except (nbformat.reader.NotJSONError, AttributeError) as exception:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1) from exception
 
