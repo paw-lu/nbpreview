@@ -138,6 +138,20 @@ class CustomListItem(markdown.ListItem):
             yield new_line
 
 
+def _get_url_content(url: str) -> Union[BytesIO, None]:
+    """Return content from URL."""
+    try:
+        response = httpx.get(url)
+    except httpx.RequestError:
+        content = None
+    else:
+        try:
+            content = io.BytesIO(response.content)
+        except TypeError:
+            content = None
+    return content
+
+
 class CustomImageItem(markdown.ImageItem):
     """Renders a placeholder for an image."""
 
@@ -169,12 +183,7 @@ class CustomImageItem(markdown.ImageItem):
         else:
             self.is_url = True
             self.path = pathlib.Path(yarl.URL(self.destination).path)
-            try:
-                response = httpx.get(self.destination)
-            except httpx.RequestError:
-                content = None
-            else:
-                content = io.BytesIO(response.content)
+            content = _get_url_content(self.destination)
         self.extension = self.path.suffix.lstrip(".")
         if content is not None:
             try:
