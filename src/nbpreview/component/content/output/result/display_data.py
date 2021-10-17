@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import enum
 import json
 from typing import ClassVar, Dict, List, Literal, Union
 
@@ -30,8 +31,10 @@ def _render_html(
     """Render HTML output."""
     display_data: Union[DataFrameDisplay, HTMLDisplay]
     html_data = data["text/html"]
-    if DataFrameDisplay.is_dataframe(html_data):
-        display_data = DataFrameDisplay.from_data(data, unicode=unicode)
+    dataframe_display_type = DataFrameDisplay.dataframe_display_type(html_data)
+    styled = dataframe_display_type == DataFrameDisplayType.STYLED
+    if dataframe_display_type is not None:
+        display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
     else:
         display_data = HTMLDisplay.from_data(data, theme=theme)
     return display_data
@@ -170,19 +173,19 @@ def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
     return table_element
 
 
-def _render_dataframe(table_html: List[HtmlElement], unicode: bool) -> Table:
+def _render_dataframe(dataframe_html: HtmlElement, unicode: bool) -> Table:
     """Render a DataFrame from its HTML.
 
     Args:
-        table_html (List[HtmlElement]): The DataFrame rendered as HTML.
+        dataframe_html (HtmlElement): The DataFrame rendered as HTML.
         unicode (bool): Whether to use unicode characters when rendering
             the table.
 
     Returns:
         Table: The DataFrame rendered as a Rich Table.
     """
-    dataframe_html = table_html[0]
-    column_rows = dataframe_html.find("thead").findall("tr")
+    thead_element = dataframe_html.find("thead")
+    column_rows = thead_element.findall("tr") if thead_element is not None else []
 
     dataframe_table = table.Table(
         show_edge=False,
@@ -211,7 +214,9 @@ def _render_dataframe(table_html: List[HtmlElement], unicode: bool) -> Table:
         dataframe_table.add_row(*table_row, end_section=end_section)
 
     previous_row_spans: Dict[int, int] = {}
-    for row in dataframe_html.find("tbody").findall("tr"):
+    tbody_element = dataframe_html.find("tbody")
+    data_rows = tbody_element.findall("tr") if tbody_element is not None else []
+    for row in data_rows:
 
         table_row = []
         current_row_spans: Dict[int, int] = collections.defaultdict(int)
@@ -243,32 +248,61 @@ def _render_dataframe(table_html: List[HtmlElement], unicode: bool) -> Table:
     return dataframe_table
 
 
+class DataFrameDisplayType(enum.Enum):
+    """The type of DataFrame HTML output."""
+
+    PLAIN = enum.auto()
+    STYLED = enum.auto()
+
+
 @dataclasses.dataclass
 class DataFrameDisplay(DisplayData):
     """Notebook DataFrame display data."""
 
     unicode: bool
+    styled: bool = False
     data_type: ClassVar[str] = "text/html"
 
     @staticmethod
-    def is_dataframe(content: str) -> bool:
-        """Determine if DataFrame is contained with in HTML."""
-        table_html = html.fromstring(content).find_class("dataframe")
+    def dataframe_display_type(content: str) -> Union[DataFrameDisplayType, None]:
+        """Determine the type of DataFrame output."""
+        html_element = html.fromstring(content)
+
+        table_html = html_element.find_class("dataframe")
         if table_html and table_html[0].tag == "table":
-            return True
+            return DataFrameDisplayType.PLAIN
+
+        # Basic check for styled dataframe
+        try:
+            style_element, *non_style_elements = html_element.head.iterchildren()
+            *non_table_elements, table_element = html_element.body.iterchildren()
+        except ValueError:
+            pass
         else:
-            return False
+            if (
+                len(non_style_elements) == 0
+                and style_element.tag == "style"
+                and style_element.attrib == {"type": "text/css"}
+                and len(non_table_elements) <= 1
+                and table_element.tag == "table"
+            ):
+                return DataFrameDisplayType.STYLED
+
+        return None
 
     @classmethod
-    def from_data(cls, data: Data, unicode: bool) -> DataFrameDisplay:
+    def from_data(cls, data: Data, unicode: bool, styled: bool) -> DataFrameDisplay:
         """Create DataFrame display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, unicode=unicode)
+        return cls(content, unicode=unicode, styled=styled)
 
     def __rich__(self) -> Table:
         """Render the DataFrame display data."""
-        table_html = html.fromstring(self.content).find_class("dataframe")
-        rendered_dataframe = _render_dataframe(table_html, unicode=self.unicode)
+        if self.styled:
+            dataframe_html, *_ = html.fromstring(self.content).xpath("//body/table")
+        else:
+            dataframe_html, *_ = html.fromstring(self.content).find_class("dataframe")
+        rendered_dataframe = _render_dataframe(dataframe_html, unicode=self.unicode)
         return rendered_dataframe
 
 
