@@ -108,7 +108,7 @@ def render_drawing(
     return rendered_drawing
 
 
-class Bottleneck(str, enum.Enum):
+class Bottleneck(enum.Enum):
     """The bottleneck when rendering a drawing."""
 
     WIDTH = enum.auto()
