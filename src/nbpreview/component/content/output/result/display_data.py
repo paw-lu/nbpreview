@@ -167,7 +167,7 @@ def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
     attributes = column.attrib
     column_width = int(attributes.get("colspan", 1))
     text_style: Union[str, Style] = style.Style(bold=True) if column.tag == "th" else ""
-    column_string = column.text if column.text is not None else ""
+    column_string = column.text.strip() if column.text is not None else ""
     element_text = text.Text(column_string, style=text_style)
     table_element = (column_width - 1) * [text.Text("")] + [element_text]
     return table_element
