@@ -276,7 +276,7 @@ class DataFrameDisplay(DisplayData):
         try:
             style_element, *non_style_elements = html_element.head.iterchildren()
             *non_table_elements, table_element = html_element.body.iterchildren()
-        except ValueError:
+        except (ValueError, IndexError):
             pass
         else:
             if (
