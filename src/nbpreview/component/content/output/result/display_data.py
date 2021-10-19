@@ -11,16 +11,15 @@ import html2text
 from lxml import html
 from lxml.html import HtmlElement
 from pylatexenc import latex2text
-from rich import box, markdown, style, syntax, table, text
+from rich import markdown, syntax, text
 from rich.console import ConsoleRenderable
 from rich.emoji import Emoji
 from rich.markdown import Markdown
-from rich.style import Style
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from nbpreview.component.content.output.result import drawing, link
+from nbpreview.component.content.output.result import drawing, link, table
 from nbpreview.component.content.output.result.drawing import Drawing
 from nbpreview.data import Data
 
@@ -166,9 +165,9 @@ def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
     """
     attributes = column.attrib
     column_width = int(attributes.get("colspan", 1))
-    text_style: Union[str, Style] = style.Style(bold=True) if column.tag == "th" else ""
+    header = column.tag == "th"
     column_string = column.text.strip() if column.text is not None else ""
-    element_text = text.Text(column_string, style=text_style)
+    element_text = table.create_table_element(column_string, header=header)
     table_element = (column_width - 1) * [text.Text("")] + [element_text]
     return table_element
 
@@ -187,13 +186,7 @@ def _render_dataframe(dataframe_html: HtmlElement, unicode: bool) -> Table:
     thead_element = dataframe_html.find("thead")
     column_rows = thead_element.findall("tr") if thead_element is not None else []
 
-    dataframe_table = table.Table(
-        show_edge=False,
-        show_header=False,
-        box=box.HORIZONTALS,
-        show_footer=False,
-        safe_box=not unicode,
-    )
+    dataframe_table = table.create_table(unicode=unicode)
 
     n_column_rows = len(column_rows)
     for i, column_row in enumerate(column_rows):
