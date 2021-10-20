@@ -172,7 +172,81 @@ def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
     return table_element
 
 
-def _render_dataframe(dataframe_html: HtmlElement, unicode: bool) -> Table:
+@dataclasses.dataclass
+class HTMLDataFrameRender:
+    """Rich counterpart of HTML table."""
+
+    unicode: bool
+
+    def __post_init__(self) -> None:
+        """Constructor."""
+        self.table = table.create_table(unicode=self.unicode)
+
+    def add_headers(self, column_rows: List[HtmlElement]) -> None:
+        """Add headers to table."""
+        n_column_rows = len(column_rows)
+        for i, column_row in enumerate(column_rows):
+
+            table_row = []
+            for column in column_row.xpath("th|td"):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+
+                if i == 0:
+                    for _ in range(column_width):
+                        self.table.add_column(justify="right")
+
+                table_element = _render_table_element(column, column_width=column_width)
+                table_row.extend(table_element)
+
+            end_section = i == n_column_rows - 1
+            self.table.add_row(*table_row, end_section=end_section)
+
+    def add_data(self, data_rows: List[HtmlElement]) -> None:
+        """Add data rows to table."""
+        previous_row_spans: Dict[int, int] = {}
+        for row in data_rows:
+
+            table_row = []
+            current_row_spans: Dict[int, int] = collections.defaultdict(int)
+            for i, column in enumerate(row.xpath("th|td")):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+                row_span = int(attributes.get("rowspan", 1))
+                table_element = _render_table_element(column, column_width=column_width)
+                table_row.extend(table_element)
+
+                if 1 < row_span:
+                    current_row_spans[i] += row_span
+
+            for column, row_span in previous_row_spans.copy().items():
+                table_row.insert(column, text.Text(""))
+                remaining_span = row_span - 1
+
+                if 1 < remaining_span:
+                    previous_row_spans[column] = remaining_span
+                else:
+                    previous_row_spans.pop(column, None)
+
+            previous_row_spans = {
+                column: previous_row_spans.get(column, 0)
+                + current_row_spans.get(column, 0)
+                for column in previous_row_spans.keys() | current_row_spans.keys()
+            }
+            self.table.add_row(*table_row)
+
+        if table.is_only_header(self.table):
+            # Divide won't show up unless there is content underneath
+            self.table.add_row("")
+
+    def __rich__(self) -> Table:
+        """Render the DataFrame table."""
+        return self.table
+
+
+def _render_dataframe(
+    dataframe_html: HtmlElement, unicode: bool
+) -> HTMLDataFrameRender:
     """Render a DataFrame from its HTML.
 
     Args:
@@ -181,64 +255,19 @@ def _render_dataframe(dataframe_html: HtmlElement, unicode: bool) -> Table:
             the table.
 
     Returns:
-        Table: The DataFrame rendered as a Rich Table.
+        HTMLDataFrameRender: The DataFrame rendered as a Rich Table.
     """
     thead_element = dataframe_html.find("thead")
     column_rows = thead_element.findall("tr") if thead_element is not None else []
 
-    dataframe_table = table.create_table(unicode=unicode)
+    rendered_html_dataframe = HTMLDataFrameRender(unicode=unicode)
+    rendered_html_dataframe.add_headers(column_rows)
 
-    n_column_rows = len(column_rows)
-    for i, column_row in enumerate(column_rows):
-
-        table_row = []
-        for column in column_row.xpath("th|td"):
-            attributes = column.attrib
-            column_width = int(attributes.get("colspan", 1))
-
-            if i == 0:
-                for _ in range(column_width):
-                    dataframe_table.add_column(justify="right")
-
-            table_element = _render_table_element(column, column_width=column_width)
-            table_row.extend(table_element)
-
-        end_section = i == n_column_rows - 1
-        dataframe_table.add_row(*table_row, end_section=end_section)
-
-    previous_row_spans: Dict[int, int] = {}
     tbody_element = dataframe_html.find("tbody")
     data_rows = tbody_element.findall("tr") if tbody_element is not None else []
-    for row in data_rows:
+    rendered_html_dataframe.add_data(data_rows)
 
-        table_row = []
-        current_row_spans: Dict[int, int] = collections.defaultdict(int)
-        for i, column in enumerate(row.xpath("th|td")):
-            attributes = column.attrib
-            column_width = int(attributes.get("colspan", 1))
-            row_span = int(attributes.get("rowspan", 1))
-            table_element = _render_table_element(column, column_width=column_width)
-            table_row.extend(table_element)
-
-            if 1 < row_span:
-                current_row_spans[i] += row_span
-
-        for column, row_span in previous_row_spans.copy().items():
-            table_row.insert(column, text.Text(""))
-            remaining_span = row_span - 1
-
-            if 1 < remaining_span:
-                previous_row_spans[column] = remaining_span
-            else:
-                previous_row_spans.pop(column, None)
-
-        previous_row_spans = {
-            column: previous_row_spans.get(column, 0) + current_row_spans.get(column, 0)
-            for column in previous_row_spans.keys() | current_row_spans.keys()
-        }
-        dataframe_table.add_row(*table_row)
-
-    return dataframe_table
+    return rendered_html_dataframe
 
 
 class DataFrameDisplayType(enum.Enum):
@@ -296,7 +325,7 @@ class DataFrameDisplay(DisplayData):
         else:
             dataframe_html, *_ = html.fromstring(self.content).find_class("dataframe")
         rendered_dataframe = _render_dataframe(dataframe_html, unicode=self.unicode)
-        return rendered_dataframe
+        return rendered_dataframe.table
 
 
 @dataclasses.dataclass

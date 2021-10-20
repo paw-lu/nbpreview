@@ -24,3 +24,9 @@ def create_table_element(element_data: str, header: bool) -> Text:
     text_style: Union[str, Style] = style.Style(bold=True) if header else ""
     rich_text = text.Text(element_data, style=text_style)
     return rich_text
+
+
+def is_only_header(rich_table: Table) -> bool:
+    """Detect if table is only headers and no content."""
+    only_header = 1 <= rich_table.row_count and rich_table.rows[-1].end_section
+    return only_header
