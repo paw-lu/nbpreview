@@ -878,6 +878,106 @@ def test_render_dataframe(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_only_header_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with only headers."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\\n<style scoped>\\n    .dataframe tb"
+                        "ody tr th:only-of-type {\\n        vertic"
+                        "al-align: middle;\\n    }\\n\\n    .datafra"
+                        "me tbody tr th {\\n        vertical-align"
+                        ": top;\\n    }\\n\\n    .dataframe thead tr"
+                        " th {\\n        text-align: left;\\n    }\\"
+                        "n\\n    .dataframe thead tr:last-of-type "
+                        "th {\\n        text-align: right;\\n    }\\"
+                        'n</style>\\n<table border="1" class="data'
+                        'frame">\\n  <thead>\\n    <tr>\\n      <th>'
+                        'Model:</th>\\n      <th colspan="2" halig'
+                        'n="left">Decision Tree</th>\\n      <th c'
+                        'olspan="2" halign="left">Regression</th>'
+                        '\\n      <th colspan="2" halign="left">Ra'
+                        "ndom</th>\\n    </tr>\\n    <tr>\\n      <t"
+                        "h>Predicted:</th>\\n      <th>Tumour</th>"
+                        "\\n      <th>Non-Tumour</th>\\n      <th>T"
+                        "umour</th>\\n      <th>Non-Tumour</th>\\n "
+                        "     <th>Tumour</th>\\n      <th>Non-Tumo"
+                        "ur</th>\\n    </tr>\\n    <tr>\\n      <th>"
+                        "Actual Label:</th>\\n      <th></th>\\n   "
+                        "   <th></th>\\n      <th></th>\\n      <th"
+                        "></th>\\n      <th></th>\\n      <th></th>"
+                        "\\n    </tr>\\n  </thead>\\n  <tbody>\\n  </"
+                        "tbody>\\n</table>\\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=360825;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m   Model:\x1b[0m          "
+        "  \x1b[1m Decision\x1b[0m            \x1b[1mRegre"
+        "ssi…\x1b[0m            \x1b[1m   Random\x1b[0m \n "
+        "                           \x1b[1m     Tree"
+        "\x1b[0m                                    "
+        "       \n       \x1b[1mPredicte…\x1b[0m   \x1b[1mT"
+        "umour\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumo"
+        "ur\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumour\x1b"
+        "[0m   \x1b[1mNon-Tumo…\x1b[0m \n       \x1b[1m   A"
+        "ctual\x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m       "
+        "  \x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b"
+        "[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b[0m"
+        " \n       \x1b[1m   Label:\x1b[0m              "
+        "                                        "
+        "          \n      ───────────────────────"
+        "────────────────────────────────────────"
+        "───────────\n                            "
+        "                                        "
+        "            \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_render_mistagged_dataframe(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
