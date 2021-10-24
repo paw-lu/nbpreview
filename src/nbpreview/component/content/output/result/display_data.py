@@ -5,27 +5,39 @@ import collections
 import dataclasses
 import enum
 import json
-from typing import ClassVar, Dict, List, Literal, Union
+from typing import ClassVar, Dict, List, Literal, Optional, Union
 
 import html2text
 from lxml import html
 from lxml.html import HtmlElement
 from pylatexenc import latex2text
-from rich import markdown, syntax, text
+from rich import syntax, text
 from rich.console import ConsoleRenderable
 from rich.emoji import Emoji
-from rich.markdown import Markdown
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
+from nbpreview.component import markdown
 from nbpreview.component.content.output.result import drawing, link, table
 from nbpreview.component.content.output.result.drawing import Drawing
+from nbpreview.component.markdown import CustomMarkdown
 from nbpreview.data import Data
 
 
 def _render_html(
-    data: Data, unicode: bool, theme: str
+    data: Data,
+    theme: str,
+    nerd_font: bool,
+    unicode: bool,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille"],
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[DataFrameDisplay, HTMLDisplay]:
     """Render HTML output."""
     display_data: Union[DataFrameDisplay, HTMLDisplay]
@@ -35,17 +47,54 @@ def _render_html(
     if dataframe_display_type is not None:
         display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
     else:
-        display_data = HTMLDisplay.from_data(data, theme=theme)
+        display_data = HTMLDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
     return display_data
 
 
 def _choose_basic_renderer(
-    data: Data, unicode: bool, nerd_font: bool, theme: str
+    data: Data,
+    unicode: bool,
+    nerd_font: bool,
+    theme: str,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille"],
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
     """Render straightforward text data."""
     display_data: DisplayData
     if "text/markdown" in data:
-        display_data = MarkdownDisplay.from_data(data, theme=theme)
+        display_data = MarkdownDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
         return display_data
     elif unicode and "text/latex" in data:
         display_data = LaTeXDisplay.from_data(data)
@@ -73,6 +122,10 @@ def render_display_data(
     image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[DisplayData, None, Drawing]:
     """Render the notebook display data."""
     display_data: Union[DisplayData, None, Drawing]
@@ -97,11 +150,35 @@ def render_display_data(
                     return display_data
 
     if not plain and "text/html" in data:
-        display_data = _render_html(data, unicode=unicode, theme=theme)
+        display_data = _render_html(
+            data,
+            unicode=unicode,
+            theme=theme,
+            nerd_font=nerd_font,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
         return display_data
     else:
         display_data = _choose_basic_renderer(
-            data, unicode=unicode, nerd_font=nerd_font, theme=theme
+            data,
+            unicode=unicode,
+            nerd_font=nerd_font,
+            theme=theme,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
         )
         return display_data
 
@@ -136,19 +213,66 @@ class HTMLDisplay(DisplayData):
     """Notebook HTML display data."""
 
     theme: str
+    nerd_font: bool
+    unicode: bool
+    images: bool
+    image_drawing: Literal["block", "character", "braille"]
+    color: bool
+    negative_space: bool
+    hyperlinks: bool
+    files: bool
+    hide_hyperlink_hints: bool
+    characters: Optional[str] = None
     data_type: ClassVar[str] = "text/html"
 
     @classmethod
-    def from_data(cls, data: Data, theme: str) -> HTMLDisplay:
+    def from_data(
+        cls,
+        data: Data,
+        theme: str,
+        nerd_font: bool,
+        unicode: bool,
+        images: bool,
+        image_drawing: Literal["block", "character", "braille"],
+        color: bool,
+        negative_space: bool,
+        hyperlinks: bool,
+        files: bool,
+        hide_hyperlink_hints: bool,
+        characters: Optional[str] = None,
+    ) -> HTMLDisplay:
         """Create an HTML display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, theme=theme)
+        return cls(
+            content,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
 
-    def __rich__(self) -> Markdown:
+    def __rich__(self) -> CustomMarkdown:
         """Render the HTML display data."""
         converted_markdown = html2text.html2text(self.content)
-        rendered_html = markdown.Markdown(
-            converted_markdown, inline_code_theme=self.theme
+        rendered_html = markdown.CustomMarkdown(
+            converted_markdown,
+            code_theme=self.theme,
+            unicode=self.unicode,
+            images=self.images,
+            image_drawing=self.image_drawing,
+            color=self.color,
+            negative_space=self.negative_space,
+            hyperlinks_=self.hyperlinks,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
+            characters=self.characters,
         )
         return rendered_html
 
@@ -333,18 +457,65 @@ class MarkdownDisplay(DisplayData):
     """Notebook Markdown display data."""
 
     theme: str
+    nerd_font: bool
+    unicode: bool
+    images: bool
+    image_drawing: Literal["block", "character", "braille"]
+    color: bool
+    negative_space: bool
+    hyperlinks: bool
+    files: bool
+    hide_hyperlink_hints: bool
+    characters: Optional[str] = None
     data_type: ClassVar[str] = "text/markdown"
 
     @classmethod
-    def from_data(cls, data: Data, theme: str) -> MarkdownDisplay:
+    def from_data(
+        cls,
+        data: Data,
+        theme: str,
+        nerd_font: bool,
+        unicode: bool,
+        images: bool,
+        image_drawing: Literal["block", "character", "braille"],
+        color: bool,
+        negative_space: bool,
+        hyperlinks: bool,
+        files: bool,
+        hide_hyperlink_hints: bool,
+        characters: Optional[str] = None,
+    ) -> MarkdownDisplay:
         """Create Markdown display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, theme=theme)
+        return cls(
+            content,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
 
-    def __rich__(self) -> Markdown:
+    def __rich__(self) -> CustomMarkdown:
         """Render the Markdown display data."""
-        rendered_markdown = markdown.Markdown(
-            self.content, inline_code_theme=self.theme
+        rendered_markdown = markdown.CustomMarkdown(
+            self.content,
+            code_theme=self.theme,
+            unicode=self.unicode,
+            images=self.images,
+            image_drawing=self.image_drawing,
+            color=self.color,
+            negative_space=self.negative_space,
+            hyperlinks_=self.hyperlinks,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
+            characters=self.characters,
         )
         return rendered_markdown
 
