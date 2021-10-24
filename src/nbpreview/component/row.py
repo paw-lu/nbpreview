@@ -10,8 +10,9 @@ from rich.padding import Padding, PaddingDimensions
 
 from nbpreview.component.content import input
 from nbpreview.component.content.input import Cell
-from nbpreview.component.content.output import Output, error, result, stream
-from nbpreview.component.content.output.result import execution_indicator
+from nbpreview.component.content.output import error, stream
+from nbpreview.component.content.output.output import Output
+from nbpreview.component.content.output.result import execution_indicator, result
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
 Content = Union[Cell, Padding]
