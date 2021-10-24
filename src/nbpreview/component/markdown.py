@@ -14,7 +14,6 @@ import httpx
 import PIL
 import validators
 import yarl
-from picharsso.draw import gradient
 from PIL import Image
 from rich import _loop, markdown, rule, segment, style, syntax, text
 from rich.console import Console, ConsoleOptions, JustifyMethod, RenderResult
@@ -160,7 +159,7 @@ class CustomImageItem(markdown.ImageItem):
     images: bool = True
     image_drawing: Literal["block", "character", "braille"] = "block"
     color: bool = True
-    characters: str = gradient.DEFAULT_CHARSET
+    characters: Optional[str] = None
     hyperlinks_: bool = True
     files: bool = True
     hide_hyperlink_hints: bool = False
@@ -266,7 +265,7 @@ class CustomMarkdown(markdown.Markdown):
         image_drawing: Literal["block", "character", "braille"] = "block",
         color: bool = True,
         negative_space: bool = True,
-        characters: str = gradient.DEFAULT_CHARSET,
+        characters: Optional[str] = None,
         hyperlinks_: bool = True,
         files: bool = True,
         hide_hyperlink_hints: bool = False,

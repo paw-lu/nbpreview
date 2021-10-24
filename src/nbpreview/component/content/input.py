@@ -5,7 +5,6 @@ import dataclasses
 from typing import Literal, Optional, Union
 
 import pygments
-from picharsso.draw import gradient
 from rich import padding, panel, syntax, text
 from rich.console import RenderableType
 from rich.padding import Padding, PaddingDimensions
@@ -57,7 +56,7 @@ class MarkdownCell(Cell):
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
-        characters: str = gradient.DEFAULT_CHARSET,
+        characters: Optional[str] = None,
     ) -> None:
         """Constructor."""
         super().__init__(source, plain=True)

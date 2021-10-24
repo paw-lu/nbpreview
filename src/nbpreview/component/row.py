@@ -5,7 +5,6 @@ from dataclasses import InitVar
 from typing import Iterator, List, Literal, Optional, Tuple, Union
 
 from nbformat import NotebookNode
-from picharsso.draw import gradient
 from rich import padding
 from rich.padding import Padding, PaddingDimensions
 
@@ -73,7 +72,7 @@ def render_input_row(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
     unicode_border: Optional[bool] = None,
 ) -> Union[Row, None]:
     """Render a Jupyter Notebook cell.
@@ -105,7 +104,8 @@ def render_input_row(
         hide_hyperlink_hints (bool):
             Whether to hide hyperlink hints.
         characters (str):
-            The characters to draw images with.
+            The characters to draw images with. If set to None will
+            default to ' :!?PG@'.
         unicode_border (Optional[bool]): Whether to render the cell
             borders using unicode characters. Will autodetect by
             default.

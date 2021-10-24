@@ -8,7 +8,6 @@ from typing import Iterator, List, Literal, Optional, Tuple
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
-from picharsso.draw import gradient
 from rich import table
 from rich.console import Console, ConsoleOptions
 from rich.table import Table
@@ -108,7 +107,7 @@ def _render_notebook(
     image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
