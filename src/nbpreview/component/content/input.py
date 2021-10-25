@@ -78,14 +78,14 @@ class MarkdownCell(Cell):
         rendered_markdown = padding.Padding(
             markdown.CustomMarkdown(
                 self.source,
-                inline_code_theme=self.theme,
+                code_theme=self.theme,
                 nerd_font=self.nerd_font,
                 unicode=self.unicode,
                 images=self.images,
                 image_drawing=self.image_drawing,
                 color=self.color,
                 negative_space=self.negative_space,
-                hyperlinks_=self.hyperlinks,
+                hyperlinks=self.hyperlinks,
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
                 characters=self.characters,

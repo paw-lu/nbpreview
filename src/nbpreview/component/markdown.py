@@ -160,7 +160,6 @@ class CustomImageItem(markdown.ImageItem):
     image_drawing: Literal["block", "character", "braille"] = "block"
     color: bool = True
     characters: Optional[str] = None
-    hyperlinks_: bool = True
     files: bool = True
     hide_hyperlink_hints: bool = False
     negative_space: bool = True
@@ -216,7 +215,7 @@ class CustomImageItem(markdown.ImageItem):
                 subject=title,
                 emoji_name="globe_with_meridians",
                 nerd_font_icon="爵",
-                hyperlinks=self.hyperlinks_,
+                hyperlinks=self.hyperlinks,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
         else:
@@ -224,7 +223,7 @@ class CustomImageItem(markdown.ImageItem):
                 content=self.image_data,
                 file_extension=self.extension,
                 unicode=self.unicode,
-                hyperlinks=self.hyperlinks_,
+                hyperlinks=self.hyperlinks,
                 nerd_font=self.nerd_font,
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
@@ -266,7 +265,6 @@ class CustomMarkdown(markdown.Markdown):
         color: bool = True,
         negative_space: bool = True,
         characters: Optional[str] = None,
-        hyperlinks_: bool = True,
         files: bool = True,
         hide_hyperlink_hints: bool = False,
     ):
@@ -285,7 +283,6 @@ class CustomMarkdown(markdown.Markdown):
         CustomImageItem.color = color
         CustomImageItem.negative_space = negative_space
         CustomImageItem.characters = characters
-        CustomImageItem.hyperlinks_ = hyperlinks_
         CustomImageItem.files = files
         CustomImageItem.hide_hyperlink_hints = hide_hyperlink_hints
         super().__init__(

@@ -403,22 +403,15 @@ def test_code_markdown_cell(rich_notebook_output: RichOutput) -> None:
     }
     output = rich_notebook_output(markdown_cell)
     expected_output = (
-        "  \x1b[38;2;248;248;242;49m    \x1b[0m\x1b[38;2;1"
-        "02;217;239;49mfor\x1b[0m\x1b[38;2;248;248;242;"
-        "49m \x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;"
-        "2;248;248;242;49m \x1b[0m\x1b[38;2;249;38;114;"
-        "49min\x1b[0m\x1b[38;2;248;248;242;49m \x1b[0m\x1b[38"
-        ";2;248;248;242;49mrange\x1b[0m\x1b[38;2;248;24"
-        "8;242;49m(\x1b[0m\x1b[38;2;174;129;255;49m20\x1b["
-        "0m\x1b[38;2;248;248;242;49m)\x1b[0m\x1b[38;2;248;"
-        "248;242;49m:\x1b[0m                        "
-        "                               \n  \x1b[38;2"
-        ";248;248;242;49m        \x1b[0m\x1b[38;2;248;2"
-        "48;242;49mprint\x1b[0m\x1b[38;2;248;248;242;49"
-        "m(\x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;2;"
-        "248;248;242;49m)\x1b[0m                    "
+        "  \x1b[49m    \x1b[0m\x1b[94;49mfor\x1b[0m\x1b[49m \x1b[0m"
+        "\x1b[49mi\x1b[0m\x1b[49m \x1b[0m\x1b[95;49min\x1b[0m\x1b[49m "
+        "\x1b[0m\x1b[96;49mrange\x1b[0m\x1b[49m(\x1b[0m\x1b[94;49m2"
+        "0\x1b[0m\x1b[49m)\x1b[0m\x1b[49m:\x1b[0m               "
         "                                        "
-        "  \n"
+        "\n  \x1b[49m        \x1b[0m\x1b[96;49mprint\x1b[0m\x1b[4"
+        "9m(\x1b[0m\x1b[49mi\x1b[0m\x1b[49m)\x1b[0m             "
+        "                                        "
+        "         \n"
     )
     assert output == expected_output
 
