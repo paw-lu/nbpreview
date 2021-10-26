@@ -416,6 +416,111 @@ def test_code_markdown_cell(rich_notebook_output: RichOutput) -> None:
     assert output == expected_output
 
 
+def test_table_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with tables."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": """# Hey buddy
+
+*did you hear the news?*
+
+ ```python
+for i in range(20):
+    print(i)
+```
+
+| aaa | bbbb **ccc** |
+| --- | --- |
+| 111 **222** 333 | 222 |
+| susu | lulu|
+
+- so there you are
+- words
+
+| ddd | `eeee` fff |
+| --- | --- |
+
+| | |
+--- | ---
+sus | *spect*
+
+rak
+     """,
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[1;38;2;255;255;255;48;2;96;2;238m \x1b["
+        "0m\x1b[1;38;2;255;255;255;48;2;96;2;238mHey"
+        " buddy\x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m \x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m                                   "
+        "                                \x1b[0m\n  \x1b"
+        "[2;38;2;96;2;238m───────────────────────"
+        "────────────────────────────────────────"
+        "───────────────\x1b[0m\n                    "
+        "                                        "
+        "                    \n  \x1b[3mdid you hear "
+        "the news?\x1b[0m                           "
+        "                             \n          "
+        "                                        "
+        "                              \n  \x1b[49m  "
+        "  \x1b[0m\x1b[94;49mfor\x1b[0m\x1b[49m \x1b[0m\x1b[49mi\x1b[0"
+        "m\x1b[49m \x1b[0m\x1b[95;49min\x1b[0m\x1b[49m \x1b[0m\x1b[96;"
+        "49mrange\x1b[0m\x1b[49m(\x1b[0m\x1b[94;49m20\x1b[0m\x1b[49"
+        "m)\x1b[0m\x1b[49m:\x1b[0m                        "
+        "                               \n  \x1b[49m "
+        "      \x1b[0m\x1b[96;49mprint\x1b[0m\x1b[49m(\x1b[0m\x1b[4"
+        "9mi\x1b[0m\x1b[49m)\x1b[0m                       "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n   \x1b[1maaa\x1b[0m                        "
+        "             \x1b[1mbbbb \x1b[0m\x1b[1mccc\x1b[0m   "
+        "                          \n  ───────────"
+        "────────────────────────────────────────"
+        "───────────────────────────\n   111 \x1b[1m2"
+        "22\x1b[0m 333                             2"
+        "22                                  \n   "
+        "susu                                    "
+        "lulu                                 \n  "
+        "                                        "
+        "                                      \n "
+        "                                        "
+        "                                       \n"
+        "   • so there you are                   "
+        "                                        "
+        "\n   • words                             "
+        "                                        "
+        " \n                                      "
+        "                                        "
+        "  \n   \x1b[1mddd\x1b[0m                       "
+        "              \x1b[1;97;40meeee\x1b[0m\x1b[1m fff"
+        "\x1b[0m                             \n  ────"
+        "────────────────────────────────────────"
+        "──────────────────────────────────\n     "
+        "                                        "
+        "                                   \n    "
+        "                                        "
+        "                                    \n   "
+        "                                        "
+        "                                     \n  "
+        "                                        "
+        "                                      \n "
+        " ───────────────────────────────────────"
+        "───────────────────────────────────────\n"
+        "   sus                                  "
+        "   \x1b[3mspect\x1b[0m                        "
+        "        \n                               "
+        "                                        "
+        "         \n  rak                         "
+        "                                        "
+        "          \n"
+    )
+    assert output == expected_output
+
+
 def test_heading_markdown_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a markdown cell with headings."""
     markdown_cell = {
