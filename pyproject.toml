@@ -97,6 +97,10 @@ ignore_missing_imports = true
 module = "nbpreview"
 disallow_untyped_calls = false
 
+[[tool.mypy.overrides]]
+module = "markdown_it"
+no_implicit_reexport = false
+
 # Might change, see https://github.com/python/mypy/issues/10198
 [tool.mypy-jinja2]
 no_implicit_reexport = false
