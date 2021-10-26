@@ -78,7 +78,7 @@ class MarkdownCell(Cell):
         rendered_markdown = padding.Padding(
             markdown.CustomMarkdown(
                 self.source,
-                code_theme=self.theme,
+                theme=self.theme,
                 nerd_font=self.nerd_font,
                 unicode=self.unicode,
                 images=self.images,

@@ -263,7 +263,7 @@ class HTMLDisplay(DisplayData):
         converted_markdown = html2text.html2text(self.content)
         rendered_html = markdown.CustomMarkdown(
             converted_markdown,
-            code_theme=self.theme,
+            theme=self.theme,
             unicode=self.unicode,
             images=self.images,
             image_drawing=self.image_drawing,
@@ -506,7 +506,7 @@ class MarkdownDisplay(DisplayData):
         """Render the Markdown display data."""
         rendered_markdown = markdown.CustomMarkdown(
             self.content,
-            code_theme=self.theme,
+            theme=self.theme,
             unicode=self.unicode,
             images=self.images,
             image_drawing=self.image_drawing,

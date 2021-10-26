@@ -1,13 +1,14 @@
 """Override rich's markdown renderer with custom components."""
 from __future__ import annotations
 
+import dataclasses
 import io
 import os
 import pathlib
 import textwrap
 from io import BytesIO
 from pathlib import Path
-from typing import Literal, Optional, Union
+from typing import Iterable, Iterator, Literal, Optional, Union
 from urllib import parse
 
 import httpx
@@ -15,11 +16,15 @@ import PIL
 import validators
 import yarl
 from PIL import Image
-from rich import _loop, markdown, rule, segment, style, syntax, text
+from rich import _loop, markdown, measure, rule, segment, style, syntax, text
 from rich.console import Console, ConsoleOptions, JustifyMethod, RenderResult
+from rich.measure import Measurement
 from rich.style import Style
+from rich.table import Table
+from rich.text import Text
 
-from nbpreview.component.content.output.result import drawing, link
+from nbpreview.component.content.output.result import drawing, link, table
+from nbpreview.component.content.output.result.table import TableSection
 
 
 class CustomCodeBlock(markdown.CodeBlock):
@@ -246,7 +251,7 @@ class CustomImageItem(markdown.ImageItem):
             yield rendered_drawing
 
 
-class CustomMarkdown(markdown.Markdown):
+class MarkdownOverwrite(markdown.Markdown):
     """A custom markdown renderer."""
 
     def __init__(
@@ -267,7 +272,7 @@ class CustomMarkdown(markdown.Markdown):
         characters: Optional[str] = None,
         files: bool = True,
         hide_hyperlink_hints: bool = False,
-    ):
+    ) -> None:
         """Constructor."""
         self.elements["code_block"] = CustomCodeBlock
         self.elements["heading"] = CustomHeading
@@ -294,3 +299,115 @@ class CustomMarkdown(markdown.Markdown):
             inline_code_lexer=inline_code_lexer,
             inline_code_theme=inline_code_theme,
         )
+
+
+@dataclasses.dataclass
+class CustomMarkdown:
+    """A custom markdown renderer with table support."""
+
+    source: str
+    theme: str
+    hyperlinks: bool = True
+    nerd_font: bool = False
+    unicode: bool = True
+    images: bool = True
+    image_drawing: Literal["block", "character", "braille"] = "block"
+    color: bool = True
+    negative_space: bool = True
+    characters: Optional[str] = None
+    files: bool = True
+    hide_hyperlink_hints: bool = False
+
+    def __post_init__(self) -> None:
+        """Constructor."""
+        table_sections = table.parse_markdown_tables(self.source, unicode=self.unicode)
+        self.renderables = [
+            renderable
+            for renderable in _splice_tables(
+                self.source,
+                table_sections=table_sections,
+                theme=self.theme,
+                hyperlinks=self.hyperlinks,
+                nerd_font=self.nerd_font,
+                unicode=self.unicode,
+                images=self.images,
+                image_drawing=self.image_drawing,
+                color=self.color,
+                negative_space=self.negative_space,
+                characters=self.characters,
+                files=self.files,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+            )
+        ]
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        """Render the markdown."""
+        yield from self.renderables
+
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered markdown."""
+        measurement = measure.measure_renderables(
+            console=console, options=options, renderables=self.renderables
+        )
+        return measurement
+
+
+def _splice_tables(
+    markup: str,
+    table_sections: Iterable[TableSection],
+    theme: str,
+    hyperlinks: bool,
+    nerd_font: bool,
+    unicode: bool,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille"],
+    color: bool,
+    negative_space: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
+) -> Iterator[Union[MarkdownOverwrite, Table, Text]]:
+    """Mix in tables with traditional markdown parser."""
+    markup_lines = markup.splitlines()
+    last_end_point = 0
+    for table_section in table_sections:
+        non_table_section = "\n".join(
+            markup_lines[last_end_point : table_section.start_line]
+        )
+        yield MarkdownOverwrite(
+            non_table_section,
+            code_theme=theme,
+            hyperlinks=hyperlinks,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            characters=characters,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+        )
+        yield text.Text()
+        yield table_section.table
+        yield text.Text()
+        last_end_point = table_section.end_line + 1
+    end_section = "\n".join(markup_lines[last_end_point:])
+    yield MarkdownOverwrite(
+        end_section,
+        code_theme=theme,
+        hyperlinks=hyperlinks,
+        nerd_font=nerd_font,
+        unicode=unicode,
+        images=images,
+        image_drawing=image_drawing,
+        color=color,
+        negative_space=negative_space,
+        characters=characters,
+        files=files,
+        hide_hyperlink_hints=hide_hyperlink_hints,
+    )
