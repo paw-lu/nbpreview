@@ -2365,15 +2365,19 @@ def test_render_stderr_stream(rich_notebook_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n      \x1b[38;5;237;48;5"
-        ";174m<ipython-input-5-bc08279b5148>:2: U"
-        "serWarning: Lorep                      \x1b"
-        "[0m\n      \x1b[38;5;237;48;5;174m warnings."
-        'warn("Lorep")                           '
-        "                        \x1b[0m\n      \x1b[38;"
-        "5;237;48;5;174m                         "
+        "                  \n      \x1b[48;5;174m    "
         "                                        "
-        "         \x1b[0m\n"
+        "                              \x1b[0m\n     "
+        " \x1b[48;5;174m \x1b[0m\x1b[38;5;237;48;5;174m<ip"
+        "ython-input-5-bc08279b5148>:2: UserWarni"
+        "ng: Lorep                    \x1b[0m\x1b[48;5;"
+        "174m \x1b[0m\n      \x1b[48;5;174m \x1b[0m\x1b[38;5;2"
+        '37;48;5;174m warnings.warn("Lorep")     '
+        "                                        "
+        "    \x1b[0m\x1b[48;5;174m \x1b[0m\n      \x1b[48;5;17"
+        "4m \x1b[0m\x1b[38;5;237;48;5;174m             "
+        "                                        "
+        "                   \x1b[0m\x1b[48;5;174m \x1b[0m\n"
     )
     output = rich_notebook_output(stderr_cell)
     assert output == expected_output
