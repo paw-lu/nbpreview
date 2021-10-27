@@ -5,15 +5,16 @@ import collections
 import dataclasses
 import enum
 import json
-from typing import ClassVar, Dict, List, Literal, Optional, Union
+from typing import ClassVar, Dict, Iterator, List, Literal, Optional, Union
 
 import html2text
 from lxml import html
 from lxml.html import HtmlElement
 from pylatexenc import latex2text
-from rich import syntax, text
-from rich.console import ConsoleRenderable
+from rich import measure, syntax, text
+from rich.console import Console, ConsoleOptions, ConsoleRenderable
 from rich.emoji import Emoji
+from rich.measure import Measurement
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
@@ -363,9 +364,20 @@ class HTMLDataFrameRender:
             # Divide won't show up unless there is content underneath
             self.table.add_row("")
 
-    def __rich__(self) -> Table:
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Iterator[Table]:
         """Render the DataFrame table."""
-        return self.table
+        yield self.table
+
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered DataFrame."""
+        measurement = measure.Measurement.get(
+            console=console, options=options, renderable=self.table
+        )
+        return measurement
 
 
 def _render_dataframe(
@@ -442,14 +454,14 @@ class DataFrameDisplay(DisplayData):
         content = data[cls.data_type]
         return cls(content, unicode=unicode, styled=styled)
 
-    def __rich__(self) -> Table:
+    def __rich__(self) -> HTMLDataFrameRender:
         """Render the DataFrame display data."""
         if self.styled:
             dataframe_html, *_ = html.fromstring(self.content).xpath("//body/table")
         else:
             dataframe_html, *_ = html.fromstring(self.content).find_class("dataframe")
         rendered_dataframe = _render_dataframe(dataframe_html, unicode=self.unicode)
-        return rendered_dataframe.table
+        return rendered_dataframe
 
 
 @dataclasses.dataclass
