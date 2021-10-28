@@ -2611,6 +2611,49 @@ def test_render_error_traceback_no_hang(
     assert output == expected_output
 
 
+def test_render_debugger_output(
+    rich_notebook_output: RichOutput, expected_output: str
+) -> None:
+    """It renders the output from the debugger."""
+    debugger_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "id": "fa534da6-88ac-43bc-b00f-cc68ace69fb7",
+        "metadata": {},
+        "outputs": [
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "> \x1b[1;32m<ipython-input-4-a2d401806d89>\x1b"
+                "[0m(1)\x1b[0;36m<module>\x1b[1;34m()\x1b[0m\n\x1b"
+                "[1;32m----> 1 \x1b[1;33m\x1b[0m_jupyterlab_variable"
+                "inspector_dict_list\x1b[0m\x1b[1;33m(\x1b[0m\x1b"
+                "[1;33m)\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m\x1b[0m\x1b"
+                "[0m\n\x1b[0m\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  ll\n"},
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "\x1b[1;32m----> 1 \x1b[1;33m\x1b[0m_"
+                "jupyterlab_variableinspector_dict_list\x1b[0m\x1b"
+                "[1;33m(\x1b[0m\x1b[1;33m)\x1b[0m\x1b[1;33m\x1b[0m\x1b"
+                "[1;33m\x1b[0m\x1b[0m\n\x1b[0m\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  sticky\n"},
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "*** NameError: name 'sticky' is not defined\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  q\n"},
+        ],
+        "source": "%debug",
+    }
+    output = rich_notebook_output(debugger_output_cell)
+    assert output == expected_output
+
+
 def test_render_result(rich_notebook_output: RichOutput) -> None:
     """It renders a result."""
     output_cell = {
