@@ -4097,6 +4097,85 @@ def test_render_html(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_render_html_table(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders an HTML table."""
+    html_cell = {
+        "cell_type": "code",
+        "execution_count": 7,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": """\
+<table>
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table>
+                    """,
+                    "text/plain": "<IPython.core.display.HTML object>",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[7]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n      \x1b]8;id=58222;fi"
+        f"le://{tempfile_path}0.ht"
+        "ml\x1b\\\x1b[94m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\"
+        "                                        "
+        "             \n                          "
+        "                                        "
+        "              \n                         "
+        "                                        "
+        "               \n       \x1b[1mCompany\x1b[0m  "
+        "                \x1b[1mContact\x1b[0m         "
+        "         \x1b[1mCountry\x1b[0m                "
+        "\n      ─────────────────────────────────"
+        "────────────────────────────────────────"
+        "─\n       Alfreds Futterkiste      Maria "
+        "Anders             Germany              "
+        "  \n       Centro comercial         Franc"
+        "isco Chang          Mexico              "
+        "   \n       Moctezuma                    "
+        "                                        "
+        "    \n                                   "
+        "                                        "
+        "     \n"
+    )
+    output = rich_notebook_output(html_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_render_unknown_data_type(rich_notebook_output: RichOutput) -> None:
     """It skips rendering an unknown output type."""
     unknown_data_type = {
