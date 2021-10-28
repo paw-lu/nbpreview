@@ -2923,6 +2923,41 @@ def test_render_latex_output(rich_notebook_output: RichOutput) -> None:
     assert expected_output == output
 
 
+def test_render_invalid_latex_output(rich_notebook_output: RichOutput) -> None:
+    """It renders invalid LaTeX output."""
+    latex_output_cell = {
+        "cell_type": "code",
+        "execution_count": 15,
+        "id": "sapphire-harmony",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/latex": r"garbledmess \sef{}",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "      ╭─────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[15]:\x1b[0m │                 "
+        "                                        "
+        "               │\n      ╰────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n       garbledmess   "
+        "                                        "
+        "                   \n"
+    )
+    output = rich_notebook_output(latex_output_cell)
+    assert expected_output == output
+
+
 def test_render_latex_output_no_unicode(rich_notebook_output: RichOutput) -> None:
     """It does not render LaTeX output if unicode is False."""
     latex_output_cell = {
