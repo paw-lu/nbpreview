@@ -2404,9 +2404,7 @@ def test_render_stream_stdout(rich_notebook_output: RichOutput) -> None:
         "                                        "
         "                  \n      Lorep          "
         "                                        "
-        "                   \n                    "
-        "                                        "
-        "                    \n"
+        "                   \n"
     )
     output = rich_notebook_output(stdout_cell)
     assert output == expected_output
