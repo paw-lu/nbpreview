@@ -3273,6 +3273,55 @@ def test_vega_output(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_invalid_vega_output(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a hyperlink to an invalid Vega plot."""
+    vega_output_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vega.v5+json": {
+                        "invalid": "no",
+                    },
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n      \x1b]8;id=16281369"
+        f"58.012196-350876;file://{tempfile_path}0.html\x1b\\\x1b[94m\uf080"
+        " Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
+    )
+    output = rich_notebook_output(
+        vega_output_cell,
+        nerd_font=True,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_vegalite_output(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
