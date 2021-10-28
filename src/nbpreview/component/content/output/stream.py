@@ -42,7 +42,8 @@ class Stream:
     @classmethod
     def from_output(cls, output: NotebookNode) -> Stream:
         """Create stream from notebook output."""
-        text = output.get("text", "")
+        stream_text = output.get("text", "")
+        text = stream_text[:-1] if stream_text.endswith("\n") else stream_text
         return cls(text)
 
 
