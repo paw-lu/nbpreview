@@ -4833,6 +4833,63 @@ def test_braille_drawing(
     assert output == expected_output
 
 
+def test_invalid_image_drawing(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It fallsback to text when failing to draw image."""
+    image_cell = {
+        "cell_type": "code",
+        "execution_count": 1,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"text/plain": "<AxesSubplot:>"},
+                "execution_count": 1,
+                "metadata": {},
+                "output_type": "execute_result",
+            },
+            {
+                "data": {
+                    "image/png": "ib45",
+                    "text/plain": "<Figure size 432x288 with 1 Axes>",
+                },
+                "metadata": {"needs_background": "light"},
+                "output_type": "display_data",
+            },
+        ],
+        "source": "",
+    }
+    output = rich_notebook_output(
+        image_cell, images=True, image_drawing="character", files=False
+    )
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[1]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[1]:\x1b[0m  "
+        "<AxesSubplot:>                          "
+        "                                  \n     "
+        "                                        "
+        "                                   \n    "
+        "  🖼 Image                               "
+        "                                    \n   "
+        "                                        "
+        "                                     \n  "
+        "    \x1b[38;2;187;134;252m<Figure size 432x"
+        "288 with 1 Axes>                        "
+        "                 \x1b[0m\n"
+    )
+    assert output == expected_output
+
+
 def test_render_image_link_no_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
