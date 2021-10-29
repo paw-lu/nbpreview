@@ -7,7 +7,7 @@ import nbformat
 import typer
 from rich import console, traceback
 
-from nbpreview import __version__, notebook
+from nbpreview import __version__, errors, notebook
 
 app = typer.Typer()
 traceback.install(theme="ansi_dark")
@@ -103,7 +103,7 @@ def main(
             plain=plain,
             unicode=unicode,
         )
-    except nbformat.reader.NotJSONError as exception:
+    except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
         raise typer.Exit(1) from exception
 

@@ -5,14 +5,14 @@ from dataclasses import InitVar
 from typing import Iterator, List, Literal, Optional, Tuple, Union
 
 from nbformat import NotebookNode
-from picharsso.draw import gradient
 from rich import padding
 from rich.padding import Padding, PaddingDimensions
 
 from nbpreview.component.content import input
 from nbpreview.component.content.input import Cell
-from nbpreview.component.content.output import Output, error, result, stream
-from nbpreview.component.content.output.result import execution_indicator
+from nbpreview.component.content.output import error, stream
+from nbpreview.component.content.output.output import Output
+from nbpreview.component.content.output.result import execution_indicator, result
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
 Content = Union[Cell, Padding]
@@ -73,9 +73,9 @@ def render_input_row(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
     unicode_border: Optional[bool] = None,
-) -> Row:
+) -> Union[Row, None]:
     """Render a Jupyter Notebook cell.
 
     Args:
@@ -105,14 +105,15 @@ def render_input_row(
         hide_hyperlink_hints (bool):
             Whether to hide hyperlink hints.
         characters (str):
-            The characters to draw images with.
+            The characters to draw images with. If set to None will
+            default to ' :!?PG@'.
         unicode_border (Optional[bool]): Whether to render the cell
             borders using unicode characters. Will autodetect by
             default.
 
     Returns:
-        Row: The execution count indicator and cell
-            content.
+        Row: The execution count indicator and cell content if cell type
+            is known, else None.
     """
     cell_type = cell.get("cell_type")
     source = cell.source
@@ -148,9 +149,11 @@ def render_input_row(
             default_lexer_name=default_lexer_name,
         )
 
-    # Includes cell_type == "raw"
-    else:
+    elif cell_type == "raw":
         rendered_cell = Cell(source, plain=plain, safe_box=safe_box)
+
+    else:
+        return None
 
     cell_row = Row(rendered_cell, plain=plain, execution=execution)
     return cell_row

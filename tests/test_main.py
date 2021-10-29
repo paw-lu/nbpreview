@@ -1,4 +1,5 @@
 """Test cases for the __main__ module."""
+import json
 import pathlib
 import shlex
 import tempfile
@@ -254,11 +255,11 @@ def test_render_markdown(run_cli: RunCli) -> None:
 
 
 @pytest.mark.parametrize(
-    "args, env",
+    "arg, env",
     (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
 )
 def test_force_plain(
-    args: Optional[str],
+    arg: Optional[str],
     env: Optional[Mapping[str, str]],
     runner: CliRunner,
     write_notebook: Callable[[Union[Dict[str, Any], None]], str],
@@ -273,12 +274,46 @@ def test_force_plain(
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
     notebook_path = write_notebook(code_cell)
-    result = runner.invoke(
-        app, args=["--unicode", "--width=80", notebook_path], env=env
-    )
+    args = ["--unicode", "--width=80", notebook_path]
+    if arg is not None:
+        args = [arg] + args
+    result = runner.invoke(app, args=args, env=env)
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
         "                  \n    return x + y                          "
         "                                      \n"
     )
     assert result.output == expected_output
+
+
+def test_raise_no_source(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if there is no source."""
+    no_source_cell = {
+        "cell_type": "code",
+        "outputs": [],
+    }
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output
+
+
+def test_raise_no_output(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if no output in a code cell."""
+    no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output

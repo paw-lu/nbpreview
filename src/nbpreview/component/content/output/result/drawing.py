@@ -52,7 +52,7 @@ def choose_drawing(
     image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
 ) -> Union[Drawing, None]:
     """Choose which drawing to render an image with."""
     rendered_image: Drawing
@@ -91,7 +91,7 @@ def render_drawing(
     image_type: str,
     color: bool,
     negative_space: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
 ) -> Union[Drawing, None]:
     """Render a drawing of an image."""
     image = _get_image(data, image_type=image_type)
@@ -108,7 +108,7 @@ def render_drawing(
     return rendered_drawing
 
 
-class Bottleneck(str, enum.Enum):
+class Bottleneck(enum.Enum):
     """The bottleneck when rendering a drawing."""
 
     WIDTH = enum.auto()
@@ -341,11 +341,12 @@ def _render_character_drawing(
     max_width: int,
     max_height: int,
     fallback_text: str,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
     negative_space: bool = True,
 ) -> Tuple[Text, ...]:
     """Render a representation of an image with text characters."""
     rendered_character_drawing: Tuple[Text, ...]
+    characters = characters if characters is not None else gradient.DEFAULT_CHARSET
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
 
@@ -385,7 +386,7 @@ class CharacterDrawing(Drawing):
         fallback_text: str,
         color: bool,
         negative_space: bool,
-        characters: str = gradient.DEFAULT_CHARSET,
+        characters: Optional[str] = None,
     ) -> None:
         """Constructor."""
         super().__init__(image=image, fallback_text=fallback_text)
@@ -410,7 +411,7 @@ class CharacterDrawing(Drawing):
         image_type: str,
         color: bool,
         negative_space: bool,
-        characters: str = gradient.DEFAULT_CHARSET,
+        characters: Optional[str] = None,
     ) -> CharacterDrawing:
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]

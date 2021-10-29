@@ -35,6 +35,7 @@ terminedia = "^0.4.1"
 picharsso = "^2.0.1"
 validators = "^0.18.2"
 yarl = "^1.6.3"
+markdown-it-py = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -95,6 +96,10 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "nbpreview"
 disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = "markdown_it"
+no_implicit_reexport = false
 
 # Might change, see https://github.com/python/mypy/issues/10198
 [tool.mypy-jinja2]

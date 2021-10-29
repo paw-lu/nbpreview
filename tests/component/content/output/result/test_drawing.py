@@ -133,7 +133,7 @@ def test_character_drawing_repr(image: Image) -> None:
     output = repr(character_drawing)
     expected_output = (
         "CharacterDrawing(image=sefi, fallback_text=Hey,"
-        " color=True, negative_space=True, characters= :!?PG@)"
+        " color=True, negative_space=True, characters=None)"
     )
     assert output == expected_output
 

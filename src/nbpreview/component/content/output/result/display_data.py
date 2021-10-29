@@ -3,47 +3,99 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import enum
 import json
-from typing import ClassVar, Dict, List, Literal, Union
+from typing import ClassVar, Dict, Iterator, List, Literal, Optional, Union
 
 import html2text
 from lxml import html
 from lxml.html import HtmlElement
 from pylatexenc import latex2text
-from rich import box, markdown, style, syntax, table, text
-from rich.console import ConsoleRenderable
+from rich import measure, syntax, text
+from rich.console import Console, ConsoleOptions, ConsoleRenderable
 from rich.emoji import Emoji
-from rich.markdown import Markdown
-from rich.style import Style
+from rich.measure import Measurement
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from nbpreview.component.content.output.result import drawing, link
+from nbpreview.component import markdown
+from nbpreview.component.content.output.result import drawing, link, table
 from nbpreview.component.content.output.result.drawing import Drawing
+from nbpreview.component.markdown import CustomMarkdown
 from nbpreview.data import Data
 
 
 def _render_html(
-    data: Data, unicode: bool, theme: str
+    data: Data,
+    theme: str,
+    nerd_font: bool,
+    unicode: bool,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille"],
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[DataFrameDisplay, HTMLDisplay]:
     """Render HTML output."""
     display_data: Union[DataFrameDisplay, HTMLDisplay]
     html_data = data["text/html"]
-    if DataFrameDisplay.is_dataframe(html_data):
-        display_data = DataFrameDisplay.from_data(data, unicode=unicode)
+    dataframe_display_type = DataFrameDisplay.dataframe_display_type(html_data)
+    styled = dataframe_display_type == DataFrameDisplayType.STYLED
+    if dataframe_display_type is not None:
+        display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
     else:
-        display_data = HTMLDisplay.from_data(data, theme=theme)
+        display_data = HTMLDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
     return display_data
 
 
 def _choose_basic_renderer(
-    data: Data, unicode: bool, nerd_font: bool, theme: str
+    data: Data,
+    unicode: bool,
+    nerd_font: bool,
+    theme: str,
+    images: bool,
+    image_drawing: Literal["block", "character", "braille"],
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
     """Render straightforward text data."""
     display_data: DisplayData
     if "text/markdown" in data:
-        display_data = MarkdownDisplay.from_data(data, theme=theme)
+        display_data = MarkdownDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
         return display_data
     elif unicode and "text/latex" in data:
         display_data = LaTeXDisplay.from_data(data)
@@ -71,6 +123,10 @@ def render_display_data(
     image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    characters: Optional[str] = None,
 ) -> Union[DisplayData, None, Drawing]:
     """Render the notebook display data."""
     display_data: Union[DisplayData, None, Drawing]
@@ -95,11 +151,35 @@ def render_display_data(
                     return display_data
 
     if not plain and "text/html" in data:
-        display_data = _render_html(data, unicode=unicode, theme=theme)
+        display_data = _render_html(
+            data,
+            unicode=unicode,
+            theme=theme,
+            nerd_font=nerd_font,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
         return display_data
     else:
         display_data = _choose_basic_renderer(
-            data, unicode=unicode, nerd_font=nerd_font, theme=theme
+            data,
+            unicode=unicode,
+            nerd_font=nerd_font,
+            theme=theme,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
         )
         return display_data
 
@@ -134,19 +214,66 @@ class HTMLDisplay(DisplayData):
     """Notebook HTML display data."""
 
     theme: str
+    nerd_font: bool
+    unicode: bool
+    images: bool
+    image_drawing: Literal["block", "character", "braille"]
+    color: bool
+    negative_space: bool
+    hyperlinks: bool
+    files: bool
+    hide_hyperlink_hints: bool
+    characters: Optional[str] = None
     data_type: ClassVar[str] = "text/html"
 
     @classmethod
-    def from_data(cls, data: Data, theme: str) -> HTMLDisplay:
+    def from_data(
+        cls,
+        data: Data,
+        theme: str,
+        nerd_font: bool,
+        unicode: bool,
+        images: bool,
+        image_drawing: Literal["block", "character", "braille"],
+        color: bool,
+        negative_space: bool,
+        hyperlinks: bool,
+        files: bool,
+        hide_hyperlink_hints: bool,
+        characters: Optional[str] = None,
+    ) -> HTMLDisplay:
         """Create an HTML display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, theme=theme)
+        return cls(
+            content,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
 
-    def __rich__(self) -> Markdown:
+    def __rich__(self) -> CustomMarkdown:
         """Render the HTML display data."""
         converted_markdown = html2text.html2text(self.content)
-        rendered_html = markdown.Markdown(
-            converted_markdown, inline_code_theme=self.theme
+        rendered_html = markdown.CustomMarkdown(
+            converted_markdown,
+            theme=self.theme,
+            unicode=self.unicode,
+            images=self.images,
+            image_drawing=self.image_drawing,
+            color=self.color,
+            negative_space=self.negative_space,
+            hyperlinks=self.hyperlinks,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
+            characters=self.characters,
         )
         return rendered_html
 
@@ -163,84 +290,127 @@ def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
     """
     attributes = column.attrib
     column_width = int(attributes.get("colspan", 1))
-    text_style: Union[str, Style] = style.Style(bold=True) if column.tag == "th" else ""
-    column_string = column.text if column.text is not None else ""
-    element_text = text.Text(column_string, style=text_style)
+    header = column.tag == "th"
+    column_string = column.text.strip() if column.text is not None else ""
+    element_text = table.create_table_element(column_string, header=header)
     table_element = (column_width - 1) * [text.Text("")] + [element_text]
     return table_element
 
 
-def _render_dataframe(table_html: List[HtmlElement], unicode: bool) -> Table:
+@dataclasses.dataclass
+class HTMLDataFrameRender:
+    """Rich counterpart of HTML table."""
+
+    unicode: bool
+
+    def __post_init__(self) -> None:
+        """Constructor."""
+        self.table = table.create_table(unicode=self.unicode)
+
+    def add_headers(self, column_rows: List[HtmlElement]) -> None:
+        """Add headers to table."""
+        n_column_rows = len(column_rows)
+        for i, column_row in enumerate(column_rows):
+
+            table_row = []
+            for column in column_row.xpath("th|td"):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+
+                if i == 0:
+                    for _ in range(column_width):
+                        self.table.add_column(justify="right")
+
+                table_element = _render_table_element(column, column_width=column_width)
+                table_row.extend(table_element)
+
+            end_section = i == n_column_rows - 1
+            self.table.add_row(*table_row, end_section=end_section)
+
+    def add_data(self, data_rows: List[HtmlElement]) -> None:
+        """Add data rows to table."""
+        previous_row_spans: Dict[int, int] = {}
+        for row in data_rows:
+
+            table_row = []
+            current_row_spans: Dict[int, int] = collections.defaultdict(int)
+            for i, column in enumerate(row.xpath("th|td")):
+                attributes = column.attrib
+                column_width = int(attributes.get("colspan", 1))
+                row_span = int(attributes.get("rowspan", 1))
+                table_element = _render_table_element(column, column_width=column_width)
+                table_row.extend(table_element)
+
+                if 1 < row_span:
+                    current_row_spans[i] += row_span
+
+            for column, row_span in previous_row_spans.copy().items():
+                table_row.insert(column, text.Text(""))
+                remaining_span = row_span - 1
+
+                if 1 < remaining_span:
+                    previous_row_spans[column] = remaining_span
+                else:
+                    previous_row_spans.pop(column, None)
+
+            previous_row_spans = {
+                column: previous_row_spans.get(column, 0)
+                + current_row_spans.get(column, 0)
+                for column in previous_row_spans.keys() | current_row_spans.keys()
+            }
+            self.table.add_row(*table_row)
+
+        if table.is_only_header(self.table):
+            # Divide won't show up unless there is content underneath
+            self.table.add_row("")
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Iterator[Table]:
+        """Render the DataFrame table."""
+        yield self.table
+
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered DataFrame."""
+        measurement = measure.Measurement.get(
+            console=console, options=options, renderable=self.table
+        )
+        return measurement
+
+
+def _render_dataframe(
+    dataframe_html: HtmlElement, unicode: bool
+) -> HTMLDataFrameRender:
     """Render a DataFrame from its HTML.
 
     Args:
-        table_html (List[HtmlElement]): The DataFrame rendered as HTML.
+        dataframe_html (HtmlElement): The DataFrame rendered as HTML.
         unicode (bool): Whether to use unicode characters when rendering
             the table.
 
     Returns:
-        Table: The DataFrame rendered as a Rich Table.
+        HTMLDataFrameRender: The DataFrame rendered as a Rich Table.
     """
-    dataframe_html = table_html[0]
-    column_rows = dataframe_html.find("thead").findall("tr")
+    thead_element = dataframe_html.find("thead")
+    column_rows = thead_element.findall("tr") if thead_element is not None else []
 
-    dataframe_table = table.Table(
-        show_edge=False,
-        show_header=False,
-        box=box.HORIZONTALS,
-        show_footer=False,
-        safe_box=not unicode,
-    )
+    rendered_html_dataframe = HTMLDataFrameRender(unicode=unicode)
+    rendered_html_dataframe.add_headers(column_rows)
 
-    n_column_rows = len(column_rows)
-    for i, column_row in enumerate(column_rows):
+    tbody_element = dataframe_html.find("tbody")
+    data_rows = tbody_element.findall("tr") if tbody_element is not None else []
+    rendered_html_dataframe.add_data(data_rows)
 
-        table_row = []
-        for column in column_row.xpath("th|td"):
-            attributes = column.attrib
-            column_width = int(attributes.get("colspan", 1))
+    return rendered_html_dataframe
 
-            if i == 0:
-                for _ in range(column_width):
-                    dataframe_table.add_column(justify="right")
 
-            table_element = _render_table_element(column, column_width=column_width)
-            table_row.extend(table_element)
+class DataFrameDisplayType(enum.Enum):
+    """The type of DataFrame HTML output."""
 
-        end_section = i == n_column_rows - 1
-        dataframe_table.add_row(*table_row, end_section=end_section)
-
-    previous_row_spans: Dict[int, int] = {}
-    for row in dataframe_html.find("tbody").findall("tr"):
-
-        table_row = []
-        current_row_spans: Dict[int, int] = collections.defaultdict(int)
-        for i, column in enumerate(row.xpath("th|td")):
-            attributes = column.attrib
-            column_width = int(attributes.get("colspan", 1))
-            row_span = int(attributes.get("rowspan", 1))
-            table_element = _render_table_element(column, column_width=column_width)
-            table_row.extend(table_element)
-
-            if 1 < row_span:
-                current_row_spans[i] += row_span
-
-        for column, row_span in previous_row_spans.copy().items():
-            table_row.insert(column, text.Text(""))
-            remaining_span = row_span - 1
-
-            if 1 < remaining_span:
-                previous_row_spans[column] = remaining_span
-            else:
-                previous_row_spans.pop(column, None)
-
-        previous_row_spans = {
-            column: previous_row_spans.get(column, 0) + current_row_spans.get(column, 0)
-            for column in previous_row_spans.keys() | current_row_spans.keys()
-        }
-        dataframe_table.add_row(*table_row)
-
-    return dataframe_table
+    PLAIN = enum.auto()
+    STYLED = enum.auto()
 
 
 @dataclasses.dataclass
@@ -248,27 +418,49 @@ class DataFrameDisplay(DisplayData):
     """Notebook DataFrame display data."""
 
     unicode: bool
+    styled: bool = False
     data_type: ClassVar[str] = "text/html"
 
     @staticmethod
-    def is_dataframe(content: str) -> bool:
-        """Determine if DataFrame is contained with in HTML."""
-        table_html = html.fromstring(content).find_class("dataframe")
+    def dataframe_display_type(content: str) -> Union[DataFrameDisplayType, None]:
+        """Determine the type of DataFrame output."""
+        html_element = html.fromstring(content)
+
+        table_html = html_element.find_class("dataframe")
         if table_html and table_html[0].tag == "table":
-            return True
+            return DataFrameDisplayType.PLAIN
+
+        # Basic check for styled dataframe
+        try:
+            style_element, *non_style_elements = html_element.head.iterchildren()
+            *non_table_elements, table_element = html_element.body.iterchildren()
+        except (ValueError, IndexError):
+            pass
         else:
-            return False
+            if (
+                len(non_style_elements) == 0
+                and style_element.tag == "style"
+                and style_element.attrib == {"type": "text/css"}
+                and len(non_table_elements) <= 1
+                and table_element.tag == "table"
+            ):
+                return DataFrameDisplayType.STYLED
+
+        return None
 
     @classmethod
-    def from_data(cls, data: Data, unicode: bool) -> DataFrameDisplay:
+    def from_data(cls, data: Data, unicode: bool, styled: bool) -> DataFrameDisplay:
         """Create DataFrame display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, unicode=unicode)
+        return cls(content, unicode=unicode, styled=styled)
 
-    def __rich__(self) -> Table:
+    def __rich__(self) -> HTMLDataFrameRender:
         """Render the DataFrame display data."""
-        table_html = html.fromstring(self.content).find_class("dataframe")
-        rendered_dataframe = _render_dataframe(table_html, unicode=self.unicode)
+        if self.styled:
+            dataframe_html, *_ = html.fromstring(self.content).xpath("//body/table")
+        else:
+            dataframe_html, *_ = html.fromstring(self.content).find_class("dataframe")
+        rendered_dataframe = _render_dataframe(dataframe_html, unicode=self.unicode)
         return rendered_dataframe
 
 
@@ -277,18 +469,65 @@ class MarkdownDisplay(DisplayData):
     """Notebook Markdown display data."""
 
     theme: str
+    nerd_font: bool
+    unicode: bool
+    images: bool
+    image_drawing: Literal["block", "character", "braille"]
+    color: bool
+    negative_space: bool
+    hyperlinks: bool
+    files: bool
+    hide_hyperlink_hints: bool
+    characters: Optional[str] = None
     data_type: ClassVar[str] = "text/markdown"
 
     @classmethod
-    def from_data(cls, data: Data, theme: str) -> MarkdownDisplay:
+    def from_data(
+        cls,
+        data: Data,
+        theme: str,
+        nerd_font: bool,
+        unicode: bool,
+        images: bool,
+        image_drawing: Literal["block", "character", "braille"],
+        color: bool,
+        negative_space: bool,
+        hyperlinks: bool,
+        files: bool,
+        hide_hyperlink_hints: bool,
+        characters: Optional[str] = None,
+    ) -> MarkdownDisplay:
         """Create Markdown display data from notebook data."""
         content = data[cls.data_type]
-        return cls(content, theme=theme)
+        return cls(
+            content,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+        )
 
-    def __rich__(self) -> Markdown:
+    def __rich__(self) -> CustomMarkdown:
         """Render the Markdown display data."""
-        rendered_markdown = markdown.Markdown(
-            self.content, inline_code_theme=self.theme
+        rendered_markdown = markdown.CustomMarkdown(
+            self.content,
+            theme=self.theme,
+            unicode=self.unicode,
+            images=self.images,
+            image_drawing=self.image_drawing,
+            color=self.color,
+            negative_space=self.negative_space,
+            hyperlinks=self.hyperlinks,
+            files=self.files,
+            hide_hyperlink_hints=self.hide_hyperlink_hints,
+            characters=self.characters,
         )
         return rendered_markdown
 

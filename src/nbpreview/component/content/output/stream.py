@@ -5,9 +5,9 @@ import dataclasses
 from typing import ClassVar, Iterator, Union
 
 from nbformat import NotebookNode
-from rich import style, text
+from rich import padding, style, text
 from rich.console import ConsoleRenderable
-from rich.text import Text
+from rich.padding import Padding
 
 
 def render_stream(output: NotebookNode) -> Iterator[Stream]:
@@ -42,7 +42,8 @@ class Stream:
     @classmethod
     def from_output(cls, output: NotebookNode) -> Stream:
         """Create stream from notebook output."""
-        text = output.get("text", "")
+        stream_text = output.get("text", "")
+        text = stream_text[:-1] if stream_text.endswith("\n") else stream_text
         return cls(text)
 
 
@@ -60,9 +61,10 @@ class StdErr(Stream):
         text = output.get("text", "")
         return cls(text)
 
-    def __rich__(self) -> Text:
+    def __rich__(self) -> Padding:
         """Render a stderr stream."""
-        rendered_stderr = text.Text(
-            self.content, style=style.Style(color="color(237)", bgcolor="color(174)")
+        stderr_text = text.Text(self.content, style=style.Style(color="color(237)"))
+        rendered_stderr = padding.Padding(
+            stderr_text, pad=(1, 1, 0, 1), style=style.Style(bgcolor="color(174)")
         )
         return rendered_stderr

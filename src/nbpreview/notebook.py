@@ -8,11 +8,11 @@ from typing import Iterator, List, Literal, Optional, Tuple
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
-from picharsso.draw import gradient
 from rich import table
 from rich.console import Console, ConsoleOptions
 from rich.table import Table
 
+from nbpreview import errors
 from nbpreview.component import row
 
 # terminedia depends on fcntl, which is not present on Windows platforms
@@ -107,7 +107,7 @@ def _render_notebook(
     image_drawing: Literal["block", "character", "braille"],
     color: bool,
     negative_space: bool,
-    characters: str = gradient.DEFAULT_CHARSET,
+    characters: Optional[str] = None,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -136,7 +136,8 @@ def _render_notebook(
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
         )
-        grid.add_row(*cell_row.to_table_row())
+        if cell_row is not None:
+            grid.add_row(*cell_row.to_table_row())
 
         outputs = cell.get("outputs")
         if not hide_output and outputs is not None:
@@ -230,7 +231,11 @@ class Notebook:
         image_drawing: Literal["block", "character", "braille", None] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
-        notebook_node = nbformat.read(file, as_version=4)
+        try:
+            notebook_node = nbformat.read(file, as_version=4)
+        except AttributeError as exception:
+            raise errors.InvalidNotebookError from exception
+
         return cls(
             notebook_node,
             theme=theme,

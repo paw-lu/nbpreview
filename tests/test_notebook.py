@@ -403,22 +403,120 @@ def test_code_markdown_cell(rich_notebook_output: RichOutput) -> None:
     }
     output = rich_notebook_output(markdown_cell)
     expected_output = (
-        "  \x1b[38;2;248;248;242;49m    \x1b[0m\x1b[38;2;1"
-        "02;217;239;49mfor\x1b[0m\x1b[38;2;248;248;242;"
-        "49m \x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;"
-        "2;248;248;242;49m \x1b[0m\x1b[38;2;249;38;114;"
-        "49min\x1b[0m\x1b[38;2;248;248;242;49m \x1b[0m\x1b[38"
-        ";2;248;248;242;49mrange\x1b[0m\x1b[38;2;248;24"
-        "8;242;49m(\x1b[0m\x1b[38;2;174;129;255;49m20\x1b["
-        "0m\x1b[38;2;248;248;242;49m)\x1b[0m\x1b[38;2;248;"
-        "248;242;49m:\x1b[0m                        "
-        "                               \n  \x1b[38;2"
-        ";248;248;242;49m        \x1b[0m\x1b[38;2;248;2"
-        "48;242;49mprint\x1b[0m\x1b[38;2;248;248;242;49"
-        "m(\x1b[0m\x1b[38;2;248;248;242;49mi\x1b[0m\x1b[38;2;"
-        "248;248;242;49m)\x1b[0m                    "
+        "  \x1b[49m    \x1b[0m\x1b[94;49mfor\x1b[0m\x1b[49m \x1b[0m"
+        "\x1b[49mi\x1b[0m\x1b[49m \x1b[0m\x1b[95;49min\x1b[0m\x1b[49m "
+        "\x1b[0m\x1b[96;49mrange\x1b[0m\x1b[49m(\x1b[0m\x1b[94;49m2"
+        "0\x1b[0m\x1b[49m)\x1b[0m\x1b[49m:\x1b[0m               "
         "                                        "
-        "  \n"
+        "\n  \x1b[49m        \x1b[0m\x1b[96;49mprint\x1b[0m\x1b[4"
+        "9m(\x1b[0m\x1b[49mi\x1b[0m\x1b[49m)\x1b[0m             "
+        "                                        "
+        "         \n"
+    )
+    assert output == expected_output
+
+
+def test_table_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with tables."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": """# Hey buddy
+
+*did you hear the news?*
+
+ ```python
+for i in range(20):
+    print(i)
+```
+
+| aaa | bbbb **ccc** |
+| --- | --- |
+| 111 **222** 333 | 222 |
+| susu | lulu|
+
+- so there you are
+- words
+
+| ddd | `eeee` fff |
+| --- | --- |
+
+| | |
+--- | ---
+sus | *spect*
+
+rak
+     """,
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[1;38;2;255;255;255;48;2;96;2;238m \x1b["
+        "0m\x1b[1;38;2;255;255;255;48;2;96;2;238mHey"
+        " buddy\x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m \x1b[0m\x1b[1;38;2;255;255;255;48;2;96;2"
+        ";238m                                   "
+        "                                \x1b[0m\n  \x1b"
+        "[2;38;2;96;2;238m───────────────────────"
+        "────────────────────────────────────────"
+        "───────────────\x1b[0m\n                    "
+        "                                        "
+        "                    \n  \x1b[3mdid you hear "
+        "the news?\x1b[0m                           "
+        "                             \n          "
+        "                                        "
+        "                              \n  \x1b[49m  "
+        "  \x1b[0m\x1b[94;49mfor\x1b[0m\x1b[49m \x1b[0m\x1b[49mi\x1b[0"
+        "m\x1b[49m \x1b[0m\x1b[95;49min\x1b[0m\x1b[49m \x1b[0m\x1b[96;"
+        "49mrange\x1b[0m\x1b[49m(\x1b[0m\x1b[94;49m20\x1b[0m\x1b[49"
+        "m)\x1b[0m\x1b[49m:\x1b[0m                        "
+        "                               \n  \x1b[49m "
+        "      \x1b[0m\x1b[96;49mprint\x1b[0m\x1b[49m(\x1b[0m\x1b[4"
+        "9mi\x1b[0m\x1b[49m)\x1b[0m                       "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n   \x1b[1maaa\x1b[0m                        "
+        "             \x1b[1mbbbb \x1b[0m\x1b[1mccc\x1b[0m   "
+        "                          \n  ───────────"
+        "────────────────────────────────────────"
+        "───────────────────────────\n   111 \x1b[1m2"
+        "22\x1b[0m 333                             2"
+        "22                                  \n   "
+        "susu                                    "
+        "lulu                                 \n  "
+        "                                        "
+        "                                      \n "
+        "                                        "
+        "                                       \n"
+        "   • so there you are                   "
+        "                                        "
+        "\n   • words                             "
+        "                                        "
+        " \n                                      "
+        "                                        "
+        "  \n   \x1b[1mddd\x1b[0m                       "
+        "              \x1b[1;97;40meeee\x1b[0m\x1b[1m fff"
+        "\x1b[0m                             \n  ────"
+        "────────────────────────────────────────"
+        "──────────────────────────────────\n     "
+        "                                        "
+        "                                   \n    "
+        "                                        "
+        "                                    \n   "
+        "                                        "
+        "                                     \n  "
+        "                                        "
+        "                                      \n "
+        " ───────────────────────────────────────"
+        "───────────────────────────────────────\n"
+        "   sus                                  "
+        "   \x1b[3mspect\x1b[0m                        "
+        "        \n                               "
+        "                                        "
+        "         \n  rak                         "
+        "                                        "
+        "          \n"
     )
     assert output == expected_output
 
@@ -878,6 +976,716 @@ def test_render_dataframe(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_only_header_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with only headers."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\\n<style scoped>\\n    .dataframe tb"
+                        "ody tr th:only-of-type {\\n        vertic"
+                        "al-align: middle;\\n    }\\n\\n    .datafra"
+                        "me tbody tr th {\\n        vertical-align"
+                        ": top;\\n    }\\n\\n    .dataframe thead tr"
+                        " th {\\n        text-align: left;\\n    }\\"
+                        "n\\n    .dataframe thead tr:last-of-type "
+                        "th {\\n        text-align: right;\\n    }\\"
+                        'n</style>\\n<table border="1" class="data'
+                        'frame">\\n  <thead>\\n    <tr>\\n      <th>'
+                        'Model:</th>\\n      <th colspan="2" halig'
+                        'n="left">Decision Tree</th>\\n      <th c'
+                        'olspan="2" halign="left">Regression</th>'
+                        '\\n      <th colspan="2" halign="left">Ra'
+                        "ndom</th>\\n    </tr>\\n    <tr>\\n      <t"
+                        "h>Predicted:</th>\\n      <th>Tumour</th>"
+                        "\\n      <th>Non-Tumour</th>\\n      <th>T"
+                        "umour</th>\\n      <th>Non-Tumour</th>\\n "
+                        "     <th>Tumour</th>\\n      <th>Non-Tumo"
+                        "ur</th>\\n    </tr>\\n    <tr>\\n      <th>"
+                        "Actual Label:</th>\\n      <th></th>\\n   "
+                        "   <th></th>\\n      <th></th>\\n      <th"
+                        "></th>\\n      <th></th>\\n      <th></th>"
+                        "\\n    </tr>\\n  </thead>\\n  <tbody>\\n  </"
+                        "tbody>\\n</table>\\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=360825;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m   Model:\x1b[0m          "
+        "  \x1b[1m Decision\x1b[0m            \x1b[1mRegre"
+        "ssi…\x1b[0m            \x1b[1m   Random\x1b[0m \n "
+        "                           \x1b[1m     Tree"
+        "\x1b[0m                                    "
+        "       \n       \x1b[1mPredicte…\x1b[0m   \x1b[1mT"
+        "umour\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumo"
+        "ur\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumour\x1b"
+        "[0m   \x1b[1mNon-Tumo…\x1b[0m \n       \x1b[1m   A"
+        "ctual\x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m       "
+        "  \x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b"
+        "[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b[0m"
+        " \n       \x1b[1m   Label:\x1b[0m              "
+        "                                        "
+        "          \n      ───────────────────────"
+        "────────────────────────────────────────"
+        "───────────\n                            "
+        "                                        "
+        "            \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_mistagged_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It doesn't detect a DataFrame when it is not a table."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead tr th {\n    "
+                        "    text-align: left;\n    }\n\n    .datafr"
+                        "ame thead tr:last-of-type th {\n        t"
+                        "ext-align: right;\n    }\n</style>\n<not-a-table "
+                        'border="1" class="dataframe">\n  <thead>\n'
+                        "    <tr>\n      <th>Model:</th>\n      <th"
+                        ' colspan="2" halign="left">Decision Tree'
+                        '</th>\n      <th colspan="2" halign="left'
+                        '">Regression</th>\n      <th colspan="2" '
+                        'halign="left">Random</th>\n    </tr>\n    '
+                        "<tr>\n      <th>Predicted:</th>\n      <th"
+                        ">Tumour</th>\n      <th>Non-Tumour</th>\n "
+                        "     <th>Tumour</th>\n      <th>Non-Tumou"
+                        "r</th>\n      <th>Tumour</th>\n      <th>N"
+                        "on-Tumour</th>\n    </tr>\n    <tr>\n      "
+                        "<th>Actual Label:</th>\n      <th></th>\n "
+                        "     <th></th>\n      <th></th>\n      <th"
+                        "></th>\n      <th></th>\n      <th></th>\n "
+                        "   </tr>\n  </thead>\n  <tbody>\n    <tr>\n "
+                        "     <th>Tumour (Positive)</th>\n      <t"
+                        "d>38.0</td>\n      <td>2.0</td>\n      <td"
+                        ">18.0</td>\n      <td>22.0</td>\n      <td"
+                        ">21</td>\n      <td>NaN</td>\n    </tr>\n  "
+                        "  <tr>\n      <th>Non-Tumour (Negative)</"
+                        "th>\n      <td>19.0</td>\n      <td>439.0<"
+                        "/td>\n      <td>6.0</td>\n      <td>452.0<"
+                        "/td>\n      <td>226</td>\n      <td>232.0<"
+                        "/td>\n    </tr>\n  </tbody>\n</not-a-table>\n</div"
+                        ">"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=968899;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m  Model: | Decision Tree | Reg"
+        "ression | Random                        "
+        "      \n      Predicted: | Tumour | Non-T"
+        "umour | Tumour | Non-Tumour | Tumour |  "
+        "       \n      Non-Tumour                "
+        "                                        "
+        "        \n      Actual Label: |  |  |  | "
+        " |  |                                   "
+        "         \n      Tumour (Positive) | 38.0"
+        " | 2.0 | 18.0 | 22.0 | 21 | NaN         "
+        "          \n      Non-Tumour (Negative) |"
+        " 19.0 | 439.0 | 6.0 | 452.0 | 226 | 232."
+        "0          \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_multiindex_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a multiindex DataFrame."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead tr th {\n    "
+                        "    text-align: left;\n    }\n\n    .datafr"
+                        "ame thead tr:last-of-type th {\n        t"
+                        "ext-align: right;\n    }\n</style>\n<table "
+                        'border="1" class="dataframe">\n  <thead>\n'
+                        "    <tr>\n      <th>Model:</th>\n      <th"
+                        ' colspan="2" halign="left">Decision Tree'
+                        '</th>\n      <th colspan="2" halign="left'
+                        '">Regression</th>\n      <th colspan="2" '
+                        'halign="left">Random</th>\n    </tr>\n    '
+                        "<tr>\n      <th>Predicted:</th>\n      <th"
+                        ">Tumour</th>\n      <th>Non-Tumour</th>\n "
+                        "     <th>Tumour</th>\n      <th>Non-Tumou"
+                        "r</th>\n      <th>Tumour</th>\n      <th>N"
+                        "on-Tumour</th>\n    </tr>\n    <tr>\n      "
+                        "<th>Actual Label:</th>\n      <th></th>\n "
+                        "     <th></th>\n      <th></th>\n      <th"
+                        "></th>\n      <th></th>\n      <th></th>\n "
+                        "   </tr>\n  </thead>\n  <tbody>\n    <tr>\n "
+                        "     <th>Tumour (Positive)</th>\n      <t"
+                        "d>38.0</td>\n      <td>2.0</td>\n      <td"
+                        ">18.0</td>\n      <td>22.0</td>\n      <td"
+                        ">21</td>\n      <td>NaN</td>\n    </tr>\n  "
+                        "  <tr>\n      <th>Non-Tumour (Negative)</"
+                        "th>\n      <td>19.0</td>\n      <td>439.0<"
+                        "/td>\n      <td>6.0</td>\n      <td>452.0<"
+                        "/td>\n      <td>226</td>\n      <td>232.0<"
+                        "/td>\n    </tr>\n  </tbody>\n</table>\n</div"
+                        ">"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=888128;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m   Model:\x1b[0m          "
+        "  \x1b[1m Decision\x1b[0m            \x1b[1mRegre"
+        "ssi…\x1b[0m            \x1b[1m   Random\x1b[0m \n "
+        "                           \x1b[1m     Tree"
+        "\x1b[0m                                    "
+        "       \n       \x1b[1mPredicte…\x1b[0m   \x1b[1mT"
+        "umour\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumo"
+        "ur\x1b[0m   \x1b[1mNon-Tumo…\x1b[0m   \x1b[1mTumour\x1b"
+        "[0m   \x1b[1mNon-Tumo…\x1b[0m \n       \x1b[1m   A"
+        "ctual\x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m       "
+        "  \x1b[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b"
+        "[0m   \x1b[1m      \x1b[0m   \x1b[1m         \x1b[0m"
+        " \n       \x1b[1m   Label:\x1b[0m              "
+        "                                        "
+        "          \n      ───────────────────────"
+        "────────────────────────────────────────"
+        "───────────\n       \x1b[1m   Tumour\x1b[0m    "
+        " 38.0         2.0     18.0        22.0  "
+        "     21         NaN \n       \x1b[1m(Positiv"
+        "…\x1b[0m                                   "
+        "                             \n       \x1b[1"
+        "mNon-Tumo…\x1b[0m     19.0       439.0     "
+        " 6.0       452.0      226       232.0 \n "
+        "      \x1b[1m(Negativ…\x1b[0m                 "
+        "                                        "
+        "       \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_styled_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a styled DataFrame."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        '<style type="text/css">\n#T_7cafb_ td:hov'
+                        "er {\n  background-color: #ffffb3;\n}\n#T_7"
+                        "cafb_ .index_name {\n  font-style: italic"
+                        ";\n  color: darkgrey;\n  font-weight: norm"
+                        "al;\n}\n#T_7cafb_ th:not(.index_name) {\n  "
+                        "background-color: #000066;\n  color: whit"
+                        "e;\n}\n#T_7cafb_ .true {\n  background-colo"
+                        "r: #e6ffe6;\n}\n#T_7cafb_ .false {\n  backg"
+                        "round-color: #ffe6e6;\n}\n</style>\n<table "
+                        'id="T_7cafb_">\n  <thead>\n    <tr>\n      '
+                        '<th class="index_name level0" >Model:</t'
+                        'h>\n      <th class="col_heading level0 c'
+                        'ol0" colspan="2">Decision Tree</th>\n    '
+                        '  <th class="col_heading level0 col2" co'
+                        'lspan="2">Regression</th>\n    </tr>\n    '
+                        '<tr>\n      <th class="index_name level1"'
+                        ' >Predicted:</th>\n      <th class="col_h'
+                        'eading level1 col0" >Tumour</th>\n      <'
+                        'th class="col_heading level1 col1" >Non-'
+                        'Tumour</th>\n      <th class="col_heading'
+                        ' level1 col2" >Tumour</th>\n      <th cla'
+                        'ss="col_heading level1 col3" >Non-Tumour'
+                        "</th>\n    </tr>\n    <tr>\n      <th class"
+                        '="index_name level0" >Actual Label:</th>'
+                        '\n      <th class="blank col0" >&nbsp;</t'
+                        'h>\n      <th class="blank col1" >&nbsp;<'
+                        '/th>\n      <th class="blank col2" >&nbsp'
+                        ';</th>\n      <th class="blank col3" >&nb'
+                        "sp;</th>\n    </tr>\n  </thead>\n  <tbody>\n"
+                        '    <tr>\n      <th id="T_7cafb_level0_ro'
+                        'w0" class="row_heading level0 row0" >Tum'
+                        'our (Positive)</th>\n      <td id="T_7caf'
+                        'b_row0_col0" class="data row0 col0 true '
+                        '" >38</td>\n      <td id="T_7cafb_row0_co'
+                        'l1" class="data row0 col1 false " >2</td'
+                        '>\n      <td id="T_7cafb_row0_col2" class'
+                        '="data row0 col2 true " >18</td>\n      <'
+                        'td id="T_7cafb_row0_col3" class="data ro'
+                        'w0 col3 false " >22</td>\n    </tr>\n    <'
+                        'tr>\n      <th id="T_7cafb_level0_row1" c'
+                        'lass="row_heading level0 row1" >Non-Tumo'
+                        'ur (Negative)</th>\n      <td id="T_7cafb'
+                        '_row1_col0" class="data row1 col0 false '
+                        '" >19</td>\n      <td id="T_7cafb_row1_co'
+                        'l1" class="data row1 col1 true " >439</t'
+                        'd>\n      <td id="T_7cafb_row1_col2" clas'
+                        's="data row1 col2 false " >6</td>\n      '
+                        '<td id="T_7cafb_row1_col3" class="data r'
+                        'ow1 col3 true " >452</td>\n    </tr>\n  </'
+                        "tbody>\n</table>\n"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=698065;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m               Model:\x1b["
+        "0m            \x1b[1mDecision Tree\x1b[0m     "
+        "       \x1b[1mRegression\x1b[0m     \n       \x1b["
+        "1m           Predicted:\x1b[0m   \x1b[1mTumour"
+        "\x1b[0m   \x1b[1m   Non-Tumour\x1b[0m   \x1b[1mTumou"
+        "r\x1b[0m   \x1b[1mNon-Tumour\x1b[0m     \n       \x1b"
+        "[1m        Actual Label:\x1b[0m   \x1b[1m     "
+        " \x1b[0m   \x1b[1m             \x1b[0m   \x1b[1m    "
+        "  \x1b[0m   \x1b[1m          \x1b[0m     \n      ─"
+        "────────────────────────────────────────"
+        "─────────────────────────────    \n      "
+        " \x1b[1m    Tumour (Positive)\x1b[0m       38 "
+        "              2       18           22   "
+        "  \n       \x1b[1mNon-Tumour (Negative)\x1b[0m "
+        "      19             439        6       "
+        "   452     \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_missing_column_name_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with a missing column index name."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead tr th {\n    "
+                        "    text-align: left;\n    }\n\n    .datafr"
+                        "ame thead tr:last-of-type th {\n        t"
+                        "ext-align: right;\n    }\n</style>\n<table "
+                        'border="1" class="dataframe">\n  <thead>\n'
+                        "    <tr>\n      <th></th>\n      <th>lorep"
+                        "</th>\n      <th>hey</th>\n      <th>sup</"
+                        "th>\n      <th>bye</th>\n    </tr>\n    <tr"
+                        ">\n      <th>hey</th>\n      <th></th>\n   "
+                        "   <th></th>\n      <th></th>\n      <th><"
+                        "/th>\n    </tr>\n  </thead>\n  <tbody>\n    "
+                        "<tr>\n      <th>3</th>\n      <th>1</th>\n "
+                        "     <td>1</td>\n      <td>4</td>\n      <"
+                        "td>6</td>\n    </tr>\n    <tr>\n      <th>4"
+                        "</th>\n      <th>1</th>\n      <td>2</td>\n"
+                        "      <td>5</td>\n      <td>7</td>\n    </"
+                        "tr>\n  </tbody>\n</table>\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=337911;file://{tempfile_path}0.html\x1b\\\x1b[94m🌐 "
+        "Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m   \x1b[0m   \x1b[1mlorep\x1b[0m"
+        "   \x1b[1mhey\x1b[0m   \x1b[1msup\x1b[0m   \x1b[1mbye\x1b["
+        "0m                                      "
+        "      \n       \x1b[1mhey\x1b[0m   \x1b[1m     \x1b[0"
+        "m   \x1b[1m   \x1b[0m   \x1b[1m   \x1b[0m   \x1b[1m   \x1b"
+        "[0m                                     "
+        "       \n      ──────────────────────────"
+        "─────                                   "
+        "        \n       \x1b[1m  3\x1b[0m   \x1b[1m    1\x1b"
+        "[0m     1     4     6                   "
+        "                         \n       \x1b[1m  4"
+        "\x1b[0m   \x1b[1m    1\x1b[0m     2     5     7  "
+        "                                        "
+        "  \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_missing_index_name_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with a missing index index name."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead th {\n       "
+                        " text-align: right;\n    }\n</style>\n<tabl"
+                        'e border="1" class="dataframe">\n  <thead'
+                        '>\n    <tr style="text-align: right;">\n  '
+                        "    <th></th>\n      <th></th>\n      <th>"
+                        "a</th>\n      <th>b</th>\n      <th>c</th>"
+                        "\n    </tr>\n    <tr>\n      <th></th>\n    "
+                        "  <th>hey</th>\n      <th></th>\n      <th"
+                        "></th>\n      <th></th>\n    </tr>\n  </the"
+                        "ad>\n  <tbody>\n    <tr>\n      <th>3</th>\n"
+                        "      <th>1</th>\n      <td>1</td>\n      "
+                        "<td>4</td>\n      <td>6</td>\n    </tr>\n  "
+                        "  <tr>\n      <th>4</th>\n      <th>1</th>"
+                        "\n      <td>2</td>\n      <td>5</td>\n     "
+                        " <td>7</td>\n    </tr>\n  </tbody>\n</table"
+                        ">\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=308498;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m \x1b[0m   \x1b[1m   \x1b[0m   \x1b"
+        "[1ma\x1b[0m   \x1b[1mb\x1b[0m   \x1b[1mc\x1b[0m        "
+        "                                        "
+        "      \n       \x1b[1m \x1b[0m   \x1b[1mhey\x1b[0m   "
+        "\x1b[1m \x1b[0m   \x1b[1m \x1b[0m   \x1b[1m \x1b[0m       "
+        "                                        "
+        "       \n      ─────────────────────     "
+        "                                        "
+        "        \n       \x1b[1m3\x1b[0m   \x1b[1m  1\x1b[0m "
+        "  1   4   6                             "
+        "                         \n       \x1b[1m4\x1b["
+        "0m   \x1b[1m  1\x1b[0m   2   5   7            "
+        "                                        "
+        "  \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_missing_last_index_name_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with missing lasst index index name."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n<style scoped>\n    .dataframe tbod"
+                        "y tr th:only-of-type {\n        vertical-"
+                        "align: middle;\n    }\n\n    .dataframe tbo"
+                        "dy tr th {\n        vertical-align: top;\n"
+                        "    }\n\n    .dataframe thead th {\n       "
+                        " text-align: right;\n    }\n</style>\n<tabl"
+                        'e border="1" class="dataframe">\n  <thead'
+                        '>\n    <tr style="text-align: right;">\n  '
+                        "    <th></th>\n      <th></th>\n      <th>"
+                        "a</th>\n      <th>b</th>\n      <th>c</th>"
+                        "\n    </tr>\n    <tr>\n      <th>hey</th>\n "
+                        "     <th></th>\n      <th></th>\n      <th"
+                        "></th>\n      <th></th>\n    </tr>\n  </the"
+                        "ad>\n  <tbody>\n    <tr>\n      <th>3</th>\n"
+                        "      <th>1</th>\n      <td>1</td>\n      "
+                        "<td>4</td>\n      <td>6</td>\n    </tr>\n  "
+                        "  <tr>\n      <th>4</th>\n      <th>1</th>"
+                        "\n      <td>2</td>\n      <td>5</td>\n     "
+                        " <td>7</td>\n    </tr>\n  </tbody>\n</table"
+                        ">\n</div>"
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=59302;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view "
+        "HTML\x1b[0m\x1b]8;;\x1b\\                         "
+        "                            \n           "
+        "                                        "
+        "                             \n\x1b[38;5;247"
+        "m[2]:\x1b[0m   \x1b[1m   \x1b[0m   \x1b[1m \x1b[0m   \x1b["
+        "1ma\x1b[0m   \x1b[1mb\x1b[0m   \x1b[1mc\x1b[0m         "
+        "                                        "
+        "     \n       \x1b[1mhey\x1b[0m   \x1b[1m \x1b[0m   \x1b"
+        "[1m \x1b[0m   \x1b[1m \x1b[0m   \x1b[1m \x1b[0m        "
+        "                                        "
+        "      \n      ─────────────────────      "
+        "                                        "
+        "       \n       \x1b[1m  3\x1b[0m   \x1b[1m1\x1b[0m  "
+        " 1   4   6                              "
+        "                        \n       \x1b[1m  4\x1b"
+        "[0m   \x1b[1m1\x1b[0m   2   5   7             "
+        "                                        "
+        " \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_render_plain_dataframe(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
@@ -977,6 +1785,560 @@ def test_render_plain_dataframe(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_render_uneven_columns_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with missing columns."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        """
+                        <style type="text/css">
+  \n</style
+>\n
+<table id="T_aba0a_">
+  \n
+  <thead>
+    \n
+    <tr>
+      \n
+      <th class="index_name level0">Model:</th>
+      \n
+      <th class="col_heading level0 col0" colspan="2">Decision Tree</th>
+      \n
+      <th class="col_heading level0 col2" colspan="2">Regression</th>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th class="col_heading level1 col0">Tumour</th>
+      \n
+      <th class="col_heading level1 col1">Non-Tumour</th>
+      \n
+      <th class="col_heading level1 col2">Tumour</th>
+      \n
+      <th class="col_heading level1 col3">Non-Tumour</th>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th class="index_name level0">Actual Label:</th>
+      \n
+      <th class="blank col0">&nbsp;</th>
+      \n
+      <th class="blank col1">&nbsp;</th>
+      \n
+      <th class="blank col2">&nbsp;</th>
+      \n
+      <th class="blank col3">&nbsp;</th>
+      \n
+    </tr>
+    \n
+  </thead>
+  \n
+  <tbody>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row0" class="row_heading level0 row0">
+        Tumour (Positive)
+      </th>
+      \n
+      <td id="T_aba0a_row0_col0" class="data row0 col0">38</td>
+      \n
+      <td id="T_aba0a_row0_col1" class="data row0 col1">2</td>
+      \n
+      <td id="T_aba0a_row0_col2" class="data row0 col2">18</td>
+      \n
+      <td id="T_aba0a_row0_col3" class="data row0 col3">22</td>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row1" class="row_heading level0 row1">
+        Non-Tumour (Negative)
+      </th>
+      \n
+      <td id="T_aba0a_row1_col0" class="data row1 col0">19</td>
+      \n
+      <td id="T_aba0a_row1_col1" class="data row1 col1">439</td>
+      \n
+      <td id="T_aba0a_row1_col2" class="data row1 col2">6</td>
+      \n
+      <td id="T_aba0a_row1_col3" class="data row1 col3">452</td>
+      \n
+    </tr>
+    \n
+  </tbody>
+  \n
+</table>
+\n
+
+                        """
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=635975;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1m           Model:\x1b[0m  "
+        "              \x1b[1mDecision Tree\x1b[0m     "
+        "           \x1b[1mRegression\x1b[0m \n       \x1b["
+        "1m           Tumour\x1b[0m   \x1b[1mNon-Tumour"
+        "\x1b[0m   \x1b[1m       Tumour\x1b[0m   \x1b[1mNon-T"
+        "umour\x1b[0m              \n       \x1b[1m    A"
+        "ctual Label:\x1b[0m   \x1b[1m          \x1b[0m   "
+        "\x1b[1m             \x1b[0m   \x1b[1m          \x1b["
+        "0m   \x1b[1m          \x1b[0m \n      ─────────"
+        "────────────────────────────────────────"
+        "─────────────────────────\n       \x1b[1mTum"
+        "our (Positive)\x1b[0m           38         "
+        "      2           18           22 \n     "
+        "  \x1b[1m       Non-Tumour\x1b[0m           19"
+        "             439            6          4"
+        "52 \n       \x1b[1m       (Negative)\x1b[0m    "
+        "                                        "
+        "            \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_no_columns_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with missing columns."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        """
+<style type="text/css">
+  \n</style
+>\n
+<table id="T_aba0a_">
+  \n
+  <thead>
+  </thead>
+  \n
+  <tbody>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row0" class="row_heading level0 row0">
+        Tumour (Positive)
+      </th>
+      \n
+      <td id="T_aba0a_row0_col0" class="data row0 col0">38</td>
+      \n
+      <td id="T_aba0a_row0_col1" class="data row0 col1">2</td>
+      \n
+      <td id="T_aba0a_row0_col2" class="data row0 col2">18</td>
+      \n
+      <td id="T_aba0a_row0_col3" class="data row0 col3">22</td>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row1" class="row_heading level0 row1">
+        Non-Tumour (Negative)
+      </th>
+      \n
+      <td id="T_aba0a_row1_col0" class="data row1 col0">19</td>
+      \n
+      <td id="T_aba0a_row1_col1" class="data row1 col1">439</td>
+      \n
+      <td id="T_aba0a_row1_col2" class="data row1 col2">6</td>
+      \n
+      <td id="T_aba0a_row1_col3" class="data row1 col3">452</td>
+      \n
+    </tr>
+    \n
+  </tbody>
+  \n
+</table>
+\n
+                        """
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=380451;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1mTumour (Positive)    \x1b["
+        "0m   38   2     18   22                 "
+        "              \n       \x1b[1mNon-Tumour (Ne"
+        "gative)\x1b[0m   19   439   6    452       "
+        "                       \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_uneven_data_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with non square data."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        """
+<style type="text/css">
+  \n</style
+>\n
+<table id="T_aba0a_">
+  \n
+  <thead>
+  </thead>
+  \n
+  <tbody>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row0" class="row_heading level0 row0">
+        Tumour (Positive)
+      </th>
+      \n
+      <td id="T_aba0a_row0_col1" class="data row0 col1">2</td>
+      \n
+      <td id="T_aba0a_row0_col2" class="data row0 col2">18</td>
+      \n
+      <td id="T_aba0a_row0_col3" class="data row0 col3">22</td>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row1" class="row_heading level0 row1">
+        Non-Tumour (Negative)
+      </th>
+      \n
+      <td id="T_aba0a_row1_col0" class="data row1 col0">19</td>
+      \n
+      <td id="T_aba0a_row1_col1" class="data row1 col1">439</td>
+      \n
+      <td id="T_aba0a_row1_col2" class="data row1 col2">6</td>
+      \n
+      <td id="T_aba0a_row1_col3" class="data row1 col3">452</td>
+      \n
+    </tr>
+    \n
+  </tbody>
+  \n
+</table>
+\n
+                        """
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=330589;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   \x1b[1mTumour (Positive)    \x1b["
+        "0m   2    18    22                      "
+        "              \n       \x1b[1mNon-Tumour (Ne"
+        "gative)\x1b[0m   19   439   6    452       "
+        "                       \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_uneven_index_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a DataFrame with uneven index names."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        """
+<style type="text/css">
+  \n</style
+>\n
+<table id="T_aba0a_">
+  \n
+  <thead>
+  </thead>
+  \n
+  <tbody>
+    \n
+    <tr>
+      \n
+      <td id="T_aba0a_row0_col1" class="data row0 col1">2</td>
+      \n
+      <td id="T_aba0a_row0_col2" class="data row0 col2">18</td>
+      \n
+      <td id="T_aba0a_row0_col3" class="data row0 col3">22</td>
+      \n
+    </tr>
+    \n
+    <tr>
+      \n
+      <th id="T_aba0a_level0_row1" class="row_heading level0 row1">
+        Non-Tumour (Negative)
+      </th>
+      \n
+      <td id="T_aba0a_row1_col0" class="data row1 col0">19</td>
+      \n
+      <td id="T_aba0a_row1_col1" class="data row1 col1">439</td>
+      \n
+      <td id="T_aba0a_row1_col2" class="data row1 col2">6</td>
+      \n
+      <td id="T_aba0a_row1_col3" class="data row1 col3">452</td>
+      \n
+    </tr>
+    \n
+  </tbody>
+  \n
+</table>
+\n
+
+                        """
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=487619;file://{tempfile_path}0.html\x1b\\\x1b"
+        "[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m   2                       18 "
+        "  22                                    "
+        "      \n       \x1b[1mNon-Tumour (Negative)\x1b"
+        "[0m   19   439   6   452                "
+        "               \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_render_empty_html_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a blank output when given an empty table."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "mighty-oasis",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        """
+<style type="text/css">
+  \n</style
+>\n
+<table id="T_aba0a_">
+  \n
+  <thead>
+  </thead>
+  \n
+  <tbody>
+  </tbody>
+  \n
+</table>
+\n
+                        """
+                    ),
+                    "text/plain": (
+                        "lorep              hey                by"
+                        "e\nipsum               hi very_long_word "
+                        " hi\nfirst second third                  "
+                        "     \nbar   one    1       1            "
+                        "  2   4\n             10      3          "
+                        "    4  -1\n      three  3       3        "
+                        "      4  -1\nfoo   one    1       3      "
+                        "        4  -1"
+                    ),
+                },
+                "execution_count": 2,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[2]:\x1b[0m  "
+        f"\x1b]8;id=316923;file://{tempfile_path}0.html"
+        "\x1b\\\x1b[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[2]:\x1b[0m                              "
+        "                                        "
+        "      \n"
+    )
+    output = rich_notebook_output(code_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_render_stderr_stream(rich_notebook_output: RichOutput) -> None:
     """It renders the stderr stream."""
     stderr_cell = {
@@ -1003,15 +2365,19 @@ def test_render_stderr_stream(rich_notebook_output: RichOutput) -> None:
         "────────────────────────────────────────"
         "────────────────╯\n                      "
         "                                        "
-        "                  \n      \x1b[38;5;237;48;5"
-        ";174m<ipython-input-5-bc08279b5148>:2: U"
-        "serWarning: Lorep                      \x1b"
-        "[0m\n      \x1b[38;5;237;48;5;174m warnings."
-        'warn("Lorep")                           '
-        "                        \x1b[0m\n      \x1b[38;"
-        "5;237;48;5;174m                         "
+        "                  \n      \x1b[48;5;174m    "
         "                                        "
-        "         \x1b[0m\n"
+        "                              \x1b[0m\n     "
+        " \x1b[48;5;174m \x1b[0m\x1b[38;5;237;48;5;174m<ip"
+        "ython-input-5-bc08279b5148>:2: UserWarni"
+        "ng: Lorep                    \x1b[0m\x1b[48;5;"
+        "174m \x1b[0m\n      \x1b[48;5;174m \x1b[0m\x1b[38;5;2"
+        '37;48;5;174m warnings.warn("Lorep")     '
+        "                                        "
+        "    \x1b[0m\x1b[48;5;174m \x1b[0m\n      \x1b[48;5;17"
+        "4m \x1b[0m\x1b[38;5;237;48;5;174m             "
+        "                                        "
+        "                   \x1b[0m\x1b[48;5;174m \x1b[0m\n"
     )
     output = rich_notebook_output(stderr_cell)
     assert output == expected_output
@@ -1038,9 +2404,7 @@ def test_render_stream_stdout(rich_notebook_output: RichOutput) -> None:
         "                                        "
         "                  \n      Lorep          "
         "                                        "
-        "                   \n                    "
-        "                                        "
-        "                    \n"
+        "                   \n"
     )
     output = rich_notebook_output(stdout_cell)
     assert output == expected_output
@@ -1244,6 +2608,49 @@ def test_render_error_traceback_no_hang(
         "source": "%%bash\nech",
     }
     output = rich_notebook_output(traceback_cell)
+    assert output == expected_output
+
+
+def test_render_debugger_output(
+    rich_notebook_output: RichOutput, expected_output: str
+) -> None:
+    """It renders the output from the debugger."""
+    debugger_output_cell = {
+        "cell_type": "code",
+        "execution_count": 4,
+        "id": "fa534da6-88ac-43bc-b00f-cc68ace69fb7",
+        "metadata": {},
+        "outputs": [
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "> \x1b[1;32m<ipython-input-4-a2d401806d89>\x1b"
+                "[0m(1)\x1b[0;36m<module>\x1b[1;34m()\x1b[0m\n\x1b"
+                "[1;32m----> 1 \x1b[1;33m\x1b[0m_jupyterlab_variable"
+                "inspector_dict_list\x1b[0m\x1b[1;33m(\x1b[0m\x1b"
+                "[1;33m)\x1b[0m\x1b[1;33m\x1b[0m\x1b[1;33m\x1b[0m\x1b"
+                "[0m\n\x1b[0m\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  ll\n"},
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "\x1b[1;32m----> 1 \x1b[1;33m\x1b[0m_"
+                "jupyterlab_variableinspector_dict_list\x1b[0m\x1b"
+                "[1;33m(\x1b[0m\x1b[1;33m)\x1b[0m\x1b[1;33m\x1b[0m\x1b"
+                "[1;33m\x1b[0m\x1b[0m\n\x1b[0m\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  sticky\n"},
+            {
+                "name": "stdout",
+                "output_type": "stream",
+                "text": "*** NameError: name 'sticky' is not defined\n",
+            },
+            {"name": "stdin", "output_type": "stream", "text": "ipdb>  q\n"},
+        ],
+        "source": "%debug",
+    }
+    output = rich_notebook_output(debugger_output_cell)
     assert output == expected_output
 
 
@@ -1511,6 +2918,41 @@ def test_render_latex_output(rich_notebook_output: RichOutput) -> None:
         "                          \n             "
         "                                        "
         "                           \n"
+    )
+    output = rich_notebook_output(latex_output_cell)
+    assert expected_output == output
+
+
+def test_render_invalid_latex_output(rich_notebook_output: RichOutput) -> None:
+    """It renders invalid LaTeX output."""
+    latex_output_cell = {
+        "cell_type": "code",
+        "execution_count": 15,
+        "id": "sapphire-harmony",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/latex": r"garbledmess \sef{}",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "      ╭─────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[15]:\x1b[0m │                 "
+        "                                        "
+        "               │\n      ╰────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n       garbledmess   "
+        "                                        "
+        "                   \n"
     )
     output = rich_notebook_output(latex_output_cell)
     assert expected_output == output
@@ -1798,6 +3240,55 @@ def test_vega_output(
                             }
                         ],
                         "width": 400,
+                    },
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n      \x1b]8;id=16281369"
+        f"58.012196-350876;file://{tempfile_path}0.html\x1b\\\x1b[94m\uf080"
+        " Click to v"
+        "iew Vega chart\x1b[0m\x1b]8;;\x1b\\               "
+        "                                 \n"
+    )
+    output = rich_notebook_output(
+        vega_output_cell,
+        nerd_font=True,
+        files=True,
+        hyperlinks=True,
+        hide_hyperlink_hints=False,
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_invalid_vega_output(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a hyperlink to an invalid Vega plot."""
+    vega_output_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "metadata": {"tags": []},
+        "outputs": [
+            {
+                "data": {
+                    "application/vnd.vega.v5+json": {
+                        "invalid": "no",
                     },
                 },
                 "metadata": {},
@@ -2606,6 +4097,85 @@ def test_render_html(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_render_html_table(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders an HTML table."""
+    html_cell = {
+        "cell_type": "code",
+        "execution_count": 7,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": """\
+<table>
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table>
+                    """,
+                    "text/plain": "<IPython.core.display.HTML object>",
+                },
+                "metadata": {},
+                "output_type": "display_data",
+            }
+        ],
+        "source": "",
+    }
+
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[7]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n      \x1b]8;id=58222;fi"
+        f"le://{tempfile_path}0.ht"
+        "ml\x1b\\\x1b[94m🌐 Click to view HTML\x1b[0m\x1b]8;;\x1b\\"
+        "                                        "
+        "             \n                          "
+        "                                        "
+        "              \n                         "
+        "                                        "
+        "               \n       \x1b[1mCompany\x1b[0m  "
+        "                \x1b[1mContact\x1b[0m         "
+        "         \x1b[1mCountry\x1b[0m                "
+        "\n      ─────────────────────────────────"
+        "────────────────────────────────────────"
+        "─\n       Alfreds Futterkiste      Maria "
+        "Anders             Germany              "
+        "  \n       Centro comercial         Franc"
+        "isco Chang          Mexico              "
+        "   \n       Moctezuma                    "
+        "                                        "
+        "    \n                                   "
+        "                                        "
+        "     \n"
+    )
+    output = rich_notebook_output(html_cell)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_render_unknown_data_type(rich_notebook_output: RichOutput) -> None:
     """It skips rendering an unknown output type."""
     unknown_data_type = {
@@ -2971,7 +4541,7 @@ def test_charater_drawing(
     remove_link_ids: Callable[[str], str],
     expected_output: str,
 ) -> None:
-    """It renders a block drawing of an image."""
+    """It renders a character drawing of an image."""
     image_cell = {
         "cell_type": "code",
         "execution_count": 1,
@@ -3263,6 +4833,63 @@ def test_braille_drawing(
     assert output == expected_output
 
 
+def test_invalid_image_drawing(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It fallsback to text when failing to draw image."""
+    image_cell = {
+        "cell_type": "code",
+        "execution_count": 1,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"text/plain": "<AxesSubplot:>"},
+                "execution_count": 1,
+                "metadata": {},
+                "output_type": "execute_result",
+            },
+            {
+                "data": {
+                    "image/png": "ib45",
+                    "text/plain": "<Figure size 432x288 with 1 Axes>",
+                },
+                "metadata": {"needs_background": "light"},
+                "output_type": "display_data",
+            },
+        ],
+        "source": "",
+    }
+    output = rich_notebook_output(
+        image_cell, images=True, image_drawing="character", files=False
+    )
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[1]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[1]:\x1b[0m  "
+        "<AxesSubplot:>                          "
+        "                                  \n     "
+        "                                        "
+        "                                   \n    "
+        "  🖼 Image                               "
+        "                                    \n   "
+        "                                        "
+        "                                     \n  "
+        "    \x1b[38;2;187;134;252m<Figure size 432x"
+        "288 with 1 Axes>                        "
+        "                 \x1b[0m\n"
+    )
+    assert output == expected_output
+
+
 def test_render_image_link_no_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
@@ -3535,3 +5162,55 @@ def test_unknown_language() -> None:
     expected_output = "python"
     acutal_output = rendered_notebook.language
     assert acutal_output == expected_output
+
+
+def test_skip_unknown_cell_type(rich_notebook_output: RichOutput) -> None:
+    """It skips rendering a cell if the type is not known."""
+    markdown_cell = {
+        "cell_type": "unknown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "### Lorep ipsum\n\n**dolor** _sit_ `amet`",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = ""
+    assert output == expected_output
+
+
+def test_skip_no_cell_type(rich_notebook_output: RichOutput) -> None:
+    """It skips rendering a cell if there is not cell type."""
+    markdown_cell = {
+        "metadata": {"no"},
+        "source": "### Lorep ipsum\n\n**dolor** _sit_ `amet`",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = ""
+    assert output == expected_output
+
+
+def test_image_link_not_image(
+    rich_notebook_output: RichOutput,
+    mocker: MockerFixture,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It falls back to skipping drawing if content is not an image."""
+    mock = mocker.patch("httpx.get")
+    mock.return_value.content = "Bad image"
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Azores](https://github.com/paw-lu/nbpreview/tests"
+        "/assets/outline_article_white_48dp.png)",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="character")
+    expected_output = (
+        "  \x1b]8;id=246597;https://github.com/paw-l"
+        "u/nbpreview/tests/assets/outline_article"
+        "_white_48dp.png\x1b\\\x1b[94m🌐 Click to view Az"
+        "ores\x1b[0m\x1b]8;;\x1b\\                         "
+        "                              \n         "
+        "                                        "
+        "                               \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
