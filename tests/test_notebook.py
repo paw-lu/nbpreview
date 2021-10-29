@@ -4541,7 +4541,7 @@ def test_charater_drawing(
     remove_link_ids: Callable[[str], str],
     expected_output: str,
 ) -> None:
-    """It renders a block drawing of an image."""
+    """It renders a character drawing of an image."""
     image_cell = {
         "cell_type": "code",
         "execution_count": 1,
