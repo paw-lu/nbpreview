@@ -226,10 +226,12 @@ class Notebook:
         hide_output: bool = False,
         nerd_font: bool = False,
         files: bool = True,
+        negative_space: bool = True,
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
         image_drawing: Optional[ImageDrawing] = None,
+        color: Optional[bool] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
         try:
@@ -245,10 +247,12 @@ class Notebook:
             hide_output=hide_output,
             nerd_font=nerd_font,
             files=files,
+            negative_space=negative_space,
             hyperlinks=hyperlinks,
             hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
             image_drawing=image_drawing,
+            color=color,
         )
 
     def __rich_console__(
