@@ -9,7 +9,7 @@ import enum
 import functools
 import io
 from dataclasses import InitVar
-from typing import Iterator, Literal, Optional, Tuple, Union
+from typing import Any, Iterator, List, Literal, Optional, Tuple, Union
 
 import picharsso
 import PIL.Image
@@ -49,7 +49,7 @@ def choose_drawing(
     image: Union[bytes, None],
     fallback_text: str,
     image_type: str,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     characters: Optional[str] = None,
@@ -87,7 +87,7 @@ def choose_drawing(
 
 def render_drawing(
     data: Data,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     image_type: str,
     color: bool,
     negative_space: bool,
@@ -108,6 +108,28 @@ def render_drawing(
     return rendered_drawing
 
 
+@enum.unique
+class ImageDrawingEnum(str, enum.Enum):
+    """Image drawing types."""
+
+    def _generate_next_value_(  # type: ignore[override]
+        name: str,  # noqa: B902,N805
+        start: int,
+        count: int,
+        last_values: List[Any],
+    ) -> str:
+        """Set member's values as their lowercase name."""
+        return name.lower()
+
+    BLOCK = enum.auto()
+    CHARACTER = enum.auto()
+    BRAILLE = enum.auto()
+
+
+ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
+
+
+@enum.unique
 class Bottleneck(enum.Enum):
     """The bottleneck when rendering a drawing."""
 

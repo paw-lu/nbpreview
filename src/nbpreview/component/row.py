@@ -2,7 +2,7 @@
 import dataclasses
 import itertools
 from dataclasses import InitVar
-from typing import Iterator, List, Literal, Optional, Tuple, Union
+from typing import Iterator, List, Optional, Tuple, Union
 
 from nbformat import NotebookNode
 from rich import padding
@@ -13,6 +13,7 @@ from nbpreview.component.content.input import Cell
 from nbpreview.component.content.output import error, stream
 from nbpreview.component.content.output.output import Output
 from nbpreview.component.content.output.result import execution_indicator, result
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
 Content = Union[Cell, Padding]
@@ -67,7 +68,7 @@ def render_input_row(
     nerd_font: bool,
     unicode: bool,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
@@ -91,8 +92,8 @@ def render_input_row(
         nerd_font (bool): Whether to use nerd fonts as an icon.
         unicode (bool): Whether to use unicode characters as an icon.
         images (bool): Whether to render images in the output.
-        image_drawing (Literal["block", "character", "braille"]):
-            The type of characters to draw images with.
+        image_drawing (ImageDrawing): The type of characters to draw
+            images with.
         color (bool):
             Whether to draw images using color.
         negative_space (bool):
@@ -170,7 +171,7 @@ def render_output_row(
     theme: str,
     pad: PaddingDimensions,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
 ) -> Iterator[OutputRow]:

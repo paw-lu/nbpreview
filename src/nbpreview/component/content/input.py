@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Literal, Optional, Union
+from typing import Optional, Union
 
 import pygments
 from rich import padding, panel, syntax, text
@@ -12,6 +12,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from nbpreview.component import markdown
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 
 def box_cell(
@@ -50,7 +51,7 @@ class MarkdownCell(Cell):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,

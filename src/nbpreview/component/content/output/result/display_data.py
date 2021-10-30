@@ -5,7 +5,7 @@ import collections
 import dataclasses
 import enum
 import json
-from typing import ClassVar, Dict, Iterator, List, Literal, Optional, Union
+from typing import ClassVar, Dict, Iterator, List, Optional, Union
 
 import html2text
 from lxml import html
@@ -21,7 +21,7 @@ from rich.text import Text
 
 from nbpreview.component import markdown
 from nbpreview.component.content.output.result import drawing, link, table
-from nbpreview.component.content.output.result.drawing import Drawing
+from nbpreview.component.content.output.result.drawing import Drawing, ImageDrawing
 from nbpreview.component.markdown import CustomMarkdown
 from nbpreview.data import Data
 
@@ -32,7 +32,7 @@ def _render_html(
     nerd_font: bool,
     unicode: bool,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
@@ -71,7 +71,7 @@ def _choose_basic_renderer(
     nerd_font: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
@@ -120,7 +120,7 @@ def render_display_data(
     nerd_font: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
@@ -217,7 +217,7 @@ class HTMLDisplay(DisplayData):
     nerd_font: bool
     unicode: bool
     images: bool
-    image_drawing: Literal["block", "character", "braille"]
+    image_drawing: ImageDrawing
     color: bool
     negative_space: bool
     hyperlinks: bool
@@ -234,7 +234,7 @@ class HTMLDisplay(DisplayData):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,
@@ -472,7 +472,7 @@ class MarkdownDisplay(DisplayData):
     nerd_font: bool
     unicode: bool
     images: bool
-    image_drawing: Literal["block", "character", "braille"]
+    image_drawing: ImageDrawing
     color: bool
     negative_space: bool
     hyperlinks: bool
@@ -489,7 +489,7 @@ class MarkdownDisplay(DisplayData):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,

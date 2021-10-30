@@ -8,7 +8,7 @@ import pathlib
 import textwrap
 from io import BytesIO
 from pathlib import Path
-from typing import Iterable, Iterator, Literal, Optional, Union
+from typing import Iterable, Iterator, Optional, Union
 from urllib import parse
 
 import httpx
@@ -24,6 +24,7 @@ from rich.table import Table
 from rich.text import Text
 
 from nbpreview.component.content.output.result import drawing, link, table
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 from nbpreview.component.content.output.result.table import TableSection
 
 
@@ -162,7 +163,7 @@ class CustomImageItem(markdown.ImageItem):
     nerd_font: bool = False
     unicode: bool = True
     images: bool = True
-    image_drawing: Literal["block", "character", "braille"] = "block"
+    image_drawing: ImageDrawing = "block"
     color: bool = True
     characters: Optional[str] = None
     files: bool = True
@@ -266,7 +267,7 @@ class MarkdownOverwrite(markdown.Markdown):
         nerd_font: bool = False,
         unicode: bool = True,
         images: bool = True,
-        image_drawing: Literal["block", "character", "braille"] = "block",
+        image_drawing: ImageDrawing = "block",
         color: bool = True,
         negative_space: bool = True,
         characters: Optional[str] = None,
@@ -311,7 +312,7 @@ class CustomMarkdown:
     nerd_font: bool = False
     unicode: bool = True
     images: bool = True
-    image_drawing: Literal["block", "character", "braille"] = "block"
+    image_drawing: ImageDrawing = "block"
     color: bool = True
     negative_space: bool = True
     characters: Optional[str] = None
@@ -364,7 +365,7 @@ def _splice_tables(
     nerd_font: bool,
     unicode: bool,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     files: bool,

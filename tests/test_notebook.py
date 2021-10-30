@@ -16,7 +16,6 @@ from typing import (
     ContextManager,
     Dict,
     Generator,
-    Literal,
     Optional,
     Protocol,
     Tuple,
@@ -36,6 +35,7 @@ from pytest_mock import MockerFixture
 from rich import console
 
 from nbpreview import notebook
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 
 class RichOutput(Protocol):
@@ -54,7 +54,7 @@ class RichOutput(Protocol):
         hyperlinks: bool = True,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Optional[Literal["block", "character", "braille"]] = None,
+        image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
     ) -> str:
         """Callable types."""
@@ -196,7 +196,7 @@ def rich_notebook_output(
         hyperlinks: bool = True,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Optional[Literal["block", "character", "braille"]] = None,
+        image_drawing: Optional[Union[ImageDrawing, None]] = None,
         color: Optional[bool] = None,
     ) -> str:
         """Render the notebook containing the cell."""

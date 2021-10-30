@@ -4,7 +4,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 from pathlib import Path
-from typing import Iterator, List, Literal, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple, Union
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
@@ -14,6 +14,7 @@ from rich.table import Table
 
 from nbpreview import errors
 from nbpreview.component import row
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 # terminedia depends on fcntl, which is not present on Windows platforms
 try:
@@ -61,25 +62,25 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 
 def _pick_image_drawing(
-    option: Literal["block", "character", "braille", None],
+    option: Union[ImageDrawing, None],
     unicode: bool,
     color: bool,
-) -> Literal["block", "character", "braille"]:
+) -> ImageDrawing:
     """Pick an image render option.
 
     Args:
-        option (Literal["block", "character", "braille", None]): The
-            inputted option which can override detections. If None, will
-            autodetect.
+        option (Literal["block", "character", "braille", ImageDrawingEnum, None]):
+            The inputted option which can override detections. If None,
+            will autodetect.
         unicode (bool): Whether to use unicode characters to
             render the notebook. By default will autodetect.
         color (bool): Whether to use color.
 
     Returns:
-        Literal["block", "character", "braille", None]: The image type
-        to render.
+        Union[Literal["block", "character", "braille"] ImageDrawingEnum]:
+        The image type to render.
     """
-    image_render: Literal["block", "character", "braille"]
+    image_render: ImageDrawing
     if option is None:
         if unicode and "terminedia" in sys.modules and color:
             image_render = "block"
@@ -104,7 +105,7 @@ def _render_notebook(
     hide_output: bool,
     language: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     characters: Optional[str] = None,
@@ -204,7 +205,7 @@ class Notebook:
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
     images: Optional[bool] = None
-    image_drawing: Optional[Literal["block", "character", "braille"]] = None
+    image_drawing: Optional[ImageDrawing] = None
     color: Optional[bool] = None
 
     def __post_init__(self) -> None:
@@ -228,7 +229,7 @@ class Notebook:
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Literal["block", "character", "braille", None] = None,
+        image_drawing: Optional[ImageDrawing] = None,
     ) -> Notebook:
         """Create Notebook from notebook file."""
         try:
