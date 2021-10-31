@@ -6,7 +6,6 @@ import json
 import os
 import pathlib
 import re
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -18,18 +17,14 @@ from typing import (
     Generator,
     Optional,
     Protocol,
-    Tuple,
     Union,
 )
 from unittest.mock import Mock
 
 import httpx
-import jinja2
 import nbformat
 import pytest
 from _pytest.config import _PluggyPlugin
-from _pytest.fixtures import FixtureRequest
-from jinja2 import select_autoescape
 from nbformat import NotebookNode
 from pytest_mock import MockerFixture
 from rich import console
@@ -59,66 +54,6 @@ class RichOutput(Protocol):
     ) -> str:
         """Callable types."""
         ...
-
-
-def split_string(
-    string: str, sub_length: int = 40, copy: bool = False
-) -> Tuple[str, ...]:
-    """Split a string into subsections less than or equal to new length.
-
-    Args:
-        string (str): The long string to split up.
-        sub_length (int): The maximum length of the subsections.
-            Defaults to 56.
-        copy (bool): Copy output to clipboard.
-
-    Returns:
-        Tuple[str]: The string split into sections.
-    """
-    string_length = len(string)
-    split = tuple(
-        string[begin : begin + sub_length]
-        for begin in range(0, string_length, sub_length)
-    )
-    if copy is True:
-        string = str(split)
-        copy_string(string)
-    return split
-
-
-def copy_string(string: str) -> None:
-    """Copies the string to clipboard.
-
-    Uses pbcopy, so for now only works with macOS.
-    """
-    subprocess.run("/usr/bin/pbcopy", text=True, input=string)  # noqa: S603
-
-
-def write_output(string: str, test_name: str) -> None:
-    """Write the output to the expected outptus file."""
-    output_directory = pathlib.Path(__file__).parent / pathlib.Path("expected_outputs")
-    expected_output_file = output_directory / pathlib.Path(test_name).with_suffix(
-        ".txt"
-    )
-    expected_output_file.write_text(string)
-
-
-@pytest.fixture
-def expected_output(
-    request: FixtureRequest, tempfile_path: Path, remove_link_ids: Callable[[str], str]
-) -> str:
-    """Get the expected output for a test."""
-    output_directory = pathlib.Path(__file__).parent / pathlib.Path("expected_outputs")
-    test_name = request.node.name
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(output_directory),
-        autoescape=select_autoescape(),
-        keep_trailing_newline=True,
-    )
-    expected_output_file = f"{test_name}.txt"
-    expected_output_template = env.get_template(expected_output_file)
-    expected_output = expected_output_template.render(tempfile_path=tempfile_path)
-    return remove_link_ids(expected_output)
 
 
 @pytest.fixture

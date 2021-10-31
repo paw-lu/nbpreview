@@ -1,11 +1,16 @@
 """Package-wide test fixtures."""
 import contextlib
 import io
+import pathlib
+from pathlib import Path
 from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
 
+import jinja2
 import nbformat
 import pytest
 from _pytest.config import Config, _PluggyPlugin
+from _pytest.fixtures import FixtureRequest
+from jinja2 import select_autoescape
 from nbformat.notebooknode import NotebookNode
 from rich import console
 
@@ -112,3 +117,23 @@ def rich_console() -> Callable[[Any, Union[bool, None]], str]:
         return output
 
     return _rich_console
+
+
+@pytest.fixture
+def expected_output(
+    request: FixtureRequest, tempfile_path: Path, remove_link_ids: Callable[[str], str]
+) -> str:
+    """Get the expected output for a test."""
+    output_directory = pathlib.Path(__file__).parent / pathlib.Path(
+        "unit", "expected_outputs"
+    )
+    test_name = request.node.name
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(output_directory),
+        autoescape=select_autoescape(),
+        keep_trailing_newline=True,
+    )
+    expected_output_file = f"{test_name}.txt"
+    expected_output_template = env.get_template(expected_output_file)
+    expected_output = expected_output_template.render(tempfile_path=tempfile_path)
+    return remove_link_ids(expected_output)

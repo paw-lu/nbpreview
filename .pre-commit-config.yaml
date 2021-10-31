@@ -65,4 +65,4 @@ repos:
     rev: v2.3.0
     hooks:
       - id: prettier
-exclude: "^tests/expected_outputs"
+exclude: "^tests/unit/expected_outputs"

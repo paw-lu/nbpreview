@@ -114,6 +114,7 @@ markers = [
     "no_atty_mock: Test where sys.stdout.isatty should not be mocked",
     "no_typeguard: Tests typeguard should ignore",
 ]
+norecursedirs = "tests/util"
 
 [tool.interrogate]
 verbose = 2
