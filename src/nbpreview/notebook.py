@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import dataclasses
-import sys
 from pathlib import Path
 from typing import Iterator, List, Optional, Tuple, Union
 
@@ -82,12 +81,12 @@ def _pick_image_drawing(
     """
     image_render: ImageDrawing
     if option is None:
-        if unicode and "terminedia" in sys.modules and color:
-            image_render = "block"
-        elif unicode:
+        # Block is too slow to offer as a sensible default
+        if unicode and color:
             image_render = "braille"
         else:
             image_render = "character"
+
     else:
         image_render = option
     return image_render
