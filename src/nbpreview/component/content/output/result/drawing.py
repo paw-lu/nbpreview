@@ -8,6 +8,7 @@ import dataclasses
 import enum
 import functools
 import io
+import typing
 from dataclasses import InitVar
 from typing import Any, Iterator, List, Literal, Optional, Tuple, Union
 
@@ -27,6 +28,13 @@ try:
     import terminedia
 except ModuleNotFoundError:
     pass
+
+
+class Size(typing.NamedTuple):
+    """The size of a rendered image."""
+
+    x: Union[float, None]
+    y: Union[float, None]
 
 
 def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
@@ -273,7 +281,7 @@ def _render_block_drawing(
             if character_dimensions.height is not None
             else None
         )
-        size = terminedia.V2(
+        size = Size(
             x=character_dimensions.width,
             y=scaled_y,
         )
