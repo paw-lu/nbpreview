@@ -1,6 +1,4 @@
 """Drawings of image outputs."""
-from __future__ import annotations
-
 import abc
 import base64
 import binascii
@@ -35,6 +33,55 @@ class Size(typing.NamedTuple):
 
     x: Union[float, None]
     y: Union[float, None]
+
+
+@enum.unique
+class ImageDrawingEnum(str, enum.Enum):
+    """Image drawing types."""
+
+    def _generate_next_value_(  # type: ignore[override]
+        name: str,  # noqa: B902,N805
+        start: int,
+        count: int,
+        last_values: List[Any],
+    ) -> str:
+        """Set member's values as their lowercase name."""
+        return name.lower()
+
+    BLOCK = enum.auto()
+    CHARACTER = enum.auto()
+    BRAILLE = enum.auto()
+
+
+ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
+
+
+class Drawing(abc.ABC):
+    """A representation of an image output."""
+
+    def __init__(self, image: bytes, fallback_text: str) -> None:
+        """Constructor."""
+        self.image = image
+        self.fallback_text = fallback_text
+
+    def __repr__(self) -> str:
+        """String representation of class."""
+        return (
+            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f" fallback_text={self.fallback_text})"
+        )
+
+    @abc.abstractmethod
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        """Render a drawing of image."""
+
+    @abc.abstractmethod
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered drawing."""
 
 
 def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
@@ -114,27 +161,6 @@ def render_drawing(
         characters=characters,
     )
     return rendered_drawing
-
-
-@enum.unique
-class ImageDrawingEnum(str, enum.Enum):
-    """Image drawing types."""
-
-    def _generate_next_value_(  # type: ignore[override]
-        name: str,  # noqa: B902,N805
-        start: int,
-        count: int,
-        last_values: List[Any],
-    ) -> str:
-        """Set member's values as their lowercase name."""
-        return name.lower()
-
-    BLOCK = enum.auto()
-    CHARACTER = enum.auto()
-    BRAILLE = enum.auto()
-
-
-ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
 
 
 @enum.unique
@@ -220,34 +246,6 @@ class DrawingDimension:
         self.drawing_height = drawing_height
 
 
-class Drawing(abc.ABC):
-    """A representation of an image output."""
-
-    def __init__(self, image: bytes, fallback_text: str) -> None:
-        """Constructor."""
-        self.image = image
-        self.fallback_text = fallback_text
-
-    def __repr__(self) -> str:
-        """String representation of class."""
-        return (
-            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
-            f" fallback_text={self.fallback_text})"
-        )
-
-    @abc.abstractmethod
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        """Render a drawing of image."""
-
-    @abc.abstractmethod
-    def __rich_measure__(
-        self, console: Console, options: ConsoleOptions
-    ) -> Measurement:
-        """Define the dimensions of the rendered drawing."""
-
-
 def render_fallback_text(fallback_text: str) -> Text:
     """Render the fallback text representing an image."""
     rendered_fallback_text = text.Text(
@@ -319,7 +317,7 @@ class UnicodeDrawing(Drawing):
         yield from rendered_unicode_drawing
 
     @classmethod
-    def from_data(cls, data: Data, image_type: str) -> UnicodeDrawing:
+    def from_data(cls, data: Data, image_type: str) -> "UnicodeDrawing":
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
@@ -442,7 +440,7 @@ class CharacterDrawing(Drawing):
         color: bool,
         negative_space: bool,
         characters: Optional[str] = None,
-    ) -> CharacterDrawing:
+    ) -> "CharacterDrawing":
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
@@ -552,7 +550,7 @@ class BrailleDrawing(Drawing):
         data: Data,
         image_type: str,
         color: bool,
-    ) -> BrailleDrawing:
+    ) -> "BrailleDrawing":
         """Create a braille drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
