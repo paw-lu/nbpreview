@@ -4304,6 +4304,71 @@ def test_render_block_image(
     "terminedia" not in sys.modules,
     reason=SKIP_TERMINEDIA_REASON,
 )
+def test_render_invalid_block_image(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    disable_capture: ContextManager[_PluggyPlugin],
+    tempfile_path: Path,
+) -> None:
+    """It renders a fallback when image is invalid."""
+    image_cell = {
+        "cell_type": "code",
+        "execution_count": 1,
+        "id": "43e39858-6416-4dc8-9d7e-7905127e7452",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {"text/plain": "<AxesSubplot:>"},
+                "execution_count": 1,
+                "metadata": {},
+                "output_type": "execute_result",
+            },
+            {
+                "data": {
+                    "image/png": "bad_image_data\n",
+                    "text/plain": "<Figure size 432x288 with 1 Axes>",
+                },
+                "metadata": {"needs_background": "light"},
+                "output_type": "display_data",
+            },
+        ],
+        "source": "",
+    }
+
+    with disable_capture:
+        output = rich_notebook_output(image_cell, images=True, image_drawing="block")
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[1]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[1]:\x1b[0m  "
+        "<AxesSubplot:>                          "
+        "                                  \n     "
+        "                                        "
+        "                                   \n    "
+        f"  \x1b]8;id=45753;file://{tempfile_path}0.png"
+        "\x1b\\\x1b[94m🖼 Click to view"
+        " Image\x1b[0m\x1b]8;;\x1b\\                       "
+        "                              \n         "
+        "                                        "
+        "                               \n      \x1b["
+        "38;2;187;134;252m<Figure size 432x288 wi"
+        "th 1 Axes>                              "
+        "           \x1b[0m\n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+@pytest.mark.skipif(
+    "terminedia" not in sys.modules,
+    reason=SKIP_TERMINEDIA_REASON,
+)
 def test_render_height_constrained_block_image(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
