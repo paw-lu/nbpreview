@@ -169,6 +169,7 @@ class CustomImageItem(markdown.ImageItem):
     files: bool = True
     hide_hyperlink_hints: bool = False
     negative_space: bool = True
+    relative_dir: Path = dataclasses.field(default_factory=pathlib.Path)
 
     def __init__(self, destination: str, hyperlinks: bool) -> None:
         """Constructor."""
@@ -179,8 +180,13 @@ class CustomImageItem(markdown.ImageItem):
             # destination comes in a url quoted format, which will turn
             # Windows-like paths into %5c, unquote here to that pathlib
             # understands correctly
-            unquoted_destination = parse.unquote(self.destination)
-            self.path = pathlib.Path(unquoted_destination).resolve()
+            if (
+                destination_path := pathlib.Path(parse.unquote(self.destination))
+            ).is_absolute():
+                self.path = destination_path
+            else:
+                self.path = self.relative_dir / destination_path
+            self.path = self.path.resolve()
             self.destination = os.fsdecode(self.path)
             content = self.path
             self.is_url = False
@@ -189,7 +195,7 @@ class CustomImageItem(markdown.ImageItem):
             self.path = pathlib.Path(yarl.URL(self.destination).path)
             content = _get_url_content(self.destination)
         self.extension = self.path.suffix.lstrip(".")
-        if content is not None:
+        if content is not None and (self.images or (self.is_url and self.files)):
             try:
                 with Image.open(content) as image:
                     with io.BytesIO() as output:
@@ -206,7 +212,7 @@ class CustomImageItem(markdown.ImageItem):
         else:
             self.image_data = None
 
-        super().__init__(destination=destination, hyperlinks=hyperlinks)
+        super().__init__(destination=self.destination, hyperlinks=hyperlinks)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -224,6 +230,19 @@ class CustomImageItem(markdown.ImageItem):
                 hyperlinks=self.hyperlinks,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
+
+        elif self.image_data is None:
+            rendered_link = link.Link(
+                path=f"file://{self.destination}",
+                nerd_font=self.nerd_font,
+                unicode=self.unicode,
+                subject=title,
+                emoji_name="framed_picture",
+                nerd_font_icon="",
+                hyperlinks=self.hyperlinks,
+                hide_hyperlink_hints=self.hide_hyperlink_hints,
+            )
+
         else:
             rendered_link = link.ImageLink(
                 content=self.image_data,
@@ -238,18 +257,19 @@ class CustomImageItem(markdown.ImageItem):
         yield rendered_link
 
         fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
-        rendered_drawing = drawing.choose_drawing(
-            image=self.image_data,
-            fallback_text=self.text.plain or fallback_title,
-            image_type=f"image/{self.extension}",
-            image_drawing=self.image_drawing,
-            color=self.color,
-            negative_space=self.negative_space,
-            characters=self.characters,
-        )
-        if rendered_drawing is not None:
-            yield text.Text("")
-            yield rendered_drawing
+        if self.images:
+            rendered_drawing = drawing.choose_drawing(
+                image=self.image_data,
+                fallback_text=self.text.plain or fallback_title,
+                image_type=f"image/{self.extension}",
+                image_drawing=self.image_drawing,
+                color=self.color,
+                negative_space=self.negative_space,
+                characters=self.characters,
+            )
+            if rendered_drawing is not None:
+                yield text.Text("")
+                yield rendered_drawing
 
 
 class MarkdownOverwrite(markdown.Markdown):
@@ -273,8 +293,10 @@ class MarkdownOverwrite(markdown.Markdown):
         characters: Optional[str] = None,
         files: bool = True,
         hide_hyperlink_hints: bool = False,
+        relative_dir: Optional[Path] = None,
     ) -> None:
         """Constructor."""
+        relative_dir = relative_dir if relative_dir is not None else pathlib.Path()
         self.elements["code_block"] = CustomCodeBlock
         self.elements["heading"] = CustomHeading
         self.elements["block_quote"] = CustomBlockQuote
@@ -291,6 +313,7 @@ class MarkdownOverwrite(markdown.Markdown):
         CustomImageItem.characters = characters
         CustomImageItem.files = files
         CustomImageItem.hide_hyperlink_hints = hide_hyperlink_hints
+        CustomImageItem.relative_dir = relative_dir
         super().__init__(
             markup=markup,
             code_theme=code_theme,
@@ -308,6 +331,7 @@ class CustomMarkdown:
 
     source: str
     theme: str
+    relative_dir: Path
     hyperlinks: bool = True
     nerd_font: bool = False
     unicode: bool = True
@@ -338,6 +362,7 @@ class CustomMarkdown:
                 characters=self.characters,
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
+                relative_dir=self.relative_dir,
             )
         ]
 
@@ -370,6 +395,7 @@ def _splice_tables(
     negative_space: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Iterator[Union[MarkdownOverwrite, Table, Text]]:
     """Mix in tables with traditional markdown parser."""
@@ -392,6 +418,7 @@ def _splice_tables(
             characters=characters,
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
+            relative_dir=relative_dir,
         )
         yield text.Text()
         yield table_section.table
@@ -411,4 +438,5 @@ def _splice_tables(
         characters=characters,
         files=files,
         hide_hyperlink_hints=hide_hyperlink_hints,
+        relative_dir=relative_dir,
     )

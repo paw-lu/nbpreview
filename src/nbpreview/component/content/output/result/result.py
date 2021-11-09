@@ -1,4 +1,5 @@
 """Render execution results from Jupyter Notebooks."""
+from pathlib import Path
 from typing import Dict, Iterator, Union
 
 from nbformat import NotebookNode
@@ -26,6 +27,7 @@ def render_result(
     image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
 ) -> Iterator[Result]:
     """Render executed result outputs."""
     data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
@@ -51,6 +53,7 @@ def render_result(
         hyperlinks=hyperlinks,
         files=files,
         hide_hyperlink_hints=hide_hyperlink_hints,
+        relative_dir=relative_dir,
     )
     for result in (link_result, main_result):
         if result is not None:

@@ -2,6 +2,7 @@
 import dataclasses
 import itertools
 from dataclasses import InitVar
+from pathlib import Path
 from typing import Iterator, List, Optional, Tuple, Union
 
 from nbformat import NotebookNode
@@ -74,6 +75,7 @@ def render_input_row(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
     unicode_border: Optional[bool] = None,
 ) -> Union[Row, None]:
@@ -105,6 +107,9 @@ def render_input_row(
             Whether to write temporary files.
         hide_hyperlink_hints (bool):
             Whether to hide hyperlink hints.
+        relative_dir (Path): The directory to prefix relative
+            paths to convert them to absolute. If None will assume
+            current directory is relative prefix.
         characters (str):
             The characters to draw images with. If set to None will
             default to ' :!?PG@'.
@@ -138,6 +143,7 @@ def render_input_row(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     elif cell_type == "code":
@@ -174,6 +180,7 @@ def render_output_row(
     image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
 ) -> Iterator[OutputRow]:
     """Render the output row of a notebook."""
     for output in outputs:
@@ -209,6 +216,7 @@ def render_output_row(
                 image_drawing=image_drawing,
                 color=color,
                 negative_space=negative_space,
+                relative_dir=relative_dir,
             )
             rendered_outputs.append(rendered_execute_result)
 

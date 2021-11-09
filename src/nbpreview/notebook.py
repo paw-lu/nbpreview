@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import dataclasses
+import pathlib
+from dataclasses import InitVar
 from pathlib import Path
 from typing import Iterator, List, Optional, Tuple, Union
 
@@ -82,10 +84,9 @@ def _pick_image_drawing(
     image_render: ImageDrawing
     if option is None:
         # Block is too slow to offer as a sensible default
-        if unicode and color:
-            image_render = "braille"
-        else:
-            image_render = "character"
+        # Braille can not do negative space, and most notebook's primary
+        # images are plots with light backgrounds
+        image_render = "character"
 
     else:
         image_render = option
@@ -107,6 +108,7 @@ def _render_notebook(
     image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Table:
     """Create a table representing a notebook."""
@@ -135,6 +137,7 @@ def _render_notebook(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
         if cell_row is not None:
             grid.add_row(*cell_row.to_table_row())
@@ -155,6 +158,7 @@ def _render_notebook(
                 image_drawing=image_drawing,
                 color=color,
                 negative_space=negative_space,
+                relative_dir=relative_dir,
             )
             for rendered_output in rendered_outputs:
                 grid.add_row(*rendered_output.to_table_row())
@@ -190,7 +194,10 @@ class Notebook:
             "block" or None. If None will attempt to autodetect. By
             default None.
         color (Optional[bool]): Whether to use color. If None will
-            attempt to autodetect. By default None
+            attempt to autodetect. By default None.
+        relative_dir (Optional[Path]): The directory to prefix relative
+            paths to convert them to absolute. If None will assume
+            current directory is relative prefix.
     """
 
     notebook_node: NotebookNode
@@ -206,10 +213,14 @@ class Notebook:
     images: Optional[bool] = None
     image_drawing: Optional[ImageDrawing] = None
     color: Optional[bool] = None
+    relative_dir: InitVar[Optional[Path]] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, relative_dir: Optional[Path]) -> None:
         """Constructor."""
         self.cells = self.notebook_node.get("cells", nbformat.from_dict([]))
+        self.relative_dir = (
+            pathlib.Path().resolve() if relative_dir is None else relative_dir
+        )
         try:
             self.language = self.notebook_node.metadata.kernelspec.language
         except AttributeError:
@@ -237,7 +248,7 @@ class Notebook:
             notebook_node = nbformat.read(file, as_version=4)
         except AttributeError as exception:
             raise errors.InvalidNotebookError from exception
-
+        relative_dir = file.parent.resolve()
         return cls(
             notebook_node,
             theme=theme,
@@ -252,6 +263,7 @@ class Notebook:
             images=images,
             image_drawing=image_drawing,
             color=color,
+            relative_dir=relative_dir,
         )
 
     def __rich_console__(
@@ -293,5 +305,6 @@ class Notebook:
             image_drawing=image_drawing,
             color=color,
             negative_space=self.negative_space,
+            relative_dir=self.relative_dir,
         )
         yield rendered_notebook

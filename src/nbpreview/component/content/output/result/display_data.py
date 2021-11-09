@@ -5,6 +5,7 @@ import collections
 import dataclasses
 import enum
 import json
+from pathlib import Path
 from typing import ClassVar, Dict, Iterator, List, Optional, Union
 
 import html2text
@@ -38,6 +39,7 @@ def _render_html(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Union[DataFrameDisplay, HTMLDisplay]:
     """Render HTML output."""
@@ -61,6 +63,7 @@ def _render_html(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
     return display_data
 
@@ -77,6 +80,7 @@ def _choose_basic_renderer(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
     """Render straightforward text data."""
@@ -95,6 +99,7 @@ def _choose_basic_renderer(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
         return display_data
     elif unicode and "text/latex" in data:
@@ -126,6 +131,7 @@ def render_display_data(
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Union[DisplayData, None, Drawing]:
     """Render the notebook display data."""
@@ -164,6 +170,7 @@ def render_display_data(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
         return display_data
     else:
@@ -180,6 +187,7 @@ def render_display_data(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
         return display_data
 
@@ -223,6 +231,7 @@ class HTMLDisplay(DisplayData):
     hyperlinks: bool
     files: bool
     hide_hyperlink_hints: bool
+    relative_dir: Path
     characters: Optional[str] = None
     data_type: ClassVar[str] = "text/html"
 
@@ -240,6 +249,7 @@ class HTMLDisplay(DisplayData):
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
     ) -> HTMLDisplay:
         """Create an HTML display data from notebook data."""
@@ -257,6 +267,7 @@ class HTMLDisplay(DisplayData):
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     def __rich__(self) -> CustomMarkdown:
@@ -274,6 +285,7 @@ class HTMLDisplay(DisplayData):
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             characters=self.characters,
+            relative_dir=self.relative_dir,
         )
         return rendered_html
 
@@ -478,6 +490,7 @@ class MarkdownDisplay(DisplayData):
     hyperlinks: bool
     files: bool
     hide_hyperlink_hints: bool
+    relative_dir: Path
     characters: Optional[str] = None
     data_type: ClassVar[str] = "text/markdown"
 
@@ -495,6 +508,7 @@ class MarkdownDisplay(DisplayData):
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
     ) -> MarkdownDisplay:
         """Create Markdown display data from notebook data."""
@@ -512,6 +526,7 @@ class MarkdownDisplay(DisplayData):
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     def __rich__(self) -> CustomMarkdown:
@@ -528,6 +543,7 @@ class MarkdownDisplay(DisplayData):
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             characters=self.characters,
+            relative_dir=self.relative_dir,
         )
         return rendered_markdown
 

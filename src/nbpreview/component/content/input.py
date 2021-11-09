@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+from pathlib import Path
 from typing import Optional, Union
 
 import pygments
@@ -57,6 +58,7 @@ class MarkdownCell(Cell):
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
     ) -> None:
         """Constructor."""
@@ -73,6 +75,7 @@ class MarkdownCell(Cell):
         self.files = files
         self.hide_hyperlink_hints = hide_hyperlink_hints
         self.characters = characters
+        self.relative_dir = relative_dir
 
     def __rich__(self) -> Padding:
         """Render the markdown cell."""
@@ -90,6 +93,7 @@ class MarkdownCell(Cell):
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
                 characters=self.characters,
+                relative_dir=self.relative_dir,
             ),
             pad=self.pad,
         )
