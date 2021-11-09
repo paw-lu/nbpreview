@@ -598,52 +598,56 @@ def test_number_markdown_cell(rich_notebook_output: RichOutput) -> None:
 
 
 def test_image_file_link_not_image_markdown_cell(
-    rich_notebook_output: RichOutput,
+    rich_notebook_output: RichOutput, remove_link_ids: Callable[[str], str]
 ) -> None:
     """It does not render an image link when file is not an image."""
+    bad_path = pathlib.Path(__file__).parent / pathlib.Path("assets", "bad_image.xyz")
     markdown_cell = {
         "cell_type": "markdown",
         "id": "academic-bride",
         "metadata": {},
-        "source": "![This is a weird file extension]"
-        f"({pathlib.Path(__file__).parent / pathlib.Path('assets', 'bad_image.xyz')})",
+        "source": "![This is a weird file extension]" f"({bad_path})",
     }
-    output = rich_notebook_output(markdown_cell)
+    output = rich_notebook_output(markdown_cell, images=True)
     expected_output = (
-        "  🖼 This is a weird file extension      "
+        f"  \x1b]8;id=228254;file://{bad_path}\x1b\\\x1b[94m🖼 Click to "
+        "view This is a weird file extension\x1b[0m\x1b]8;;\x1b\\       "
+        "                         \n              "
         "                                        "
-        "\n                                       "
-        "                                        "
-        " \n"
+        "                          \n"
     )
-    assert output == expected_output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_image_file_link_bad_extension_markdown_cell(
-    rich_notebook_output: RichOutput,
+    rich_notebook_output: RichOutput, remove_link_ids: Callable[[str], str]
 ) -> None:
     """It does not render an image link when extension is unknown."""
+    bad_extension_path = __file__
     markdown_cell = {
         "cell_type": "markdown",
         "id": "academic-bride",
         "metadata": {},
-        "source": f"![This isn't even a image]({__file__})",
+        "source": f"![This isn't even a image]({bad_extension_path})",
     }
-    output = rich_notebook_output(markdown_cell)
+    output = rich_notebook_output(markdown_cell, images=True)
     expected_output = (
-        "  🖼 This isn't even a image             "
+        f"  \x1b]8;id=467471;file://{bad_extension_path}\x1b\\\x1b"
+        "[94m🖼 Click"
+        " to view This isn't even a image\x1b[0m\x1b]8;;\x1b\\"
+        "                  "
+        "                     \n                  "
         "                                        "
-        "\n                                       "
-        "                                        "
-        " \n"
+        "                      \n"
     )
-    assert output == expected_output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_image_file_link_not_exist_markdown_cell(
-    rich_notebook_output: RichOutput,
+    rich_notebook_output: RichOutput, remove_link_ids: Callable[[str], str]
 ) -> None:
     """It does not render an image link when the file does not exist."""
+    project_dir = pathlib.Path(__file__).parent.parent.parent
     markdown_cell = {
         "cell_type": "markdown",
         "id": "academic-bride",
@@ -652,13 +656,15 @@ def test_image_file_link_not_exist_markdown_cell(
     }
     output = rich_notebook_output(markdown_cell)
     expected_output = (
-        "  🖼 This image does not exist           "
+        "  \x1b]8;"
+        f"id=179352;file://{project_dir / 'i_do_not_exists.xyz'}"
+        "\x1b\\\x1b[94m🖼 Click to view This image does not "
+        "exist\x1b[0m\x1b]8;;\x1b\\                        "
+        "             \n                          "
         "                                        "
-        "\n                                       "
-        "                                        "
-        " \n"
+        "              \n"
     )
-    assert output == expected_output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_notebook_code_cell(rich_notebook_output: RichOutput) -> None:
