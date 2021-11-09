@@ -1,4 +1,6 @@
 """Tests for src.nbpreview.component.row."""
+import pathlib
+
 import nbformat
 import pytest
 
@@ -22,6 +24,7 @@ def test_render_unknown_output_type() -> None:
         image_drawing="braille",
         color=True,
         negative_space=True,
+        relative_dir=pathlib.Path(),
     )
     with pytest.raises(StopIteration):
         next(rendered_output_row)

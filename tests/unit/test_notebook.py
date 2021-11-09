@@ -56,6 +56,7 @@ class RichOutput(Protocol):
         images: Optional[bool] = None,
         image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
+        relative_dir: Optional[Path] = None,
     ) -> str:
         """Callable types."""
         ...
@@ -138,6 +139,7 @@ def rich_notebook_output(
         images: Optional[bool] = None,
         image_drawing: Optional[Union[ImageDrawing, None]] = None,
         color: Optional[bool] = None,
+        relative_dir: Optional[Path] = None,
     ) -> str:
         """Render the notebook containing the cell."""
         notebook_node = make_notebook(cell)
@@ -154,6 +156,7 @@ def rich_notebook_output(
             image_drawing=image_drawing,
             color=color,
             negative_space=negative_space,
+            relative_dir=relative_dir,
         )
         output = rich_console(rendered_notebook, no_wrap)
         return output
@@ -5391,5 +5394,32 @@ def test_image_link_not_image(
         "                              \n         "
         "                                        "
         "                               \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_relative_dir_markdown_link(
+    rich_notebook_output: RichOutput,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It adds a path prefix to the image hyperlink."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Test image](image.png)",
+    }
+    relative_dir = pathlib.Path("/", "Users", "test")
+    output = rich_notebook_output(
+        markdown_cell, relative_dir=relative_dir, hyperlinks=True
+    )
+    expected_output = (
+        "  \x1b]8;id=835649;"
+        f"file://{relative_dir.resolve() / 'image.png'}\x1b\\\x1b"
+        "[94m🖼 Click to view Test image\x1b[0m\x1b]8;;\x1b"
+        "\\                                       "
+        "             \n                          "
+        "                                        "
+        "              \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
