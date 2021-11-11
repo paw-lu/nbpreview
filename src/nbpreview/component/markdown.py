@@ -1,5 +1,5 @@
 """Override rich's markdown renderer with custom components."""
-from __future__ import annotations
+
 
 import dataclasses
 import io

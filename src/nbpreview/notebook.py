@@ -1,6 +1,4 @@
 """Render the notebook."""
-from __future__ import annotations
-
 import dataclasses
 import pathlib
 from dataclasses import InitVar
@@ -242,7 +240,7 @@ class Notebook:
         images: Optional[bool] = None,
         image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
-    ) -> Notebook:
+    ) -> "Notebook":
         """Create Notebook from notebook file."""
         try:
             notebook_node = nbformat.read(file, as_version=4)
