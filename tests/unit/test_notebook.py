@@ -336,6 +336,35 @@ def test_image_markdown_cell(
     assert remove_link_ids(output) == expected_output
 
 
+def test_image_markdown_cell_no_drawing(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It renders a markdown cell with an image and skips drawing."""
+    image_path = os.fsdecode(
+        pathlib.Path(__file__).parent
+        / pathlib.Path("assets", "outline_article_white_48dp.png")
+    )
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": f"![Azores]({image_path})",
+    }
+    output = rich_notebook_output(markdown_cell, image_drawing="braille", images=False)
+    expected_output = (
+        f"  \x1b]8;id=378979;file://{image_path}\x1b\\\x1b[94m"
+        "🖼 Click to view Azores\x1b[0m\x1b]8;;\x1b\\       "
+        "                                        "
+        "         \n                              "
+        "                                        "
+        "          \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_code_markdown_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a markdown cell with code."""
     markdown_cell = {
