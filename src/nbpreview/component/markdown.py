@@ -245,8 +245,8 @@ class CustomImageItem(markdown.ImageItem):
 
         yield rendered_link
 
-        fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
         if self.images:
+            fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
             rendered_drawing = drawing.choose_drawing(
                 image=self.image_data,
                 fallback_text=self.text.plain or fallback_title,
