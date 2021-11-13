@@ -89,8 +89,7 @@ def render_input_row(
         language (str): The programming language of the notebook. Will
             be used when highlighting the syntax of code cells.
         theme (str): The theme to use for syntax highlighting. May be
-            "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "ansi_dark".
+            "ansi_light", "ansi_dark", or any Pygments theme.
         nerd_font (bool): Whether to use nerd fonts as an icon.
         unicode (bool): Whether to use unicode characters as an icon.
         images (bool): Whether to render images in the output.

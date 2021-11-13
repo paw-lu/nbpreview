@@ -172,7 +172,7 @@ class Notebook:
             render.
         theme (str): The theme to use for syntax highlighting. May be
             "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "ansi_dark".
+            "material".
         plain (bool): Only show plain style. No decorations such as
             boxes or execution counts. By default will autodetect.
         unicode (Optional[bool]): Whether to use unicode characters to
@@ -199,7 +199,7 @@ class Notebook:
     """
 
     notebook_node: NotebookNode
-    theme: str = "ansi_dark"
+    theme: str = "material"
     plain: Optional[bool] = None
     unicode: Optional[bool] = None
     hide_output: bool = False

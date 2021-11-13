@@ -10,7 +10,7 @@ from rich import console, traceback
 from nbpreview import __version__, errors, notebook
 
 app = typer.Typer()
-traceback.install(theme="ansi_dark")
+traceback.install(theme="material")
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -37,11 +37,11 @@ file_argument = typer.Argument(
     help="A Jupyter Notebook file to render.",
 )
 theme_option = typer.Option(
-    "ansi_dark",
+    "material",
     "--theme",
     "-t",
-    help="The theme to use for syntax highlighting. May be 'ansi_light',"
-    " 'ansi_dark', or any Pygments theme.",
+    help="The theme to use for syntax highlighting. May be 'light',"
+    " 'dark', or any Pygments theme.",
     envvar="NBPREVIEW_THEME",
 )
 hide_output_option = typer.Option(
