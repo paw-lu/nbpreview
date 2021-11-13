@@ -135,5 +135,8 @@ def expected_output(
     )
     expected_output_file = f"{test_name}.txt"
     expected_output_template = env.get_template(expected_output_file)
-    expected_output = expected_output_template.render(tempfile_path=tempfile_path)
+    project_dir = pathlib.Path(__file__).parent.parent.resolve()
+    expected_output = expected_output_template.render(
+        tempfile_path=tempfile_path, project_dir=project_dir
+    )
     return remove_link_ids(expected_output)
