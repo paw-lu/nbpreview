@@ -231,7 +231,7 @@ class CustomImageItem(markdown.ImageItem):
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
 
-        elif self.image_data is None:
+        else:
             rendered_link = link.Link(
                 path=f"file://{self.destination}",
                 nerd_font=self.nerd_font,
@@ -243,17 +243,6 @@ class CustomImageItem(markdown.ImageItem):
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
             )
 
-        else:
-            rendered_link = link.ImageLink(
-                content=self.image_data,
-                file_extension=self.extension,
-                unicode=self.unicode,
-                hyperlinks=self.hyperlinks,
-                nerd_font=self.nerd_font,
-                files=self.files,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-                subject=title,
-            )
         yield rendered_link
 
         fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
