@@ -7,7 +7,6 @@ import os
 import pathlib
 import re
 import sys
-import tempfile
 from pathlib import Path
 from typing import (
     Any,
@@ -165,16 +164,6 @@ def rich_notebook_output(
 
 
 @pytest.fixture
-def tempfile_path() -> Path:
-    """Fixture that returns the tempfile path."""
-    prefix = tempfile.template
-    file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
-        f"{prefix}nbpreview_link_file"
-    )
-    return file_path
-
-
-@pytest.fixture
 def mock_tempfile_file(
     mocker: MockerFixture, tempfile_path: Path
 ) -> Generator[Mock, None, None]:
@@ -190,19 +179,6 @@ def mock_tempfile_file(
     tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
     for file in tempfiles:
         file.unlink()
-
-
-@pytest.fixture
-def remove_link_ids() -> Callable[[str], str]:
-    """Create function to remove link ids from rendered hyperlinks."""
-
-    def _remove_link_ids(render: str) -> str:
-        """Remove link ids from rendered hyperlinks."""
-        re_link_ids = re.compile(r"id=[\d\.\-]*?;")
-        subsituted_render = re_link_ids.sub("id=0;", render)
-        return subsituted_render
-
-    return _remove_link_ids
 
 
 def test_automatic_plain(

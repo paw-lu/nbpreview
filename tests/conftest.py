@@ -2,6 +2,8 @@
 import contextlib
 import io
 import pathlib
+import re
+import tempfile
 from pathlib import Path
 from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
 
@@ -13,6 +15,29 @@ from _pytest.fixtures import FixtureRequest
 from jinja2 import select_autoescape
 from nbformat.notebooknode import NotebookNode
 from rich import console
+
+
+@pytest.fixture
+def tempfile_path() -> Path:
+    """Fixture that returns the tempfile path."""
+    prefix = tempfile.template
+    file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
+        f"{prefix}nbpreview_link_file"
+    )
+    return file_path
+
+
+@pytest.fixture
+def remove_link_ids() -> Callable[[str], str]:
+    """Create function to remove link ids from rendered hyperlinks."""
+
+    def _remove_link_ids(render: str) -> str:
+        """Remove link ids from rendered hyperlinks."""
+        re_link_ids = re.compile(r"id=[\d\.\-]*?;")
+        subsituted_render = re_link_ids.sub("id=0;", render)
+        return subsituted_render
+
+    return _remove_link_ids
 
 
 @pytest.fixture
