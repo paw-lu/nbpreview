@@ -1,11 +1,15 @@
 """Command-line interface."""
+import itertools
 import sys
+import textwrap
+import typing
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional, Union
 
 import nbformat
 import typer
-from rich import console, traceback
+from pygments import styles
+from rich import box, console, panel, syntax, traceback
 
 from nbpreview import __version__, errors, notebook
 
@@ -28,6 +32,71 @@ def version_callback(value: Optional[bool] = None) -> None:
     pass
 
 
+def _get_all_available_themes(list_duplicate_alias: bool = False) -> Iterable[str]:
+    """Return the available theme names."""
+    theme_alias: Iterable[str] = ["light", "dark"]
+    if list_duplicate_alias:
+        theme_alias = itertools.chain(
+            theme_alias, (f"ansi_{alias}" for alias in theme_alias)
+        )
+    available_themes = itertools.chain(styles.get_all_styles(), theme_alias)
+    yield from available_themes
+
+
+def list_themes_callback(value: Optional[bool] = None) -> None:
+    """Render a preview of all available themes."""
+    example_code = textwrap.dedent(
+        '''\
+    """Example syntax highlighting."""
+    from typing import Iterator
+
+    class Math:
+        """An example class."""
+
+        @staticmethod
+        def fib(n: int) -> Iterator[int]:
+            """Fibonacci series up to n."""
+            a, b = 0, 1  # Manually set first two terms
+            while a < n:
+                yield a
+                a, b = b, a + b
+
+    result = sum(Math.fib(42))
+    print(f"The answer is {result}")
+    '''
+    )
+    if value:
+        stdout_console = console.Console(file=sys.stdout)
+        panel_width = min(stdout_console.width, 88)
+        for theme in _get_all_available_themes(list_duplicate_alias=False):
+            translated_theme = _translate_theme(theme)
+            theme_title = (
+                f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
+            )
+            if stdout_console.is_terminal:
+                theme_example = syntax.Syntax(
+                    example_code,
+                    theme=translated_theme,
+                    background_color="default",
+                    lexer_name="python",
+                )
+                theme_example_panel = panel.Panel(
+                    theme_example,
+                    title=theme_title,
+                    box=box.ROUNDED,
+                    title_align="left",
+                    expand=False,
+                    padding=(1, 2, 1, 2),
+                    safe_box=True,
+                    width=panel_width,
+                )
+                stdout_console.print(theme_example_panel)
+            else:
+                stdout_console.print(theme_title)
+        raise typer.Exit()
+    pass
+
+
 file_argument = typer.Argument(
     ...,
     exists=True,
@@ -43,6 +112,13 @@ theme_option = typer.Option(
     help="The theme to use for syntax highlighting. May be 'light',"
     " 'dark', or any Pygments theme.",
     envvar="NBPREVIEW_THEME",
+)
+list_themes_option = typer.Option(
+    None,
+    "--list-themes",
+    help="Display a preview all available themes.",
+    callback=list_themes_callback,
+    is_eager=True,
 )
 hide_output_option = typer.Option(
     False,
@@ -82,12 +158,42 @@ version_option = typer.Option(
 )
 
 
+@typing.overload
+def _translate_theme(theme_argument: str) -> str:
+    """Convert theme argument to one recognized by rich."""
+    ...
+
+
+@typing.overload
+def _translate_theme(theme_argument: None) -> None:
+    """Convert theme argument to one recognized by rich."""
+    ...
+
+
+def _translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
+    """Convert theme argument to one recognized by rich."""
+    translated_theme: Union[str, None]
+    if theme_argument is not None:
+        theme_alias = {
+            "dark": "ansi_dark",
+            "light": "ansi_light",
+        }
+        lowered_theme_argument = theme_argument.lower()
+        translated_theme = theme_alias.get(
+            lowered_theme_argument, lowered_theme_argument
+        )
+    else:
+        translated_theme = None
+    return translated_theme
+
+
 @app.command()
 def main(
     file: Path = file_argument,
     theme: str = theme_option,
     width: Optional[int] = width_option,
     hide_output: bool = hide_output_option,
+    list_themes: Optional[bool] = list_themes_option,
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
     version: Optional[bool] = version_option,

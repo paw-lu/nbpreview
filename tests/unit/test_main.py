@@ -1,4 +1,6 @@
 """Test cases for the __main__ module."""
+import functools
+import itertools
 import json
 import pathlib
 import shlex
@@ -11,21 +13,27 @@ from typing import (
     Dict,
     Generator,
     Iterable,
+    Iterator,
     Mapping,
     Optional,
     Protocol,
     Union,
 )
+from unittest.mock import Mock
 
 import nbformat
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from click.testing import Result
 from nbformat.notebooknode import NotebookNode
+from pygments import styles
+from pytest_mock import MockerFixture
+from rich import console
 from typer import testing
 from typer.testing import CliRunner
 
 import nbpreview
+from nbpreview import __main__
 from nbpreview.__main__ import app
 
 
@@ -317,3 +325,64 @@ def test_raise_no_output(
     output = result.output.replace("\n", "")
     expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
     assert output == expected_output
+
+
+@pytest.fixture
+def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
+    """Mock pygment styles.
+
+    Control the styles outputted here so that test does not break every
+    time pygments adds or removes a style
+    """
+    mock = mocker.patch(
+        "nbpreview.__main__.styles.get_all_styles",
+        return_value=(style for style in ("material", "monokai", "zenburn")),
+    )
+    yield mock
+
+
+def test_list_themes(
+    runner: CliRunner,
+    mocker: MockerFixture,
+    expected_output: str,
+    mock_pygment_styles: Mock,
+) -> None:
+    """It renders an example of all available themes."""
+    terminal_console = functools.partial(
+        console.Console,
+        color_system="truecolor",
+        force_terminal=True,
+        width=100,
+        no_color=False,
+        legacy_windows=False,
+    )
+    mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)
+
+    result = runner.invoke(
+        app,
+        args=["--list-themes"],
+        color=True,
+    )
+    output = result.output
+    assert output == expected_output
+
+
+def test_list_themes_no_terminal(runner: CliRunner, mock_pygment_styles: Mock) -> None:
+    """It lists all themes with no preview when not a terminal."""
+    result = runner.invoke(
+        app,
+        args=["--list-themes"],
+        color=True,
+    )
+    output = result.output
+    expected_output = (
+        "material\nmonokai\nzenburn\nlight / ansi_li" "ght\ndark / ansi_dark\n"
+    )
+    assert output == expected_output
+
+
+def test_get_all_available_themes() -> None:
+    """It lists all available pygment themes."""
+    output = __main__._get_all_available_themes()
+    expected_output = itertools.chain(styles.get_all_styles(), ("light", "dark"))
+    assert list(output) == list(expected_output)
