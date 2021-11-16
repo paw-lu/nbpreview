@@ -8,7 +8,7 @@ import functools
 import io
 import typing
 from dataclasses import InitVar
-from typing import Any, Iterator, List, Literal, Optional, Tuple, Union
+from typing import Iterator, Literal, Optional, Tuple, Union
 
 import picharsso
 import PIL.Image
@@ -19,6 +19,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
+from nbpreview import cli_choices
 from nbpreview.data import Data
 
 # terminedia depends on fcntl, which is not present on Windows platforms
@@ -36,17 +37,8 @@ class Size(typing.NamedTuple):
 
 
 @enum.unique
-class ImageDrawingEnum(str, enum.Enum):
+class ImageDrawingEnum(str, cli_choices.LowerNameEnum):
     """Image drawing types."""
-
-    def _generate_next_value_(  # type: ignore[override]
-        name: str,  # noqa: B902,N805
-        start: int,
-        count: int,
-        last_values: List[Any],
-    ) -> str:
-        """Set member's values as their lowercase name."""
-        return name.lower()
 
     BLOCK = enum.auto()
     CHARACTER = enum.auto()
