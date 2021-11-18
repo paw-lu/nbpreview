@@ -1,0 +1,148 @@
+# Place in ~/.matplotlib/matplotlibrc
+## ***************************************************************************
+## * LINES                                                                   *
+## ***************************************************************************
+lines.linewidth       : 2.5
+lines.dash_joinstyle  : round
+lines.solid_joinstyle : round
+lines.solid_capstyle  : round
+
+
+## ***************************************************************************
+## * PATCHES                                                                 *
+## ***************************************************************************
+patch.edgecolor       : C0
+
+
+## ***************************************************************************
+## * HATCHES                                                                 *
+## ***************************************************************************
+hatch.color      : 1C1B1F
+hatch.linewidth  : 2.5
+
+
+## ***************************************************************************
+## * BOXPLOT                                                                 *
+## ***************************************************************************
+boxplot.showcaps    : False
+
+boxplot.flierprops.marker          : o
+boxplot.flierprops.color           : C0
+boxplot.flierprops.markerfacecolor : C0
+boxplot.flierprops.markeredgecolor : C0
+boxplot.flierprops.markeredgewidth : 0
+boxplot.flierprops.markersize      : 9
+
+boxplot.boxprops.color     : C0
+boxplot.boxprops.linewidth : 2.5
+
+boxplot.whiskerprops.color     : C0
+boxplot.whiskerprops.linewidth : 2.5
+
+boxplot.capprops.color     : C0
+boxplot.capprops.linewidth : 2.5
+
+
+boxplot.medianprops.color     : C0
+boxplot.medianprops.linewidth : 2.5
+
+boxplot.meanprops.markersize      :  9
+boxplot.meanprops.linewidth       : 2.5
+
+
+## ***************************************************************************
+## * FONT                                                                    *
+## ***************************************************************************
+font.family : Roboto
+font.size : 12
+font.weight : 400
+
+
+## ***************************************************************************
+## * TEXT                                                                    *
+## ***************************************************************************
+text.color : E6E1E5
+
+
+## ***************************************************************************
+## * AXES                                                                    *
+## ***************************************************************************
+axes.facecolor     : 1C1B1F
+axes.edgecolor     : E6E1E5
+axes.linewidth     : 1.3
+axes.grid          : True
+axes.grid.axis     : y
+axes.titlelocation : left
+axes.titlesize     : 20
+axes.titlecolor    : E6E1E5
+
+axes.titlepad      : 20
+axes.labelsize     : 12
+axes.labelpad      : 20
+axes.labelcolor    : E6E1E5
+axes.axisbelow     : True
+
+axes.spines.left   : False
+axes.spines.bottom : True
+axes.spines.top    : False
+axes.spines.right  : False
+
+axes.prop_cycle : cycler('color', ['D0BCFF', '70dba8', 'ffb683', 'acc7ff', 'abd371', 'ffb4a3'])
+# D0BCFF : purple
+# 70dba8 : teal
+# ffb683 : orange
+# acc7ff : blue
+# abd371 : green
+# ffb4a3 : peach
+
+
+
+## ***************************************************************************
+## * TICKS                                                                   *
+## ***************************************************************************
+xtick.bottom        : False
+xtick.major.size    : 5
+xtick.major.width   : 1.0
+xtick.major.pad     : 10
+xtick.color         : E6E1E5
+xtick.labelsize     : 12
+
+ytick.left : False
+ytick.major.size    : 7
+ytick.major.width   : 1.0
+ytick.major.pad     : 10
+ytick.color         : E6E1E5
+ytick.labelsize     : 12
+
+
+## ***************************************************************************
+## * GRIDS                                                                   *
+## ***************************************************************************
+grid.color     : 49454F
+grid.linewidth : 1.3
+
+
+## ***************************************************************************
+## * LEGEND                                                                  *
+## ***************************************************************************
+legend.loc           : best
+legend.frameon       : False
+
+legend.fontsize      : 12
+
+
+## ***************************************************************************
+## * FIGURE                                                                  *
+## ***************************************************************************
+figure.titlesize   : 16
+figure.figsize     : 9, 5
+#figure.dpi        : 220
+figure.facecolor   : 1C1B1F
+figure.edgecolor   : 1C1B1F
+
+
+## ***************************************************************************
+## * SAVING FIGURES                                                          *
+## ***************************************************************************
+savefig.facecolor  : 1C1B1F
+savefig.edgecolor  : 1C1B1F
