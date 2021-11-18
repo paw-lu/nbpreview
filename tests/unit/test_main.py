@@ -6,6 +6,7 @@ import pathlib
 import shlex
 import tempfile
 import textwrap
+from pathlib import Path
 from typing import (
     IO,
     Any,
@@ -52,6 +53,15 @@ class RunCli(Protocol):
     ) -> Result:
         """Callable types."""
         ...
+
+
+@pytest.fixture
+def notebook_path() -> Path:
+    """Return path of example test notebook."""
+    notebook_path = pathlib.Path(__file__).parent / pathlib.Path(
+        "assets", "notebook.ipynb"
+    )
+    return notebook_path
 
 
 @pytest.fixture(autouse=True)
@@ -341,13 +351,9 @@ def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
     yield mock
 
 
-def test_list_themes(
-    runner: CliRunner,
-    mocker: MockerFixture,
-    expected_output: str,
-    mock_pygment_styles: Mock,
-) -> None:
-    """It renders an example of all available themes."""
+@pytest.fixture
+def mock_terminal(mocker: MockerFixture) -> Iterator[Mock]:
+    """Mock a modern terminal."""
     terminal_console = functools.partial(
         console.Console,
         color_system="truecolor",
@@ -355,9 +361,20 @@ def test_list_themes(
         width=100,
         no_color=False,
         legacy_windows=False,
+        force_jupyter=False,
     )
-    mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)
+    mock = mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)
+    yield mock
 
+
+def test_list_themes(
+    runner: CliRunner,
+    mocker: MockerFixture,
+    expected_output: str,
+    mock_terminal: Mock,
+    mock_pygment_styles: Mock,
+) -> None:
+    """It renders an example of all available themes."""
     result = runner.invoke(
         app,
         args=["--list-themes"],
