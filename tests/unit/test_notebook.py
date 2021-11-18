@@ -672,7 +672,7 @@ def test_image_file_link_not_exist_markdown_cell(
     rich_notebook_output: RichOutput, remove_link_ids: Callable[[str], str]
 ) -> None:
     """It does not render an image link when the file does not exist."""
-    project_dir = pathlib.Path(__file__).parent.parent.parent
+    project_dir = pathlib.Path().resolve()
     markdown_cell = {
         "cell_type": "markdown",
         "id": "academic-bride",
