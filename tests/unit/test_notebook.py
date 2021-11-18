@@ -1,7 +1,6 @@
 """Test cases for render."""
 import dataclasses
 import io
-import itertools
 import json
 import os
 import pathlib
@@ -161,24 +160,6 @@ def rich_notebook_output(
         return output
 
     return _rich_notebook_output
-
-
-@pytest.fixture
-def mock_tempfile_file(
-    mocker: MockerFixture, tempfile_path: Path
-) -> Generator[Mock, None, None]:
-    """Control where tempfile will write to."""
-    tempfile_stem = tempfile_path.stem
-    tempfile_base_name = tempfile_stem[3:]
-    tempfile_parent = tempfile_path.parent
-    mock = mocker.patch("tempfile._get_candidate_names")
-    mock.return_value = (
-        f"{tempfile_base_name}{file_suffix}" for file_suffix in itertools.count()
-    )
-    yield mock
-    tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
-    for file in tempfiles:
-        file.unlink()
 
 
 def test_automatic_plain(

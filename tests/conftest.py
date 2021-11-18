@@ -1,11 +1,13 @@
 """Package-wide test fixtures."""
 import contextlib
 import io
+import itertools
 import pathlib
 import re
 import tempfile
 from pathlib import Path
 from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
+from unittest.mock import Mock
 
 import jinja2
 import nbformat
@@ -14,6 +16,7 @@ from _pytest.config import Config, _PluggyPlugin
 from _pytest.fixtures import FixtureRequest
 from jinja2 import select_autoescape
 from nbformat.notebooknode import NotebookNode
+from pytest_mock import MockerFixture
 from rich import console
 
 
@@ -165,3 +168,19 @@ def expected_output(
         tempfile_path=tempfile_path, project_dir=project_dir
     )
     return remove_link_ids(expected_output)
+
+
+@pytest.fixture
+def mock_tempfile_file(mocker: MockerFixture, tempfile_path: Path) -> Iterator[Mock]:
+    """Control where tempfile will write to."""
+    tempfile_stem = tempfile_path.stem
+    tempfile_base_name = tempfile_stem[3:]
+    tempfile_parent = tempfile_path.parent
+    mock = mocker.patch("tempfile._get_candidate_names")
+    mock.return_value = (
+        f"{tempfile_base_name}{file_suffix}" for file_suffix in itertools.count()
+    )
+    yield mock
+    tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
+    for file in tempfiles:
+        file.unlink()
