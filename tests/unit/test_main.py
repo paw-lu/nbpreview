@@ -2,6 +2,7 @@
 import functools
 import itertools
 import json
+import os
 import pathlib
 import shlex
 import tempfile
@@ -403,3 +404,19 @@ def test_get_all_available_themes() -> None:
     output = __main__._get_all_available_themes()
     expected_output = itertools.chain(styles.get_all_styles(), ("light", "dark"))
     assert list(output) == list(expected_output)
+
+
+def test_render_notebook_file(
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_terminal: Iterator[Mock],
+    expected_output: str,
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Iterator[Mock],
+) -> None:
+    """It renders a notebook file."""
+    result = runner.invoke(
+        app, args=[os.fsdecode(notebook_path), "--images"], color=True
+    )
+    output = result.output
+    assert remove_link_ids(output) == expected_output
