@@ -420,3 +420,26 @@ def test_render_notebook_file(
     )
     output = result.output
     assert remove_link_ids(output) == expected_output
+
+
+@pytest.mark.parametrize(
+    "option_name, theme", (("--theme", "light"), ("-t", "dark"), ("-t", "monokai"))
+)
+def test_change_theme_notebook_file(
+    option_name: str,
+    theme: str,
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_terminal: Iterator[Mock],
+    expected_output: str,
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Iterator[Mock],
+) -> None:
+    """It changes the theme of the notebook."""
+    result = runner.invoke(
+        app,
+        args=[os.fsdecode(notebook_path), "--images", f"{option_name}={theme}"],
+        color=True,
+    )
+    output = result.output
+    assert remove_link_ids(output) == expected_output
