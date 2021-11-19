@@ -385,11 +385,14 @@ def test_list_themes(
     assert output == expected_output
 
 
-def test_list_themes_no_terminal(runner: CliRunner, mock_pygment_styles: Mock) -> None:
+@pytest.mark.parametrize("option_name", ("--list-themes", "--lt"))
+def test_list_themes_no_terminal(
+    option_name: str, runner: CliRunner, mock_pygment_styles: Mock
+) -> None:
     """It lists all themes with no preview when not a terminal."""
     result = runner.invoke(
         app,
-        args=["--list-themes"],
+        args=[option_name],
         color=True,
     )
     output = result.output
