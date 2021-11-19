@@ -156,6 +156,13 @@ version_option = typer.Option(
     callback=version_callback,
     is_eager=True,
 )
+images_option = typer.Option(
+    False,
+    "--images",
+    "-i",
+    help="Render images. See image-drawing-option for render modes.",
+    envvar="NBPREVIEW_IMAGES",
+)
 
 
 @typing.overload
@@ -196,6 +203,7 @@ def main(
     list_themes: Optional[bool] = list_themes_option,
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
+    images: Optional[bool] = images_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
@@ -208,6 +216,7 @@ def main(
             hide_output=hide_output,
             plain=plain,
             unicode=unicode,
+            images=images,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
