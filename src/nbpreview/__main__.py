@@ -4,10 +4,11 @@ import sys
 import textwrap
 import typing
 from pathlib import Path
-from typing import Iterable, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 import nbformat
 import typer
+from click import Context, Parameter
 from pygments import styles
 from rich import box, console, panel, syntax, traceback
 
@@ -97,6 +98,15 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
     pass
 
 
+def complete_theme(ctx: Context, param: Parameter, incomplete: str) -> List[str]:
+    """Completion options for theme argument."""
+    available_themes = _get_all_available_themes(list_duplicate_alias=True)
+    completion_suggestions = [
+        theme for theme in available_themes if theme.startswith(incomplete.lower())
+    ]
+    return completion_suggestions
+
+
 file_argument = typer.Argument(
     ...,
     exists=True,
@@ -106,12 +116,14 @@ file_argument = typer.Argument(
     help="A Jupyter Notebook file to render.",
 )
 theme_option = typer.Option(
-    "material",
+    None,
     "--theme",
     "-t",
     help="The theme to use for syntax highlighting. May be 'light',"
-    " 'dark', or any Pygments theme.",
+    " 'dark', or any Pygments theme. By default adjusts based on"
+    " terminal. Call --list-themes to preview all available themes.",
     envvar="NBPREVIEW_THEME",
+    shell_complete=complete_theme,
 )
 list_themes_option = typer.Option(
     None,
@@ -197,22 +209,23 @@ def _translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
 @app.command()
 def main(
     file: Path = file_argument,
-    theme: str = theme_option,
-    width: Optional[int] = width_option,
-    hide_output: bool = hide_output_option,
+    theme: Optional[str] = theme_option,
     list_themes: Optional[bool] = list_themes_option,
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
+    hide_output: bool = hide_output_option,
     images: Optional[bool] = images_option,
+    width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     stdout_console = console.Console(file=sys.stdout, width=width)
     stderr_console = console.Console(file=sys.stderr)
     try:
+        translated_theme = _translate_theme(theme)
         rendered_notebook = notebook.Notebook.from_file(
             file,
-            theme=theme,
+            theme=translated_theme,
             hide_output=hide_output,
             plain=plain,
             unicode=unicode,

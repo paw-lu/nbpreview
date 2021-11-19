@@ -91,6 +91,24 @@ def _pick_image_drawing(
     return image_render
 
 
+def _pick_theme(theme: Union[str, None], console: Console) -> str:
+    """Pick a default code theme."""
+    if theme is None:
+        if (color_system := console.color_system) is not None:
+            default_themes = {
+                "standard": "ansi_dark",
+                "256": "material",
+                "truecolor": "material",
+            }
+            picked_theme = default_themes.get(color_system, "ansi_dark")
+        else:
+            picked_theme = "ansi_dark"
+    else:
+        picked_theme = theme
+
+    return picked_theme
+
+
 def _render_notebook(
     cells: List[NotebookNode],
     plain: bool,
@@ -170,9 +188,9 @@ class Notebook:
     Args:
         notebook_node (NotebookNode): A NotebookNode of the notebook to
             render.
-        theme (str): The theme to use for syntax highlighting. May be
-            "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "material".
+        theme (Optional[str]): The theme to use for syntax highlighting.
+            May be "light", "dark", or any Pygments theme. If None will
+            autodetect. By default None.
         plain (bool): Only show plain style. No decorations such as
             boxes or execution counts. By default will autodetect.
         unicode (Optional[bool]): Whether to use unicode characters to
@@ -199,7 +217,7 @@ class Notebook:
     """
 
     notebook_node: NotebookNode
-    theme: str = "material"
+    theme: Optional[str] = None
     plain: Optional[bool] = None
     unicode: Optional[bool] = None
     hide_output: bool = False
@@ -228,7 +246,7 @@ class Notebook:
     def from_file(
         cls,
         file: Path,
-        theme: str = "ansi_dark",
+        theme: Optional[str] = None,
         plain: Optional[bool] = None,
         unicode: Optional[bool] = None,
         hide_output: bool = False,
@@ -288,12 +306,13 @@ class Notebook:
         image_drawing = _pick_image_drawing(
             self.image_drawing, unicode=unicode, color=color
         )
+        theme = _pick_theme(self.theme, console=console)
         rendered_notebook = _render_notebook(
             self.cells,
             plain=plain,
             unicode=unicode,
             hyperlinks=hyperlinks,
-            theme=self.theme,
+            theme=theme,
             nerd_font=self.nerd_font,
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
