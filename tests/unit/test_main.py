@@ -200,6 +200,43 @@ def run_cli(
     return _run_cli
 
 
+@pytest.fixture
+def cli_arg(
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_terminal: Iterator[Mock],
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Iterator[Mock],
+) -> Callable[..., str]:
+    """Return function that applies arguments to cli."""
+
+    def _cli_arg(*args: str) -> str:
+        """Apply given arguments to cli."""
+        result = runner.invoke(
+            app, args=[os.fsdecode(notebook_path), "--images", *args], color=True
+        )
+        output = remove_link_ids(result.output)
+        return output
+
+    return _cli_arg
+
+
+@pytest.fixture
+def test_cli(
+    cli_arg: Callable[..., str],
+    remove_link_ids: Callable[[str], str],
+    expected_output: str,
+) -> Callable[..., None]:
+    """Return fixture that tests expected argument output."""
+
+    def _test_cli(*args: str) -> None:
+        """Tests expected argument output."""
+        output = cli_arg(*args)
+        assert output == remove_link_ids(expected_output)
+
+    return _test_cli
+
+
 def test_main_succeeds(run_cli: RunCli) -> None:
     """It exits with a status code of zero with a valid file."""
     result = run_cli()
