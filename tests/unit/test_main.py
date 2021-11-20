@@ -446,3 +446,23 @@ def test_change_theme_notebook_file(
     )
     output = result.output
     assert remove_link_ids(output) == expected_output
+
+
+@pytest.mark.parametrize("option_name", ("--hide-output", "-h"))
+def test_hide_output_notebook_file(
+    option_name: str,
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_terminal: Iterator[Mock],
+    expected_output: str,
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Iterator[Mock],
+) -> None:
+    """It hides the output of a notebook file."""
+    result = runner.invoke(
+        app,
+        args=[os.fsdecode(notebook_path), "--images", option_name],
+        color=True,
+    )
+    output = result.output
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
