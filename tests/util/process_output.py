@@ -1,5 +1,6 @@
 """Utilities for processing test outputs."""
 import pathlib
+import re
 import subprocess
 from typing import Tuple
 
@@ -37,8 +38,20 @@ def copy_string(string: str) -> None:
     subprocess.run("/usr/bin/pbcopy", text=True, input=string)  # noqa: S603
 
 
-def write_output(string: str, test_name: str) -> None:
-    """Write the output to the expected outptus file."""
+def write_output(string: str, test_name: str, replace_links: bool = True) -> None:
+    """Write the output to the expected output's file."""
+    if replace_links:
+        tempfile_link_pattern = re.compile(
+            r"(?P<prefix>file://)"
+            r"(?P<core_tempfile_link>[\w\s/\\]*)"
+            r"(?P<suffix>\d+\.\w+)"
+        )
+        string = tempfile_link_pattern.sub(
+            lambda match: f"{match.group('prefix')}"
+            "{{ tempfile_path }}"
+            f"{match.group('suffix')}",
+            string=string,
+        )
     output_directory = pathlib.Path(__file__).parent.parent / pathlib.Path(
         "unit", "expected_outputs"
     )
