@@ -299,10 +299,10 @@ class Notebook:
             self.unicode, detector=not options.legacy_windows and not options.ascii_only
         )
         hyperlinks = _pick_option(
-            self.hyperlinks, detector=not options.legacy_windows and not plain
+            self.hyperlinks, detector=not options.legacy_windows and options.is_terminal
         )
-        images = _pick_option(self.images, detector=options.is_terminal and not plain)
-        color = _pick_option(self.color, detector=options.is_terminal and not plain)
+        images = _pick_option(self.images, detector=options.is_terminal)
+        color = _pick_option(self.color, detector=options.is_terminal)
         image_drawing = _pick_image_drawing(
             self.image_drawing, unicode=unicode, color=color
         )
