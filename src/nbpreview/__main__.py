@@ -205,6 +205,13 @@ hyperlinks_option = typer.Option(
     " By default autodetects.",
     envvar="NBPREVIEW_HYPERLINKS",
 )
+hide_hyperlink_hints_option = typer.Option(
+    False,
+    "--hide-hyperlink-hints",
+    "-y",
+    help="Hide text hints that hyperlinks are clickable.",
+    envvar="NBPREVIEW_HIDE_HYPERLINK_HINTS",
+)
 images_option = typer.Option(
     False,
     "--images",
@@ -255,6 +262,7 @@ def main(
     no_files: bool = no_files_option,
     positive_space: bool = positive_space_option,
     hyperlinks: bool = hyperlinks_option,
+    hide_hyperlink_hints: bool = hide_hyperlink_hints_option,
     images: Optional[bool] = images_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
@@ -281,6 +289,7 @@ def main(
             files=files,
             negative_space=negative_space,
             hyperlinks=hyperlinks,
+            hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
