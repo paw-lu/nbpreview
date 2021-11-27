@@ -210,10 +210,27 @@ def cli_arg(
 ) -> Callable[..., str]:
     """Return function that applies arguments to cli."""
 
-    def _cli_arg(*args: str) -> str:
-        """Apply given arguments to cli."""
+    def _cli_arg(*args: Union[str, None], **kwargs: Union[str, None]) -> str:
+        """Apply given arguments to cli.
+
+        Args:
+            *args (Union[str, None]): The extra arguments to pass to the
+                command.
+            **kwargs (Union[str, None]): Environmental variables to set.
+                Will be uppercased.
+
+        Returns:
+            str: The output of the invoked command.
+        """
+        cleaned_args = [arg for arg in args if arg is not None]
+        upper_kwargs = {
+            name.upper(): value for name, value in kwargs.items() if value is not None
+        }
         result = runner.invoke(
-            app, args=[os.fsdecode(notebook_path), "--images", *args], color=True
+            app,
+            args=[os.fsdecode(notebook_path), "--images", *cleaned_args],
+            color=True,
+            env=upper_kwargs,
         )
         output = remove_link_ids(result.output)
         return output
@@ -229,9 +246,16 @@ def test_cli(
 ) -> Callable[..., None]:
     """Return fixture that tests expected argument output."""
 
-    def _test_cli(*args: str) -> None:
-        """Tests expected argument output."""
-        output = cli_arg(*args)
+    def _test_cli(*args: Union[str, None], **kwargs: Union[str, None]) -> None:
+        """Tests expected argument output.
+
+        Args:
+            *args (Union[str, None]): The extra arguments to pass to the
+                command.
+            **kwargs (Union[str, None]): Environmental variables to set.
+                Will be uppercased.
+        """
+        output = cli_arg(*args, **kwargs)
         assert output == remove_link_ids(expected_output)
 
     return _test_cli
