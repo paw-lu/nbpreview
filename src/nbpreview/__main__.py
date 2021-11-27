@@ -172,6 +172,13 @@ version_option = typer.Option(
     callback=version_callback,
     is_eager=True,
 )
+nerd_font_option = typer.Option(
+    False,
+    "--nerd-font",
+    "-n",
+    help="Whether to use Nerd Font icons.",
+    envvar="NBPREVIEW_NERD_FONT",
+)
 positive_space_option = typer.Option(
     False,
     "--positive-space",
@@ -229,6 +236,7 @@ def main(
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
     hide_output: bool = hide_output_option,
+    nerd_font: bool = nerd_font_option,
     positive_space: bool = positive_space_option,
     images: Optional[bool] = images_option,
     width: Optional[int] = width_option,
@@ -251,6 +259,7 @@ def main(
             hide_output=hide_output,
             plain=plain,
             unicode=unicode,
+            nerd_font=nerd_font,
             negative_space=negative_space,
             images=images,
         )
