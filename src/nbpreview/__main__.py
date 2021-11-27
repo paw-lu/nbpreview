@@ -169,6 +169,17 @@ version_option = typer.Option(
     callback=version_callback,
     is_eager=True,
 )
+positive_space_option = typer.Option(
+    False,
+    "--positive-space",
+    "-p",
+    help="Draw character images in positive space."
+    " Generally negative space works best on charts or images with"
+    " light backgrounds, while positive space will look best on dark"
+    " background images. Only has effect on character drawings. By "
+    " default set to negative space.",
+    envvar="NBPREVIEW_POSITIVE_SPACE",
+)
 images_option = typer.Option(
     False,
     "--images",
@@ -215,6 +226,7 @@ def main(
     plain: Optional[bool] = plain_option,
     unicode: Optional[bool] = unicode_option,
     hide_output: bool = hide_output_option,
+    positive_space: bool = positive_space_option,
     images: Optional[bool] = images_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
@@ -223,6 +235,7 @@ def main(
     stdout_console = console.Console(file=sys.stdout, width=width)
     stderr_console = console.Console(file=sys.stderr)
     try:
+        negative_space = not positive_space
         translated_theme = _translate_theme(theme)
         rendered_notebook = notebook.Notebook.from_file(
             file,
@@ -230,6 +243,7 @@ def main(
             hide_output=hide_output,
             plain=plain,
             unicode=unicode,
+            negative_space=negative_space,
             images=images,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
