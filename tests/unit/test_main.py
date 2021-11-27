@@ -476,27 +476,44 @@ def test_render_notebook_file(test_cli: Callable[..., None]) -> None:
 
 
 @pytest.mark.parametrize(
-    "option_name, theme", (("--theme", "light"), ("-t", "dark"), ("-t", "monokai"))
+    "option_name, theme, env",
+    (
+        ("--theme", "light", None),
+        ("-t", "dark", None),
+        ("-t", "monokai", None),
+        (None, None, "default"),
+    ),
 )
 def test_change_theme_notebook_file(
-    option_name: str, theme: str, test_cli: Callable[..., None]
+    option_name: Union[str, None],
+    theme: Union[str, None],
+    env: Union[str, None],
+    test_cli: Callable[..., None],
 ) -> None:
     """It changes the theme of the notebook."""
-    arg = f"{option_name}={theme}"
-    test_cli(arg)
+    arg = (
+        f"{option_name}={theme}"
+        if theme is not None and option_name is not None
+        else None
+    )
+    test_cli(arg, nbpreview_theme=env)
 
 
-@pytest.mark.parametrize("option_name", ("--hide-output", "-h"))
+@pytest.mark.parametrize(
+    "option_name, env", (("--hide-output", None), ("-h", None), (None, "1"))
+)
 def test_hide_output_notebook_file(
-    option_name: str, test_cli: Callable[..., None]
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
     """It hides the output of a notebook file."""
-    test_cli(option_name)
+    test_cli(option_name, nbpreview_hide_output=env)
 
 
-@pytest.mark.parametrize("option_name", ("--plain", "-p"))
+@pytest.mark.parametrize(
+    "option_name, env", (("--plain", None), ("-p", None), (None, "1"))
+)
 def test_plain_output_notebook_file(
-    option_name: str, test_cli: Callable[..., None]
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook in a plain format."""
-    test_cli(option_name)
+    test_cli(option_name, nbpreview_plain=env)
