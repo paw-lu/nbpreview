@@ -567,3 +567,21 @@ def test_positive_space_output_notebook_file(
 ) -> None:
     """It draws images in positive space if options are specified."""
     test_cli(option_name, nbpreview_positive_space=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--hyperlinks", None),
+        ("-k", None),
+        (None, "1"),
+        ("--no-hyperlinks", None),
+        ("-r", None),
+        (None, "0"),
+    ),
+)
+def test_hyperlinks_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It includes or excludes hyperlinks depending on options."""
+    test_cli(option_name, nbpreview_hyperlinks=env)
