@@ -517,3 +517,20 @@ def test_plain_output_notebook_file(
 ) -> None:
     """It renders a notebook in a plain format."""
     test_cli(option_name, nbpreview_plain=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--unicode", None),
+        ("-u", None),
+        ("--no-unicode", None),
+        ("-x", None),
+        (None, "0"),
+    ),
+)
+def test_unicode_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook with and without unicode characters."""
+    test_cli(option_name, nbpreview_unicode=env)
