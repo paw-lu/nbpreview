@@ -1,4 +1,5 @@
 """Command-line interface."""
+import functools
 import itertools
 import sys
 import textwrap
@@ -157,6 +158,8 @@ width_option = typer.Option(
 )
 unicode_option = typer.Option(
     None,
+    "--unicode / --no-unicode",
+    "-u / -x",
     help="Force the display or replacement of unicode chartacters"
     " instead of determining automatically.",
     envvar="NBPREVIEW_UNICODE",
@@ -232,8 +235,13 @@ def main(
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
-    stdout_console = console.Console(file=sys.stdout, width=width)
-    stderr_console = console.Console(file=sys.stderr)
+    output_console = functools.partial(
+        console.Console,
+        width=width,
+        emoji=unicode if unicode is not None else True,
+    )
+    stdout_console = output_console(file=sys.stdout)
+    stderr_console = output_console(file=sys.stderr)
     try:
         negative_space = not positive_space
         translated_theme = _translate_theme(theme)
