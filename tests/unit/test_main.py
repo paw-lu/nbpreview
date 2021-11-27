@@ -585,3 +585,18 @@ def test_hyperlinks_output_notebook_file(
 ) -> None:
     """It includes or excludes hyperlinks depending on options."""
     test_cli(option_name, nbpreview_hyperlinks=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--hide-hyperlink-hints", None),
+        ("-y", None),
+        (None, "1"),
+    ),
+)
+def test_hyperlink_hints_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It does not render hints to click the hyperlinks."""
+    test_cli(option_name, nbpreview_hide_hyperlink_hints=env)
