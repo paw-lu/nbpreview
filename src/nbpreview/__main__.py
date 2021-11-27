@@ -197,6 +197,14 @@ positive_space_option = typer.Option(
     " default set to negative space.",
     envvar="NBPREVIEW_POSITIVE_SPACE",
 )
+hyperlinks_option = typer.Option(
+    None,
+    "--hyperlinks / --no-hyperlinks",
+    "-k / -r",
+    help="Whether to use terminal hyperlinks when rendering content."
+    " By default autodetects.",
+    envvar="NBPREVIEW_HYPERLINKS",
+)
 images_option = typer.Option(
     False,
     "--images",
@@ -246,6 +254,7 @@ def main(
     nerd_font: bool = nerd_font_option,
     no_files: bool = no_files_option,
     positive_space: bool = positive_space_option,
+    hyperlinks: bool = hyperlinks_option,
     images: Optional[bool] = images_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
@@ -271,6 +280,7 @@ def main(
             nerd_font=nerd_font,
             files=files,
             negative_space=negative_space,
+            hyperlinks=hyperlinks,
             images=images,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
