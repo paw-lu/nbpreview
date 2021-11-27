@@ -179,6 +179,13 @@ nerd_font_option = typer.Option(
     help="Whether to use Nerd Font icons.",
     envvar="NBPREVIEW_NERD_FONT",
 )
+no_files_option = typer.Option(
+    False,
+    "--no-files",
+    "-l",
+    help="Do not write temporary files for previews.",
+    envvar="NBPREVIEW_NO_FILES",
+)
 positive_space_option = typer.Option(
     False,
     "--positive-space",
@@ -237,6 +244,7 @@ def main(
     unicode: Optional[bool] = unicode_option,
     hide_output: bool = hide_output_option,
     nerd_font: bool = nerd_font_option,
+    no_files: bool = no_files_option,
     positive_space: bool = positive_space_option,
     images: Optional[bool] = images_option,
     width: Optional[int] = width_option,
@@ -251,6 +259,7 @@ def main(
     stdout_console = output_console(file=sys.stdout)
     stderr_console = output_console(file=sys.stderr)
     try:
+        files = not no_files
         negative_space = not positive_space
         translated_theme = _translate_theme(theme)
         rendered_notebook = notebook.Notebook.from_file(
@@ -260,6 +269,7 @@ def main(
             plain=plain,
             unicode=unicode,
             nerd_font=nerd_font,
+            files=files,
             negative_space=negative_space,
             images=images,
         )
