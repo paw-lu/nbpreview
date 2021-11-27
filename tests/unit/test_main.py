@@ -545,3 +545,14 @@ def test_nerd_font_output_notebook_file(
 ) -> None:
     """It renders a notebook with nerd font characters."""
     test_cli(option_name, nbpreview_nerd_font=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--no-files", None), ("-l", None), (None, "1")),
+)
+def test_files_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It does not write temporary files if options are specified."""
+    test_cli(option_name, nbpreview_no_files=env)
