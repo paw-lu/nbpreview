@@ -210,12 +210,16 @@ def cli_arg(
 ) -> Callable[..., str]:
     """Return function that applies arguments to cli."""
 
-    def _cli_arg(*args: Union[str, None], **kwargs: Union[str, None]) -> str:
+    def _cli_arg(
+        *args: Union[str, None], images: bool = True, **kwargs: Union[str, None]
+    ) -> str:
         """Apply given arguments to cli.
 
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
+            images (bool): Whether to pass the "--images" option. By
+                default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
@@ -226,9 +230,12 @@ def cli_arg(
         upper_kwargs = {
             name.upper(): value for name, value in kwargs.items() if value is not None
         }
+        cli_args = [os.fsdecode(notebook_path), *cleaned_args]
+        if images:
+            cli_args.append("--images")
         result = runner.invoke(
             app,
-            args=[os.fsdecode(notebook_path), "--images", *cleaned_args],
+            args=cli_args,
             color=True,
             env=upper_kwargs,
         )
@@ -246,16 +253,20 @@ def test_cli(
 ) -> Callable[..., None]:
     """Return fixture that tests expected argument output."""
 
-    def _test_cli(*args: Union[str, None], **kwargs: Union[str, None]) -> None:
+    def _test_cli(
+        *args: Union[str, None], images: bool = True, **kwargs: Union[str, None]
+    ) -> None:
         """Tests expected argument output.
 
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
+            images (bool): Whether to pass the "--images" option. By
+                default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
         """
-        output = cli_arg(*args, **kwargs)
+        output = cli_arg(*args, images=images, **kwargs)
         assert output == remove_link_ids(expected_output)
 
     return _test_cli
