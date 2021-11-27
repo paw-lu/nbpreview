@@ -556,3 +556,14 @@ def test_files_output_notebook_file(
 ) -> None:
     """It does not write temporary files if options are specified."""
     test_cli(option_name, nbpreview_no_files=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--positive-space", None), ("-p", None), (None, "1")),
+)
+def test_positive_space_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It draws images in positive space if options are specified."""
+    test_cli(option_name, nbpreview_positive_space=env)
