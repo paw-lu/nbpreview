@@ -1,8 +1,14 @@
 name: Tests
 
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 
 jobs:
   tests:
@@ -81,6 +87,12 @@ jobs:
       - name: Run Nox
         run: |
           nox --force-color --python=${{ matrix.python-version }}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled && failure()}}
 
       - name: Upload coverage data
         if: always() && matrix.session == 'tests'
