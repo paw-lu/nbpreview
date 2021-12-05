@@ -611,3 +611,23 @@ def test_hyperlink_hints_output_notebook_file(
 ) -> None:
     """It does not render hints to click the hyperlinks."""
     test_cli(option_name, nbpreview_hide_hyperlink_hints=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--images", None),
+        ("-i", None),
+        (None, None),
+        (None, "1"),
+    ),
+)
+def test_image_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It draws images only when option is set."""
+    test_cli(
+        option_name,
+        images=False,
+        nbpreview_images=env,
+    )
