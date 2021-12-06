@@ -11,7 +11,7 @@ import nbformat
 import typer
 from click import Context, Parameter
 from pygments import styles
-from rich import box, console, panel, syntax, traceback
+from rich import box, console, panel, style, syntax, text, traceback
 from rich.console import Console
 
 from nbpreview import __version__, errors, notebook
@@ -262,6 +262,12 @@ def _translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
     return translated_theme
 
 
+def print_error(console: Console, message: str) -> None:
+    """Print stylized error message to the terminal."""
+    rich_message = text.Text(message, style=style.Style(color="#B3261E"))
+    console.print(rich_message)
+
+
 def _check_image_drawing_option(
     image_drawing: Union[ImageDrawingEnum, None], stderr_console: Console
 ) -> None:
@@ -270,10 +276,11 @@ def _check_image_drawing_option(
         try:
             import terminedia  # noqa: F401
         except ModuleNotFoundError as exception:
-            stderr_console.print(
-                f"--image-drawing='{image_drawing.value}' cannot be"
-                " used on this system. This might because it is being"
-                " run on Windows."
+            print_error(
+                stderr_console,
+                message=f"--image-drawing='{image_drawing.value}' cannot be"
+                " used on this system. This might be because it is"
+                " being run on Windows.",
             )
             raise typer.Exit(1) from exception
 
@@ -324,7 +331,9 @@ def main(
             image_drawing=image_drawing,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
-        stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
+        print_error(
+            stderr_console, message=f"{file} is not a valid Jupyter Notebook path."
+        )
         raise typer.Exit(1) from exception
 
     stdout_console.print(rendered_notebook)
