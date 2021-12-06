@@ -5,6 +5,7 @@ import json
 import os
 import pathlib
 import shlex
+import sys
 import tempfile
 import textwrap
 from pathlib import Path
@@ -37,6 +38,7 @@ from typer.testing import CliRunner
 import nbpreview
 from nbpreview import __main__
 from nbpreview.__main__ import app
+from tests.unit import test_notebook
 
 
 class RunCli(Protocol):
@@ -657,3 +659,20 @@ def test_image_drawing_notebook_file(
         arg,
         nbpreview_image_drawing=env,
     )
+
+
+@pytest.mark.xfail(
+    "terminedia" in sys.modules,
+    reason=test_notebook.SKIP_TERMINEDIA_REASON,
+    strict=True,
+)
+def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
+    """It raises a user-friendly warning message if import fails."""
+    output = cli_arg("--image-drawing=block")
+    expected_output = (
+        "\x1b[38;2;179;38;30m--image-drawing='block'"
+        " cannot be used on this system."
+        " This might be because it"
+        " \x1b[0m\x1b[38;2;179;38;30mis being run on Windows.\x1b[0m"
+    )
+    assert output.replace("\n", "") == expected_output
