@@ -12,8 +12,10 @@ import typer
 from click import Context, Parameter
 from pygments import styles
 from rich import box, console, panel, syntax, traceback
+from rich.console import Console
 
 from nbpreview import __version__, errors, notebook
+from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 
 app = typer.Typer()
@@ -260,6 +262,22 @@ def _translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
     return translated_theme
 
 
+def _check_image_drawing_option(
+    image_drawing: Union[ImageDrawingEnum, None], stderr_console: Console
+) -> None:
+    """Check if the image drawing option is valid."""
+    if image_drawing == drawing.ImageDrawingEnum.BLOCK:
+        try:
+            import terminedia  # noqa: F401
+        except ModuleNotFoundError as exception:
+            stderr_console.print(
+                f"--image-drawing='{image_drawing.value}' cannot be"
+                " used on this system. This might because it is being"
+                " run on Windows."
+            )
+            raise typer.Exit(1) from exception
+
+
 @app.command()
 def main(
     file: Path = file_argument,
@@ -286,6 +304,7 @@ def main(
     )
     stdout_console = output_console(file=sys.stdout)
     stderr_console = output_console(file=sys.stderr)
+    _check_image_drawing_option(image_drawing, stderr_console=stderr_console)
     try:
         files = not no_files
         negative_space = not positive_space
