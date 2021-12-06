@@ -14,6 +14,7 @@ from pygments import styles
 from rich import box, console, panel, syntax, traceback
 
 from nbpreview import __version__, errors, notebook
+from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 
 app = typer.Typer()
 traceback.install(theme="material")
@@ -219,6 +220,15 @@ images_option = typer.Option(
     help="Render images. See image-drawing-option for render modes.",
     envvar="NBPREVIEW_IMAGES",
 )
+image_drawing_option = typer.Option(
+    None,
+    "--image-drawing",
+    "--id",
+    help="The type of image drawing. Accepted values are 'block',"
+    " 'character', or 'braille'. 'block' might raise issues on Windows.",
+    envvar="NBPREVIEW_IMAGE_DRAWING",
+    case_sensitive=False,
+)
 
 
 @typing.overload
@@ -264,6 +274,7 @@ def main(
     hyperlinks: bool = hyperlinks_option,
     hide_hyperlink_hints: bool = hide_hyperlink_hints_option,
     images: Optional[bool] = images_option,
+    image_drawing: Optional[ImageDrawingEnum] = image_drawing_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
 ) -> None:
@@ -291,6 +302,7 @@ def main(
             hyperlinks=hyperlinks,
             hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
+            image_drawing=image_drawing,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         stderr_console.print(f"{file} is not a valid Jupyter Notebook path.")
