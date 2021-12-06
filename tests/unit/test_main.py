@@ -631,3 +631,29 @@ def test_image_notebook_file(
         images=False,
         nbpreview_images=env,
     )
+
+
+@pytest.mark.parametrize(
+    "option_name, drawing_type, env",
+    (
+        ("--image-drawing", "braille", None),
+        ("--id", "character", None),
+        (None, None, "braille"),
+    ),
+)
+def test_image_drawing_notebook_file(
+    option_name: Union[str, None],
+    drawing_type: Union[str, None],
+    env: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It draws images only when option is set."""
+    arg = (
+        f"{option_name}={drawing_type}"
+        if option_name is not None and drawing_type is not None
+        else None
+    )
+    test_cli(
+        arg,
+        nbpreview_image_drawing=env,
+    )
