@@ -1,0 +1,82 @@
+       Lorem ipsum                                                              
+      ──────────────────────────────────────────────────────────────────────────
+                                                                                
+     ╭─────────────────────────────────────────────────────────────────────────╮
+[1]: │ import matplotlib.pyplot as plt                                         │
+     │ import seaborn as sns                                                   │
+     ╰─────────────────────────────────────────────────────────────────────────╯
+                                                                                
+                                                                                
+      ## Condimentum                                                            
+      ──────────────────────────────────────────────────────────────────────────
+                                                                                
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod   
+      tempor incididunt ut labore et dolore magna aliqua. Sunt in culpa qui     
+      officia deserunt mollit anim id est laborum.                              
+                                                                                
+     ╭─────────────────────────────────────────────────────────────────────────╮
+[2]: │ fmri = sns.load_dataset("fmri")                                         │
+     │ tips = sns.load_dataset("tips")                                         │
+     │ fmri.head()                                                             │
+     ╰─────────────────────────────────────────────────────────────────────────╯
+                                                                                
+[2]:  🌐 Click to view HTML                                                     
+                                                                                
+[2]:       subject   timepoint   event     region      signal                   
+      ────────────────────────────────────────────────────────                  
+       0       s13          18    stim   parietal   -0.017552                   
+       1        s5          14    stim   parietal   -0.080883                   
+       2       s12          18    stim   parietal   -0.081033                   
+       3       s11          18    stim   parietal   -0.046134                   
+       4       s10          18    stim   parietal   -0.037970                   
+                                                                                
+     ╭─────────────────────────────────────────────────────────────────────────╮
+[3]: │ _, (ax_line, ax_box) = plt.subplots(ncols=2, facecolor="#1C1B1F", figs… │
+     │ (                                                                       │
+     │     fmri.pipe(                                                          │
+     │         (sns.lineplot, "data"),                                         │
+     │         x="timepoint",                                                  │
+     │         y="signal",                                                     │
+     │         hue="event",                                                    │
+     │         ax=ax_line,                                                     │
+     │         err_kws={"alpha": 1},                                           │
+     │     ).set(                                                              │
+     │         xlabel=None,                                                    │
+     │         ylabel=None,                                                    │
+     │         yticks=[],                                                      │
+     │         xticks=[],                                                      │
+     │     )                                                                   │
+     │ )                                                                       │
+     │                                                                         │
+     │ (                                                                       │
+     │     tips.pipe(                                                          │
+     │         (sns.boxplot, "data"),                                          │
+     │         x="day",                                                        │
+     │         y="total_bill",                                                 │
+     │         hue="smoker",                                                   │
+     │         ax=ax_box,                                                      │
+     │     ).set(                                                              │
+     │         xlabel=None,                                                    │
+     │         ylabel=None,                                                    │
+     │         yticks=[],                                                      │
+     │         xticks=[],                                                      │
+     │     )                                                                   │
+     │ )                                                                       │
+     ╰─────────────────────────────────────────────────────────────────────────╯
+                                                                                
+[3]:  [Text(0.5, 0, ''), Text(0, 0.5, ''), [], []]                              
+                                                                                
+      🖼 Click to view Image                                                     
+                                                                                
+      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+      GGGGGGGGGG:::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+      GGGGGGGGG:::::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGGGGGGGGGG
+      GGGGGGGGG:GG::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGGGGGGGGGG
+      GGGGGGGG:GGGG::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGGGGGGGGGG
+      GGGGGGG!:GGGGG::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGG:::GGGGG
+      GGGGGGG:!!!GGGG:GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG:::GGGGG:::?!!!G
+      GGGGGG:!!GG!!GGG:GGGGGGGGGGGGGGGGGGGGGGGGGGGP???GGGGG!!!GG:::!!!PG:::?!!!G
+      GG:G!!GGGGGGG!GG::GGG?!!!!!!!!!!GGGGGGGGG:::P!!!GP:::!!!GG:::!!!PGGGG?!!!G
+      GGGGGGGGGGGGGG!!!!!!GGGGGG::::::GGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGGGGGGGGGG
+      GGGGGGGGGGGGGGGGGGG::::::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGGGGGGGGGG
+      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG

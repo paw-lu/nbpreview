@@ -676,3 +676,29 @@ def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
         " \x1b[0m\x1b[38;2;179;38;30mis being run on Windows.\x1b[0m"
     )
     assert output.replace("\n", "") == expected_output
+
+
+@pytest.mark.parametrize(
+    "option_name, env_name, env_value",
+    (
+        ("--color", None, None),
+        ("-c", None, None),
+        ("--no-color", None, None),
+        ("-o", None, None),
+        (None, "NBPREVIEW_COLOR", "0"),
+        (None, "NO_COLOR", "1"),
+        (None, "NBPREVIEW_NO_COLOR", "true"),
+        (None, "TERM", "dumb"),
+    ),
+)
+def test_color_notebook_file(
+    option_name: Union[str, None],
+    env_name: Union[str, None],
+    env_value: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It does not use color when specified."""
+    if env_name is not None:
+        test_cli(option_name, **{env_name: env_value})
+    else:
+        test_cli(option_name)
