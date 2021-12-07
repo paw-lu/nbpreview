@@ -1,6 +1,7 @@
 """Command-line interface."""
 import functools
 import itertools
+import os
 import sys
 import textwrap
 import typing
@@ -231,6 +232,33 @@ image_drawing_option = typer.Option(
     envvar="NBPREVIEW_IMAGE_DRAWING",
     case_sensitive=False,
 )
+color_option = typer.Option(
+    None,
+    "--color / --no-color",
+    "-c / -o",
+    help="Whether to render with color. By default will autodetect."
+    " Additionally respects NO_COLOR, NBPREVIEW_NO_COLOR, and"
+    " TERM='dumb'.",
+    envvar="NBPREVIEW_COLOR",
+)
+
+
+def _envvar_to_bool(envvar: str) -> bool:
+    """Convert environmental variable values to bool."""
+    envvar_value = os.environ.get(envvar, False)
+    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
+    return envvar_bool
+
+
+def _detect_no_color() -> Union[bool, None]:
+    """Detect if color should be used."""
+    no_color_variables = (
+        _envvar_to_bool("NO_COLOR"),
+        _envvar_to_bool("NBPREVIEW_NO_COLOR"),
+        os.environ.get("TERM", "smart").lower() == "dumb",
+    )
+    force_no_color = any(no_color_variables)
+    return force_no_color
 
 
 @typing.overload
@@ -300,13 +328,18 @@ def main(
     hide_hyperlink_hints: bool = hide_hyperlink_hints_option,
     images: Optional[bool] = images_option,
     image_drawing: Optional[ImageDrawingEnum] = image_drawing_option,
+    color: Optional[bool] = color_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
+    if color is None and _detect_no_color():
+        color = False
+    no_color = not color if color is not None else color
     output_console = functools.partial(
         console.Console,
         width=width,
+        no_color=no_color,
         emoji=unicode if unicode is not None else True,
     )
     stdout_console = output_console(file=sys.stdout)
@@ -329,6 +362,7 @@ def main(
             hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
             image_drawing=image_drawing,
+            color=color,
         )
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         print_error(
