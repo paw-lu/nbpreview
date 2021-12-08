@@ -1,4 +1,5 @@
 """Command-line interface."""
+import enum
 import functools
 import itertools
 import os
@@ -15,12 +16,22 @@ from pygments import styles
 from rich import box, console, panel, style, syntax, text, traceback
 from rich.console import Console
 
-from nbpreview import __version__, errors, notebook
+from nbpreview import __version__, cli_choices, errors, notebook
 from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 
 app = typer.Typer()
 traceback.install(theme="material")
+
+
+class ColorSystemEnum(str, cli_choices.LowerNameEnum):
+    """The color systems supported by terminals."""
+
+    STANDARD = enum.auto()
+    EIGHT_BIT = "256"
+    TRUECOLOR = enum.auto()
+    WINDOWS = enum.auto()
+    NONE = enum.auto()
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -241,6 +252,14 @@ color_option = typer.Option(
     " TERM='dumb'.",
     envvar="NBPREVIEW_COLOR",
 )
+color_system_option = typer.Option(
+    None,
+    "--color-system",
+    "--cs",
+    help="The type of color system to use.",
+    envvar="NBPREVIEW_COLOR_SYSTEM",
+    case_sensitive=False,
+)
 
 
 def _envvar_to_bool(envvar: str) -> bool:
@@ -329,6 +348,7 @@ def main(
     images: Optional[bool] = images_option,
     image_drawing: Optional[ImageDrawingEnum] = image_drawing_option,
     color: Optional[bool] = color_option,
+    color_system: Optional[ColorSystemEnum] = color_system_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
 ) -> None:
@@ -336,11 +356,20 @@ def main(
     if color is None and _detect_no_color():
         color = False
     no_color = not color if color is not None else color
+    _color_system: Union[str, None]
+    if color_system is None:
+        _color_system = "auto"
+    elif color_system == "none":
+        _color_system = None
+    else:
+        _color_system = color_system
+
     output_console = functools.partial(
         console.Console,
         width=width,
         no_color=no_color,
         emoji=unicode if unicode is not None else True,
+        color_system=_color_system,
     )
     stdout_console = output_console(file=sys.stdout)
     stderr_console = output_console(file=sys.stderr)
@@ -364,13 +393,15 @@ def main(
             image_drawing=image_drawing,
             color=color,
         )
+
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         print_error(
             stderr_console, message=f"{file} is not a valid Jupyter Notebook path."
         )
         raise typer.Exit(1) from exception
 
-    stdout_console.print(rendered_notebook)
+    else:
+        stdout_console.print(rendered_notebook)
 
 
 if __name__ == "__main__":
