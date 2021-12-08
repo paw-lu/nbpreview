@@ -213,15 +213,20 @@ def cli_arg(
     """Return function that applies arguments to cli."""
 
     def _cli_arg(
-        *args: Union[str, None], images: bool = True, **kwargs: Union[str, None]
+        *args: Union[str, None],
+        images: bool = True,
+        truecolor: bool = True,
+        **kwargs: Union[str, None],
     ) -> str:
         """Apply given arguments to cli.
 
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
-            images (bool): Whether to pass the "--images" option. By
+            images (bool): Whether to pass the '--images' option. By
                 default True.
+            truecolor (bool): Whether to pass
+                '--color-system=truecolor' option. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
@@ -235,6 +240,8 @@ def cli_arg(
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
         if images:
             cli_args.append("--images")
+        if truecolor:
+            cli_args.append("--color-system=truecolor")
         result = runner.invoke(
             app,
             args=cli_args,
@@ -256,19 +263,24 @@ def test_cli(
     """Return fixture that tests expected argument output."""
 
     def _test_cli(
-        *args: Union[str, None], images: bool = True, **kwargs: Union[str, None]
+        *args: Union[str, None],
+        images: bool = True,
+        truecolor: bool = True,
+        **kwargs: Union[str, None],
     ) -> None:
         """Tests expected argument output.
 
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
-            images (bool): Whether to pass the "--images" option. By
+            images (bool): Whether to pass the '--images' option. By
                 default True.
+            truecolor (bool): Whether to pass
+                '--color-system=truecolor' option. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
         """
-        output = cli_arg(*args, images=images, **kwargs)
+        output = cli_arg(*args, images=images, truecolor=truecolor, **kwargs)
         assert output == remove_link_ids(expected_output)
 
     return _test_cli
@@ -702,3 +714,27 @@ def test_color_notebook_file(
         test_cli(option_name, **{env_name: env_value})
     else:
         test_cli(option_name)
+
+
+@pytest.mark.parametrize(
+    "option_name, color_system, env_value",
+    (
+        ("--color-system", "standard", None),
+        ("--color-system", "none", None),
+        ("--cs", "256", None),
+        (None, None, "windows"),
+    ),
+)
+def test_color_system_notebook_file(
+    option_name: Union[str, None],
+    color_system: Union[str, None],
+    env_value: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It uses different color systems depending on option value."""
+    arg = (
+        f"{option_name}={color_system}"
+        if option_name is not None and color_system is not None
+        else None
+    )
+    test_cli(arg, truecolor=False, nbpreview_color_system=env_value)
