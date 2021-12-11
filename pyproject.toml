@@ -68,6 +68,7 @@ pyupgrade = "^2.29.0"
 tryceratops = "^1.0.0"
 isort = "^5.9.3"
 nbqa = "^1.1.1"
+click = "^8.0.3"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
