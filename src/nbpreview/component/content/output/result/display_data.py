@@ -1,11 +1,12 @@
 """Notebook display data and execute result."""
-from __future__ import annotations
+
 
 import collections
 import dataclasses
 import enum
 import json
-from typing import ClassVar, Dict, Iterator, List, Literal, Optional, Union
+from pathlib import Path
+from typing import ClassVar, Dict, Iterator, List, Optional, Union
 
 import html2text
 from lxml import html
@@ -21,167 +22,9 @@ from rich.text import Text
 
 from nbpreview.component import markdown
 from nbpreview.component.content.output.result import drawing, link, table
-from nbpreview.component.content.output.result.drawing import Drawing
+from nbpreview.component.content.output.result.drawing import Drawing, ImageDrawing
 from nbpreview.component.markdown import CustomMarkdown
 from nbpreview.data import Data
-
-
-def _render_html(
-    data: Data,
-    theme: str,
-    nerd_font: bool,
-    unicode: bool,
-    images: bool,
-    image_drawing: Literal["block", "character", "braille"],
-    color: bool,
-    negative_space: bool,
-    hyperlinks: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-    characters: Optional[str] = None,
-) -> Union[DataFrameDisplay, HTMLDisplay]:
-    """Render HTML output."""
-    display_data: Union[DataFrameDisplay, HTMLDisplay]
-    html_data = data["text/html"]
-    dataframe_display_type = DataFrameDisplay.dataframe_display_type(html_data)
-    styled = dataframe_display_type == DataFrameDisplayType.STYLED
-    if dataframe_display_type is not None:
-        display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
-    else:
-        display_data = HTMLDisplay.from_data(
-            data,
-            theme=theme,
-            nerd_font=nerd_font,
-            unicode=unicode,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-        )
-    return display_data
-
-
-def _choose_basic_renderer(
-    data: Data,
-    unicode: bool,
-    nerd_font: bool,
-    theme: str,
-    images: bool,
-    image_drawing: Literal["block", "character", "braille"],
-    color: bool,
-    negative_space: bool,
-    hyperlinks: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-    characters: Optional[str] = None,
-) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
-    """Render straightforward text data."""
-    display_data: DisplayData
-    if "text/markdown" in data:
-        display_data = MarkdownDisplay.from_data(
-            data,
-            theme=theme,
-            nerd_font=nerd_font,
-            unicode=unicode,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-        )
-        return display_data
-    elif unicode and "text/latex" in data:
-        display_data = LaTeXDisplay.from_data(data)
-        return display_data
-    elif "application/json" in data:
-        display_data = JSONDisplay.from_data(data, theme=theme)
-        return display_data
-    elif (unicode or nerd_font) and "application/pdf" in data:
-        display_data = PDFDisplay.from_data(data, nerd_font=nerd_font, unicode=unicode)
-        return display_data
-    elif "text/plain" in data:
-        display_data = PlainDisplay.from_data(data)
-        return display_data
-    else:
-        return None
-
-
-def render_display_data(
-    data: Data,
-    unicode: bool,
-    plain: bool,
-    nerd_font: bool,
-    theme: str,
-    images: bool,
-    image_drawing: Literal["block", "character", "braille"],
-    color: bool,
-    negative_space: bool,
-    hyperlinks: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-    characters: Optional[str] = None,
-) -> Union[DisplayData, None, Drawing]:
-    """Render the notebook display data."""
-    display_data: Union[DisplayData, None, Drawing]
-    if images:
-        image_types = (
-            "image/bmp",
-            "image/gif",
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-        )
-        for image_type in image_types:
-            if image_type in data:
-                display_data = drawing.render_drawing(
-                    data=data,
-                    image_drawing=image_drawing,
-                    image_type=image_type,
-                    color=color,
-                    negative_space=negative_space,
-                )
-                if display_data is not None:
-                    return display_data
-
-    if not plain and "text/html" in data:
-        display_data = _render_html(
-            data,
-            unicode=unicode,
-            theme=theme,
-            nerd_font=nerd_font,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-        )
-        return display_data
-    else:
-        display_data = _choose_basic_renderer(
-            data,
-            unicode=unicode,
-            nerd_font=nerd_font,
-            theme=theme,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-        )
-        return display_data
 
 
 @dataclasses.dataclass
@@ -203,7 +46,7 @@ class PlainDisplay(DisplayData):
     data_type: ClassVar[str] = "text/plain"
 
     @classmethod
-    def from_data(cls, data: Data) -> PlainDisplay:
+    def from_data(cls, data: Data) -> "PlainDisplay":
         """Create a plain display data from notebook data."""
         content = data[cls.data_type]
         return cls(content)
@@ -217,12 +60,13 @@ class HTMLDisplay(DisplayData):
     nerd_font: bool
     unicode: bool
     images: bool
-    image_drawing: Literal["block", "character", "braille"]
+    image_drawing: ImageDrawing
     color: bool
     negative_space: bool
     hyperlinks: bool
     files: bool
     hide_hyperlink_hints: bool
+    relative_dir: Path
     characters: Optional[str] = None
     data_type: ClassVar[str] = "text/html"
 
@@ -234,14 +78,15 @@ class HTMLDisplay(DisplayData):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
-    ) -> HTMLDisplay:
+    ) -> "HTMLDisplay":
         """Create an HTML display data from notebook data."""
         content = data[cls.data_type]
         return cls(
@@ -257,6 +102,7 @@ class HTMLDisplay(DisplayData):
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     def __rich__(self) -> CustomMarkdown:
@@ -274,6 +120,7 @@ class HTMLDisplay(DisplayData):
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             characters=self.characters,
+            relative_dir=self.relative_dir,
         )
         return rendered_html
 
@@ -449,7 +296,7 @@ class DataFrameDisplay(DisplayData):
         return None
 
     @classmethod
-    def from_data(cls, data: Data, unicode: bool, styled: bool) -> DataFrameDisplay:
+    def from_data(cls, data: Data, unicode: bool, styled: bool) -> "DataFrameDisplay":
         """Create DataFrame display data from notebook data."""
         content = data[cls.data_type]
         return cls(content, unicode=unicode, styled=styled)
@@ -472,12 +319,13 @@ class MarkdownDisplay(DisplayData):
     nerd_font: bool
     unicode: bool
     images: bool
-    image_drawing: Literal["block", "character", "braille"]
+    image_drawing: ImageDrawing
     color: bool
     negative_space: bool
     hyperlinks: bool
     files: bool
     hide_hyperlink_hints: bool
+    relative_dir: Path
     characters: Optional[str] = None
     data_type: ClassVar[str] = "text/markdown"
 
@@ -489,14 +337,15 @@ class MarkdownDisplay(DisplayData):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
-    ) -> MarkdownDisplay:
+    ) -> "MarkdownDisplay":
         """Create Markdown display data from notebook data."""
         content = data[cls.data_type]
         return cls(
@@ -512,6 +361,7 @@ class MarkdownDisplay(DisplayData):
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     def __rich__(self) -> CustomMarkdown:
@@ -528,6 +378,7 @@ class MarkdownDisplay(DisplayData):
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
             characters=self.characters,
+            relative_dir=self.relative_dir,
         )
         return rendered_markdown
 
@@ -539,7 +390,7 @@ class LaTeXDisplay(DisplayData):
     data_type: ClassVar[str] = "text/latex"
 
     @classmethod
-    def from_data(cls, data: Data) -> LaTeXDisplay:
+    def from_data(cls, data: Data) -> "LaTeXDisplay":
         """Create LaTeX display data from notebook data."""
         content = data[cls.data_type]
         return cls(content)
@@ -560,7 +411,7 @@ class JSONDisplay(DisplayData):
     data_type: ClassVar[str] = "application/json"
 
     @classmethod
-    def from_data(cls, data: Data, theme: str) -> JSONDisplay:
+    def from_data(cls, data: Data, theme: str) -> "JSONDisplay":
         """Create JSON display data from notebook data."""
         content = json.dumps(data[cls.data_type])
         return cls(content, theme=theme)
@@ -600,7 +451,172 @@ class PDFDisplay(DisplayData):
         data: Data,
         nerd_font: bool,
         unicode: bool,
-    ) -> PDFDisplay:
+    ) -> "PDFDisplay":
         """Create PDF display data from notebook data."""
         content = data[cls.data_type]
         return cls(content, nerd_font=nerd_font, unicode=unicode)
+
+
+def _render_html(
+    data: Data,
+    theme: str,
+    nerd_font: bool,
+    unicode: bool,
+    images: bool,
+    image_drawing: ImageDrawing,
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    relative_dir: Path,
+    characters: Optional[str] = None,
+) -> Union[DataFrameDisplay, HTMLDisplay]:
+    """Render HTML output."""
+    display_data: Union[DataFrameDisplay, HTMLDisplay]
+    html_data = data["text/html"]
+    dataframe_display_type = DataFrameDisplay.dataframe_display_type(html_data)
+    styled = dataframe_display_type == DataFrameDisplayType.STYLED
+    if dataframe_display_type is not None:
+        display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
+    else:
+        display_data = HTMLDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+            relative_dir=relative_dir,
+        )
+    return display_data
+
+
+def _choose_basic_renderer(
+    data: Data,
+    unicode: bool,
+    nerd_font: bool,
+    theme: str,
+    images: bool,
+    image_drawing: ImageDrawing,
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    relative_dir: Path,
+    characters: Optional[str] = None,
+) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
+    """Render straightforward text data."""
+    display_data: DisplayData
+    if "text/markdown" in data:
+        display_data = MarkdownDisplay.from_data(
+            data,
+            theme=theme,
+            nerd_font=nerd_font,
+            unicode=unicode,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+            relative_dir=relative_dir,
+        )
+        return display_data
+    elif unicode and "text/latex" in data:
+        display_data = LaTeXDisplay.from_data(data)
+        return display_data
+    elif "application/json" in data:
+        display_data = JSONDisplay.from_data(data, theme=theme)
+        return display_data
+    elif (unicode or nerd_font) and "application/pdf" in data:
+        display_data = PDFDisplay.from_data(data, nerd_font=nerd_font, unicode=unicode)
+        return display_data
+    elif "text/plain" in data:
+        display_data = PlainDisplay.from_data(data)
+        return display_data
+    else:
+        return None
+
+
+def render_display_data(
+    data: Data,
+    unicode: bool,
+    plain: bool,
+    nerd_font: bool,
+    theme: str,
+    images: bool,
+    image_drawing: ImageDrawing,
+    color: bool,
+    negative_space: bool,
+    hyperlinks: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+    relative_dir: Path,
+    characters: Optional[str] = None,
+) -> Union[DisplayData, None, Drawing]:
+    """Render the notebook display data."""
+    display_data: Union[DisplayData, None, Drawing]
+    if images:
+        image_types = (
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+        )
+        for image_type in image_types:
+            if image_type in data:
+                display_data = drawing.render_drawing(
+                    data=data,
+                    image_drawing=image_drawing,
+                    image_type=image_type,
+                    color=color,
+                    negative_space=negative_space,
+                )
+                if display_data is not None:
+                    return display_data
+
+    if not plain and "text/html" in data:
+        display_data = _render_html(
+            data,
+            unicode=unicode,
+            theme=theme,
+            nerd_font=nerd_font,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+            relative_dir=relative_dir,
+        )
+        return display_data
+    else:
+        display_data = _choose_basic_renderer(
+            data,
+            unicode=unicode,
+            nerd_font=nerd_font,
+            theme=theme,
+            images=images,
+            image_drawing=image_drawing,
+            color=color,
+            negative_space=negative_space,
+            hyperlinks=hyperlinks,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+            characters=characters,
+            relative_dir=relative_dir,
+        )
+        return display_data

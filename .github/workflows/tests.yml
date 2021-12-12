@@ -1,8 +1,14 @@
 name: Tests
 
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 
 jobs:
   tests:
@@ -12,17 +18,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { python-version: 3.9, os: ubuntu-latest, session: "pre-commit" }
-          - { python-version: 3.9, os: ubuntu-latest, session: "safety" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "pre-commit" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "safety" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "mypy" }
           - { python-version: 3.9, os: ubuntu-latest, session: "mypy" }
           - { python-version: 3.8, os: ubuntu-latest, session: "mypy" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "tests" }
           - { python-version: 3.9, os: ubuntu-latest, session: "tests" }
           - { python-version: 3.8, os: ubuntu-latest, session: "tests" }
           - { python-version: 3.9, os: windows-latest, session: "tests" }
           - { python-version: 3.9, os: macos-latest, session: "tests" }
           - { python-version: 3.9, os: ubuntu-latest, session: "typeguard" }
-          - { python-version: 3.9, os: ubuntu-latest, session: "xdoctest" }
-          - { python-version: 3.9, os: ubuntu-latest, session: "docs-build" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "xdoctest" }
+          - { python-version: "3.10", os: ubuntu-latest, session: "docs-build" }
 
     env:
       NOXSESSION: ${{ matrix.session }}
@@ -43,12 +51,13 @@ jobs:
 
       - name: Install Poetry
         run: |
-          pip install --constraint=.github/workflows/constraints.txt poetry
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
           poetry --version
 
       - name: Install Nox
         run: |
-          pip install --constraint=.github/workflows/constraints.txt nox nox-poetry
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
           nox --version
 
       - name: Compute pre-commit cache key
@@ -78,6 +87,12 @@ jobs:
       - name: Run Nox
         run: |
           nox --force-color --python=${{ matrix.python-version }}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled && failure()}}
 
       - name: Upload coverage data
         if: always() && matrix.session == 'tests'
@@ -112,12 +127,13 @@ jobs:
 
       - name: Install Poetry
         run: |
-          pip install --constraint=.github/workflows/constraints.txt poetry
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
           poetry --version
 
       - name: Install Nox
         run: |
-          pip install --constraint=.github/workflows/constraints.txt nox nox-poetry
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
           nox --version
 
       - name: Download coverage data

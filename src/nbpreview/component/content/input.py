@@ -1,8 +1,9 @@
 """Input notebook cells."""
-from __future__ import annotations
+
 
 import dataclasses
-from typing import Literal, Optional, Union
+from pathlib import Path
+from typing import Optional, Union
 
 import pygments
 from rich import padding, panel, syntax, text
@@ -12,6 +13,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from nbpreview.component import markdown
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 
 def box_cell(
@@ -50,12 +52,13 @@ class MarkdownCell(Cell):
         nerd_font: bool,
         unicode: bool,
         images: bool,
-        image_drawing: Literal["block", "character", "braille"],
+        image_drawing: ImageDrawing,
         color: bool,
         negative_space: bool,
         hyperlinks: bool,
         files: bool,
         hide_hyperlink_hints: bool,
+        relative_dir: Path,
         characters: Optional[str] = None,
     ) -> None:
         """Constructor."""
@@ -72,6 +75,7 @@ class MarkdownCell(Cell):
         self.files = files
         self.hide_hyperlink_hints = hide_hyperlink_hints
         self.characters = characters
+        self.relative_dir = relative_dir
 
     def __rich__(self) -> Padding:
         """Render the markdown cell."""
@@ -89,6 +93,7 @@ class MarkdownCell(Cell):
                 files=self.files,
                 hide_hyperlink_hints=self.hide_hyperlink_hints,
                 characters=self.characters,
+                relative_dir=self.relative_dir,
             ),
             pad=self.pad,
         )

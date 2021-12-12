@@ -1,11 +1,12 @@
 """Render execution results from Jupyter Notebooks."""
-from typing import Dict, Iterator, Literal, Union
+from pathlib import Path
+from typing import Dict, Iterator, Union
 
 from nbformat import NotebookNode
 
 from nbpreview.component.content.output.result import display_data, link
 from nbpreview.component.content.output.result.display_data import DisplayData
-from nbpreview.component.content.output.result.drawing import Drawing
+from nbpreview.component.content.output.result.drawing import Drawing, ImageDrawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
 from nbpreview.component.content.output.result.link import FileLink
 
@@ -23,9 +24,10 @@ def render_result(
     hide_hyperlink_hints: bool,
     theme: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
 ) -> Iterator[Result]:
     """Render executed result outputs."""
     data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
@@ -51,6 +53,7 @@ def render_result(
         hyperlinks=hyperlinks,
         files=files,
         hide_hyperlink_hints=hide_hyperlink_hints,
+        relative_dir=relative_dir,
     )
     for result in (link_result, main_result):
         if result is not None:

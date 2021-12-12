@@ -43,6 +43,30 @@ repos:
         entry: isort
         language: system
         types: [python]
+      - id: nbqa-black
+        name: nbqa-black
+        entry: nbqa black
+        language: system
+        require_serial: true
+        types: [jupyter]
+      - id: nbqa-flake8
+        name: nbqa-flake8
+        entry: nbqa flake8
+        language: system
+        require_serial: true
+        types: [jupyter]
+      - id: nbqa-pyupgrade
+        name: nbqa-pyupgrade
+        entry: nbqa pyupgrade
+        language: system
+        require_serial: true
+        types: [jupyter]
+      - id: nbqa-isort
+        name: nbqa-isort
+        entry: nbqa isort
+        language: system
+        require_serial: true
+        types: [jupyter]
       - id: pyupgrade
         name: pyupgrade
         entry: pyupgrade
@@ -65,4 +89,4 @@ repos:
     rev: v2.3.0
     hooks:
       - id: prettier
-exclude: "^tests/expected_outputs"
+exclude: "^tests/unit/expected_outputs"

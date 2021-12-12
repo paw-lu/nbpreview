@@ -2,7 +2,8 @@
 import dataclasses
 import itertools
 from dataclasses import InitVar
-from typing import Iterator, List, Literal, Optional, Tuple, Union
+from pathlib import Path
+from typing import Iterator, List, Optional, Tuple, Union
 
 from nbformat import NotebookNode
 from rich import padding
@@ -13,6 +14,7 @@ from nbpreview.component.content.input import Cell
 from nbpreview.component.content.output import error, stream
 from nbpreview.component.content.output.output import Output
 from nbpreview.component.content.output.result import execution_indicator, result
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
 Content = Union[Cell, Padding]
@@ -67,12 +69,13 @@ def render_input_row(
     nerd_font: bool,
     unicode: bool,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     hyperlinks: bool,
     files: bool,
     hide_hyperlink_hints: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
     unicode_border: Optional[bool] = None,
 ) -> Union[Row, None]:
@@ -86,13 +89,12 @@ def render_input_row(
         language (str): The programming language of the notebook. Will
             be used when highlighting the syntax of code cells.
         theme (str): The theme to use for syntax highlighting. May be
-            "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "ansi_dark".
+            "ansi_light", "ansi_dark", or any Pygments theme.
         nerd_font (bool): Whether to use nerd fonts as an icon.
         unicode (bool): Whether to use unicode characters as an icon.
         images (bool): Whether to render images in the output.
-        image_drawing (Literal["block", "character", "braille"]):
-            The type of characters to draw images with.
+        image_drawing (ImageDrawing): The type of characters to draw
+            images with.
         color (bool):
             Whether to draw images using color.
         negative_space (bool):
@@ -104,6 +106,9 @@ def render_input_row(
             Whether to write temporary files.
         hide_hyperlink_hints (bool):
             Whether to hide hyperlink hints.
+        relative_dir (Path): The directory to prefix relative
+            paths to convert them to absolute. If None will assume
+            current directory is relative prefix.
         characters (str):
             The characters to draw images with. If set to None will
             default to ' :!?PG@'.
@@ -137,6 +142,7 @@ def render_input_row(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
 
     elif cell_type == "code":
@@ -170,9 +176,10 @@ def render_output_row(
     theme: str,
     pad: PaddingDimensions,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
 ) -> Iterator[OutputRow]:
     """Render the output row of a notebook."""
     for output in outputs:
@@ -208,6 +215,7 @@ def render_output_row(
                 image_drawing=image_drawing,
                 color=color,
                 negative_space=negative_space,
+                relative_dir=relative_dir,
             )
             rendered_outputs.append(rendered_execute_result)
 

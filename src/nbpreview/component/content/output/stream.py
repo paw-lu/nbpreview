@@ -1,5 +1,5 @@
 """Notebook stream results."""
-from __future__ import annotations
+
 
 import dataclasses
 from typing import ClassVar, Iterator, Union
@@ -8,6 +8,25 @@ from nbformat import NotebookNode
 from rich import padding, style, text
 from rich.console import ConsoleRenderable
 from rich.padding import Padding
+
+
+@dataclasses.dataclass
+class Stream:
+    """A stream output."""
+
+    content: str
+    name: ClassVar[str]
+
+    def __rich__(self) -> Union[ConsoleRenderable, str]:
+        """Render the stream."""
+        return self.content
+
+    @classmethod
+    def from_output(cls, output: NotebookNode) -> "Stream":
+        """Create stream from notebook output."""
+        stream_text = output.get("text", "")
+        text = stream_text[:-1] if stream_text.endswith("\n") else stream_text
+        return cls(text)
 
 
 def render_stream(output: NotebookNode) -> Iterator[Stream]:
@@ -29,32 +48,13 @@ def render_stream(output: NotebookNode) -> Iterator[Stream]:
 
 
 @dataclasses.dataclass
-class Stream:
-    """A stream output."""
-
-    content: str
-    name: ClassVar[str]
-
-    def __rich__(self) -> Union[ConsoleRenderable, str]:
-        """Render the stream."""
-        return self.content
-
-    @classmethod
-    def from_output(cls, output: NotebookNode) -> Stream:
-        """Create stream from notebook output."""
-        stream_text = output.get("text", "")
-        text = stream_text[:-1] if stream_text.endswith("\n") else stream_text
-        return cls(text)
-
-
-@dataclasses.dataclass
 class StdErr(Stream):
     """A stderr stream output."""
 
     name: ClassVar[str] = "stderr"
 
     @classmethod
-    def from_output(cls, output: NotebookNode) -> StdErr:
+    def from_output(cls, output: NotebookNode) -> "StdErr":
         """Create stderr from notebook output."""
         if output["name"] != cls.name:
             raise ValueError(f"Output does not contain a {cls.name} stream")

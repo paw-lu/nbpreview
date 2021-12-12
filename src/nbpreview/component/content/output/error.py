@@ -1,5 +1,5 @@
 """Notebook error messages."""
-from __future__ import annotations
+
 
 import abc
 from typing import Iterator, List
@@ -9,21 +9,6 @@ from rich import ansi, measure
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
-
-
-def render_error(output: NotebookNode) -> Iterator[Error]:
-    """Render an error type output.
-
-    Args:
-        output (NotebookNode): The error output.
-
-    Yields:
-        Generator[Syntax, None, None]: Generate each row of the
-            traceback.
-    """
-    if "traceback" in output:
-        error = Traceback.from_output(output)
-        yield error
 
 
 class Error(abc.ABC):
@@ -50,6 +35,21 @@ class Error(abc.ABC):
         self, console: Console, options: ConsoleOptions
     ) -> Measurement:
         """Define the dimensions of the rendered error."""
+
+
+def render_error(output: NotebookNode) -> Iterator[Error]:
+    """Render an error type output.
+
+    Args:
+        output (NotebookNode): The error output.
+
+    Yields:
+        Generator[Syntax, None, None]: Generate each row of the
+            traceback.
+    """
+    if "traceback" in output:
+        error = Traceback.from_output(output)
+        yield error
 
 
 class Traceback(Error):
@@ -79,7 +79,7 @@ class Traceback(Error):
         return measure.Measurement(minimum=self.min_length, maximum=options.max_width)
 
     @classmethod
-    def from_output(cls, output: NotebookNode) -> Traceback:
+    def from_output(cls, output: NotebookNode) -> "Traceback":
         """Create a traceback from a notebook output."""
         content = output["traceback"]
         return cls(content)

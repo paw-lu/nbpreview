@@ -1,13 +1,47 @@
 """Package-wide test fixtures."""
 import contextlib
 import io
+import itertools
+import pathlib
+import re
+import tempfile
+from pathlib import Path
 from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
+from unittest.mock import Mock
 
+import jinja2
 import nbformat
 import pytest
 from _pytest.config import Config, _PluggyPlugin
+from _pytest.fixtures import FixtureRequest
+from jinja2 import select_autoescape
 from nbformat.notebooknode import NotebookNode
-from rich import console
+from pytest_mock import MockerFixture
+from rich import ansi, console, padding, text
+from rich.text import Text
+
+
+@pytest.fixture
+def tempfile_path() -> Path:
+    """Fixture that returns the tempfile path."""
+    prefix = tempfile.template
+    file_path = pathlib.Path(tempfile.gettempdir()) / pathlib.Path(
+        f"{prefix}nbpreview_link_file"
+    )
+    return file_path
+
+
+@pytest.fixture
+def remove_link_ids() -> Callable[[str], str]:
+    """Create function to remove link ids from rendered hyperlinks."""
+
+    def _remove_link_ids(render: str) -> str:
+        """Remove link ids from rendered hyperlinks."""
+        re_link_ids = re.compile(r"id=[\d\.\-]*?;")
+        subsituted_render = re_link_ids.sub("id=0;", render)
+        return subsituted_render
+
+    return _remove_link_ids
 
 
 @pytest.fixture
@@ -112,3 +146,111 @@ def rich_console() -> Callable[[Any, Union[bool, None]], str]:
         return output
 
     return _rich_console
+
+
+def _wrap_ansi(
+    decoded_text: Iterator[Text], width: int, left_pad: int
+) -> Iterator[str]:
+    """Wrap characters relative to cell width."""
+    for idx, text_line in enumerate(decoded_text):
+        output = io.StringIO()
+        con = console.Console(
+            force_terminal=True,
+            file=output,
+            color_system="truecolor",
+            no_color=False,
+            width=width,
+            soft_wrap=True,
+        )
+        non_pad_width = width - left_pad
+        if idx == 0:
+            *pre_link_text, link_text = text_line.split(" ")
+            if width < text_line.cell_len and link_text.cell_len <= non_pad_width:
+                text_line = link_text
+                first_line = text.Text(" ").join(pre_link_text)
+                con.print(first_line)
+            else:
+                first_line, text_line = text_line[:width], text_line[width:]
+                con.print(first_line)
+        if text_line:
+            wrapped_lines = text_line.wrap(con, width=non_pad_width)
+            padded_lines = padding.Padding(wrapped_lines, pad=(0, 0, 0, left_pad))
+            con.print(padded_lines)
+        if plain_text := output.getvalue():
+            yield plain_text
+
+
+def decode_ansi(value: str) -> Iterator[Text]:
+    """Decode ansi into rich Text."""
+    decoder = ansi.AnsiDecoder()
+    parsed_text = decoder.decode(value)
+    yield from parsed_text
+
+
+def ansi_wrap(value: str, width: int = 80, left_pad: int = 6) -> str:
+    """Wrap characers relative to their cell width."""
+    decoded_text = decode_ansi(value)
+    wrapped_text = "\n".join(_wrap_ansi(decoded_text, width=width, left_pad=left_pad))
+    return wrapped_text
+
+
+def ansi_right_pad(value: str, min_width: int = 80) -> str:
+    """Right pad the string to be no less than a certain width."""
+    decoded_text = decode_ansi(value)
+    output = io.StringIO()
+    con = console.Console(
+        force_terminal=True,
+        file=output,
+        color_system="truecolor",
+        no_color=False,
+        width=min_width,
+        soft_wrap=True,
+    )
+    for line in decoded_text:
+        line.rstrip()
+        cell_len = line.cell_len
+        pad = min_width - cell_len
+        line.pad_right(pad)
+        con.print(line)
+    return output.getvalue().rstrip("\n")
+
+
+@pytest.fixture
+def expected_output(
+    request: FixtureRequest, tempfile_path: Path, remove_link_ids: Callable[[str], str]
+) -> str:
+    """Get the expected output for a test."""
+    output_directory = pathlib.Path(__file__).parent / pathlib.Path(
+        "unit", "expected_outputs"
+    )
+    test_name = request.node.name
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(output_directory),
+        autoescape=select_autoescape(),
+        keep_trailing_newline=True,
+    )
+    env.filters["ansi_right_pad"] = ansi_right_pad
+    env.filters["ansi_wrap"] = ansi_wrap
+    expected_output_file = f"{test_name}.txt"
+    expected_output_template = env.get_template(expected_output_file)
+    project_dir = pathlib.Path(__file__).parent.parent.resolve()
+    expected_output = expected_output_template.render(
+        tempfile_path=tempfile_path, project_dir=project_dir
+    )
+    return remove_link_ids(expected_output)
+
+
+@pytest.fixture
+def mock_tempfile_file(mocker: MockerFixture, tempfile_path: Path) -> Iterator[Mock]:
+    """Control where tempfile will write to."""
+    tempfile_stem = tempfile_path.stem
+    tempfile_base_name = tempfile_stem[3:]
+    tempfile_parent = tempfile_path.parent
+    mock = mocker.patch("tempfile._get_candidate_names")
+    mock.return_value = (
+        f"{tempfile_base_name}{file_suffix}" for file_suffix in itertools.count()
+    )
+    yield mock
+    tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
+    for file in tempfiles:
+        file.unlink()

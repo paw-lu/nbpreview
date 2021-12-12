@@ -1,10 +1,9 @@
 """Render the notebook."""
-from __future__ import annotations
-
 import dataclasses
-import sys
+import pathlib
+from dataclasses import InitVar
 from pathlib import Path
-from typing import Iterator, List, Literal, Optional, Tuple
+from typing import Iterator, List, Optional, Tuple, Union
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
@@ -14,6 +13,7 @@ from rich.table import Table
 
 from nbpreview import errors
 from nbpreview.component import row
+from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 # terminedia depends on fcntl, which is not present on Windows platforms
 try:
@@ -61,35 +61,52 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
 
 
 def _pick_image_drawing(
-    option: Literal["block", "character", "braille", None],
+    option: Union[ImageDrawing, None],
     unicode: bool,
     color: bool,
-) -> Literal["block", "character", "braille"]:
+) -> ImageDrawing:
     """Pick an image render option.
 
     Args:
-        option (Literal["block", "character", "braille", None]): The
-            inputted option which can override detections. If None, will
-            autodetect.
+        option (Literal["block", "character", "braille", ImageDrawingEnum, None]):
+            The inputted option which can override detections. If None,
+            will autodetect.
         unicode (bool): Whether to use unicode characters to
             render the notebook. By default will autodetect.
         color (bool): Whether to use color.
 
     Returns:
-        Literal["block", "character", "braille", None]: The image type
-        to render.
+        Union[Literal["block", "character", "braille"] ImageDrawingEnum]:
+        The image type to render.
     """
-    image_render: Literal["block", "character", "braille"]
+    image_render: ImageDrawing
     if option is None:
-        if unicode and "terminedia" in sys.modules and color:
-            image_render = "block"
-        elif unicode:
-            image_render = "braille"
-        else:
-            image_render = "character"
+        # Block is too slow to offer as a sensible default
+        # Braille can not do negative space, and most notebook's primary
+        # images are plots with light backgrounds
+        image_render = "character"
+
     else:
         image_render = option
     return image_render
+
+
+def _pick_theme(theme: Union[str, None], console: Console) -> str:
+    """Pick a default code theme."""
+    if theme is None:
+        if (color_system := console.color_system) is not None:
+            default_themes = {
+                "standard": "ansi_dark",
+                "256": "material",
+                "truecolor": "material",
+            }
+            picked_theme = default_themes.get(color_system, "ansi_dark")
+        else:
+            picked_theme = "ansi_dark"
+    else:
+        picked_theme = theme
+
+    return picked_theme
 
 
 def _render_notebook(
@@ -104,9 +121,10 @@ def _render_notebook(
     hide_output: bool,
     language: str,
     images: bool,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
+    relative_dir: Path,
     characters: Optional[str] = None,
 ) -> Table:
     """Create a table representing a notebook."""
@@ -135,6 +153,7 @@ def _render_notebook(
             files=files,
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
+            relative_dir=relative_dir,
         )
         if cell_row is not None:
             grid.add_row(*cell_row.to_table_row())
@@ -155,6 +174,7 @@ def _render_notebook(
                 image_drawing=image_drawing,
                 color=color,
                 negative_space=negative_space,
+                relative_dir=relative_dir,
             )
             for rendered_output in rendered_outputs:
                 grid.add_row(*rendered_output.to_table_row())
@@ -168,9 +188,9 @@ class Notebook:
     Args:
         notebook_node (NotebookNode): A NotebookNode of the notebook to
             render.
-        theme (str): The theme to use for syntax highlighting. May be
-            "ansi_light", "ansi_dark", or any Pygments theme. By default
-            "ansi_dark".
+        theme (Optional[str]): The theme to use for syntax highlighting.
+            May be "light", "dark", or any Pygments theme. If None will
+            autodetect. By default None.
         plain (bool): Only show plain style. No decorations such as
             boxes or execution counts. By default will autodetect.
         unicode (Optional[bool]): Whether to use unicode characters to
@@ -190,11 +210,14 @@ class Notebook:
             "block" or None. If None will attempt to autodetect. By
             default None.
         color (Optional[bool]): Whether to use color. If None will
-            attempt to autodetect. By default None
+            attempt to autodetect. By default None.
+        relative_dir (Optional[Path]): The directory to prefix relative
+            paths to convert them to absolute. If None will assume
+            current directory is relative prefix.
     """
 
     notebook_node: NotebookNode
-    theme: str = "ansi_dark"
+    theme: Optional[str] = None
     plain: Optional[bool] = None
     unicode: Optional[bool] = None
     hide_output: bool = False
@@ -204,12 +227,16 @@ class Notebook:
     hyperlinks: Optional[bool] = None
     hide_hyperlink_hints: bool = False
     images: Optional[bool] = None
-    image_drawing: Optional[Literal["block", "character", "braille"]] = None
+    image_drawing: Optional[ImageDrawing] = None
     color: Optional[bool] = None
+    relative_dir: InitVar[Optional[Path]] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, relative_dir: Optional[Path]) -> None:
         """Constructor."""
         self.cells = self.notebook_node.get("cells", nbformat.from_dict([]))
+        self.relative_dir = (
+            pathlib.Path().resolve() if relative_dir is None else relative_dir
+        )
         try:
             self.language = self.notebook_node.metadata.kernelspec.language
         except AttributeError:
@@ -219,23 +246,25 @@ class Notebook:
     def from_file(
         cls,
         file: Path,
-        theme: str = "ansi_dark",
+        theme: Optional[str] = None,
         plain: Optional[bool] = None,
         unicode: Optional[bool] = None,
         hide_output: bool = False,
         nerd_font: bool = False,
         files: bool = True,
+        negative_space: bool = True,
         hyperlinks: Optional[bool] = None,
         hide_hyperlink_hints: bool = False,
         images: Optional[bool] = None,
-        image_drawing: Literal["block", "character", "braille", None] = None,
-    ) -> Notebook:
+        image_drawing: Optional[ImageDrawing] = None,
+        color: Optional[bool] = None,
+    ) -> "Notebook":
         """Create Notebook from notebook file."""
         try:
             notebook_node = nbformat.read(file, as_version=4)
         except AttributeError as exception:
             raise errors.InvalidNotebookError from exception
-
+        relative_dir = file.parent.resolve()
         return cls(
             notebook_node,
             theme=theme,
@@ -244,10 +273,13 @@ class Notebook:
             hide_output=hide_output,
             nerd_font=nerd_font,
             files=files,
+            negative_space=negative_space,
             hyperlinks=hyperlinks,
             hide_hyperlink_hints=hide_hyperlink_hints,
             images=images,
             image_drawing=image_drawing,
+            color=color,
+            relative_dir=relative_dir,
         )
 
     def __rich_console__(
@@ -267,19 +299,20 @@ class Notebook:
             self.unicode, detector=not options.legacy_windows and not options.ascii_only
         )
         hyperlinks = _pick_option(
-            self.hyperlinks, detector=not options.legacy_windows and not plain
+            self.hyperlinks, detector=not options.legacy_windows and options.is_terminal
         )
-        images = _pick_option(self.images, detector=options.is_terminal and not plain)
-        color = _pick_option(self.color, detector=options.is_terminal and not plain)
+        images = _pick_option(self.images, detector=options.is_terminal)
+        color = _pick_option(self.color, detector=options.is_terminal)
         image_drawing = _pick_image_drawing(
             self.image_drawing, unicode=unicode, color=color
         )
+        theme = _pick_theme(self.theme, console=console)
         rendered_notebook = _render_notebook(
             self.cells,
             plain=plain,
             unicode=unicode,
             hyperlinks=hyperlinks,
-            theme=self.theme,
+            theme=theme,
             nerd_font=self.nerd_font,
             files=self.files,
             hide_hyperlink_hints=self.hide_hyperlink_hints,
@@ -289,5 +322,6 @@ class Notebook:
             image_drawing=image_drawing,
             color=color,
             negative_space=self.negative_space,
+            relative_dir=self.relative_dir,
         )
         yield rendered_notebook

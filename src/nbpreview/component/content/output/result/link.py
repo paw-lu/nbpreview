@@ -1,5 +1,5 @@
 """Hyperlinks to results."""
-from __future__ import annotations
+
 
 import base64
 import dataclasses
@@ -17,63 +17,6 @@ from rich.text import Text
 from nbpreview.component.content.output.result import execution_indicator
 from nbpreview.component.content.output.result.execution_indicator import Execution
 from nbpreview.data import Data
-
-
-def render_link(
-    data: Data,
-    unicode: bool,
-    hyperlinks: bool,
-    execution: Union[Execution, None],
-    nerd_font: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-) -> Union[FileLink, None]:
-    """Render an output link."""
-    link_result: FileLink
-    if (
-        "application/vnd.vega.v5+json" in data
-        or "application/vnd.vegalite.v4+json" in data
-    ):
-        link_result = VegaLink.from_data(
-            data,
-            unicode=unicode,
-            hyperlinks=hyperlinks,
-            execution=execution,
-            nerd_font=nerd_font,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-        )
-        return link_result
-    image_types = {
-        "image/bmp",
-        "image/gif",
-        "image/jpeg",
-        "image/png",
-        "image/svg+xml",
-    }
-    for image_type in image_types:
-        if image_type in data:
-            link_result = ImageLink.from_data(
-                data,
-                image_type=image_type,
-                unicode=unicode,
-                hyperlinks=hyperlinks,
-                nerd_font=nerd_font,
-                files=files,
-                hide_hyperlink_hints=hide_hyperlink_hints,
-            )
-            return link_result
-    if "text/html" in data:
-        link_result = HTMLLink.from_data(
-            data,
-            unicode=unicode,
-            hyperlinks=hyperlinks,
-            nerd_font=nerd_font,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-        )
-        return link_result
-    return None
 
 
 def select_icon(
@@ -209,6 +152,63 @@ class FileLink(Link):
         )
 
 
+def render_link(
+    data: Data,
+    unicode: bool,
+    hyperlinks: bool,
+    execution: Union[Execution, None],
+    nerd_font: bool,
+    files: bool,
+    hide_hyperlink_hints: bool,
+) -> Union[FileLink, None]:
+    """Render an output link."""
+    link_result: FileLink
+    if (
+        "application/vnd.vega.v5+json" in data
+        or "application/vnd.vegalite.v4+json" in data
+    ):
+        link_result = VegaLink.from_data(
+            data,
+            unicode=unicode,
+            hyperlinks=hyperlinks,
+            execution=execution,
+            nerd_font=nerd_font,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+        )
+        return link_result
+    image_types = {
+        "image/bmp",
+        "image/gif",
+        "image/jpeg",
+        "image/png",
+        "image/svg+xml",
+    }
+    for image_type in image_types:
+        if image_type in data:
+            link_result = ImageLink.from_data(
+                data,
+                image_type=image_type,
+                unicode=unicode,
+                hyperlinks=hyperlinks,
+                nerd_font=nerd_font,
+                files=files,
+                hide_hyperlink_hints=hide_hyperlink_hints,
+            )
+            return link_result
+    if "text/html" in data:
+        link_result = HTMLLink.from_data(
+            data,
+            unicode=unicode,
+            hyperlinks=hyperlinks,
+            nerd_font=nerd_font,
+            files=files,
+            hide_hyperlink_hints=hide_hyperlink_hints,
+        )
+        return link_result
+    return None
+
+
 @dataclasses.dataclass(init=False)
 class HTMLLink(FileLink):
     """A link to HTML content."""
@@ -245,7 +245,7 @@ class HTMLLink(FileLink):
         files: bool,
         hyperlinks: bool,
         hide_hyperlink_hints: bool,
-    ) -> HTMLLink:
+    ) -> "HTMLLink":
         """Construct an HTML link from notebook data."""
         content = data.get("text/html", "")
         html_link = cls(
@@ -296,7 +296,7 @@ class VegaLink(FileLink):
         hyperlinks: bool,
         hide_hyperlink_hints: bool,
         execution: Union[Execution, None],
-    ) -> VegaLink:
+    ) -> "VegaLink":
         """Create a Vega link from notebook data."""
         vega_html: Optional[str]
         vega_data = data.get(
@@ -378,7 +378,7 @@ class ImageLink(FileLink):
         nerd_font: bool,
         files: bool,
         hide_hyperlink_hints: bool,
-    ) -> ImageLink:
+    ) -> "ImageLink":
         """Construct an image link from notebook data."""
         content: Union[str, bytes]
         encoded_content = data[image_type]

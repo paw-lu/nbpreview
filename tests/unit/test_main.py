@@ -1,0 +1,770 @@
+"""Test cases for the __main__ module."""
+import functools
+import itertools
+import json
+import os
+import pathlib
+import shlex
+import sys
+import tempfile
+import textwrap
+from pathlib import Path
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    Mapping,
+    Optional,
+    Protocol,
+    Union,
+)
+from unittest.mock import Mock
+
+import nbformat
+import pytest
+from _pytest.monkeypatch import MonkeyPatch
+from click import shell_completion
+from click.testing import Result
+from nbformat.notebooknode import NotebookNode
+from pygments import styles
+from pytest_mock import MockerFixture
+from rich import console
+from typer import main, testing
+from typer.testing import CliRunner
+
+import nbpreview
+from nbpreview import __main__
+from nbpreview.__main__ import app
+from tests.unit import test_notebook
+
+
+class RunCli(Protocol):
+    """Typing protocol for run_cli."""
+
+    def __call__(
+        self,
+        cell: Optional[Dict[str, Any]] = None,
+        args: Optional[Union[str, Iterable[str]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        """Callable types."""
+        ...
+
+
+@pytest.fixture
+def notebook_path() -> Path:
+    """Return path of example test notebook."""
+    notebook_path = pathlib.Path(__file__).parent / pathlib.Path(
+        "assets", "notebook.ipynb"
+    )
+    return notebook_path
+
+
+@pytest.fixture(autouse=True)
+def patch_env(monkeypatch: MonkeyPatch) -> None:
+    """Patch environmental variables that affect tests."""
+    for environment_variable in (
+        "TERM",
+        "NO_COLOR",
+        "PAGER",
+        "NBPREVIEW_PLAIN",
+        "NBPREVIEW_THEME",
+        "NBPREVIEW_UNICODE",
+        "NBPREVIEW_WIDTH",
+    ):
+        monkeypatch.delenv(environment_variable, raising=False)
+
+
+@pytest.fixture
+def runner() -> CliRunner:
+    """Fixture for invoking command-line interfaces."""
+    return testing.CliRunner()
+
+
+@pytest.fixture
+def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
+    """Fixture that returns function to create temporary file.
+
+    This is used in place of NamedTemporaryFile as a contex manager
+    because of the inability to read from an open file created on
+    Windows.
+
+    Yields:
+        Generator[Callable[[Optional[str]], str]: Function to create
+            tempfile that is delted at teardown.
+    """
+    file = tempfile.NamedTemporaryFile(delete=False)
+    file_name = file.name
+    tempfile_path = pathlib.Path(file_name)
+
+    def _named_temp_file(text: Optional[str] = None) -> str:
+        """Create a temporary file.
+
+        Args:
+            text (Optional[str], optional): The text to fill the file
+                with. Defaults to None, which creates a blank file.
+
+        Returns:
+            str: The path of the temporary file.
+        """
+        if text is not None:
+            tempfile_path.write_text(text)
+        file.close()
+        return file_name
+
+    yield _named_temp_file
+    tempfile_path.unlink()
+
+
+@pytest.fixture
+def write_notebook(
+    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    temp_file: Callable[[Optional[str]], str],
+) -> Callable[[Union[Dict[str, Any], None]], str]:
+    """Fixture for generating notebook files."""
+
+    def _write_notebook(cell: Union[Dict[str, Any], None]) -> str:
+        """Writes a notebook file.
+
+        Args:
+            cell (Union[Dict[str, Any], None]): The cell of the notebook
+                to render
+
+        Returns:
+            str: The path of the notebook file.
+        """
+        notebook_node = make_notebook(cell)
+        notebook_path = temp_file(nbformat.writes(notebook_node))
+        return notebook_path
+
+    return _write_notebook
+
+
+@pytest.fixture
+def run_cli(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> RunCli:
+    """Fixture for running the cli against a notebook file."""
+
+    def _run_cli(
+        cell: Optional[Dict[str, Any]] = None,
+        args: Optional[Union[str, Iterable[str]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        r"""Runs the CLI against a notebook file.
+
+        Args:
+            cell (Optional[Dict[str, Any]], optional): The cell to add
+                to the notebook file. Defaults to None.
+            args (Optional[Union[str, Iterable[str]]]): The extra
+                arguments to invoke. By default --width=80 and
+                --unicode are included.
+            input (Optional[Union[bytes, Text, IO[Any]]]): The input
+                data. By default None.
+            env (Optional[Mapping[str, str]]): The environmental
+                overrides. By default None.
+            catch_exceptions (bool): Whether to catch exceptions.
+            color (bool): Whether the output should contain color codes.
+            **extra (Any): Extra arguments to pass.
+
+        Returns:
+            Result: The result from running the CLI command against the
+                notebook.
+        """
+        notebook_path = write_notebook(cell)
+        if isinstance(args, str):
+            args = shlex.split(args)
+        default_args = ["--decorated", "--unicode", "--width=80", notebook_path]
+        full_args = [*args, *default_args] if args is not None else default_args
+        result = runner.invoke(
+            app,
+            args=full_args,
+            input=input,
+            env=env,
+            catch_exceptions=catch_exceptions,
+            color=color,
+            **extra,
+        )
+        return result
+
+    return _run_cli
+
+
+@pytest.fixture
+def cli_arg(
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_terminal: Iterator[Mock],
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Iterator[Mock],
+) -> Callable[..., str]:
+    """Return function that applies arguments to cli."""
+
+    def _cli_arg(
+        *args: Union[str, None],
+        images: bool = True,
+        truecolor: bool = True,
+        **kwargs: Union[str, None],
+    ) -> str:
+        """Apply given arguments to cli.
+
+        Args:
+            *args (Union[str, None]): The extra arguments to pass to the
+                command.
+            images (bool): Whether to pass the '--images' option. By
+                default True.
+            truecolor (bool): Whether to pass
+                '--color-system=truecolor' option. By default True.
+            **kwargs (Union[str, None]): Environmental variables to set.
+                Will be uppercased.
+
+        Returns:
+            str: The output of the invoked command.
+        """
+        cleaned_args = [arg for arg in args if arg is not None]
+        upper_kwargs = {
+            name.upper(): value for name, value in kwargs.items() if value is not None
+        }
+        cli_args = [os.fsdecode(notebook_path), *cleaned_args]
+        if images:
+            cli_args.append("--images")
+        if truecolor:
+            cli_args.append("--color-system=truecolor")
+        result = runner.invoke(
+            app,
+            args=cli_args,
+            color=True,
+            env=upper_kwargs,
+        )
+        output = remove_link_ids(result.output)
+        return output
+
+    return _cli_arg
+
+
+@pytest.fixture
+def test_cli(
+    cli_arg: Callable[..., str],
+    remove_link_ids: Callable[[str], str],
+    expected_output: str,
+) -> Callable[..., None]:
+    """Return fixture that tests expected argument output."""
+
+    def _test_cli(
+        *args: Union[str, None],
+        images: bool = True,
+        truecolor: bool = True,
+        **kwargs: Union[str, None],
+    ) -> None:
+        """Tests expected argument output.
+
+        Args:
+            *args (Union[str, None]): The extra arguments to pass to the
+                command.
+            images (bool): Whether to pass the '--images' option. By
+                default True.
+            truecolor (bool): Whether to pass
+                '--color-system=truecolor' option. By default True.
+            **kwargs (Union[str, None]): Environmental variables to set.
+                Will be uppercased.
+        """
+        output = cli_arg(*args, images=images, truecolor=truecolor, **kwargs)
+        assert output == remove_link_ids(expected_output)
+
+    return _test_cli
+
+
+def test_main_succeeds(run_cli: RunCli) -> None:
+    """It exits with a status code of zero with a valid file."""
+    result = run_cli()
+    assert result.exit_code == 0
+
+
+@pytest.mark.parametrize("option", ("--version", "-V"))
+def test_version(runner: CliRunner, option: str) -> None:
+    """It returns the version number."""
+    result = runner.invoke(app, [option])
+    assert result.stdout == f"nbpreview {nbpreview.__version__}\n"
+
+
+def test_exit_invalid_file_status(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+) -> None:
+    """It exits with a status code of 1 when fed an invalid file."""
+    invalid_path = temp_file(None)
+    result = runner.invoke(app, [invalid_path])
+    assert result.exit_code == 1
+
+
+def test_exit_invalid_file_output(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+) -> None:
+    """It outputs a message when fed an invalid file."""
+    invalid_path = temp_file(None)
+    result = runner.invoke(app, [invalid_path])
+    assert (
+        result.output.replace("\n", "")
+        == f"{invalid_path} is not a valid Jupyter Notebook path."
+    )
+
+
+def test_render_notebook(run_cli: RunCli) -> None:
+    """It renders a notebook."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    result = run_cli(code_cell)
+    expected_output = textwrap.dedent(
+        """\
+         ╭─────────────────────────────────────────────────────────────────────────╮
+    [2]: │ def foo(x: float, y: float) -> float:                                   │
+         │     return x + y                                                        │
+         ╰─────────────────────────────────────────────────────────────────────────╯
+    """
+    )
+    assert result.output == expected_output
+
+
+def test_render_markdown(run_cli: RunCli) -> None:
+    """It renders a markdown cell."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "Lorep",
+    }
+    result = run_cli(markdown_cell)
+    assert result.output == (
+        "  Lorep                                                    "
+        "                     \n"
+    )
+
+
+@pytest.mark.parametrize(
+    "arg, env",
+    (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
+)
+def test_force_plain(
+    arg: Optional[str],
+    env: Optional[Mapping[str, str]],
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+) -> None:
+    """It renders in plain format when flag or env is specified."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    notebook_path = write_notebook(code_cell)
+    args = ["--unicode", "--width=80", notebook_path]
+    if arg is not None:
+        args = [arg] + args
+    result = runner.invoke(app, args=args, env=env)
+    expected_output = (
+        "def foo(x: float, y: float) -> float:                         "
+        "                  \n    return x + y                          "
+        "                                      \n"
+    )
+    assert result.output == expected_output
+
+
+def test_raise_no_source(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if there is no source."""
+    no_source_cell = {
+        "cell_type": "code",
+        "outputs": [],
+    }
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output
+
+
+def test_raise_no_output(
+    runner: CliRunner,
+    temp_file: Callable[[Optional[str]], str],
+    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+) -> None:
+    """It returns an error message if no output in a code cell."""
+    no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
+    notebook_dict = make_notebook_dict(no_source_cell)
+    notebook_path = temp_file(json.dumps(notebook_dict))
+    result = runner.invoke(app, args=[notebook_path])
+    output = result.output.replace("\n", "")
+    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    assert output == expected_output
+
+
+@pytest.fixture
+def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
+    """Mock pygment styles.
+
+    Control the styles outputted here so that test does not break every
+    time pygments adds or removes a style
+    """
+    mock = mocker.patch(
+        "nbpreview.__main__.styles.get_all_styles",
+        return_value=(style for style in ("material", "monokai", "zenburn")),
+    )
+    yield mock
+
+
+@pytest.fixture
+def mock_terminal(mocker: MockerFixture) -> Iterator[Mock]:
+    """Mock a modern terminal."""
+    terminal_console = functools.partial(
+        console.Console,
+        color_system="truecolor",
+        force_terminal=True,
+        width=100,
+        no_color=False,
+        legacy_windows=False,
+        force_jupyter=False,
+    )
+    mock = mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)
+    yield mock
+
+
+def test_list_themes(
+    runner: CliRunner,
+    mocker: MockerFixture,
+    expected_output: str,
+    mock_terminal: Mock,
+    mock_pygment_styles: Mock,
+) -> None:
+    """It renders an example of all available themes."""
+    result = runner.invoke(
+        app,
+        args=["--list-themes"],
+        color=True,
+    )
+    output = result.output
+    assert output == expected_output
+
+
+@pytest.mark.parametrize("option_name", ("--list-themes", "--lt"))
+def test_list_themes_no_terminal(
+    option_name: str, runner: CliRunner, mock_pygment_styles: Mock
+) -> None:
+    """It lists all themes with no preview when not a terminal."""
+    result = runner.invoke(
+        app,
+        args=[option_name],
+        color=True,
+    )
+    output = result.output
+    expected_output = (
+        "material\nmonokai\nzenburn\nlight / ansi_li" "ght\ndark / ansi_dark\n"
+    )
+    assert output == expected_output
+
+
+def test_get_all_available_themes() -> None:
+    """It lists all available pygment themes."""
+    output = __main__._get_all_available_themes()
+    expected_output = itertools.chain(styles.get_all_styles(), ("light", "dark"))
+    assert list(output) == list(expected_output)
+
+
+def test_render_notebook_file(test_cli: Callable[..., None]) -> None:
+    """It renders a notebook file."""
+    test_cli()
+
+
+@pytest.mark.parametrize(
+    "option_name, theme, env",
+    (
+        ("--theme", "light", None),
+        ("-t", "dark", None),
+        ("-t", "monokai", None),
+        (None, None, "default"),
+    ),
+)
+def test_change_theme_notebook_file(
+    option_name: Union[str, None],
+    theme: Union[str, None],
+    env: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It changes the theme of the notebook."""
+    arg = (
+        f"{option_name}={theme}"
+        if theme is not None and option_name is not None
+        else None
+    )
+    test_cli(arg, nbpreview_theme=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env", (("--hide-output", None), ("-h", None), (None, "1"))
+)
+def test_hide_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It hides the output of a notebook file."""
+    test_cli(option_name, nbpreview_hide_output=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env", (("--plain", None), ("-p", None), (None, "1"))
+)
+def test_plain_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook in a plain format."""
+    test_cli(option_name, nbpreview_plain=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--unicode", None),
+        ("-u", None),
+        ("--no-unicode", None),
+        ("-x", None),
+        (None, "0"),
+    ),
+)
+def test_unicode_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook with and without unicode characters."""
+    test_cli(option_name, nbpreview_unicode=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--nerd-font", None), ("-n", None), (None, "1")),
+)
+def test_nerd_font_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook with nerd font characters."""
+    test_cli(option_name, nbpreview_nerd_font=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--no-files", None), ("-l", None), (None, "1")),
+)
+def test_files_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It does not write temporary files if options are specified."""
+    test_cli(option_name, nbpreview_no_files=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--positive-space", None), ("-p", None), (None, "1")),
+)
+def test_positive_space_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It draws images in positive space if options are specified."""
+    test_cli(option_name, nbpreview_positive_space=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--hyperlinks", None),
+        ("-k", None),
+        (None, "1"),
+        ("--no-hyperlinks", None),
+        ("-r", None),
+        (None, "0"),
+    ),
+)
+def test_hyperlinks_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It includes or excludes hyperlinks depending on options."""
+    test_cli(option_name, nbpreview_hyperlinks=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--hide-hyperlink-hints", None),
+        ("-y", None),
+        (None, "1"),
+    ),
+)
+def test_hyperlink_hints_output_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It does not render hints to click the hyperlinks."""
+    test_cli(option_name, nbpreview_hide_hyperlink_hints=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (
+        ("--images", None),
+        ("-i", None),
+        (None, None),
+        (None, "1"),
+    ),
+)
+def test_image_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It draws images only when option is set."""
+    test_cli(
+        option_name,
+        images=False,
+        nbpreview_images=env,
+    )
+
+
+@pytest.mark.parametrize(
+    "option_name, drawing_type, env",
+    (
+        ("--image-drawing", "braille", None),
+        ("--id", "character", None),
+        (None, None, "braille"),
+    ),
+)
+def test_image_drawing_notebook_file(
+    option_name: Union[str, None],
+    drawing_type: Union[str, None],
+    env: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It draws images only when option is set."""
+    arg = (
+        f"{option_name}={drawing_type}"
+        if option_name is not None and drawing_type is not None
+        else None
+    )
+    test_cli(
+        arg,
+        nbpreview_image_drawing=env,
+    )
+
+
+@pytest.mark.xfail(
+    "terminedia" in sys.modules,
+    reason=test_notebook.SKIP_TERMINEDIA_REASON,
+    strict=True,
+)
+def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
+    """It raises a user-friendly warning message if import fails."""
+    output = cli_arg("--image-drawing=block")
+    expected_output = (
+        "\x1b[38;2;179;38;30m--image-drawing='block'"
+        " cannot be used on this system."
+        " This might be because it"
+        " \x1b[0m\x1b[38;2;179;38;30mis being run on Windows.\x1b[0m"
+    )
+    assert output.replace("\n", "") == expected_output
+
+
+@pytest.mark.parametrize(
+    "option_name, env_name, env_value",
+    (
+        ("--color", None, None),
+        ("-c", None, None),
+        ("--no-color", None, None),
+        ("-o", None, None),
+        (None, "NBPREVIEW_COLOR", "0"),
+        (None, "NO_COLOR", "1"),
+        (None, "NBPREVIEW_NO_COLOR", "true"),
+        (None, "TERM", "dumb"),
+    ),
+)
+def test_color_notebook_file(
+    option_name: Union[str, None],
+    env_name: Union[str, None],
+    env_value: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It does not use color when specified."""
+    if env_name is not None:
+        test_cli(option_name, **{env_name: env_value})
+    else:
+        test_cli(option_name)
+
+
+@pytest.mark.parametrize(
+    "option_name, color_system, env_value",
+    (
+        ("--color-system", "standard", None),
+        ("--color-system", "none", None),
+        ("--cs", "256", None),
+        (None, None, "windows"),
+    ),
+)
+def test_color_system_notebook_file(
+    option_name: Union[str, None],
+    color_system: Union[str, None],
+    env_value: Union[str, None],
+    test_cli: Callable[..., None],
+) -> None:
+    """It uses different color systems depending on option value."""
+    arg = (
+        f"{option_name}={color_system}"
+        if option_name is not None and color_system is not None
+        else None
+    )
+    test_cli(arg, truecolor=False, nbpreview_color_system=env_value)
+
+
+@pytest.mark.parametrize("option_name", ("--theme", "-t"))
+def test_theme_completion(
+    option_name: str, runner: CliRunner, mock_pygment_styles: Mock
+) -> None:
+    """It autocompletes themes with appropriate names."""
+    typer_click_object = main.get_command(app)
+    prog_name = app_name if (app_name := app.info.name) is not None else "nbpreview"
+    nbpreview_shell_complete = shell_completion.ShellComplete(
+        typer_click_object,
+        ctx_args={},
+        prog_name=prog_name,
+        complete_var="_NBPREVIEW_COMPLETE",
+    )
+    completions = nbpreview_shell_complete.get_completions(
+        args=[option_name], incomplete=""
+    )
+    output = [completion.value for completion in completions]
+    expected_output = [
+        "material",
+        "monokai",
+        "zenburn",
+        "light",
+        "dark",
+        "ansi_light",
+        "ansi_dark",
+    ]
+    assert output == expected_output

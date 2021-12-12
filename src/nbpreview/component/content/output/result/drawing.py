@@ -1,6 +1,4 @@
 """Drawings of image outputs."""
-from __future__ import annotations
-
 import abc
 import base64
 import binascii
@@ -8,6 +6,7 @@ import dataclasses
 import enum
 import functools
 import io
+import typing
 from dataclasses import InitVar
 from typing import Iterator, Literal, Optional, Tuple, Union
 
@@ -20,6 +19,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
+from nbpreview import cli_choices
 from nbpreview.data import Data
 
 # terminedia depends on fcntl, which is not present on Windows platforms
@@ -27,6 +27,53 @@ try:
     import terminedia
 except ModuleNotFoundError:
     pass
+
+
+class Size(typing.NamedTuple):
+    """The size of a rendered image."""
+
+    x: Union[float, None]
+    y: Union[float, None]
+
+
+@enum.unique
+class ImageDrawingEnum(str, cli_choices.LowerNameEnum):
+    """Image drawing types."""
+
+    BLOCK = enum.auto()
+    CHARACTER = enum.auto()
+    BRAILLE = enum.auto()
+
+
+ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
+
+
+class Drawing(abc.ABC):
+    """A representation of an image output."""
+
+    def __init__(self, image: bytes, fallback_text: str) -> None:
+        """Constructor."""
+        self.image = image
+        self.fallback_text = fallback_text
+
+    def __repr__(self) -> str:
+        """String representation of class."""
+        return (
+            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f" fallback_text={self.fallback_text})"
+        )
+
+    @abc.abstractmethod
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        """Render a drawing of image."""
+
+    @abc.abstractmethod
+    def __rich_measure__(
+        self, console: Console, options: ConsoleOptions
+    ) -> Measurement:
+        """Define the dimensions of the rendered drawing."""
 
 
 def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
@@ -49,7 +96,7 @@ def choose_drawing(
     image: Union[bytes, None],
     fallback_text: str,
     image_type: str,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
     characters: Optional[str] = None,
@@ -87,7 +134,7 @@ def choose_drawing(
 
 def render_drawing(
     data: Data,
-    image_drawing: Literal["block", "character", "braille"],
+    image_drawing: ImageDrawing,
     image_type: str,
     color: bool,
     negative_space: bool,
@@ -108,6 +155,7 @@ def render_drawing(
     return rendered_drawing
 
 
+@enum.unique
 class Bottleneck(enum.Enum):
     """The bottleneck when rendering a drawing."""
 
@@ -190,34 +238,6 @@ class DrawingDimension:
         self.drawing_height = drawing_height
 
 
-class Drawing(abc.ABC):
-    """A representation of an image output."""
-
-    def __init__(self, image: bytes, fallback_text: str) -> None:
-        """Constructor."""
-        self.image = image
-        self.fallback_text = fallback_text
-
-    def __repr__(self) -> str:
-        """String representation of class."""
-        return (
-            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
-            f" fallback_text={self.fallback_text})"
-        )
-
-    @abc.abstractmethod
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        """Render a drawing of image."""
-
-    @abc.abstractmethod
-    def __rich_measure__(
-        self, console: Console, options: ConsoleOptions
-    ) -> Measurement:
-        """Define the dimensions of the rendered drawing."""
-
-
 def render_fallback_text(fallback_text: str) -> Text:
     """Render the fallback text representing an image."""
     rendered_fallback_text = text.Text(
@@ -251,7 +271,7 @@ def _render_block_drawing(
             if character_dimensions.height is not None
             else None
         )
-        size = terminedia.V2(
+        size = Size(
             x=character_dimensions.width,
             y=scaled_y,
         )
@@ -289,7 +309,7 @@ class UnicodeDrawing(Drawing):
         yield from rendered_unicode_drawing
 
     @classmethod
-    def from_data(cls, data: Data, image_type: str) -> UnicodeDrawing:
+    def from_data(cls, data: Data, image_type: str) -> "UnicodeDrawing":
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
@@ -412,7 +432,7 @@ class CharacterDrawing(Drawing):
         color: bool,
         negative_space: bool,
         characters: Optional[str] = None,
-    ) -> CharacterDrawing:
+    ) -> "CharacterDrawing":
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
@@ -522,7 +542,7 @@ class BrailleDrawing(Drawing):
         data: Data,
         image_type: str,
         color: bool,
-    ) -> BrailleDrawing:
+    ) -> "BrailleDrawing":
         """Create a braille drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")

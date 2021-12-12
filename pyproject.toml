@@ -12,6 +12,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
 ]
 
 [tool.poetry.urls]
@@ -64,8 +65,10 @@ ipykernel = "^6.4.2"
 pytest-mock = "^3.6.1"
 interrogate = "^1.5.0"
 pyupgrade = "^2.29.0"
-tryceratops = { version = "^0.6.0", python = "^3.8" }
+tryceratops = "^1.0.0"
 isort = "^5.9.3"
+nbqa = "^1.1.1"
+click = "^8.0.3"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
@@ -81,9 +84,16 @@ source = ["nbpreview"]
 [tool.coverage.report]
 show_missing = true
 fail_under = 100
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Typing overloads are never run
+    "@typing.overload",
+]
 
 [tool.mypy]
 strict = true
+warn_unreachable = true
 pretty = true
 show_column_numbers = true
 show_error_codes = true
@@ -114,6 +124,7 @@ markers = [
     "no_atty_mock: Test where sys.stdout.isatty should not be mocked",
     "no_typeguard: Tests typeguard should ignore",
 ]
+norecursedirs = "tests/util"
 
 [tool.interrogate]
 verbose = 2
@@ -122,3 +133,12 @@ color = true
 
 [tool.isort]
 profile = "black"
+
+[tool.nbqa.dont_skip_bad_cells]
+black = true
+flake8 = true
+pyupgrade = true
+isort = true
+
+[tool.nbqa.addopts]
+flake8 = ["--extend-ignore=D100"]
