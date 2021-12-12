@@ -27,12 +27,13 @@ from unittest.mock import Mock
 import nbformat
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
+from click import shell_completion
 from click.testing import Result
 from nbformat.notebooknode import NotebookNode
 from pygments import styles
 from pytest_mock import MockerFixture
 from rich import console
-from typer import testing
+from typer import main, testing
 from typer.testing import CliRunner
 
 import nbpreview
@@ -738,3 +739,32 @@ def test_color_system_notebook_file(
         else None
     )
     test_cli(arg, truecolor=False, nbpreview_color_system=env_value)
+
+
+@pytest.mark.parametrize("option_name", ("--theme", "-t"))
+def test_theme_completion(
+    option_name: str, runner: CliRunner, mock_pygment_styles: Mock
+) -> None:
+    """It autocompletes themes with appropriate names."""
+    typer_click_object = main.get_command(app)
+    prog_name = app_name if (app_name := app.info.name) is not None else "nbpreview"
+    nbpreview_shell_complete = shell_completion.ShellComplete(
+        typer_click_object,
+        ctx_args={},
+        prog_name=prog_name,
+        complete_var="_NBPREVIEW_COMPLETE",
+    )
+    completions = nbpreview_shell_complete.get_completions(
+        args=[option_name], incomplete=""
+    )
+    output = [completion.value for completion in completions]
+    expected_output = [
+        "material",
+        "monokai",
+        "zenburn",
+        "light",
+        "dark",
+        "ansi_light",
+        "ansi_dark",
+    ]
+    assert output == expected_output
