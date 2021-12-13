@@ -1230,7 +1230,7 @@ idna2008 = ["idna"]
 
 [[package]]
 name = "rich"
-version = "10.15.2"
+version = "10.16.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
@@ -2552,8 +2552,8 @@ rfc3986 = [
     {file = "rfc3986-1.5.0.tar.gz", hash = "sha256:270aaf10d87d0d4e095063c65bf3ddbc6ee3d0b226328ce21e036f946e421835"},
 ]
 rich = [
-    {file = "rich-10.15.2-py3-none-any.whl", hash = "sha256:43b2c6ad51f46f6c94992aee546f1c177719f4e05aff8f5ea4d2efae3ebdac89"},
-    {file = "rich-10.15.2.tar.gz", hash = "sha256:1dded089b79dd042b3ab5cd63439a338e16652001f0c16e73acdcf4997ad772d"},
+    {file = "rich-10.16.0-py3-none-any.whl", hash = "sha256:24de23bd86b539d02c1570d93ace9bc8a07f2d5db87f97640226e9f6f8ff0253"},
+    {file = "rich-10.16.0.tar.gz", hash = "sha256:06a1355131feda5eba4511dd749e9187ac0fb42209e189845d81e94505fc268e"},
 ]
 "ruamel.yaml" = [
     {file = "ruamel.yaml-0.17.16-py3-none-any.whl", hash = "sha256:ea21da1198c4b41b8e7a259301cc9710d3b972bf8ba52f06218478e6802dd1f1"},
