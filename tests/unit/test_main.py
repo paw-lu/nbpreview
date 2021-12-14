@@ -54,7 +54,7 @@ class RunCli(Protocol):
         catch_exceptions: bool = True,
         color: bool = False,
         **extra: Any,
-    ) -> Result:
+    ) -> Result:  # pragma: no cover
         """Callable types."""
         ...
 
@@ -343,6 +343,45 @@ def test_render_notebook(run_cli: RunCli) -> None:
     """
     )
     assert result.output == expected_output
+
+
+def test_render_notebook_option(run_cli: RunCli) -> None:
+    """It respects cli options."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    result = run_cli(code_cell, args="--color --color-system=256")
+    output = result.output
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[2]:\x1b[0m │ \x1b[38;5;182;49mdef"
+        "\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b[38;5;147;49mfoo"
+        "\x1b[0m\x1b[38;5;153;49m(\x1b[0m\x1b[38;5;231;49mx\x1b["
+        "0m\x1b[38;5;153;49m:\x1b[0m\x1b[38;5;231;49m \x1b[0m"
+        "\x1b[38;5;147;49mfloat\x1b[0m\x1b[38;5;153;49m,\x1b["
+        "0m\x1b[38;5;231;49m \x1b[0m\x1b[38;5;231;49my\x1b[0m"
+        "\x1b[38;5;153;49m:\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b["
+        "38;5;147;49mfloat\x1b[0m\x1b[38;5;153;49m)\x1b[0m"
+        "\x1b[38;5;231;49m \x1b[0m\x1b[38;5;153;49m-\x1b[0m\x1b["
+        "38;5;153;49m>\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b[38"
+        ";5;147;49mfloat\x1b[0m\x1b[38;5;153;49m:\x1b[0m  "
+        "                                 │\n     "
+        "│ \x1b[38;5;231;49m    \x1b[0m\x1b[38;5;182;49mre"
+        "turn\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b[38;5;231;49"
+        "mx\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b[38;5;153;49m+"
+        "\x1b[0m\x1b[38;5;231;49m \x1b[0m\x1b[38;5;231;49my\x1b["
+        "0m                                      "
+        "                  │\n     ╰──────────────"
+        "────────────────────────────────────────"
+        "───────────────────╯\n"
+    )
+    assert output == expected_output
 
 
 def test_render_markdown(run_cli: RunCli) -> None:

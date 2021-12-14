@@ -55,7 +55,7 @@ class RichOutput(Protocol):
         image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
         relative_dir: Optional[Path] = None,
-    ) -> str:
+    ) -> str:  # pragma: no cover
         """Callable types."""
         ...
 
@@ -84,7 +84,7 @@ class LinkFilePathNotFoundError(Exception):
 
     def __post_init__(
         self,
-    ) -> None:
+    ) -> None:  # pragma: no cover
         """Constructor."""
         super().__init__("No hyperlink filepath found in output")
 
@@ -100,7 +100,7 @@ def parse_link_filepath() -> Callable[[str], Path]:
         if link_filepath_match is not None:
             link_filepath = link_filepath_match.group(1)
             return pathlib.Path(link_filepath)
-        else:
+        else:  # pragma: no cover
             raise LinkFilePathNotFoundError()
 
     return _parse_link_filepath
@@ -3646,7 +3646,9 @@ def test_vegalite_output_no_files(
     )
 
     tempfile_directory = tempfile_path.parent
-    for file in tempfile_directory.glob(f"{tempfile_path.stem}*.html"):
+    for file in tempfile_directory.glob(
+        f"{tempfile_path.stem}*.html"
+    ):  # pragma: no cover
         assert not file.exists()
     assert remove_link_ids(output) == remove_link_ids(adjusted_expected_output)
 
