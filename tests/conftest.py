@@ -163,7 +163,7 @@ def _wrap_ansi(
             soft_wrap=True,
         )
         non_pad_width = width - left_pad
-        if idx == 0:
+        if idx == 0:  # pragma: no branch
             *pre_link_text, link_text = text_line.split(" ")
             if width < text_line.cell_len and link_text.cell_len <= non_pad_width:
                 text_line = link_text
@@ -176,7 +176,7 @@ def _wrap_ansi(
             wrapped_lines = text_line.wrap(con, width=non_pad_width)
             padded_lines = padding.Padding(wrapped_lines, pad=(0, 0, 0, left_pad))
             con.print(padded_lines)
-        if plain_text := output.getvalue():
+        if plain_text := output.getvalue():  # pragma: no branch
             yield plain_text
 
 
@@ -247,7 +247,7 @@ def mock_tempfile_file(mocker: MockerFixture, tempfile_path: Path) -> Iterator[M
     tempfile_base_name = tempfile_stem[3:]
     tempfile_parent = tempfile_path.parent
     mock = mocker.patch("tempfile._get_candidate_names")
-    mock.return_value = (
+    mock.return_value = (  # pragma: no branch
         f"{tempfile_base_name}{file_suffix}" for file_suffix in itertools.count()
     )
     yield mock

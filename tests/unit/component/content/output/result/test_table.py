@@ -8,7 +8,7 @@ from nbpreview.component.content.output.result import table
 def test_group_tokens_equal_tags() -> None:
     """It raises a NotUniqueError when tags are equal."""
     with pytest.raises(table.NotUniqueError):
-        grouped_tokens = table._group_tokens(
+        grouped_tokens = table._group_tokens(  # pragma: no branch
             (token.Token("", tag="", nesting=0) for _ in range(2)),
             open_tag="hey",
             close_tag="hey",

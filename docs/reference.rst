@@ -1,13 +1,9 @@
 Reference
 =========
 
-.. contents::
-    :local:
-    :backlinks: none
 
+nbpreview
+---------
 
-nbpreview.__main__
-------------------
-
-.. automodule:: nbpreview.__main__
+.. automodule:: nbpreview
    :members:

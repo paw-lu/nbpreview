@@ -69,10 +69,11 @@ repos:
         types: [jupyter]
       - id: pyupgrade
         name: pyupgrade
+        description: Automatically upgrade syntax for newer versions.
         entry: pyupgrade
         language: system
         types: [python]
-        args: [--keep-runtime-typing, --py37-plus]
+        args: [--py38-plus]
       - id: trailing-whitespace
         name: Trim Trailing Whitespace
         entry: trailing-whitespace-fixer

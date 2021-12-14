@@ -208,7 +208,7 @@ positive_space_option = typer.Option(
     help="Draw character images in positive space."
     " Generally negative space works best on charts or images with"
     " light backgrounds, while positive space will look best on dark"
-    " background images. Only has effect on character drawings. By "
+    " background images. Only has effect on character drawings. By"
     " default set to negative space.",
     envvar="NBPREVIEW_POSITIVE_SPACE",
 )
