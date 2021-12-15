@@ -807,3 +807,14 @@ def test_theme_completion(
         "ansi_dark",
     ]
     assert output == expected_output
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--line-numbers", None), ("-m", None), (None, "1")),
+)
+def test_line_numbers_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook file with line numbers."""
+    test_cli(option_name, nbpreview_line_numbers=env)
