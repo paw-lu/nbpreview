@@ -260,6 +260,13 @@ color_system_option = typer.Option(
     envvar="NBPREVIEW_COLOR_SYSTEM",
     case_sensitive=False,
 )
+line_numbers_option = typer.Option(
+    False,
+    "--line-numbers",
+    "-m",
+    help="Show line numbers for code in cells.",
+    envvar="NBPREVIEW_LINE_NUMBERS",
+)
 
 
 def _envvar_to_bool(envvar: str) -> bool:
@@ -351,6 +358,7 @@ def main(
     color_system: Optional[ColorSystemEnum] = color_system_option,
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
+    line_numbers: bool = line_numbers_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     if color is None and _detect_no_color():
@@ -392,6 +400,7 @@ def main(
             images=images,
             image_drawing=image_drawing,
             color=color,
+            line_numbers=line_numbers,
         )
 
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
