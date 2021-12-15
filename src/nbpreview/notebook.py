@@ -126,6 +126,7 @@ def _render_notebook(
     negative_space: bool,
     relative_dir: Path,
     characters: Optional[str] = None,
+    line_numbers: bool = False,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -154,6 +155,7 @@ def _render_notebook(
             hide_hyperlink_hints=hide_hyperlink_hints,
             characters=characters,
             relative_dir=relative_dir,
+            line_numbers=line_numbers,
         )
         if cell_row is not None:
             grid.add_row(*cell_row.to_table_row())
@@ -214,6 +216,8 @@ class Notebook:
         relative_dir (Optional[Path]): The directory to prefix relative
             paths to convert them to absolute. If None will assume
             current directory is relative prefix.
+        line_numbers (bool): Whether to render line numbers in code
+            cells. By default False.
     """
 
     notebook_node: NotebookNode
@@ -230,6 +234,7 @@ class Notebook:
     image_drawing: Optional[ImageDrawing] = None
     color: Optional[bool] = None
     relative_dir: InitVar[Optional[Path]] = None
+    line_numbers: bool = False
 
     def __post_init__(self, relative_dir: Optional[Path]) -> None:
         """Constructor."""
@@ -258,6 +263,7 @@ class Notebook:
         images: Optional[bool] = None,
         image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
+        line_numbers: bool = False,
     ) -> "Notebook":
         """Create Notebook from notebook file."""
         try:
@@ -280,6 +286,7 @@ class Notebook:
             image_drawing=image_drawing,
             color=color,
             relative_dir=relative_dir,
+            line_numbers=line_numbers,
         )
 
     def __rich_console__(
@@ -323,5 +330,6 @@ class Notebook:
             color=color,
             negative_space=self.negative_space,
             relative_dir=self.relative_dir,
+            line_numbers=self.line_numbers,
         )
         yield rendered_notebook
