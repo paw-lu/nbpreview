@@ -1,5 +1,6 @@
 """Input notebook cells."""
 import dataclasses
+import functools
 from pathlib import Path
 from typing import Optional, Union
 
@@ -119,32 +120,22 @@ class CodeCell(Cell):
     def __rich__(self) -> RenderableType:
         """Render the code cell."""
         rendered_code_cell: Union[Syntax, Group]
-        rendered_code_cell = syntax.Syntax(
-            self.source,
+        code_cell_renderer = functools.partial(
+            syntax.Syntax,
             lexer_name=self.default_lexer_name,
             theme=self.theme,
             background_color="default",
             line_numbers=self.line_numbers,
         )
+        rendered_code_cell = code_cell_renderer(self.source)
         if self.source.startswith("%%"):
             try:
                 magic, body = self.source.split("\n", 1)
                 language_name = magic.lstrip("%")
                 body_lexer_name = pygments.lexers.get_lexer_by_name(language_name).name
-                rendered_magic = syntax.Syntax(
-                    magic,
-                    lexer_name=self.default_lexer_name,
-                    theme=self.theme,
-                    background_color="default",
-                    line_numbers=self.line_numbers,
-                )
-                rendered_body = syntax.Syntax(
-                    body,
-                    lexer_name=body_lexer_name,
-                    theme=self.theme,
-                    background_color="default",
-                    line_numbers=self.line_numbers,
-                    start_line=2,
+                rendered_magic = code_cell_renderer(magic)
+                rendered_body = code_cell_renderer(
+                    body, lexer_name=body_lexer_name, start_line=2
                 )
                 rendered_code_cell = console.Group(rendered_magic, rendered_body)
 
