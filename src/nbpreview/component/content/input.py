@@ -110,12 +110,14 @@ class CodeCell(Cell):
         default_lexer_name: str,
         safe_box: Optional[bool] = None,
         line_numbers: bool = False,
+        code_wrap: bool = False,
     ) -> None:
         """Constructor."""
         super().__init__(source, plain=plain, safe_box=safe_box)
         self.theme = theme
         self.default_lexer_name = default_lexer_name
         self.line_numbers = line_numbers
+        self.code_wrap = code_wrap
 
     def __rich__(self) -> RenderableType:
         """Render the code cell."""
@@ -126,6 +128,7 @@ class CodeCell(Cell):
             theme=self.theme,
             background_color="default",
             line_numbers=self.line_numbers,
+            word_wrap=self.code_wrap,
         )
         rendered_code_cell = code_cell_renderer(self.source)
         if self.source.startswith("%%"):
