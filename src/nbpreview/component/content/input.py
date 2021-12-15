@@ -1,16 +1,13 @@
 """Input notebook cells."""
-
-
 import dataclasses
 from pathlib import Path
 from typing import Optional, Union
 
 import pygments
-from rich import padding, panel, syntax, text
-from rich.console import RenderableType
+from rich import console, padding, panel, syntax
+from rich.console import Group, RenderableType
 from rich.padding import Padding, PaddingDimensions
 from rich.syntax import Syntax
-from rich.text import Text
 
 from nbpreview.component import markdown
 from nbpreview.component.content.output.result.drawing import ImageDrawing
@@ -111,42 +108,45 @@ class CodeCell(Cell):
         theme: str,
         default_lexer_name: str,
         safe_box: Optional[bool] = None,
+        line_numbers: bool = False,
     ) -> None:
         """Constructor."""
         super().__init__(source, plain=plain, safe_box=safe_box)
         self.theme = theme
         self.default_lexer_name = default_lexer_name
+        self.line_numbers = line_numbers
 
     def __rich__(self) -> RenderableType:
         """Render the code cell."""
-        rendered_code_cell: Union[Syntax, Text]
+        rendered_code_cell: Union[Syntax, Group]
         rendered_code_cell = syntax.Syntax(
             self.source,
             lexer_name=self.default_lexer_name,
             theme=self.theme,
             background_color="default",
+            line_numbers=self.line_numbers,
         )
         if self.source.startswith("%%"):
             try:
                 magic, body = self.source.split("\n", 1)
                 language_name = magic.lstrip("%")
                 body_lexer_name = pygments.lexers.get_lexer_by_name(language_name).name
-                # Syntax needs a string in the init, so pass an
-                # empty string and then pass the actual code to
-                # highlight method
                 rendered_magic = syntax.Syntax(
-                    "",
+                    magic,
                     lexer_name=self.default_lexer_name,
                     theme=self.theme,
                     background_color="default",
-                ).highlight(magic)
+                    line_numbers=self.line_numbers,
+                )
                 rendered_body = syntax.Syntax(
-                    "",
+                    body,
                     lexer_name=body_lexer_name,
                     theme=self.theme,
                     background_color="default",
-                ).highlight(body)
-                rendered_code_cell = text.Text().join((rendered_magic, rendered_body))
+                    line_numbers=self.line_numbers,
+                    start_line=2,
+                )
+                rendered_code_cell = console.Group(rendered_magic, rendered_body)
 
             except pygments.util.ClassNotFound:
                 pass
