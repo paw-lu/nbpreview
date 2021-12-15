@@ -267,6 +267,14 @@ line_numbers_option = typer.Option(
     help="Show line numbers for code in cells.",
     envvar="NBPREVIEW_LINE_NUMBERS",
 )
+code_wrap_option = typer.Option(
+    False,
+    "--code-wrap",
+    "-q",
+    help="Wrap code onto next line if it does not fit in width."
+    " May be used with --line-numbers for clarity.",
+    envvar="NBPREVIEW_CODE_WRAP",
+)
 
 
 def _envvar_to_bool(envvar: str) -> bool:
@@ -359,6 +367,7 @@ def main(
     width: Optional[int] = width_option,
     version: Optional[bool] = version_option,
     line_numbers: bool = line_numbers_option,
+    code_wrap: bool = code_wrap_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     if color is None and _detect_no_color():
@@ -401,6 +410,7 @@ def main(
             image_drawing=image_drawing,
             color=color,
             line_numbers=line_numbers,
+            code_wrap=code_wrap,
         )
 
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
