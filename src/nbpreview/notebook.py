@@ -127,6 +127,7 @@ def _render_notebook(
     relative_dir: Path,
     characters: Optional[str] = None,
     line_numbers: bool = False,
+    code_wrap: bool = False,
 ) -> Table:
     """Create a table representing a notebook."""
     grid = table.Table.grid(padding=(1, 1, 1, 0))
@@ -156,6 +157,7 @@ def _render_notebook(
             characters=characters,
             relative_dir=relative_dir,
             line_numbers=line_numbers,
+            code_wrap=code_wrap,
         )
         if cell_row is not None:
             grid.add_row(*cell_row.to_table_row())
@@ -218,6 +220,8 @@ class Notebook:
             current directory is relative prefix.
         line_numbers (bool): Whether to render line numbers in code
             cells. By default False.
+        code_wrap (bool): Whether to wrap code if it does not fit. By
+            default False.
     """
 
     notebook_node: NotebookNode
@@ -235,6 +239,7 @@ class Notebook:
     color: Optional[bool] = None
     relative_dir: InitVar[Optional[Path]] = None
     line_numbers: bool = False
+    code_wrap: bool = False
 
     def __post_init__(self, relative_dir: Optional[Path]) -> None:
         """Constructor."""
@@ -264,6 +269,7 @@ class Notebook:
         image_drawing: Optional[ImageDrawing] = None,
         color: Optional[bool] = None,
         line_numbers: bool = False,
+        code_wrap: bool = False,
     ) -> "Notebook":
         """Create Notebook from notebook file."""
         try:
@@ -287,6 +293,7 @@ class Notebook:
             color=color,
             relative_dir=relative_dir,
             line_numbers=line_numbers,
+            code_wrap=code_wrap,
         )
 
     def __rich_console__(
@@ -331,5 +338,6 @@ class Notebook:
             negative_space=self.negative_space,
             relative_dir=self.relative_dir,
             line_numbers=self.line_numbers,
+            code_wrap=self.code_wrap,
         )
         yield rendered_notebook

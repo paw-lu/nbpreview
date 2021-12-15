@@ -818,3 +818,14 @@ def test_line_numbers_notebook_file(
 ) -> None:
     """It renders a notebook file with line numbers."""
     test_cli(option_name, nbpreview_line_numbers=env)
+
+
+@pytest.mark.parametrize(
+    "option_name, env",
+    (("--code-wrap", None), ("-q", None), (None, "1")),
+)
+def test_code_wrap_notebook_file(
+    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook file with line numbers."""
+    test_cli(option_name, nbpreview_code_wrap=env)

@@ -79,6 +79,7 @@ def render_input_row(
     characters: Optional[str] = None,
     unicode_border: Optional[bool] = None,
     line_numbers: bool = False,
+    code_wrap: bool = False,
 ) -> Union[Row, None]:
     """Render a Jupyter Notebook cell.
 
@@ -118,6 +119,8 @@ def render_input_row(
             default.
         line_numbers (bool): Whether to render line numbers in code
             cells. By default False.
+        code_wrap (bool): Whether to wrap code if it does not fit. By
+            default False.
 
     Returns:
         Row: The execution count indicator and cell content if cell type
@@ -157,6 +160,7 @@ def render_input_row(
             theme=theme,
             default_lexer_name=default_lexer_name,
             line_numbers=line_numbers,
+            code_wrap=code_wrap,
         )
 
     elif cell_type == "raw":
