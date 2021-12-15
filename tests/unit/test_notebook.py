@@ -174,8 +174,9 @@ def test_automatic_plain(
         "outputs": [],
         "source": "%%bash\necho 'lorep'",
     }
+    output_file = io.StringIO()
     con = console.Console(
-        file=io.StringIO(),
+        file=output_file,
         width=80,
         color_system="truecolor",
         legacy_windows=False,
@@ -184,13 +185,16 @@ def test_automatic_plain(
     notebook_node = make_notebook(code_cell)
     rendered_notebook = notebook.Notebook(notebook_node)
     con.print(rendered_notebook)
-    output = con.file.getvalue()  # type: ignore[attr-defined]
+    output = output_file.getvalue()
     expected_output = (
         "\x1b[38;2;137;221;255;49m%%\x1b[0m\x1b[38;2;187;1"
-        "28;179;49mbash\x1b[0m      \n\x1b[38;2;130;170;"
-        "255;49mecho\x1b[0m\x1b[38;2;238;255;255;49m \x1b["
-        "0m\x1b[38;2;195;232;141;49m'lorep'\x1b[0m\n    "
-        "        \n"
+        "28;179;49mbash\x1b[0m                      "
+        "                                        "
+        "            \n\x1b[38;2;130;170;255;49mecho\x1b"
+        "[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;195"
+        ";232;141;49m'lorep'\x1b[0m                 "
+        "                                        "
+        "           \n"
     )
     assert output == expected_output
 
@@ -728,13 +732,18 @@ def test_notebook_magic_code_cell(rich_notebook_output: RichOutput) -> None:
         "source": "%%bash\necho 'lorep'",
     }
     expected_output = (
-        "     ╭──────────────╮\n\x1b[38;5;247m[3]:\x1b[0"
-        "m │ \x1b[38;2;137;221;255;49m%%\x1b[0m\x1b[38;2;1"
-        "87;128;179;49mbash\x1b[0m       │\n     │ \x1b["
-        "38;2;130;170;255;49mecho\x1b[0m\x1b[38;2;238;2"
-        "55;255;49m \x1b[0m\x1b[38;2;195;232;141;49m'lo"
-        "rep'\x1b[0m │\n     │              │\n     ╰─"
-        "─────────────╯\n"
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b[38;2;137;221;25"
+        "5;49m%%\x1b[0m\x1b[38;2;187;128;179;49mbash\x1b[0"
+        "m                                       "
+        "                           │\n     │ \x1b[38"
+        ";2;130;170;255;49mecho\x1b[0m\x1b[38;2;238;255"
+        ";255;49m \x1b[0m\x1b[38;2;195;232;141;49m'lore"
+        "p'\x1b[0m                                  "
+        "                          │\n     ╰──────"
+        "────────────────────────────────────────"
+        "───────────────────────────╯\n"
     )
     output = rich_notebook_output(code_cell)
     assert output == expected_output
@@ -2756,16 +2765,14 @@ def test_render_markdown_output(rich_notebook_output: RichOutput) -> None:
         ";2;255;83;112;49m**Lorep**\x1b[0m\x1b[38;2;238"
         ";255;255;49m \x1b[0m\x1b[38;2;137;221;255;49m_"
         "ipsum_\x1b[0m                              "
-        "                         │\n     │       "
-        "                                        "
-        "                          │\n     ╰──────"
+        "                         │\n     ╰───────"
         "────────────────────────────────────────"
-        "───────────────────────────╯\n           "
+        "──────────────────────────╯\n            "
         "                                        "
-        "                             \n      \x1b[1m"
-        "Lorep\x1b[0m \x1b[3mipsum\x1b[0m                 "
+        "                            \n      \x1b[1mL"
+        "orep\x1b[0m \x1b[3mipsum\x1b[0m                  "
         "                                        "
-        "      \n"
+        "     \n"
     )
     output = rich_notebook_output(markdown_output_cell)
     assert output == expected_output
