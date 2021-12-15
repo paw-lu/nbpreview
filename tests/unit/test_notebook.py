@@ -56,6 +56,7 @@ class RichOutput(Protocol):
         color: Optional[bool] = None,
         relative_dir: Optional[Path] = None,
         line_numbers: bool = False,
+        code_wrap: bool = False,
     ) -> str:  # pragma: no cover
         """Callable types."""
         ...
@@ -140,6 +141,7 @@ def rich_notebook_output(
         color: Optional[bool] = None,
         relative_dir: Optional[Path] = None,
         line_numbers: bool = False,
+        code_wrap: bool = False,
     ) -> str:
         """Render the notebook containing the cell."""
         notebook_node = make_notebook(cell)
@@ -158,6 +160,7 @@ def rich_notebook_output(
             negative_space=negative_space,
             relative_dir=relative_dir,
             line_numbers=line_numbers,
+            code_wrap=code_wrap,
         )
         output = rich_console(rendered_notebook, no_wrap)
         return output
@@ -5546,4 +5549,50 @@ def test_notebook_line_numbers_magic_code_cell(
         "───╯\n"
     )
     output = rich_notebook_output(code_cell, line_numbers=True)
+    assert output == expected_output
+
+
+def test_code_wrap(rich_notebook_output: RichOutput) -> None:
+    """It wraps code when narrow."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 3,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "non_monkeys ="
+        ' [animal for animal in get_animals("mamals") if animal != "monkey"]',
+    }
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b[38;2;238;255;25"
+        "5;49mnon_monkeys\x1b[0m\x1b[38;2;238;255;255;4"
+        "9m \x1b[0m\x1b[38;2;137;221;255;49m=\x1b[0m\x1b[38;2"
+        ";238;255;255;49m \x1b[0m\x1b[38;2;137;221;255;"
+        "49m[\x1b[0m\x1b[38;2;238;255;255;49manimal\x1b[0m"
+        "\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;187;12"
+        "8;179;49mfor\x1b[0m\x1b[38;2;238;255;255;49m \x1b"
+        "[0m\x1b[38;2;238;255;255;49manimal\x1b[0m\x1b[38;"
+        "2;238;255;255;49m \x1b[0m\x1b[3;38;2;137;221;2"
+        "55;49min\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b"
+        "[38;2;238;255;255;49mget_animals\x1b[0m\x1b[38"
+        ";2;137;221;255;49m(\x1b[0m\x1b[38;2;195;232;14"
+        '1;49m"\x1b[0m\x1b[38;2;195;232;141;49mmamals\x1b['
+        '0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2;137;'
+        "221;255;49m)\x1b[0m\x1b[38;2;238;255;255;49m \x1b"
+        "[0m\x1b[38;2;187;128;179;49mif\x1b[0m\x1b[38;2;23"
+        "8;255;255;49m \x1b[0m\x1b[38;2;238;255;255;49m"
+        "animal\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[3"
+        "8;2;137;221;255;49m!=\x1b[0m\x1b[38;2;238;255;"
+        "255;49m \x1b[0m │\n     │ \x1b[38;2;195;232;141"
+        ';49m"\x1b[0m\x1b[38;2;195;232;141;49mmonkey\x1b[0'
+        'm\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2;137;2'
+        "21;255;49m]\x1b[0m                         "
+        "                                      │\n"
+        "     ╰──────────────────────────────────"
+        "───────────────────────────────────────╯"
+        "\n"
+    )
+    output = rich_notebook_output(code_cell, code_wrap=True)
     assert output == expected_output
