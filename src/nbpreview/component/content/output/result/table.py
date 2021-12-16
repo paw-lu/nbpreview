@@ -4,7 +4,7 @@ import itertools
 from collections import abc
 from typing import Iterator, Union
 
-from markdown_it import MarkdownIt
+import markdown_it
 from markdown_it.token import Token
 from rich import box, markdown, style, table, text
 from rich.markdown import Markdown
@@ -89,7 +89,7 @@ def _parse_table_element(element: str, header: bool) -> Markdown:
 
 def parse_markdown_tables(markup: str, unicode: bool) -> Iterator[TableSection]:
     """Return parsed tables from markdown."""
-    markdown_parser = MarkdownIt("zero").enable("table")
+    markdown_parser = markdown_it.MarkdownIt("zero").enable("table")
     parsed_markup = markdown_parser.parse(markup)
     is_header = {"th_open": True, "td_open": False}
     iter_parsed_markup = iter(parsed_markup)
