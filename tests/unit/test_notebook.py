@@ -6,6 +6,7 @@ import os
 import pathlib
 import re
 import sys
+import textwrap
 from pathlib import Path
 from typing import (
     Any,
@@ -226,6 +227,137 @@ def test_notebook_markdown_cell(rich_notebook_output: RichOutput) -> None:
         "lor\x1b[0m \x1b[3msit\x1b[0m \x1b[97;40mamet\x1b[0m    "
         "                                        "
         "                    \n"
+    )
+    assert output == expected_output
+
+
+def test_notebook_latex_markdown_cell(rich_notebook_output: RichOutput) -> None:
+    """It renders a markdown cell with latex equations."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "### Lorep ipsum\nLorep ipsum doret $\\gamma$ su\n"
+        "\n\n$$\ny = \\alpha + \\beta x\n$$\n\nsu ro\n",
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "                                        "
+        "                                        "
+        "\n  \x1b[1;38;2;3;218;197m### \x1b[0m\x1b[1;38;2;3"
+        ";218;197mLorep ipsum\x1b[0m\x1b[1;38;2;3;218;1"
+        "97m                                     "
+        "                          \x1b[0m\n         "
+        "                                        "
+        "                               \n  Lorep "
+        "ipsum doret $\\gamma$ su                 "
+        "                                \n       "
+        "                                        "
+        "                                 \n  y = "
+        "α+ βx                                   "
+        "                                  \n     "
+        "                                        "
+        "                                   \n  su"
+        " ro                                     "
+        "                                    \n"
+    )
+    assert output == expected_output
+
+
+def test_notebook_latex_and_table_markdown_cell(
+    rich_notebook_output: RichOutput,
+) -> None:
+    """It renders a markdown cell with latex equations and tables."""
+    source = textwrap.dedent(
+        """\
+        # Lorep ipsum
+
+        Hey
+
+        |  a  |  b  |  c  |
+        | --- | --- | --- |
+        |  1  |  2  |  3  |
+
+        $$
+        X \\sim \\mathcal{N}(\\mu,\\,\\sigma^{2})\
+        $$
+
+        Hear
+
+        |  a  |  b  |  c  |
+        | --- | --- | --- |
+        |  1  |  2  |  3  |
+
+        Ehse
+
+        $$
+        rmse = \\sqrt{(\frac{1}{n})\\sum_{i=1}^{n}(y_{i} - x_{i})^{2}}
+        $$
+
+        Fin
+    """
+    )
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": source,
+    }
+    output = rich_notebook_output(markdown_cell)
+    expected_output = (
+        "  \x1b[1;38;2;255;255;255;48;2;96;2;238m \x1b["
+        "0m\x1b[1;38;2;255;255;255;48;2;96;2;238mLor"
+        "ep ipsum\x1b[0m\x1b[1;38;2;255;255;255;48;2;96"
+        ";2;238m \x1b[0m\x1b[1;38;2;255;255;255;48;2;96"
+        ";2;238m                                 "
+        "                                \x1b[0m\n  \x1b"
+        "[2;38;2;96;2;238m───────────────────────"
+        "────────────────────────────────────────"
+        "───────────────\x1b[0m\n                    "
+        "                                        "
+        "                    \n  Hey              "
+        "                                        "
+        "                     \n                  "
+        "                                        "
+        "                      \n   \x1b[1ma\x1b[0m     "
+        "                    \x1b[1mb\x1b[0m           "
+        "               \x1b[1mc\x1b[0m                "
+        "       \n  ──────────────────────────────"
+        "────────────────────────────────────────"
+        "────────\n   1                         2 "
+        "                         3              "
+        "         \n                              "
+        "                                        "
+        "          \n                             "
+        "                                        "
+        "           \n  X ∼𝒩(μ, σ^2)              "
+        "                                        "
+        "            \n                           "
+        "                                        "
+        "             \n  Hear                    "
+        "                                        "
+        "              \n                         "
+        "                                        "
+        "               \n   \x1b[1ma\x1b[0m            "
+        "             \x1b[1mb\x1b[0m                  "
+        "        \x1b[1mc\x1b[0m                       "
+        "\n  ─────────────────────────────────────"
+        "────────────────────────────────────────"
+        "─\n   1                         2        "
+        "                  3                     "
+        "  \n                                     "
+        "                                        "
+        "   \n  Ehse                              "
+        "                                        "
+        "    \n                                   "
+        "                                        "
+        "     \n  rmse = √(( rac1n)∑_i=1^n(y_i - x"
+        "_i)^2)                                  "
+        "      \n                                 "
+        "                                        "
+        "       \n  Fin                           "
+        "                                        "
+        "        \n"
     )
     assert output == expected_output
 

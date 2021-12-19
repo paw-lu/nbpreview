@@ -1,6 +1,4 @@
 """Override rich's markdown renderer with custom components."""
-
-
 import dataclasses
 import io
 import os
@@ -17,15 +15,22 @@ import validators
 import yarl
 from PIL import Image
 from rich import _loop, markdown, measure, rule, segment, style, syntax, text
-from rich.console import Console, ConsoleOptions, JustifyMethod, RenderResult
+from rich.console import (
+    Console,
+    ConsoleOptions,
+    JustifyMethod,
+    RenderableType,
+    RenderResult,
+)
 from rich.measure import Measurement
 from rich.style import Style
-from rich.table import Table
 from rich.text import Text
 
-from nbpreview.component.content.output.result import drawing, link, table
+from nbpreview.component.content.output.result import drawing, link, markdown_extensions
 from nbpreview.component.content.output.result.drawing import ImageDrawing
-from nbpreview.component.content.output.result.table import TableSection
+from nbpreview.component.content.output.result.markdown_extensions import (
+    MarkdownExtensionSection,
+)
 
 
 class CustomCodeBlock(markdown.CodeBlock):
@@ -334,7 +339,9 @@ class CustomMarkdown:
 
     def __post_init__(self) -> None:
         """Constructor."""
-        table_sections = table.parse_markdown_tables(self.source, unicode=self.unicode)
+        table_sections = markdown_extensions.parse_markdown_extensions(
+            self.source, unicode=self.unicode
+        )
         self.renderables = [
             renderable
             for renderable in _splice_tables(
@@ -373,7 +380,7 @@ class CustomMarkdown:
 
 def _splice_tables(
     markup: str,
-    table_sections: Iterable[TableSection],
+    table_sections: Iterable[MarkdownExtensionSection],
     theme: str,
     hyperlinks: bool,
     nerd_font: bool,
@@ -386,7 +393,7 @@ def _splice_tables(
     hide_hyperlink_hints: bool,
     relative_dir: Path,
     characters: Optional[str] = None,
-) -> Iterator[Union[MarkdownOverwrite, Table, Text]]:
+) -> Iterator[Union[MarkdownOverwrite, RenderableType, Text]]:
     """Mix in tables with traditional markdown parser."""
     markup_lines = markup.splitlines()
     last_end_point = 0
@@ -410,7 +417,8 @@ def _splice_tables(
             relative_dir=relative_dir,
         )
         yield text.Text()
-        yield table_section.table
+        yield table_section.renderable
+
         yield text.Text()
         last_end_point = table_section.end_line + 1
     end_section = "\n".join(markup_lines[last_end_point:])

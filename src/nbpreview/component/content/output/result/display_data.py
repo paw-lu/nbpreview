@@ -1,6 +1,4 @@
 """Notebook display data and execute result."""
-
-
 import collections
 import dataclasses
 import enum
@@ -11,7 +9,6 @@ from typing import ClassVar, Dict, Iterator, List, Optional, Union
 import html2text
 from lxml import html
 from lxml.html import HtmlElement
-from pylatexenc import latex2text
 from rich import measure, syntax, text
 from rich.console import Console, ConsoleOptions, ConsoleRenderable
 from rich.emoji import Emoji
@@ -21,7 +18,7 @@ from rich.table import Table
 from rich.text import Text
 
 from nbpreview.component import markdown
-from nbpreview.component.content.output.result import drawing, link, table
+from nbpreview.component.content.output.result import drawing, latex, link, table
 from nbpreview.component.content.output.result.drawing import Drawing, ImageDrawing
 from nbpreview.component.markdown import CustomMarkdown
 from nbpreview.data import Data
@@ -397,9 +394,7 @@ class LaTeXDisplay(DisplayData):
 
     def __rich__(self) -> str:
         """Render the LaTeX display data."""
-        rendered_latex: str = latex2text.LatexNodes2Text(
-            math_mode="text", fill_text=True, strict_latex_spaces=False
-        ).latex_to_text(self.content)
+        rendered_latex: str = latex.render_latex(self.content)
         return rendered_latex
 
 
