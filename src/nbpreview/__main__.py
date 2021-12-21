@@ -9,6 +9,7 @@ import typing
 from pathlib import Path
 from typing import Iterable, List, Optional, Union
 
+import click
 import nbformat
 import typer
 from click import Context, Parameter
@@ -19,6 +20,7 @@ from rich.console import Console
 from nbpreview import __version__, cli_choices, errors, notebook
 from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
+from nbpreview.notebook import Notebook
 
 app = typer.Typer()
 traceback.install(theme="material")
@@ -275,6 +277,13 @@ code_wrap_option = typer.Option(
     " May be used with --line-numbers for clarity.",
     envvar="NBPREVIEW_CODE_WRAP",
 )
+paging_option = typer.Option(
+    None,
+    "--paging / --no-paging",
+    "-g / -f",
+    help="Whether to display the output in a pager." " By default autodetects.",
+    envvar="NBPREVIEW_PAGING",
+)
 
 
 def _envvar_to_bool(envvar: str) -> bool:
@@ -347,6 +356,37 @@ def _check_image_drawing_option(
             raise typer.Exit(1) from exception
 
 
+def _detect_paging(
+    paging: Union[bool, None], rendered_notebook: str, console: Console
+) -> bool:
+    """Determine if pager should be used."""
+    detected_paging = paging or (
+        paging is None
+        and console.height < (rendered_notebook.count("\n") + 1)
+        and console.is_interactive
+    )
+    return detected_paging
+
+
+def _render_notebook(
+    nbpreview_notebook: Notebook,
+    console: Console,
+    paging: Union[bool, None],
+    color: Union[bool, None],
+) -> None:
+    """Render the notebook to the console."""
+    with console.capture() as capture:
+        console.print(nbpreview_notebook)
+    rendered_notebook = capture.get()
+    _paging = _detect_paging(
+        paging, rendered_notebook=rendered_notebook, console=console
+    )
+    if _paging:
+        click.echo_via_pager(rendered_notebook, color=color)
+    else:
+        print(rendered_notebook, end="")
+
+
 @app.command()
 def main(
     file: Path = file_argument,
@@ -368,6 +408,7 @@ def main(
     version: Optional[bool] = version_option,
     line_numbers: bool = line_numbers_option,
     code_wrap: bool = code_wrap_option,
+    paging: Optional[bool] = paging_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     if color is None and _detect_no_color():
@@ -390,12 +431,14 @@ def main(
     )
     stdout_console = output_console(file=sys.stdout)
     stderr_console = output_console(file=sys.stderr)
+
     _check_image_drawing_option(image_drawing, stderr_console=stderr_console)
+    files = not no_files
+    negative_space = not positive_space
+    translated_theme = _translate_theme(theme)
+
     try:
-        files = not no_files
-        negative_space = not positive_space
-        translated_theme = _translate_theme(theme)
-        rendered_notebook = notebook.Notebook.from_file(
+        nbpreview_notebook = notebook.Notebook.from_file(
             file,
             theme=translated_theme,
             hide_output=hide_output,
@@ -420,7 +463,9 @@ def main(
         raise typer.Exit(1) from exception
 
     else:
-        stdout_console.print(rendered_notebook)
+        _render_notebook(
+            nbpreview_notebook, console=stdout_console, paging=paging, color=color
+        )
 
 
 if __name__ == "__main__":
