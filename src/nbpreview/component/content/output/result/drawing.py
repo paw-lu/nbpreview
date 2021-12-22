@@ -19,7 +19,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
-from nbpreview import cli_choices
+from nbpreview import parameters
 from nbpreview.data import Data
 
 # terminedia depends on fcntl, which is not present on Windows platforms
@@ -37,7 +37,7 @@ class Size(typing.NamedTuple):
 
 
 @enum.unique
-class ImageDrawingEnum(str, cli_choices.LowerNameEnum):
+class ImageDrawingEnum(str, parameters.LowerNameEnum):
     """Image drawing types."""
 
     BLOCK = enum.auto()
