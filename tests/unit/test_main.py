@@ -207,9 +207,9 @@ def run_cli(
 def cli_arg(
     runner: CliRunner,
     notebook_path: Path,
-    mock_terminal: Iterator[Mock],
+    mock_terminal: Mock,
     remove_link_ids: Callable[[str], str],
-    mock_tempfile_file: Iterator[Mock],
+    mock_tempfile_file: Mock,
 ) -> Callable[..., str]:
     """Return function that applies arguments to cli."""
 
@@ -217,6 +217,7 @@ def cli_arg(
         *args: Union[str, None],
         images: bool = True,
         truecolor: bool = True,
+        paging: Union[bool, None] = False,
         **kwargs: Union[str, None],
     ) -> str:
         """Apply given arguments to cli.
@@ -228,6 +229,9 @@ def cli_arg(
                 default True.
             truecolor (bool): Whether to pass
                 '--color-system=truecolor' option. By default True.
+            paging (Union[bool, None]): Whether to pass '--paging' or
+                '--no-paging' option. By default False, which
+                corresponds to '--no-paging'.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
@@ -243,6 +247,11 @@ def cli_arg(
             cli_args.append("--images")
         if truecolor:
             cli_args.append("--color-system=truecolor")
+        if paging is True:
+            cli_args.append("--paging")
+        elif paging is False:
+            cli_args.append("--no-paging")
+
         result = runner.invoke(
             app,
             args=cli_args,
@@ -267,6 +276,7 @@ def test_cli(
         *args: Union[str, None],
         images: bool = True,
         truecolor: bool = True,
+        paging: Union[bool, None] = False,
         **kwargs: Union[str, None],
     ) -> None:
         """Tests expected argument output.
@@ -278,10 +288,15 @@ def test_cli(
                 default True.
             truecolor (bool): Whether to pass
                 '--color-system=truecolor' option. By default True.
+            paging (Union[bool, None]): Whether to pass '--paging' or
+                '--no-paging' option. By default False, which
+                corresponds to '--no-paging'.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
         """
-        output = cli_arg(*args, images=images, truecolor=truecolor, **kwargs)
+        output = cli_arg(
+            *args, images=images, truecolor=truecolor, paging=paging, **kwargs
+        )
         assert output == remove_link_ids(expected_output)
 
     return _test_cli
@@ -829,3 +844,66 @@ def test_code_wrap_notebook_file(
 ) -> None:
     """It renders a notebook file with line numbers."""
     test_cli(option_name, nbpreview_code_wrap=env)
+
+
+@pytest.mark.parametrize("paging", [True, None])
+def test_paging_notebook_stdout_file(
+    paging: Union[bool, None], test_cli: Callable[..., None]
+) -> None:
+    """It simply prints the text when not in a terminal."""
+    test_cli("--color", paging=paging)
+
+
+@pytest.fixture
+def echo_via_pager_mock(mocker: MockerFixture) -> Iterator[Mock]:
+    """Return a mock for click.echo_via_pager."""
+    echo_via_pager_mock = mocker.patch("nbpreview.__main__.click.echo_via_pager")
+    yield echo_via_pager_mock
+
+
+@pytest.mark.parametrize(
+    "option_name, code_lines, is_expected_called",
+    (
+        ("--no-paging", 300, False),
+        ("--paging", 1, True),
+        ("-g", 50, True),
+        ("-f", 400, False),
+        ("", 500, True),
+        ("", 2, False),
+    ),
+)
+def test_automatic_paging_notebook(
+    run_cli: RunCli,
+    mock_terminal: Mock,
+    echo_via_pager_mock: Mock,
+    option_name: str,
+    code_lines: int,
+    is_expected_called: bool,
+) -> None:
+    """It uses the pager only when notebook is long or forced."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "[i for i in range(20)]\n" * code_lines,
+    }
+    run_cli(code_cell, option_name)
+    assert echo_via_pager_mock.called is is_expected_called
+
+
+@pytest.mark.parametrize(
+    "option_name, color", (("--color", True), ("--no-color", False), (None, None))
+)
+def test_color_passed_to_pager(
+    cli_arg: Callable[..., str],
+    echo_via_pager_mock: Mock,
+    mock_terminal: Mock,
+    option_name: Union[str, None],
+    color: Union[bool, None],
+) -> None:
+    """It passes the color arg value to the pager."""
+    cli_arg(option_name, paging=True)
+    color_arg = echo_via_pager_mock.call_args[1]["color"]
+    assert color_arg == color
