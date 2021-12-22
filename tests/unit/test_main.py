@@ -1,6 +1,5 @@
 """Test cases for the __main__ module."""
 import functools
-import itertools
 import json
 import os
 import pathlib
@@ -30,14 +29,12 @@ from _pytest.monkeypatch import MonkeyPatch
 from click import shell_completion
 from click.testing import Result
 from nbformat.notebooknode import NotebookNode
-from pygments import styles
 from pytest_mock import MockerFixture
 from rich import console
 from typer import main, testing
 from typer.testing import CliRunner
 
 import nbpreview
-from nbpreview import __main__
 from nbpreview.__main__ import app
 from tests.unit import test_notebook
 
@@ -487,7 +484,7 @@ def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
     time pygments adds or removes a style
     """
     mock = mocker.patch(
-        "nbpreview.__main__.styles.get_all_styles",
+        "nbpreview.parameters.styles.get_all_styles",
         return_value=(style for style in ("material", "monokai", "zenburn")),
     )
     yield mock
@@ -541,13 +538,6 @@ def test_list_themes_no_terminal(
         "material\nmonokai\nzenburn\nlight / ansi_li" "ght\ndark / ansi_dark\n"
     )
     assert output == expected_output
-
-
-def test_get_all_available_themes() -> None:
-    """It lists all available pygment themes."""
-    output = __main__._get_all_available_themes()
-    expected_output = itertools.chain(styles.get_all_styles(), ("light", "dark"))
-    assert list(output) == list(expected_output)
 
 
 def test_render_notebook_file(test_cli: Callable[..., None]) -> None:
