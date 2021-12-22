@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nbpreview"
-version = "0.4.0"
+version = "0.5.0"
 description = "nbpreview"
 authors = ["Paulo S. Costa <Paulo.S.Costa5@gmail.com>"]
 license = "MIT"
