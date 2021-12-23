@@ -177,7 +177,7 @@ list_themes_option = typer.Option(
     None,
     "--list-themes",
     "--lt",
-    help="Display a preview all available themes.",
+    help="Display a preview of all available themes.",
     callback=list_themes_callback,
     is_eager=True,
 )
