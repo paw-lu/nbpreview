@@ -26,16 +26,14 @@ from unittest.mock import Mock
 import nbformat
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from click import shell_completion
-from click.testing import Result
+from click import shell_completion, testing
+from click.testing import CliRunner, Result
 from nbformat.notebooknode import NotebookNode
 from pytest_mock import MockerFixture
 from rich import console
-from typer import main, testing
-from typer.testing import CliRunner
 
 import nbpreview
-from nbpreview.__main__ import app
+from nbpreview.__main__ import app, typer_click_object
 from tests.unit import test_notebook
 
 
@@ -187,7 +185,7 @@ def run_cli(
         default_args = ["--decorated", "--unicode", "--width=80", notebook_path]
         full_args = [*args, *default_args] if args is not None else default_args
         result = runner.invoke(
-            app,
+            typer_click_object,
             args=full_args,
             input=input,
             env=env,
@@ -250,7 +248,7 @@ def cli_arg(
             cli_args.append("--no-paging")
 
         result = runner.invoke(
-            app,
+            typer_click_object,
             args=cli_args,
             color=True,
             env=upper_kwargs,
@@ -308,7 +306,7 @@ def test_main_succeeds(run_cli: RunCli) -> None:
 @pytest.mark.parametrize("option", ("--version", "-V"))
 def test_version(runner: CliRunner, option: str) -> None:
     """It returns the version number."""
-    result = runner.invoke(app, [option])
+    result = runner.invoke(typer_click_object, [option])
     assert result.stdout == f"nbpreview {nbpreview.__version__}\n"
 
 
@@ -318,7 +316,7 @@ def test_exit_invalid_file_status(
 ) -> None:
     """It exits with a status code of 1 when fed an invalid file."""
     invalid_path = temp_file(None)
-    result = runner.invoke(app, [invalid_path])
+    result = runner.invoke(typer_click_object, [invalid_path])
     assert result.exit_code == 1
 
 
@@ -328,7 +326,7 @@ def test_exit_invalid_file_output(
 ) -> None:
     """It outputs a message when fed an invalid file."""
     invalid_path = temp_file(None)
-    result = runner.invoke(app, [invalid_path])
+    result = runner.invoke(typer_click_object, [invalid_path])
     assert (
         result.output.replace("\n", "")
         == f"{invalid_path} is not a valid Jupyter Notebook path."
@@ -434,7 +432,7 @@ def test_force_plain(
     args = ["--unicode", "--width=80", notebook_path]
     if arg is not None:
         args = [arg] + args
-    result = runner.invoke(app, args=args, env=env)
+    result = runner.invoke(typer_click_object, args=args, env=env)
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
         "                  \n    return x + y                          "
@@ -455,7 +453,7 @@ def test_raise_no_source(
     }
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
-    result = runner.invoke(app, args=[notebook_path])
+    result = runner.invoke(typer_click_object, args=[notebook_path])
     output = result.output.replace("\n", "")
     expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
     assert output == expected_output
@@ -470,7 +468,7 @@ def test_raise_no_output(
     no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
-    result = runner.invoke(app, args=[notebook_path])
+    result = runner.invoke(typer_click_object, args=[notebook_path])
     output = result.output.replace("\n", "")
     expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
     assert output == expected_output
@@ -515,7 +513,7 @@ def test_list_themes(
 ) -> None:
     """It renders an example of all available themes."""
     result = runner.invoke(
-        app,
+        typer_click_object,
         args=["--list-themes"],
         color=True,
     )
@@ -529,7 +527,7 @@ def test_list_themes_no_terminal(
 ) -> None:
     """It lists all themes with no preview when not a terminal."""
     result = runner.invoke(
-        app,
+        typer_click_object,
         args=[option_name],
         color=True,
     )
@@ -790,7 +788,6 @@ def test_theme_completion(
     option_name: str, runner: CliRunner, mock_pygment_styles: Mock
 ) -> None:
     """It autocompletes themes with appropriate names."""
-    typer_click_object = main.get_command(app)
     prog_name = app_name if (app_name := app.info.name) is not None else "nbpreview"
     nbpreview_shell_complete = shell_completion.ShellComplete(
         typer_click_object,
