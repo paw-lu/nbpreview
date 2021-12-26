@@ -199,12 +199,30 @@ def run_cli(
 
 
 @pytest.fixture
+def mock_stdin_tty(mocker: MockerFixture) -> Iterator[Mock]:
+    """Fixture yielding mock stdin acting like a TTY."""
+    stdin_mock = mocker.patch("nbpreview.__main__.sys.stdin.isatty", return_value=True)
+    yield stdin_mock
+
+
+@pytest.fixture
+def mock_stdout_tty(mocker: MockerFixture) -> Iterator[Mock]:
+    """Fixture yielding mock stdout acting like a TTY."""
+    stdout_mock = mocker.patch(
+        "nbpreview.__main__.sys.stdout.isatty", return_value=True
+    )
+    yield stdout_mock
+
+
+@pytest.fixture
 def cli_arg(
     runner: CliRunner,
     notebook_path: Path,
     mock_terminal: Mock,
     remove_link_ids: Callable[[str], str],
     mock_tempfile_file: Mock,
+    mock_stdin_tty: Mock,
+    mock_stdout_tty: Mock,
 ) -> Callable[..., str]:
     """Return function that applies arguments to cli."""
 
@@ -866,6 +884,8 @@ def test_automatic_paging_notebook(
     option_name: str,
     code_lines: int,
     is_expected_called: bool,
+    mock_stdin_tty: Mock,
+    mock_stdout_tty: Mock,
 ) -> None:
     """It uses the pager only when notebook is long or forced."""
     code_cell = {
