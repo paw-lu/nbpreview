@@ -1045,7 +1045,7 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "pre-commit-hooks"
-version = "4.0.1"
+version = "4.1.0"
 description = "Some out-of-the-box hooks for pre-commit."
 category = "dev"
 optional = false
@@ -1789,7 +1789,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "587cc4a36386c709010fa11f708731e1a1b0c2d6f481a0e7ee3e14b8090d95dd"
+content-hash = "14228534d73f7d582954dafa0770eb8db01eb52f371fffc59f54599c114b1584"
 
 [metadata.files]
 alabaster = [
@@ -2521,8 +2521,8 @@ pre-commit = [
     {file = "pre_commit-2.16.0.tar.gz", hash = "sha256:fe9897cac830aa7164dbd02a4e7b90cae49630451ce88464bca73db486ba9f65"},
 ]
 pre-commit-hooks = [
-    {file = "pre_commit_hooks-4.0.1-py2.py3-none-any.whl", hash = "sha256:6efe92c7613c311abc7dd06817fc016f222d9289fe24b261e64412b0af96c662"},
-    {file = "pre_commit_hooks-4.0.1.tar.gz", hash = "sha256:99f1b9fc00a82e6588990b6b92edcdf4bec9c3d65c6272b8867be389055ce05e"},
+    {file = "pre_commit_hooks-4.1.0-py2.py3-none-any.whl", hash = "sha256:ba95316b79038e56ce998cdacb1ce922831ac0e41744c77bcc2b9677bf183206"},
+    {file = "pre_commit_hooks-4.1.0.tar.gz", hash = "sha256:b6361865d1877c5da5ac3a944aab19ce6bd749a534d2ede28e683d07194a57e1"},
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.24-py3-none-any.whl", hash = "sha256:e56f2ff799bacecd3e88165b1e2f5ebf9bcd59e80e06d395fa0cc4b8bd7bb506"},
