@@ -1,11 +1,13 @@
 """Render the notebook."""
 import dataclasses
 import pathlib
+import typing
 from dataclasses import InitVar
 from pathlib import Path
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Iterator, List, Optional, Tuple, Type, Union
 
 import nbformat
+from click.utils import KeepOpenFile
 from nbformat.notebooknode import NotebookNode
 from rich import table
 from rich.console import Console, ConsoleOptions
@@ -20,6 +22,22 @@ try:
     import terminedia  # noqa: F401
 except ModuleNotFoundError:
     pass
+
+# Fake KeepOpenFile used to avoid non-subscriptable error
+# https://github.com/python/mypy/issues/5264
+if typing.TYPE_CHECKING:  # pragma: no cover
+    KeepOpenFileType = KeepOpenFile
+
+else:
+
+    class _KeepOpenFile:
+        """Fake click's KeepOpenFile for type checking purposes."""
+
+        def __getitem__(self, *args: Any) -> Type[KeepOpenFile]:
+            """Make the fake class subscriptable."""
+            return KeepOpenFile
+
+    KeepOpenFileType = _KeepOpenFile()
 
 
 def _pick_option(option: Optional[bool], detector: bool) -> bool:
@@ -255,7 +273,7 @@ class Notebook:
     @classmethod
     def from_file(
         cls,
-        file: Path,
+        file: Union[Path, IO[AnyStr], KeepOpenFileType[AnyStr]],
         theme: Optional[str] = None,
         plain: Optional[bool] = None,
         unicode: Optional[bool] = None,
@@ -276,7 +294,11 @@ class Notebook:
             notebook_node = nbformat.read(file, as_version=4)
         except AttributeError as exception:
             raise errors.InvalidNotebookError from exception
-        relative_dir = file.parent.resolve()
+        relative_dir = (
+            pathlib.Path.cwd()
+            if (file_name := file.name) == "<stdin>"
+            else pathlib.Path(file_name).parent
+        ).resolve()
         return cls(
             notebook_node,
             theme=theme,
