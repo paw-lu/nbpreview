@@ -199,12 +199,30 @@ def run_cli(
 
 
 @pytest.fixture
+def mock_stdin_tty(mocker: MockerFixture) -> Iterator[Mock]:
+    """Fixture yielding mock stdin acting like a TTY."""
+    stdin_mock = mocker.patch("nbpreview.__main__.sys.stdin.isatty", return_value=True)
+    yield stdin_mock
+
+
+@pytest.fixture
+def mock_stdout_tty(mocker: MockerFixture) -> Iterator[Mock]:
+    """Fixture yielding mock stdout acting like a TTY."""
+    stdout_mock = mocker.patch(
+        "nbpreview.__main__.sys.stdout.isatty", return_value=True
+    )
+    yield stdout_mock
+
+
+@pytest.fixture
 def cli_arg(
     runner: CliRunner,
     notebook_path: Path,
     mock_terminal: Mock,
     remove_link_ids: Callable[[str], str],
     mock_tempfile_file: Mock,
+    mock_stdin_tty: Mock,
+    mock_stdout_tty: Mock,
 ) -> Callable[..., str]:
     """Return function that applies arguments to cli."""
 
@@ -866,6 +884,8 @@ def test_automatic_paging_notebook(
     option_name: str,
     code_lines: int,
     is_expected_called: bool,
+    mock_stdin_tty: Mock,
+    mock_stdout_tty: Mock,
 ) -> None:
     """It uses the pager only when notebook is long or forced."""
     code_cell = {
@@ -894,3 +914,55 @@ def test_color_passed_to_pager(
     cli_arg(option_name, paging=True)
     color_arg = echo_via_pager_mock.call_args[1]["color"]
     assert color_arg == color
+
+
+@pytest.mark.parametrize("file_argument", [None, "-"])
+def test_render_stdin(
+    file_argument: Union[None, str],
+    runner: CliRunner,
+    notebook_path: Path,
+    mock_tempfile_file: Mock,
+    expected_output: str,
+    mock_terminal: Mock,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It treats stdin as a file's text and renders a notebook."""
+    stdin = notebook_path.read_text()
+    args = ["--color-system=truecolor"]
+    if file_argument is not None:
+        args.append(file_argument)
+    result = runner.invoke(typer_click_object, args=args, input=stdin)
+    output = result.output
+    assert remove_link_ids(output) == expected_output
+
+
+def test_stdin_cwd_path(
+    runner: CliRunner,
+    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    remove_link_ids: Callable[[str], str],
+    mock_terminal: Mock,
+) -> None:
+    """It uses the current working the directory when using stdin."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![Test image](image.png)",
+    }
+    notebook_nodes = make_notebook(markdown_cell)
+    notebook_stdin = nbformat.writes(notebook_nodes)
+    current_working_directory = pathlib.Path.cwd()
+    result = runner.invoke(
+        typer_click_object, args=["--color-system=truecolor"], input=notebook_stdin
+    )
+    output = result.output
+    expected_output = (
+        "  \x1b]8;id=835649;"
+        f"file://{current_working_directory.resolve() / 'image.png'}\x1b\\\x1b"
+        "[94m🖼 Click to view Test image\x1b[0m\x1b]8;;\x1b"
+        "\\                                       "
+        "             \n                          "
+        "                                        "
+        "              \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)

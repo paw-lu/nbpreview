@@ -1,13 +1,15 @@
 """Command line interface parameters."""
 import enum
 import itertools
+import pathlib
 import sys
 import textwrap
 import typing
-from typing import Any, Iterable, List, Optional, Union
+from typing import Any, Callable, Iterable, List, Optional, Type, Union
 
 import typer
 from click import Context, Parameter
+from click.shell_completion import CompletionItem
 from pygments import styles
 from rich import box, console, panel, syntax
 
@@ -155,14 +157,88 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
     pass
 
 
-file_argument = typer.Argument(
-    ...,
-    exists=True,
-    file_okay=True,
-    dir_okay=False,
-    readable=True,
-    help="A Jupyter Notebook file to render.",
-)
+def stdin_path_argument(
+    callback: Optional[Callable[..., Any]] = None,
+    metavar: Optional[str] = None,
+    expose_value: bool = True,
+    is_eager: bool = False,
+    envvar: Optional[Union[str, List[str]]] = None,
+    shell_complete: Optional[
+        Callable[
+            [Context, Parameter, str],
+            Union[List[CompletionItem], List[str]],
+        ]
+    ] = None,
+    autocompletion: Optional[Callable[..., Any]] = None,
+    show_default: Union[bool, str] = True,
+    show_choices: bool = True,
+    show_envvar: bool = True,
+    help: Optional[str] = None,
+    hidden: bool = False,
+    case_sensitive: bool = True,
+    min: Optional[Union[int, float]] = None,
+    max: Optional[Union[int, float]] = None,
+    clamp: bool = False,
+    formats: Optional[List[str]] = None,
+    mode: Optional[str] = None,
+    encoding: Optional[str] = None,
+    errors: Optional[str] = "strict",
+    lazy: Optional[bool] = None,
+    atomic: bool = False,
+    writable: bool = False,
+    resolve_path: bool = False,
+    path_type: Union[None, Type[str], Type[bytes]] = None,
+) -> Any:
+    """A required file argument that also reads from stdin.
+
+    Sets default value to '-' when piped terminal std in detected.
+    """
+    default: Any
+    is_piped = not sys.stdin.isatty()
+    # I'm unable to mock sys.stdin.isatty
+    if is_piped:  # pragma: no branch
+        default = pathlib.Path("-")
+    else:  # pragma: no cover
+        default = ...
+    # breakpoint()
+    exists = readable = not is_piped
+    argument = typer.Argument(
+        default=default,
+        callback=callback,
+        metavar=metavar,
+        expose_value=expose_value,
+        is_eager=is_eager,
+        envvar=envvar,
+        shell_complete=shell_complete,
+        autocompletion=autocompletion,
+        show_default=show_default,
+        show_choices=show_choices,
+        show_envvar=show_envvar,
+        help=help,
+        hidden=hidden,
+        case_sensitive=case_sensitive,
+        min=min,
+        max=max,
+        clamp=clamp,
+        formats=formats,
+        mode=mode,
+        encoding=encoding,
+        errors=errors,
+        lazy=lazy,
+        atomic=atomic,
+        exists=exists,
+        file_okay=True,
+        dir_okay=False,
+        writable=writable,
+        readable=readable,
+        resolve_path=resolve_path,
+        allow_dash=True,
+        path_type=path_type,
+    )
+    return argument
+
+
+file_argument = stdin_path_argument()
 theme_option = typer.Option(
     None,
     "--theme",

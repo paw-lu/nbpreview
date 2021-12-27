@@ -3,6 +3,7 @@ import functools
 import os
 import sys
 from pathlib import Path
+from sys import stdin, stdout
 from typing import Optional, Union
 
 import click
@@ -70,6 +71,13 @@ def _detect_paging(
         paging is None
         and console.height < (rendered_notebook.count("\n") + 1)
         and console.is_interactive
+        # click.echo_via_pager will not use a pager when stdin or stdout
+        # is not a tty, which will result in uncolored output
+        # Disable paging for now as a workaround
+        # This means a pager will not be used when output is piped
+        and stdin.isatty()  # Importing stdin/stdout directly because
+        # of trouble in mocking when importing top level sys
+        and stdout.isatty()
     )
     return detected_paging
 
@@ -144,23 +152,24 @@ def main(
     translated_theme = parameters.translate_theme(theme)
 
     try:
-        nbpreview_notebook = notebook.Notebook.from_file(
-            file,
-            theme=translated_theme,
-            hide_output=hide_output,
-            plain=plain,
-            unicode=unicode,
-            nerd_font=nerd_font,
-            files=files,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            line_numbers=line_numbers,
-            code_wrap=code_wrap,
-        )
+        with click.open_file(os.fsdecode(file)) as _file:
+            nbpreview_notebook = notebook.Notebook.from_file(
+                _file,
+                theme=translated_theme,
+                hide_output=hide_output,
+                plain=plain,
+                unicode=unicode,
+                nerd_font=nerd_font,
+                files=files,
+                negative_space=negative_space,
+                hyperlinks=hyperlinks,
+                hide_hyperlink_hints=hide_hyperlink_hints,
+                images=images,
+                image_drawing=image_drawing,
+                color=color,
+                line_numbers=line_numbers,
+                code_wrap=code_wrap,
+            )
 
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
         print_error(
