@@ -332,10 +332,10 @@ def test_exit_invalid_file_status(
     runner: CliRunner,
     temp_file: Callable[[Optional[str]], str],
 ) -> None:
-    """It exits with a status code of 1 when fed an invalid file."""
+    """It exits with a status code of 2 when fed an invalid file."""
     invalid_path = temp_file(None)
     result = runner.invoke(typer_click_object, [invalid_path])
-    assert result.exit_code == 1
+    assert result.exit_code == 2
 
 
 def test_exit_invalid_file_output(
@@ -345,10 +345,14 @@ def test_exit_invalid_file_output(
     """It outputs a message when fed an invalid file."""
     invalid_path = temp_file(None)
     result = runner.invoke(typer_click_object, [invalid_path])
-    assert (
-        result.output.replace("\n", "")
-        == f"{invalid_path} is not a valid Jupyter Notebook path."
+    output = result.output
+    expected_output = (
+        "Usage: main [OPTIONS] [FILE]"
+        "\nTry 'main --help' for help."
+        f"\n\nError: Invalid value for file: {invalid_path}"
+        " is not a valid Jupyter Notebook path.\n"
     )
+    assert output == expected_output
 
 
 def test_render_notebook(run_cli: RunCli) -> None:
@@ -472,8 +476,13 @@ def test_raise_no_source(
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
     result = runner.invoke(typer_click_object, args=[notebook_path])
-    output = result.output.replace("\n", "")
-    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    output = result.output
+    expected_output = (
+        "Usage: main [OPTIONS] [FILE]"
+        "\nTry 'main --help' for help."
+        "\n\nError: Invalid value for file:"
+        f" {notebook_path} is not a valid Jupyter Notebook path.\n"
+    )
     assert output == expected_output
 
 
@@ -487,8 +496,13 @@ def test_raise_no_output(
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
     result = runner.invoke(typer_click_object, args=[notebook_path])
-    output = result.output.replace("\n", "")
-    expected_output = f"{notebook_path} is not a valid Jupyter Notebook path."
+    output = result.output
+    expected_output = (
+        "Usage: main [OPTIONS] [FILE]\nTry 'main -"
+        "-help' for help.\n\nError: Invalid value f"
+        f"or file: {notebook_path} is not a v"
+        "alid Jupyter Notebook path.\n"
+    )
     assert output == expected_output
 
 
@@ -743,12 +757,13 @@ def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
     """It raises a user-friendly warning message if import fails."""
     output = cli_arg("--image-drawing=block")
     expected_output = (
-        "\x1b[38;2;179;38;30m--image-drawing='block'"
-        " cannot be used on this system."
-        " This might be because it"
-        " \x1b[0m\x1b[38;2;179;38;30mis being run on Windows.\x1b[0m"
+        "Usage: main [OPTIONS] [FILE]"
+        "\nTry 'main --help' for help."
+        "\n\nError: Invalid value for image-drawing:"
+        " --image-drawing='block' cannot be used on this system."
+        " This might be because it is being run on Windows.\n"
     )
-    assert output.replace("\n", "") == expected_output
+    assert output == expected_output
 
 
 @pytest.mark.parametrize(

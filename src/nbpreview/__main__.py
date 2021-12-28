@@ -9,7 +9,7 @@ from typing import Optional, Union
 import click
 import nbformat
 import typer
-from rich import console, style, text, traceback
+from rich import console, traceback
 from rich.console import Console
 
 from nbpreview import errors, notebook, parameters
@@ -40,12 +40,6 @@ def _detect_no_color() -> Union[bool, None]:
     return force_no_color
 
 
-def print_error(console: Console, message: str) -> None:
-    """Print stylized error message to the terminal."""
-    rich_message = text.Text(message, style=style.Style(color="#B3261E"))
-    console.print(rich_message)
-
-
 def _check_image_drawing_option(
     image_drawing: Union[ImageDrawingEnum, None], stderr_console: Console
 ) -> None:
@@ -54,13 +48,14 @@ def _check_image_drawing_option(
         try:
             import terminedia  # noqa: F401
         except ModuleNotFoundError as exception:
-            print_error(
-                stderr_console,
-                message=f"--image-drawing='{image_drawing.value}' cannot be"
+            message = (
+                f"--image-drawing='{image_drawing.value}' cannot be"
                 " used on this system. This might be because it is"
-                " being run on Windows.",
+                " being run on Windows."
             )
-            raise typer.Exit(1) from exception
+            raise typer.BadParameter(
+                message=message, param_hint="image-drawing"
+            ) from exception
 
 
 def _detect_paging(
@@ -172,10 +167,8 @@ def main(
             )
 
     except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
-        print_error(
-            stderr_console, message=f"{file} is not a valid Jupyter Notebook path."
-        )
-        raise typer.Exit(1) from exception
+        message = f"{file} is not a valid Jupyter Notebook path."
+        raise typer.BadParameter(message=message, param_hint="file") from exception
 
     else:
         _render_notebook(
