@@ -7,6 +7,7 @@ import textwrap
 import typing
 from typing import Any, Callable, Iterable, List, Optional, Type, Union
 
+import click
 import typer
 from click import Context, Parameter
 from click.shell_completion import CompletionItem
@@ -126,34 +127,43 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
     '''
     )
     if value:
-        stdout_console = console.Console(file=sys.stdout)
-        panel_width = min(stdout_console.width, 88)
-        for theme in _get_all_available_themes(list_duplicate_alias=False):
-            translated_theme = translate_theme(theme)
-            theme_title = (
-                f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
-            )
-            if stdout_console.is_terminal:
-                theme_example = syntax.Syntax(
-                    example_code,
-                    theme=translated_theme,
-                    background_color="default",
-                    lexer_name="python",
+        theme_preview_console = console.Console()
+        panel_width = min(theme_preview_console.width, 88)
+
+        with theme_preview_console.capture() as captured_render:
+
+            for theme in _get_all_available_themes(list_duplicate_alias=False):
+                translated_theme = translate_theme(theme)
+                theme_title = (
+                    f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
                 )
-                theme_example_panel = panel.Panel(
-                    theme_example,
-                    title=theme_title,
-                    box=box.ROUNDED,
-                    title_align="left",
-                    expand=False,
-                    padding=(1, 2, 1, 2),
-                    safe_box=True,
-                    width=panel_width,
-                )
-                stdout_console.print(theme_example_panel)
-            else:
-                stdout_console.print(theme_title)
+
+                if theme_preview_console.is_terminal:
+                    theme_example = syntax.Syntax(
+                        example_code,
+                        theme=translated_theme,
+                        background_color="default",
+                        lexer_name="python",
+                    )
+                    theme_example_panel = panel.Panel(
+                        theme_example,
+                        title=theme_title,
+                        box=box.ROUNDED,
+                        title_align="left",
+                        expand=False,
+                        padding=(1, 2, 1, 2),
+                        safe_box=True,
+                        width=panel_width,
+                    )
+                    theme_preview_console.print(theme_example_panel)
+
+                else:
+                    theme_preview_console.print(theme_title)
+
+        rendered_theme_preview = captured_render.get()
+        click.echo_via_pager(rendered_theme_preview)
         raise typer.Exit()
+
     pass
 
 
