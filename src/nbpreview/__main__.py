@@ -1,16 +1,16 @@
 """Command-line interface."""
-import functools
 import os
-import sys
+import pathlib
 from pathlib import Path
 from sys import stdin, stdout
-from typing import Optional, Union
+from typing import IO, AnyStr, Iterator, List, Literal, Optional, Sequence, Union
 
 import click
 import nbformat
 import typer
-from rich import console, traceback
-from rich.console import Console
+from rich import box, console, panel, style, text, traceback
+from rich.console import Capture, Console, RenderableType
+from rich.text import Text
 
 from nbpreview import errors, notebook, parameters
 from nbpreview.component.content.output.result import drawing
@@ -40,9 +40,7 @@ def _detect_no_color() -> Union[bool, None]:
     return force_no_color
 
 
-def _check_image_drawing_option(
-    image_drawing: Union[ImageDrawingEnum, None], stderr_console: Console
-) -> None:
+def _check_image_drawing_option(image_drawing: Union[ImageDrawingEnum, None]) -> None:
     """Check if the image drawing option is valid."""
     if image_drawing == drawing.ImageDrawingEnum.BLOCK:
         try:
@@ -78,14 +76,12 @@ def _detect_paging(
 
 
 def _render_notebook(
-    nbpreview_notebook: Notebook,
+    capture: Capture,
     console: Console,
     paging: Union[bool, None],
     color: Union[bool, None],
 ) -> None:
     """Render the notebook to the console."""
-    with console.capture() as capture:
-        console.print(nbpreview_notebook)
     rendered_notebook = capture.get()
     _paging = _detect_paging(
         paging, rendered_notebook=rendered_notebook, console=console
@@ -96,9 +92,83 @@ def _render_notebook(
         print(rendered_notebook, end="")
 
 
+def _make_invalid_notebook_message(
+    file: Union[
+        Sequence[Union[Path, IO[AnyStr]]],
+        Union[Path, IO[AnyStr]],
+    ]
+) -> str:
+    """Create message signifying which paths are invalid."""
+    files = file if isinstance(file, Sequence) else [file]
+    file_names = [
+        os.fsdecode(file) if isinstance(file, Path) else file.name for file in files
+    ]
+
+    if len(file_names) == 1:
+        verb = "is"
+        plural = ""
+
+    else:
+        verb = "are"
+        plural = "s"
+
+    invalid_notebook_message = (
+        f"{', '.join(file_names)} {verb}" f" not a valid Jupyter Notebook path{plural}."
+    )
+    return invalid_notebook_message
+
+
+def _create_file_title(path: Path, width: int) -> str:
+    """Create the title for a file panel."""
+    title = (
+        os.fsdecode(path.name)
+        if width < len(path_string := os.fsdecode(path))
+        else path_string
+    )
+    return title
+
+
+@console.group()
+def _title_output(
+    renderable: RenderableType,
+    plain: bool,
+    path: Path,
+    has_multiple_files: bool,
+    width: int,
+) -> Iterator[RenderableType]:
+    """If needed, title the output with the file path."""
+    if not plain and has_multiple_files:
+        border_characters = 6  # 4 for box edges and 2 for padding
+        title_width = width - border_characters
+        title = _create_file_title(path, width=title_width)
+        wrapped_output = panel.Panel(
+            renderable,
+            box=box.HEAVY,
+            title_align="left",
+            expand=True,
+            padding=(1, 2, 1, 2),
+            safe_box=True,
+            width=width,
+            title=title,
+        )
+        yield wrapped_output
+
+    else:
+        if has_multiple_files and plain:
+            title = _create_file_title(path, width=width)
+            yield title
+            yield text.Text()
+        yield renderable
+
+    if has_multiple_files:
+        yield text.Text()
+        if plain:
+            yield text.Text()
+
+
 @app.command()
 def main(
-    file: Path = parameters.file_argument,
+    file: List[Path] = parameters.file_argument,
     theme: Optional[str] = parameters.theme_option,
     list_themes: Optional[bool] = parameters.list_themes_option,
     plain: Optional[bool] = parameters.plain_option,
@@ -123,57 +193,87 @@ def main(
     if color is None and _detect_no_color():
         color = False
     no_color = not color if color is not None else color
-    _color_system: Union[str, None]
+    _color_system: Union[
+        Literal["auto", "standard", "256", "truecolor", "windows"], None
+    ]
     if color_system is None:
         _color_system = "auto"
     elif color_system == "none":
         _color_system = None
     else:
-        _color_system = color_system
+        _color_system = color_system.value
 
-    output_console = functools.partial(
-        console.Console,
+    output_console = console.Console(
         width=width,
         no_color=no_color,
         emoji=unicode if unicode is not None else True,
         color_system=_color_system,
     )
-    stdout_console = output_console(file=sys.stdout)
-    stderr_console = output_console(file=sys.stderr)
 
-    _check_image_drawing_option(image_drawing, stderr_console=stderr_console)
+    _check_image_drawing_option(image_drawing)
     files = not no_files
     negative_space = not positive_space
     translated_theme = parameters.translate_theme(theme)
 
-    try:
-        with click.open_file(os.fsdecode(file)) as _file:
-            nbpreview_notebook = notebook.Notebook.from_file(
-                _file,
-                theme=translated_theme,
-                hide_output=hide_output,
-                plain=plain,
-                unicode=unicode,
-                nerd_font=nerd_font,
-                files=files,
-                negative_space=negative_space,
-                hyperlinks=hyperlinks,
-                hide_hyperlink_hints=hide_hyperlink_hints,
-                images=images,
-                image_drawing=image_drawing,
-                color=color,
-                line_numbers=line_numbers,
-                code_wrap=code_wrap,
-            )
+    has_multiple_files = 1 < len(file)
+    successful_render = False
+    plain_title = notebook.pick_option(plain, detector=not output_console.is_terminal)
+    with output_console.capture() as captured_output:
+        for notebook_file in file:
+            with click.open_file(os.fsdecode(notebook_file)) as opened_notebook_file:
+                rendered_file: Union[Notebook, Text]
+                try:
+                    rendered_file = notebook.Notebook.from_file(
+                        opened_notebook_file,
+                        theme=translated_theme,
+                        hide_output=hide_output,
+                        plain=plain,
+                        unicode=unicode,
+                        nerd_font=nerd_font,
+                        files=files,
+                        negative_space=negative_space,
+                        hyperlinks=hyperlinks,
+                        hide_hyperlink_hints=hide_hyperlink_hints,
+                        images=images,
+                        image_drawing=image_drawing,
+                        color=color,
+                        line_numbers=line_numbers,
+                        code_wrap=code_wrap,
+                    )
 
-    except (nbformat.reader.NotJSONError, errors.InvalidNotebookError) as exception:
-        message = f"{file} is not a valid Jupyter Notebook path."
-        raise typer.BadParameter(message=message, param_hint="file") from exception
+                except (
+                    nbformat.reader.NotJSONError,
+                    errors.InvalidNotebookError,
+                ):
+                    message = _make_invalid_notebook_message(opened_notebook_file)
+                    rendered_file = text.Text(
+                        message, style=style.Style(color="color(178)")
+                    )
+                    pass
+
+                else:
+                    successful_render = True
+
+                finally:
+                    path = pathlib.Path(opened_notebook_file.name)
+                    console_width = output_console.width
+                    titled_output = _title_output(
+                        rendered_file,
+                        path=path,
+                        width=console_width,
+                        plain=plain_title,
+                        has_multiple_files=has_multiple_files,
+                    )
+                    output_console.print(titled_output)
+
+    if successful_render:
+        _render_notebook(
+            captured_output, console=output_console, paging=paging, color=color
+        )
 
     else:
-        _render_notebook(
-            nbpreview_notebook, console=stdout_console, paging=paging, color=color
-        )
+        message = _make_invalid_notebook_message(file)
+        raise typer.BadParameter(message, param_hint="FILE")
 
 
 typer_click_object = typer.main.get_command(app)

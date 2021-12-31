@@ -40,7 +40,7 @@ else:
     KeepOpenFileType = _KeepOpenFile()
 
 
-def _pick_option(option: Optional[bool], detector: bool) -> bool:
+def pick_option(option: Optional[bool], detector: bool) -> bool:
     """Select a render option.
 
     Args:
@@ -330,15 +330,15 @@ class Notebook:
         Yields:
             Iterator[RenderResult]: The
         """
-        plain = _pick_option(self.plain, detector=not options.is_terminal)
-        unicode = _pick_option(
+        plain = pick_option(self.plain, detector=not options.is_terminal)
+        unicode = pick_option(
             self.unicode, detector=not options.legacy_windows and not options.ascii_only
         )
-        hyperlinks = _pick_option(
+        hyperlinks = pick_option(
             self.hyperlinks, detector=not options.legacy_windows and options.is_terminal
         )
-        images = _pick_option(self.images, detector=options.is_terminal)
-        color = _pick_option(self.color, detector=options.is_terminal)
+        images = pick_option(self.images, detector=options.is_terminal)
+        color = pick_option(self.color, detector=options.is_terminal)
         image_drawing = _pick_image_drawing(
             self.image_drawing, unicode=unicode, color=color
         )
