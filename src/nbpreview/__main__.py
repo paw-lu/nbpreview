@@ -1,6 +1,7 @@
 """Command-line interface."""
 import os
 import pathlib
+import typing
 from pathlib import Path
 from sys import stdin, stdout
 from typing import IO, AnyStr, Iterator, List, Literal, Optional, Sequence, Union
@@ -17,6 +18,13 @@ from nbpreview.component.content.output.result import drawing
 from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 from nbpreview.notebook import Notebook
 from nbpreview.parameters import ColorSystemEnum
+
+# Prevent typeguard from being a non-development dependency
+# https://github.com/agronholm/typeguard/issues/179#issue-832697465
+if typing.TYPE_CHECKING:  # pragma: no cover
+    from typeguard import typeguard_ignore
+else:
+    from typing import no_type_check as typeguard_ignore
 
 app = typer.Typer()
 traceback.install(theme="material")
@@ -128,6 +136,9 @@ def _create_file_title(path: Path, width: int) -> str:
     return title
 
 
+# Typeguard gets confused with decorators that change the return type
+# https://github.com/agronholm/typeguard/issues/115
+@typeguard_ignore
 @console.group()
 def _title_output(
     renderable: RenderableType,
