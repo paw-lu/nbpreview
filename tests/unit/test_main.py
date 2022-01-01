@@ -1,5 +1,6 @@
 """Test cases for the __main__ module."""
 import functools
+import io
 import json
 import os
 import pathlib
@@ -25,15 +26,16 @@ from unittest.mock import Mock
 
 import nbformat
 import pytest
+import rich
 from _pytest.monkeypatch import MonkeyPatch
 from click import shell_completion, testing
 from click.testing import CliRunner, Result
 from nbformat.notebooknode import NotebookNode
 from pytest_mock import MockerFixture
-from rich import console
+from rich import box, console, panel, style, text
 
 import nbpreview
-from nbpreview.__main__ import app, typer_click_object
+from nbpreview import __main__
 from tests.unit import test_notebook
 
 
@@ -185,7 +187,7 @@ def run_cli(
         default_args = ["--decorated", "--unicode", "--width=80", notebook_path]
         full_args = [*args, *default_args] if args is not None else default_args
         result = runner.invoke(
-            typer_click_object,
+            __main__.typer_click_object,
             args=full_args,
             input=input,
             env=env,
@@ -201,16 +203,14 @@ def run_cli(
 @pytest.fixture
 def mock_stdin_tty(mocker: MockerFixture) -> Iterator[Mock]:
     """Fixture yielding mock stdin acting like a TTY."""
-    stdin_mock = mocker.patch("nbpreview.__main__.sys.stdin.isatty", return_value=True)
+    stdin_mock = mocker.patch("nbpreview.__main__.stdin.isatty", return_value=True)
     yield stdin_mock
 
 
 @pytest.fixture
 def mock_stdout_tty(mocker: MockerFixture) -> Iterator[Mock]:
     """Fixture yielding mock stdout acting like a TTY."""
-    stdout_mock = mocker.patch(
-        "nbpreview.__main__.sys.stdout.isatty", return_value=True
-    )
+    stdout_mock = mocker.patch("nbpreview.__main__.stdout.isatty", return_value=True)
     yield stdout_mock
 
 
@@ -266,7 +266,7 @@ def cli_arg(
             cli_args.append("--no-paging")
 
         result = runner.invoke(
-            typer_click_object,
+            __main__.typer_click_object,
             args=cli_args,
             color=True,
             env=upper_kwargs,
@@ -324,17 +324,16 @@ def test_main_succeeds(run_cli: RunCli) -> None:
 @pytest.mark.parametrize("option", ("--version", "-V"))
 def test_version(runner: CliRunner, option: str) -> None:
     """It returns the version number."""
-    result = runner.invoke(typer_click_object, [option])
+    result = runner.invoke(__main__.typer_click_object, [option])
     assert result.stdout == f"nbpreview {nbpreview.__version__}\n"
 
 
 def test_exit_invalid_file_status(
-    runner: CliRunner,
-    temp_file: Callable[[Optional[str]], str],
+    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
 ) -> None:
     """It exits with a status code of 2 when fed an invalid file."""
     invalid_path = temp_file(None)
-    result = runner.invoke(typer_click_object, [invalid_path])
+    result = runner.invoke(__main__.typer_click_object, [invalid_path])
     assert result.exit_code == 2
 
 
@@ -344,12 +343,12 @@ def test_exit_invalid_file_output(
 ) -> None:
     """It outputs a message when fed an invalid file."""
     invalid_path = temp_file(None)
-    result = runner.invoke(typer_click_object, [invalid_path])
+    result = runner.invoke(__main__.typer_click_object, [invalid_path])
     output = result.output
     expected_output = (
-        "Usage: main [OPTIONS] [FILE]"
+        "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
-        f"\n\nError: Invalid value for file: {invalid_path}"
+        f"\n\nError: Invalid value for FILE: {invalid_path}"
         " is not a valid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -454,7 +453,7 @@ def test_force_plain(
     args = ["--unicode", "--width=80", notebook_path]
     if arg is not None:
         args = [arg] + args
-    result = runner.invoke(typer_click_object, args=args, env=env)
+    result = runner.invoke(__main__.typer_click_object, args=args, env=env)
     expected_output = (
         "def foo(x: float, y: float) -> float:                         "
         "                  \n    return x + y                          "
@@ -475,12 +474,12 @@ def test_raise_no_source(
     }
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
-    result = runner.invoke(typer_click_object, args=[notebook_path])
+    result = runner.invoke(__main__.typer_click_object, args=[notebook_path])
     output = result.output
     expected_output = (
-        "Usage: main [OPTIONS] [FILE]"
+        "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
-        "\n\nError: Invalid value for file:"
+        "\n\nError: Invalid value for FILE:"
         f" {notebook_path} is not a valid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -495,12 +494,12 @@ def test_raise_no_output(
     no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
     notebook_dict = make_notebook_dict(no_source_cell)
     notebook_path = temp_file(json.dumps(notebook_dict))
-    result = runner.invoke(typer_click_object, args=[notebook_path])
+    result = runner.invoke(__main__.typer_click_object, args=[notebook_path])
     output = result.output
     expected_output = (
-        "Usage: main [OPTIONS] [FILE]\nTry 'main -"
+        "Usage: main [OPTIONS] [FILE]...\nTry 'main -"
         "-help' for help.\n\nError: Invalid value f"
-        f"or file: {notebook_path} is not a v"
+        f"or FILE: {notebook_path} is not a v"
         "alid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -545,7 +544,7 @@ def test_list_themes(
 ) -> None:
     """It renders an example of all available themes."""
     result = runner.invoke(
-        typer_click_object,
+        __main__.typer_click_object,
         args=["--list-themes"],
         color=True,
     )
@@ -559,7 +558,7 @@ def test_list_themes_no_terminal(
 ) -> None:
     """It lists all themes with no preview when not a terminal."""
     result = runner.invoke(
-        typer_click_object,
+        __main__.typer_click_object,
         args=[option_name],
         color=True,
     )
@@ -757,7 +756,7 @@ def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
     """It raises a user-friendly warning message if import fails."""
     output = cli_arg("--image-drawing=block")
     expected_output = (
-        "Usage: main [OPTIONS] [FILE]"
+        "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
         "\n\nError: Invalid value for image-drawing:"
         " --image-drawing='block' cannot be used on this system."
@@ -821,9 +820,11 @@ def test_theme_completion(
     option_name: str, runner: CliRunner, mock_pygment_styles: Mock
 ) -> None:
     """It autocompletes themes with appropriate names."""
-    prog_name = app_name if (app_name := app.info.name) is not None else "nbpreview"
+    prog_name = (
+        app_name if (app_name := __main__.app.info.name) is not None else "nbpreview"
+    )
     nbpreview_shell_complete = shell_completion.ShellComplete(
-        typer_click_object,
+        __main__.typer_click_object,
         ctx_args={},
         prog_name=prog_name,
         complete_var="_NBPREVIEW_COMPLETE",
@@ -946,7 +947,7 @@ def test_render_stdin(
     args = ["--color-system=truecolor"]
     if file_argument is not None:
         args.append(file_argument)
-    result = runner.invoke(typer_click_object, args=args, input=stdin)
+    result = runner.invoke(__main__.typer_click_object, args=args, input=stdin)
     output = result.output
     assert remove_link_ids(output) == expected_output
 
@@ -968,7 +969,9 @@ def test_stdin_cwd_path(
     notebook_stdin = nbformat.writes(notebook_nodes)
     current_working_directory = pathlib.Path.cwd()
     result = runner.invoke(
-        typer_click_object, args=["--color-system=truecolor"], input=notebook_stdin
+        __main__.typer_click_object,
+        args=["--color-system=truecolor"],
+        input=notebook_stdin,
     )
     output = result.output
     expected_output = (
@@ -981,3 +984,423 @@ def test_stdin_cwd_path(
         "              \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_multiple_files(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    notebook_path: Path,
+    mock_terminal: Mock,
+) -> None:
+    """It renders multiple files."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    code_notebook_path = write_notebook(code_cell)
+    result = runner.invoke(
+        __main__.typer_click_object,
+        args=[
+            code_notebook_path,
+            code_notebook_path,
+            "--color-system=truecolor",
+        ],
+    )
+    output = result.output
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    tempfile_name = f"{tempfile_name} "
+    expected_output = (
+        f"┏━ {tempfile_name:━<{path_width + 1}}━┓"
+        "\n┃                                      "
+        "                                        "
+        "┃\n┃       ╭─────────────────────────────"
+        "──────────────────────────────────────╮ "
+        " ┃\n┃  \x1b[38;5;247m[2]:\x1b[0m │ \x1b[38;2;187;1"
+        "28;179;49mdef\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;130;170;255;49mfoo\x1b[0m\x1b[38;2;"
+        "137;221;255;49m(\x1b[0m\x1b[38;2;238;255;255;4"
+        "9mx\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m\x1b[38;2"
+        ";238;255;255;49m \x1b[0m\x1b[38;2;130;170;255;"
+        "49mfloat\x1b[0m\x1b[38;2;137;221;255;49m,\x1b[0m\x1b"
+        "[38;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255"
+        ";255;49my\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m"
+        "\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;130;17"
+        "0;255;49mfloat\x1b[0m\x1b[38;2;137;221;255;49m"
+        ")\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;1"
+        "37;221;255;49m-\x1b[0m\x1b[38;2;137;221;255;49"
+        "m>\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;"
+        "130;170;255;49mfloat\x1b[0m\x1b[38;2;137;221;2"
+        "55;49m:\x1b[0m                             "
+        "│  ┃\n┃       │ \x1b[38;2;238;255;255;49m   "
+        " \x1b[0m\x1b[38;2;187;128;179;49mreturn\x1b[0m\x1b[3"
+        "8;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255;2"
+        "55;49mx\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b["
+        "38;2;137;221;255;49m+\x1b[0m\x1b[38;2;238;255;"
+        "255;49m \x1b[0m\x1b[38;2;238;255;255;49my\x1b[0m "
+        "                                        "
+        "         │  ┃\n┃       ╰─────────────────"
+        "────────────────────────────────────────"
+        "──────────╯  ┃\n┃                        "
+        "                                        "
+        "              ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        f"━━━━━━━━━━━━━━━┛\n\n┏━ {tempfile_name:━<{path_width + 1}}━┓\n┃"
+        "                    "
+        "                                        "
+        "                  ┃\n┃       ╭───────────"
+        "────────────────────────────────────────"
+        "────────────────╮  ┃\n┃  \x1b[38;5;247m[2]:\x1b"
+        "[0m │ \x1b[38;2;187;128;179;49mdef\x1b[0m\x1b[38;"
+        "2;238;255;255;49m \x1b[0m\x1b[38;2;130;170;255"
+        ";49mfoo\x1b[0m\x1b[38;2;137;221;255;49m(\x1b[0m\x1b["
+        "38;2;238;255;255;49mx\x1b[0m\x1b[38;2;137;221;"
+        "255;49m:\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b"
+        "[38;2;130;170;255;49mfloat\x1b[0m\x1b[38;2;137"
+        ";221;255;49m,\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;238;255;255;49my\x1b[0m\x1b[38;2;13"
+        "7;221;255;49m:\x1b[0m\x1b[38;2;238;255;255;49m"
+        " \x1b[0m\x1b[38;2;130;170;255;49mfloat\x1b[0m\x1b[38"
+        ";2;137;221;255;49m)\x1b[0m\x1b[38;2;238;255;25"
+        "5;49m \x1b[0m\x1b[38;2;137;221;255;49m-\x1b[0m\x1b[3"
+        "8;2;137;221;255;49m>\x1b[0m\x1b[38;2;238;255;2"
+        "55;49m \x1b[0m\x1b[38;2;130;170;255;49mfloat\x1b["
+        "0m\x1b[38;2;137;221;255;49m:\x1b[0m           "
+        "                  │  ┃\n┃       │ \x1b[38;2;"
+        "238;255;255;49m    \x1b[0m\x1b[38;2;187;128;17"
+        "9;49mreturn\x1b[0m\x1b[38;2;238;255;255;49m \x1b["
+        "0m\x1b[38;2;238;255;255;49mx\x1b[0m\x1b[38;2;238;"
+        "255;255;49m \x1b[0m\x1b[38;2;137;221;255;49m+\x1b"
+        "[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;238"
+        ";255;255;49my\x1b[0m                       "
+        "                           │  ┃\n┃       "
+        "╰───────────────────────────────────────"
+        "────────────────────────────╯  ┃\n┃      "
+        "                                        "
+        "                                ┃\n┗━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n"
+    )
+    assert output == expected_output
+
+
+def test_multiple_files_long_path() -> None:
+    """It shortens the title to the filename if the path is long."""
+    path = pathlib.Path("very", "long", "path")
+    output = __main__._create_file_title(path, width=7)
+    expected_output = "path"
+    assert output == expected_output
+
+
+def test_file_and_stdin(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    notebook_path: Path,
+    mock_terminal: Mock,
+) -> None:
+    """It renders both a file and stdin."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    code_notebook_path = write_notebook(code_cell)
+    stdin = pathlib.Path(code_notebook_path).read_text()
+    result = runner.invoke(
+        __main__.typer_click_object,
+        args=["--color-system=truecolor", code_notebook_path, "-"],
+        input=stdin,
+    )
+    output = result.output
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    tempfile_name = f"{tempfile_name} "
+    expected_output = (
+        f"┏━ {tempfile_name:━<{path_width + 1}}━┓"
+        "\n┃                                      "
+        "                                        "
+        "┃\n┃       ╭─────────────────────────────"
+        "──────────────────────────────────────╮ "
+        " ┃\n┃  \x1b[38;5;247m[2]:\x1b[0m │ \x1b[38;2;187;1"
+        "28;179;49mdef\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;130;170;255;49mfoo\x1b[0m\x1b[38;2;"
+        "137;221;255;49m(\x1b[0m\x1b[38;2;238;255;255;4"
+        "9mx\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m\x1b[38;2"
+        ";238;255;255;49m \x1b[0m\x1b[38;2;130;170;255;"
+        "49mfloat\x1b[0m\x1b[38;2;137;221;255;49m,\x1b[0m\x1b"
+        "[38;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255"
+        ";255;49my\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m"
+        "\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;130;17"
+        "0;255;49mfloat\x1b[0m\x1b[38;2;137;221;255;49m"
+        ")\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;1"
+        "37;221;255;49m-\x1b[0m\x1b[38;2;137;221;255;49"
+        "m>\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;"
+        "130;170;255;49mfloat\x1b[0m\x1b[38;2;137;221;2"
+        "55;49m:\x1b[0m                             "
+        "│  ┃\n┃       │ \x1b[38;2;238;255;255;49m   "
+        " \x1b[0m\x1b[38;2;187;128;179;49mreturn\x1b[0m\x1b[3"
+        "8;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255;2"
+        "55;49mx\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b["
+        "38;2;137;221;255;49m+\x1b[0m\x1b[38;2;238;255;"
+        "255;49m \x1b[0m\x1b[38;2;238;255;255;49my\x1b[0m "
+        "                                        "
+        "         │  ┃\n┃       ╰─────────────────"
+        "────────────────────────────────────────"
+        "──────────╯  ┃\n┃                        "
+        "                                        "
+        "              ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━┛\n\n┏━ <stdin> ━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━┓\n┃                    "
+        "                                        "
+        "                  ┃\n┃       ╭───────────"
+        "────────────────────────────────────────"
+        "────────────────╮  ┃\n┃  \x1b[38;5;247m[2]:\x1b"
+        "[0m │ \x1b[38;2;187;128;179;49mdef\x1b[0m\x1b[38;"
+        "2;238;255;255;49m \x1b[0m\x1b[38;2;130;170;255"
+        ";49mfoo\x1b[0m\x1b[38;2;137;221;255;49m(\x1b[0m\x1b["
+        "38;2;238;255;255;49mx\x1b[0m\x1b[38;2;137;221;"
+        "255;49m:\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b"
+        "[38;2;130;170;255;49mfloat\x1b[0m\x1b[38;2;137"
+        ";221;255;49m,\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;238;255;255;49my\x1b[0m\x1b[38;2;13"
+        "7;221;255;49m:\x1b[0m\x1b[38;2;238;255;255;49m"
+        " \x1b[0m\x1b[38;2;130;170;255;49mfloat\x1b[0m\x1b[38"
+        ";2;137;221;255;49m)\x1b[0m\x1b[38;2;238;255;25"
+        "5;49m \x1b[0m\x1b[38;2;137;221;255;49m-\x1b[0m\x1b[3"
+        "8;2;137;221;255;49m>\x1b[0m\x1b[38;2;238;255;2"
+        "55;49m \x1b[0m\x1b[38;2;130;170;255;49mfloat\x1b["
+        "0m\x1b[38;2;137;221;255;49m:\x1b[0m           "
+        "                  │  ┃\n┃       │ \x1b[38;2;"
+        "238;255;255;49m    \x1b[0m\x1b[38;2;187;128;17"
+        "9;49mreturn\x1b[0m\x1b[38;2;238;255;255;49m \x1b["
+        "0m\x1b[38;2;238;255;255;49mx\x1b[0m\x1b[38;2;238;"
+        "255;255;49m \x1b[0m\x1b[38;2;137;221;255;49m+\x1b"
+        "[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;238"
+        ";255;255;49my\x1b[0m                       "
+        "                           │  ┃\n┃       "
+        "╰───────────────────────────────────────"
+        "────────────────────────────╯  ┃\n┃      "
+        "                                        "
+        "                                ┃\n┗━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n"
+    )
+    assert output == expected_output
+
+
+def test_multiple_files_plain(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    mock_terminal: Mock,
+) -> None:
+    """It does not draw a border around files when in plain mode."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    code_notebook_path = write_notebook(code_cell)
+    result = runner.invoke(
+        __main__.typer_click_object,
+        args=[
+            "--color-system=truecolor",
+            "--plain",
+            code_notebook_path,
+            code_notebook_path,
+        ],
+    )
+    output = result.output
+    path_width = 80
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    file = io.StringIO()
+    rich.print(tempfile_name, file=file)
+    rendered_tempfile_name = file.getvalue()
+    expected_output = (
+        f"{rendered_tempfile_name}\n"
+        "\x1b[38;2;187;128;179;49mdef\x1b[0m\x1b[38;2;238;"
+        "255;255;49m \x1b[0m\x1b[38;2;130;170;255;49mfo"
+        "o\x1b[0m\x1b[38;2;137;221;255;49m(\x1b[0m\x1b[38;2;2"
+        "38;255;255;49mx\x1b[0m\x1b[38;2;137;221;255;49"
+        "m:\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;"
+        "130;170;255;49mfloat\x1b[0m\x1b[38;2;137;221;2"
+        "55;49m,\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b["
+        "38;2;238;255;255;49my\x1b[0m\x1b[38;2;137;221;"
+        "255;49m:\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b"
+        "[38;2;130;170;255;49mfloat\x1b[0m\x1b[38;2;137"
+        ";221;255;49m)\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;137;221;255;49m-\x1b[0m\x1b[38;2;13"
+        "7;221;255;49m>\x1b[0m\x1b[38;2;238;255;255;49m"
+        " \x1b[0m\x1b[38;2;130;170;255;49mfloat\x1b[0m\x1b[38"
+        ";2;137;221;255;49m:\x1b[0m                 "
+        "                          \n\x1b[38;2;238;25"
+        "5;255;49m    \x1b[0m\x1b[38;2;187;128;179;49mr"
+        "eturn\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38"
+        ";2;238;255;255;49mx\x1b[0m\x1b[38;2;238;255;25"
+        "5;49m \x1b[0m\x1b[38;2;137;221;255;49m+\x1b[0m\x1b[3"
+        "8;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255;2"
+        "55;49my\x1b[0m                             "
+        "                                   \n\n"
+        f"\n{rendered_tempfile_name}\n\x1b["
+        "38;2;187;128;179;49mdef\x1b[0m\x1b[38;2;238;25"
+        "5;255;49m \x1b[0m\x1b[38;2;130;170;255;49mfoo\x1b"
+        "[0m\x1b[38;2;137;221;255;49m(\x1b[0m\x1b[38;2;238"
+        ";255;255;49mx\x1b[0m\x1b[38;2;137;221;255;49m:"
+        "\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;13"
+        "0;170;255;49mfloat\x1b[0m\x1b[38;2;137;221;255"
+        ";49m,\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38"
+        ";2;238;255;255;49my\x1b[0m\x1b[38;2;137;221;25"
+        "5;49m:\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[3"
+        "8;2;130;170;255;49mfloat\x1b[0m\x1b[38;2;137;2"
+        "21;255;49m)\x1b[0m\x1b[38;2;238;255;255;49m \x1b["
+        "0m\x1b[38;2;137;221;255;49m-\x1b[0m\x1b[38;2;137;"
+        "221;255;49m>\x1b[0m\x1b[38;2;238;255;255;49m \x1b"
+        "[0m\x1b[38;2;130;170;255;49mfloat\x1b[0m\x1b[38;2"
+        ";137;221;255;49m:\x1b[0m                   "
+        "                        \n\x1b[38;2;238;255;"
+        "255;49m    \x1b[0m\x1b[38;2;187;128;179;49mret"
+        "urn\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2"
+        ";238;255;255;49mx\x1b[0m\x1b[38;2;238;255;255;"
+        "49m \x1b[0m\x1b[38;2;137;221;255;49m+\x1b[0m\x1b[38;"
+        "2;238;255;255;49m \x1b[0m\x1b[38;2;238;255;255"
+        ";49my\x1b[0m                               "
+        "                                 \n\n\n"
+    )
+    assert output == expected_output
+
+
+def test_multiple_files_all_fail(
+    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
+) -> None:
+    """It exists with a status code of 2 when fed invalid files."""
+    invalid_path = temp_file(None)
+    result = runner.invoke(__main__.typer_click_object, [invalid_path, invalid_path])
+    assert result.exit_code == 2
+
+
+def test_multiple_files_all_fail_message(
+    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
+) -> None:
+    """It exists with a status code of 2 when fed invalid files."""
+    invalid_path = temp_file(None)
+    result = runner.invoke(__main__.typer_click_object, [invalid_path, invalid_path])
+    output = result.output
+    expected_output = (
+        "Usage: main [OPTIONS] [FILE]...\nTry 'mai"
+        "n --help' for help.\n\nError: Invalid valu"
+        f"e for FILE: {invalid_path}, {invalid_path}"
+        " are not a valid Jupyter Notebook paths.\n"
+    )
+    assert output == expected_output
+
+
+def test_multiple_files_some_fail(
+    runner: CliRunner,
+    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    notebook_path: Path,
+    mock_terminal: Mock,
+) -> None:
+    """It still renders valid files when some are invalid."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 2,
+        "id": "emotional-amount",
+        "metadata": {},
+        "outputs": [],
+        "source": "def foo(x: float, y: float) -> float:\n    return x + y",
+    }
+    code_notebook_path = write_notebook(code_cell)
+    invalid_file_path = os.fsdecode(pathlib.Path(__file__))
+    result = runner.invoke(
+        __main__.typer_click_object,
+        args=["--color-system=truecolor", code_notebook_path, invalid_file_path],
+    )
+    output = result.output
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    tempfile_name = f"{tempfile_name} "
+    invalid_file_name = (
+        os.fsdecode(pathlib.Path(invalid_file_path).name)
+        if path_width < len(invalid_file_path)
+        else invalid_file_path
+    )
+    invalid_file_panel = panel.Panel(
+        text.Text(
+            f"{os.fsdecode(invalid_file_name)} is not a valid Jupyter Notebook path.",
+            style=style.Style(color="color(178)"),
+        ),
+        box=box.HEAVY,
+        title_align="left",
+        expand=True,
+        padding=(1, 2, 1, 2),
+        safe_box=True,
+        width=80,
+        title=invalid_file_name,
+    )
+    file = io.StringIO()
+    rich.print(invalid_file_panel, file=file)
+    expected_output = (
+        f"┏━ {tempfile_name:━<{path_width + 1}}━┓"
+        "\n┃                                      "
+        "                                        "
+        "┃\n┃       ╭─────────────────────────────"
+        "──────────────────────────────────────╮ "
+        " ┃\n┃  \x1b[38;5;247m[2]:\x1b[0m │ \x1b[38;2;187;1"
+        "28;179;49mdef\x1b[0m\x1b[38;2;238;255;255;49m "
+        "\x1b[0m\x1b[38;2;130;170;255;49mfoo\x1b[0m\x1b[38;2;"
+        "137;221;255;49m(\x1b[0m\x1b[38;2;238;255;255;4"
+        "9mx\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m\x1b[38;2"
+        ";238;255;255;49m \x1b[0m\x1b[38;2;130;170;255;"
+        "49mfloat\x1b[0m\x1b[38;2;137;221;255;49m,\x1b[0m\x1b"
+        "[38;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255"
+        ";255;49my\x1b[0m\x1b[38;2;137;221;255;49m:\x1b[0m"
+        "\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;130;17"
+        "0;255;49mfloat\x1b[0m\x1b[38;2;137;221;255;49m"
+        ")\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;1"
+        "37;221;255;49m-\x1b[0m\x1b[38;2;137;221;255;49"
+        "m>\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;"
+        "130;170;255;49mfloat\x1b[0m\x1b[38;2;137;221;2"
+        "55;49m:\x1b[0m                             "
+        "│  ┃\n┃       │ \x1b[38;2;238;255;255;49m   "
+        " \x1b[0m\x1b[38;2;187;128;179;49mreturn\x1b[0m\x1b[3"
+        "8;2;238;255;255;49m \x1b[0m\x1b[38;2;238;255;2"
+        "55;49mx\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b["
+        "38;2;137;221;255;49m+\x1b[0m\x1b[38;2;238;255;"
+        "255;49m \x1b[0m\x1b[38;2;238;255;255;49my\x1b[0m "
+        "                                        "
+        "         │  ┃\n┃       ╰─────────────────"
+        "────────────────────────────────────────"
+        "──────────╯  ┃\n┃                        "
+        "                                        "
+        "              ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        f"━━━━━━━━━━━━━━━┛\n\n{file.getvalue()}\n"
+    )
+    assert output == expected_output

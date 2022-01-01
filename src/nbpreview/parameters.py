@@ -5,7 +5,8 @@ import pathlib
 import sys
 import textwrap
 import typing
-from typing import Any, Callable, Iterable, List, Optional, Type, Union
+from pathlib import Path
+from typing import Any, Callable, Iterable, List, Literal, Optional, Type, Union
 
 import typer
 from click import Context, Parameter
@@ -32,11 +33,11 @@ class LowerNameEnum(enum.Enum):
 class ColorSystemEnum(str, LowerNameEnum):
     """The color systems supported by terminals."""
 
-    STANDARD = enum.auto()
-    EIGHT_BIT = "256"
-    TRUECOLOR = enum.auto()
-    WINDOWS = enum.auto()
-    NONE = enum.auto()
+    STANDARD: Literal["standard"] = enum.auto()  # type: ignore[assignment]
+    EIGHT_BIT: Literal["256"] = "256"
+    TRUECOLOR: Literal["truecolor"] = enum.auto()  # type: ignore[assignment]
+    WINDOWS: Literal["windows"] = enum.auto()  # type: ignore[assignment]
+    NONE: Literal["none"] = enum.auto()  # type: ignore[assignment]
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -157,8 +158,13 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
     pass
 
 
+def _stdin_path_callback(file_value: List[Path]) -> List[Path]:
+    """Return '-', which signifies stdin, if no files are provided."""
+    cleaned_file = file_value if file_value else [pathlib.Path("-")]
+    return cleaned_file
+
+
 def stdin_path_argument(
-    callback: Optional[Callable[..., Any]] = None,
     metavar: Optional[str] = None,
     expose_value: bool = True,
     is_eager: bool = False,
@@ -196,15 +202,18 @@ def stdin_path_argument(
     default: Any
     is_piped = not sys.stdin.isatty()
     # I'm unable to mock sys.stdin.isatty
+    # Typer/Click does not allow default values when unlimited argument
+    # values are accepted
+    # None is one exception, so later processing can transform it to a
+    # hyphen
     if is_piped:  # pragma: no branch
-        default = pathlib.Path("-")
+        default = None
     else:  # pragma: no cover
         default = ...
-    # breakpoint()
     exists = readable = not is_piped
     argument = typer.Argument(
         default=default,
-        callback=callback,
+        callback=_stdin_path_callback,
         metavar=metavar,
         expose_value=expose_value,
         is_eager=is_eager,
@@ -238,7 +247,11 @@ def stdin_path_argument(
     return argument
 
 
-file_argument = stdin_path_argument()
+file_argument = stdin_path_argument(
+    help="Jupyter notebook file(s) to render on the terminal."
+    " Use a dash ('-') or pipe in data to the command to read from"
+    " standard input."
+)
 theme_option = typer.Option(
     None,
     "--theme",
