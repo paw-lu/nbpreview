@@ -292,7 +292,10 @@ class Notebook:
         """Create Notebook from notebook file."""
         try:
             notebook_node = nbformat.read(file, as_version=4)
-        except AttributeError as exception:
+        except (
+            AttributeError,
+            UnicodeDecodeError,  # Windows failures when reading invalid files
+        ) as exception:
             raise errors.InvalidNotebookError from exception
         relative_dir = (
             pathlib.Path.cwd()
