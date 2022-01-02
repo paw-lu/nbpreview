@@ -348,7 +348,7 @@ def test_exit_invalid_file_output(
     expected_output = (
         "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
-        f"\n\nError: Invalid value for FILE: {invalid_path}"
+        f"\n\nError: Invalid value for 'FILE...': {invalid_path}"
         " is not a valid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -479,7 +479,7 @@ def test_raise_no_source(
     expected_output = (
         "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
-        "\n\nError: Invalid value for FILE:"
+        "\n\nError: Invalid value for 'FILE...':"
         f" {notebook_path} is not a valid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -499,7 +499,7 @@ def test_raise_no_output(
     expected_output = (
         "Usage: main [OPTIONS] [FILE]...\nTry 'main -"
         "-help' for help.\n\nError: Invalid value f"
-        f"or FILE: {notebook_path} is not a v"
+        f"or 'FILE...': {notebook_path} is not a v"
         "alid Jupyter Notebook path.\n"
     )
     assert output == expected_output
@@ -758,8 +758,8 @@ def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
     expected_output = (
         "Usage: main [OPTIONS] [FILE]..."
         "\nTry 'main --help' for help."
-        "\n\nError: Invalid value for image-drawing:"
-        " --image-drawing='block' cannot be used on this system."
+        "\n\nError: Invalid value for '--image-drawing' / '--id':"
+        " 'block' cannot be used on this system."
         " This might be because it is being run on Windows.\n"
     )
     assert output == expected_output
@@ -1311,7 +1311,7 @@ def test_multiple_files_all_fail_message(
     expected_output = (
         "Usage: main [OPTIONS] [FILE]...\nTry 'mai"
         "n --help' for help.\n\nError: Invalid valu"
-        f"e for FILE: {invalid_path}, {invalid_path}"
+        f"e for 'FILE...': {invalid_path}, {invalid_path}"
         " are not a valid Jupyter Notebook paths.\n"
     )
     assert output == expected_output

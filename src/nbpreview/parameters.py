@@ -1,6 +1,6 @@
 """Command line interface parameters."""
-import enum
 import itertools
+import os
 import pathlib
 import sys
 import textwrap
@@ -14,30 +14,8 @@ from click.shell_completion import CompletionItem
 from pygments import styles
 from rich import box, console, panel, syntax
 
-from nbpreview import __version__
-
-
-class LowerNameEnum(enum.Enum):
-    """Enum base class that sets value to lowercase version of name."""
-
-    def _generate_next_value_(  # type: ignore[override,misc]
-        name: str,  # noqa: B902,N805
-        start: int,
-        count: int,
-        last_values: List[Any],
-    ) -> str:
-        """Set member's values as their lowercase name."""
-        return name.lower()
-
-
-class ColorSystemEnum(str, LowerNameEnum):
-    """The color systems supported by terminals."""
-
-    STANDARD: Literal["standard"] = enum.auto()  # type: ignore[assignment]
-    EIGHT_BIT: Literal["256"] = "256"
-    TRUECOLOR: Literal["truecolor"] = enum.auto()  # type: ignore[assignment]
-    WINDOWS: Literal["windows"] = enum.auto()  # type: ignore[assignment]
-    NONE: Literal["none"] = enum.auto()  # type: ignore[assignment]
+from nbpreview import __version__, option_values
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -76,18 +54,18 @@ def complete_theme(ctx: Context, param: Parameter, incomplete: str) -> List[str]
 
 
 @typing.overload
-def translate_theme(theme_argument: str) -> str:
+def _theme_callback(theme_argument: str) -> str:
     """Convert theme argument to one recognized by rich."""
     ...
 
 
 @typing.overload
-def translate_theme(theme_argument: None) -> None:
+def _theme_callback(theme_argument: None) -> None:
     """Convert theme argument to one recognized by rich."""
     ...
 
 
-def translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
+def _theme_callback(theme_argument: Union[str, None]) -> Union[str, None]:
     """Convert theme argument to one recognized by rich."""
     translated_theme: Union[str, None]
     if theme_argument is not None:
@@ -104,7 +82,7 @@ def translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
     return translated_theme
 
 
-def list_themes_callback(value: Optional[bool] = None) -> None:
+def _list_themes_callback(value: Optional[bool] = None) -> None:
     """Render a preview of all available themes."""
     example_code = textwrap.dedent(
         '''\
@@ -130,7 +108,7 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
         stdout_console = console.Console(file=sys.stdout)
         panel_width = min(stdout_console.width, 88)
         for theme in _get_all_available_themes(list_duplicate_alias=False):
-            translated_theme = translate_theme(theme)
+            translated_theme = _theme_callback(theme)
             theme_title = (
                 f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
             )
@@ -158,10 +136,74 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
     pass
 
 
-def _stdin_path_callback(file_value: List[Path]) -> List[Path]:
+def _image_drawing_option_callback(
+    ctx: Context, image_drawing_value: Union[ImageDrawingEnum, None]
+) -> Union[str, None]:
+    """Check if the image drawing option is valid."""
+    if image_drawing_value == option_values.ImageDrawingEnum.BLOCK:
+        try:
+            import terminedia  # noqa: F401
+
+        except ModuleNotFoundError as exception:
+            message = (
+                f"'{image_drawing_value.value}' cannot be"
+                " used on this system. This might be because it is"
+                " being run on Windows."
+            )
+            raise typer.BadParameter(message=message, ctx=ctx) from exception
+    if image_drawing_value is None:
+        return image_drawing_value
+
+    else:
+        return image_drawing_value.value
+
+
+def _stdin_path_callback(ctx: Context, file_value: List[Path]) -> List[Path]:
     """Return '-', which signifies stdin, if no files are provided."""
     cleaned_file = file_value if file_value else [pathlib.Path("-")]
     return cleaned_file
+
+
+def _envvar_to_bool(envvar: str) -> bool:
+    """Convert environmental variable values to bool."""
+    envvar_value = os.environ.get(envvar, False)
+    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
+    return envvar_bool
+
+
+def _detect_no_color() -> Union[bool, None]:
+    """Detect if color should be used."""
+    no_color_variables = (
+        _envvar_to_bool("NO_COLOR"),
+        _envvar_to_bool("NBPREVIEW_NO_COLOR"),
+        os.environ.get("TERM", "smart").lower() == "dumb",
+    )
+    force_no_color = any(no_color_variables)
+    return force_no_color
+
+
+def _color_option_callback(color_value: Union[bool, None]) -> Union[bool, None]:
+    """Detect if any no color environmental variables are set."""
+    color = False if color_value is None and _detect_no_color() else color_value
+    return color
+
+
+def _color_system_callback(
+    color_system_value: Union[ColorSystemEnum, None]
+) -> Union[Literal["auto", "standard", "256", "truecolor", "windows"], None]:
+    """Translate the color system values to ones rich understands."""
+    color_system: Union[
+        Literal["auto", "standard", "256", "truecolor", "windows"], None
+    ]
+    if color_system_value is None:
+        color_system = "auto"
+
+    elif color_system_value == "none":
+        color_system = None
+
+    else:
+        color_system = color_system_value.value
+    return color_system
 
 
 def stdin_path_argument(
@@ -261,13 +303,14 @@ theme_option = typer.Option(
     " terminal. Call --list-themes to preview all available themes.",
     envvar="NBPREVIEW_THEME",
     shell_complete=complete_theme,
+    callback=_theme_callback,
 )
 list_themes_option = typer.Option(
     None,
     "--list-themes",
     "--lt",
     help="Display a preview of all available themes.",
-    callback=list_themes_callback,
+    callback=_list_themes_callback,
     is_eager=True,
 )
 hide_output_option = typer.Option(
@@ -363,6 +406,7 @@ image_drawing_option = typer.Option(
     " 'character', or 'braille'. 'block' might raise issues on Windows.",
     envvar="NBPREVIEW_IMAGE_DRAWING",
     case_sensitive=False,
+    callback=_image_drawing_option_callback,
 )
 color_option = typer.Option(
     None,
@@ -372,6 +416,7 @@ color_option = typer.Option(
     " Additionally respects NO_COLOR, NBPREVIEW_NO_COLOR, and"
     " TERM='dumb'.",
     envvar="NBPREVIEW_COLOR",
+    callback=_color_option_callback,
 )
 color_system_option = typer.Option(
     None,
@@ -380,6 +425,7 @@ color_system_option = typer.Option(
     help="The type of color system to use.",
     envvar="NBPREVIEW_COLOR_SYSTEM",
     case_sensitive=False,
+    callback=_color_system_callback,
 )
 line_numbers_option = typer.Option(
     False,

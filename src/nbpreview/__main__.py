@@ -4,7 +4,7 @@ import pathlib
 import typing
 from pathlib import Path
 from sys import stdin, stdout
-from typing import IO, AnyStr, Iterator, List, Literal, Optional, Sequence, Union
+from typing import IO, AnyStr, Iterator, List, Optional, Sequence, Union
 
 import click
 import nbformat
@@ -14,10 +14,8 @@ from rich.console import Capture, Console, RenderableType
 from rich.text import Text
 
 from nbpreview import errors, notebook, parameters
-from nbpreview.component.content.output.result import drawing
-from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 from nbpreview.notebook import Notebook
-from nbpreview.parameters import ColorSystemEnum
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
 
 # Prevent typeguard from being a non-development dependency
 # https://github.com/agronholm/typeguard/issues/179#issue-832697465
@@ -28,40 +26,6 @@ else:
 
 app = typer.Typer()
 traceback.install(theme="material")
-
-
-def _envvar_to_bool(envvar: str) -> bool:
-    """Convert environmental variable values to bool."""
-    envvar_value = os.environ.get(envvar, False)
-    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
-    return envvar_bool
-
-
-def _detect_no_color() -> Union[bool, None]:
-    """Detect if color should be used."""
-    no_color_variables = (
-        _envvar_to_bool("NO_COLOR"),
-        _envvar_to_bool("NBPREVIEW_NO_COLOR"),
-        os.environ.get("TERM", "smart").lower() == "dumb",
-    )
-    force_no_color = any(no_color_variables)
-    return force_no_color
-
-
-def _check_image_drawing_option(image_drawing: Union[ImageDrawingEnum, None]) -> None:
-    """Check if the image drawing option is valid."""
-    if image_drawing == drawing.ImageDrawingEnum.BLOCK:
-        try:
-            import terminedia  # noqa: F401
-        except ModuleNotFoundError as exception:
-            message = (
-                f"--image-drawing='{image_drawing.value}' cannot be"
-                " used on this system. This might be because it is"
-                " being run on Windows."
-            )
-            raise typer.BadParameter(
-                message=message, param_hint="image-drawing"
-            ) from exception
 
 
 def _detect_paging(
@@ -201,30 +165,16 @@ def main(
     paging: Optional[bool] = parameters.paging_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
-    if color is None and _detect_no_color():
-        color = False
     no_color = not color if color is not None else color
-    _color_system: Union[
-        Literal["auto", "standard", "256", "truecolor", "windows"], None
-    ]
-    if color_system is None:
-        _color_system = "auto"
-    elif color_system == "none":
-        _color_system = None
-    else:
-        _color_system = color_system.value
+    files = not no_files
+    negative_space = not positive_space
 
     output_console = console.Console(
         width=width,
         no_color=no_color,
         emoji=unicode if unicode is not None else True,
-        color_system=_color_system,
+        color_system=color_system,  # type: ignore[arg-type]
     )
-
-    _check_image_drawing_option(image_drawing)
-    files = not no_files
-    negative_space = not positive_space
-    translated_theme = parameters.translate_theme(theme)
 
     has_multiple_files = 1 < len(file)
     successful_render = False
@@ -236,7 +186,7 @@ def main(
                 try:
                     rendered_file = notebook.Notebook.from_file(
                         opened_notebook_file,
-                        theme=translated_theme,
+                        theme=theme,
                         hide_output=hide_output,
                         plain=plain,
                         unicode=unicode,
@@ -284,7 +234,7 @@ def main(
 
     else:
         message = _make_invalid_notebook_message(file)
-        raise typer.BadParameter(message, param_hint="FILE")
+        raise typer.BadParameter(message, param_hint="'FILE...'")
 
 
 typer_click_object = typer.main.get_command(app)
