@@ -14,10 +14,8 @@ from rich.console import Capture, Console, RenderableType
 from rich.text import Text
 
 from nbpreview import errors, notebook, parameters
-from nbpreview.component.content.output.result import drawing
-from nbpreview.component.content.output.result.drawing import ImageDrawingEnum
 from nbpreview.notebook import Notebook
-from nbpreview.parameters import ColorSystemEnum
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
 
 # Prevent typeguard from being a non-development dependency
 # https://github.com/agronholm/typeguard/issues/179#issue-832697465
@@ -46,22 +44,6 @@ def _detect_no_color() -> Union[bool, None]:
     )
     force_no_color = any(no_color_variables)
     return force_no_color
-
-
-def _check_image_drawing_option(image_drawing: Union[ImageDrawingEnum, None]) -> None:
-    """Check if the image drawing option is valid."""
-    if image_drawing == drawing.ImageDrawingEnum.BLOCK:
-        try:
-            import terminedia  # noqa: F401
-        except ModuleNotFoundError as exception:
-            message = (
-                f"--image-drawing='{image_drawing.value}' cannot be"
-                " used on this system. This might be because it is"
-                " being run on Windows."
-            )
-            raise typer.BadParameter(
-                message=message, param_hint="image-drawing"
-            ) from exception
 
 
 def _detect_paging(
@@ -221,7 +203,6 @@ def main(
         color_system=_color_system,
     )
 
-    _check_image_drawing_option(image_drawing)
     files = not no_files
     negative_space = not positive_space
     translated_theme = parameters.translate_theme(theme)
