@@ -168,7 +168,6 @@ def main(
     no_color = not color if color is not None else color
     files = not no_files
     negative_space = not positive_space
-    translated_theme = parameters.translate_theme(theme)
 
     output_console = console.Console(
         width=width,
@@ -187,7 +186,7 @@ def main(
                 try:
                     rendered_file = notebook.Notebook.from_file(
                         opened_notebook_file,
-                        theme=translated_theme,
+                        theme=theme,
                         hide_output=hide_output,
                         plain=plain,
                         unicode=unicode,

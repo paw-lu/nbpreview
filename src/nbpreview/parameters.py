@@ -54,18 +54,18 @@ def complete_theme(ctx: Context, param: Parameter, incomplete: str) -> List[str]
 
 
 @typing.overload
-def translate_theme(theme_argument: str) -> str:
+def _theme_callback(theme_argument: str) -> str:
     """Convert theme argument to one recognized by rich."""
     ...
 
 
 @typing.overload
-def translate_theme(theme_argument: None) -> None:
+def _theme_callback(theme_argument: None) -> None:
     """Convert theme argument to one recognized by rich."""
     ...
 
 
-def translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
+def _theme_callback(theme_argument: Union[str, None]) -> Union[str, None]:
     """Convert theme argument to one recognized by rich."""
     translated_theme: Union[str, None]
     if theme_argument is not None:
@@ -82,7 +82,7 @@ def translate_theme(theme_argument: Union[str, None]) -> Union[str, None]:
     return translated_theme
 
 
-def list_themes_callback(value: Optional[bool] = None) -> None:
+def _list_themes_callback(value: Optional[bool] = None) -> None:
     """Render a preview of all available themes."""
     example_code = textwrap.dedent(
         '''\
@@ -108,7 +108,7 @@ def list_themes_callback(value: Optional[bool] = None) -> None:
         stdout_console = console.Console(file=sys.stdout)
         panel_width = min(stdout_console.width, 88)
         for theme in _get_all_available_themes(list_duplicate_alias=False):
-            translated_theme = translate_theme(theme)
+            translated_theme = _theme_callback(theme)
             theme_title = (
                 f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
             )
@@ -303,13 +303,14 @@ theme_option = typer.Option(
     " terminal. Call --list-themes to preview all available themes.",
     envvar="NBPREVIEW_THEME",
     shell_complete=complete_theme,
+    callback=_theme_callback,
 )
 list_themes_option = typer.Option(
     None,
     "--list-themes",
     "--lt",
     help="Display a preview of all available themes.",
-    callback=list_themes_callback,
+    callback=_list_themes_callback,
     is_eager=True,
 )
 hide_output_option = typer.Option(
