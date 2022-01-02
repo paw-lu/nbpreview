@@ -1,5 +1,6 @@
 """Command line interface parameters."""
 import itertools
+import os
 import pathlib
 import sys
 import textwrap
@@ -161,6 +162,30 @@ def _stdin_path_callback(ctx: Context, file_value: List[Path]) -> List[Path]:
     """Return '-', which signifies stdin, if no files are provided."""
     cleaned_file = file_value if file_value else [pathlib.Path("-")]
     return cleaned_file
+
+
+def _envvar_to_bool(envvar: str) -> bool:
+    """Convert environmental variable values to bool."""
+    envvar_value = os.environ.get(envvar, False)
+    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
+    return envvar_bool
+
+
+def _detect_no_color() -> Union[bool, None]:
+    """Detect if color should be used."""
+    no_color_variables = (
+        _envvar_to_bool("NO_COLOR"),
+        _envvar_to_bool("NBPREVIEW_NO_COLOR"),
+        os.environ.get("TERM", "smart").lower() == "dumb",
+    )
+    force_no_color = any(no_color_variables)
+    return force_no_color
+
+
+def _color_option_callback(color_value: Optional[bool]) -> Union[bool, None]:
+    """Detect if any no color environmental variables are set."""
+    color = False if color_value is None and _detect_no_color() else color_value
+    return color
 
 
 def stdin_path_argument(
@@ -372,6 +397,7 @@ color_option = typer.Option(
     " Additionally respects NO_COLOR, NBPREVIEW_NO_COLOR, and"
     " TERM='dumb'.",
     envvar="NBPREVIEW_COLOR",
+    callback=_color_option_callback,
 )
 color_system_option = typer.Option(
     None,

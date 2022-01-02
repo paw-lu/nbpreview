@@ -28,24 +28,6 @@ app = typer.Typer()
 traceback.install(theme="material")
 
 
-def _envvar_to_bool(envvar: str) -> bool:
-    """Convert environmental variable values to bool."""
-    envvar_value = os.environ.get(envvar, False)
-    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
-    return envvar_bool
-
-
-def _detect_no_color() -> Union[bool, None]:
-    """Detect if color should be used."""
-    no_color_variables = (
-        _envvar_to_bool("NO_COLOR"),
-        _envvar_to_bool("NBPREVIEW_NO_COLOR"),
-        os.environ.get("TERM", "smart").lower() == "dumb",
-    )
-    force_no_color = any(no_color_variables)
-    return force_no_color
-
-
 def _detect_paging(
     paging: Union[bool, None], rendered_notebook: str, console: Console
 ) -> bool:
@@ -183,8 +165,6 @@ def main(
     paging: Optional[bool] = parameters.paging_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
-    if color is None and _detect_no_color():
-        color = False
     no_color = not color if color is not None else color
     _color_system: Union[
         Literal["auto", "standard", "256", "truecolor", "windows"], None
