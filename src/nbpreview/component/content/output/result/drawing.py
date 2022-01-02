@@ -19,8 +19,8 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
 
-from nbpreview import parameters
 from nbpreview.data import Data
+from nbpreview.option_values import ImageDrawingEnum
 
 # terminedia depends on fcntl, which is not present on Windows platforms
 try:
@@ -34,15 +34,6 @@ class Size(typing.NamedTuple):
 
     x: Union[float, None]
     y: Union[float, None]
-
-
-@enum.unique
-class ImageDrawingEnum(str, parameters.LowerNameEnum):
-    """Image drawing types."""
-
-    BLOCK = enum.auto()
-    CHARACTER = enum.auto()
-    BRAILLE = enum.auto()
 
 
 ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]

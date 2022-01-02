@@ -1,12 +1,11 @@
 """Command line interface parameters."""
-import enum
 import itertools
 import pathlib
 import sys
 import textwrap
 import typing
 from pathlib import Path
-from typing import Any, Callable, Iterable, List, Literal, Optional, Type, Union
+from typing import Any, Callable, Iterable, List, Optional, Type, Union
 
 import typer
 from click import Context, Parameter
@@ -15,29 +14,6 @@ from pygments import styles
 from rich import box, console, panel, syntax
 
 from nbpreview import __version__
-
-
-class LowerNameEnum(enum.Enum):
-    """Enum base class that sets value to lowercase version of name."""
-
-    def _generate_next_value_(  # type: ignore[override,misc]
-        name: str,  # noqa: B902,N805
-        start: int,
-        count: int,
-        last_values: List[Any],
-    ) -> str:
-        """Set member's values as their lowercase name."""
-        return name.lower()
-
-
-class ColorSystemEnum(str, LowerNameEnum):
-    """The color systems supported by terminals."""
-
-    STANDARD: Literal["standard"] = enum.auto()  # type: ignore[assignment]
-    EIGHT_BIT: Literal["256"] = "256"
-    TRUECOLOR: Literal["truecolor"] = enum.auto()  # type: ignore[assignment]
-    WINDOWS: Literal["windows"] = enum.auto()  # type: ignore[assignment]
-    NONE: Literal["none"] = enum.auto()  # type: ignore[assignment]
 
 
 def version_callback(value: Optional[bool] = None) -> None:
