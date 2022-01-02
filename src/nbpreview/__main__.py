@@ -284,7 +284,7 @@ def main(
 
     else:
         message = _make_invalid_notebook_message(file)
-        raise typer.BadParameter(message, param_hint="FILE")
+        raise typer.BadParameter(message, param_hint="'FILE...'")
 
 
 typer_click_object = typer.main.get_command(app)
