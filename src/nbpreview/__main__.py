@@ -4,7 +4,7 @@ import pathlib
 import typing
 from pathlib import Path
 from sys import stdin, stdout
-from typing import IO, AnyStr, Iterator, List, Literal, Optional, Sequence, Union
+from typing import IO, AnyStr, Iterator, List, Optional, Sequence, Union
 
 import click
 import nbformat
@@ -166,26 +166,16 @@ def main(
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     no_color = not color if color is not None else color
-    _color_system: Union[
-        Literal["auto", "standard", "256", "truecolor", "windows"], None
-    ]
-    if color_system is None:
-        _color_system = "auto"
-    elif color_system == "none":
-        _color_system = None
-    else:
-        _color_system = color_system.value
+    files = not no_files
+    negative_space = not positive_space
+    translated_theme = parameters.translate_theme(theme)
 
     output_console = console.Console(
         width=width,
         no_color=no_color,
         emoji=unicode if unicode is not None else True,
-        color_system=_color_system,
+        color_system=color_system,  # type: ignore[arg-type]
     )
-
-    files = not no_files
-    negative_space = not positive_space
-    translated_theme = parameters.translate_theme(theme)
 
     has_multiple_files = 1 < len(file)
     successful_render = False

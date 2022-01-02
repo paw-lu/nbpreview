@@ -6,7 +6,7 @@ import sys
 import textwrap
 import typing
 from pathlib import Path
-from typing import Any, Callable, Iterable, List, Optional, Type, Union
+from typing import Any, Callable, Iterable, List, Literal, Optional, Type, Union
 
 import typer
 from click import Context, Parameter
@@ -15,7 +15,7 @@ from pygments import styles
 from rich import box, console, panel, syntax
 
 from nbpreview import __version__, option_values
-from nbpreview.option_values import ImageDrawingEnum
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -182,10 +182,28 @@ def _detect_no_color() -> Union[bool, None]:
     return force_no_color
 
 
-def _color_option_callback(color_value: Optional[bool]) -> Union[bool, None]:
+def _color_option_callback(color_value: Union[bool, None]) -> Union[bool, None]:
     """Detect if any no color environmental variables are set."""
     color = False if color_value is None and _detect_no_color() else color_value
     return color
+
+
+def _color_system_callback(
+    color_system_value: Union[ColorSystemEnum, None]
+) -> Union[Literal["auto", "standard", "256", "truecolor", "windows"], None]:
+    """Translate the color system values to ones rich understands."""
+    color_system: Union[
+        Literal["auto", "standard", "256", "truecolor", "windows"], None
+    ]
+    if color_system_value is None:
+        color_system = "auto"
+
+    elif color_system_value == "none":
+        color_system = None
+
+    else:
+        color_system = color_system_value.value
+    return color_system
 
 
 def stdin_path_argument(
@@ -406,6 +424,7 @@ color_system_option = typer.Option(
     help="The type of color system to use.",
     envvar="NBPREVIEW_COLOR_SYSTEM",
     case_sensitive=False,
+    callback=_color_system_callback,
 )
 line_numbers_option = typer.Option(
     False,
