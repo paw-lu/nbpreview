@@ -1623,7 +1623,7 @@ test = ["pytest"]
 
 [[package]]
 name = "tryceratops"
-version = "1.0.0"
+version = "1.0.1"
 description = "A linter to manage your exception like a PRO!"
 category = "dev"
 optional = false
@@ -1789,7 +1789,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "250b71937b526743fff1891b1cc8f0fa9922ff326a81235f1e5e49c22dad5ba2"
+content-hash = "33f9587765299b80cfee709fac71ba920c5fd58161660d7ba035c8109cae035d"
 
 [metadata.files]
 alabaster = [
@@ -2890,8 +2890,8 @@ traitlets = [
     {file = "traitlets-5.1.1.tar.gz", hash = "sha256:059f456c5a7c1c82b98c2e8c799f39c9b8128f6d0d46941ee118daace9eb70c7"},
 ]
 tryceratops = [
-    {file = "tryceratops-1.0.0-py3-none-any.whl", hash = "sha256:8e011a4ab4d62fe6a603c40226afc4e423136a511e8e724e9aff15e46a6fb015"},
-    {file = "tryceratops-1.0.0.tar.gz", hash = "sha256:0ef525674369500baff9151dfbf4dd4c74b5e38f54391acfa323d83b0981cc5e"},
+    {file = "tryceratops-1.0.1-py3-none-any.whl", hash = "sha256:0f04f003651dc1ef30a90e9d54aca77ac22fa2ded923941c6832c4d01513a444"},
+    {file = "tryceratops-1.0.1.tar.gz", hash = "sha256:30870d05548eee15b3fdaf128396eeff9d47bc97fcc91766e322d204f2d2e79e"},
 ]
 typeguard = [
     {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
