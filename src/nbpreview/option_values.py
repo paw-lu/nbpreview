@@ -1,6 +1,32 @@
 """Enums representing option values."""
 import enum
-from typing import Any, List, Literal
+import itertools
+from typing import Any, Iterable, List, Literal
+
+from pygments import styles
+
+
+def get_all_available_themes(list_duplicate_alias: bool = False) -> Iterable[str]:
+    """Return the available theme names."""
+    theme_alias: Iterable[str] = ["light", "dark"]
+    if list_duplicate_alias:
+        theme_alias = itertools.chain(
+            theme_alias, (f"ansi_{alias}" for alias in theme_alias)
+        )
+    available_themes = itertools.chain(styles.get_all_styles(), theme_alias)
+    yield from available_themes
+
+
+class _ThemeEnum(str, enum.Enum):
+    """Enum version of available pygment themes."""
+
+    ...
+
+
+ThemeEnum = _ThemeEnum(  # type: ignore[call-overload]
+    "ThemeEnum",
+    {theme.upper(): theme for theme in get_all_available_themes(True)},
+)
 
 
 class LowerNameEnum(enum.Enum):

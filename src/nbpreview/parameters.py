@@ -1,21 +1,18 @@
 """Command line interface parameters."""
-import itertools
 import os
 import pathlib
 import sys
 import textwrap
-import typing
 from pathlib import Path
-from typing import Any, Callable, Iterable, List, Literal, Optional, Type, Union
+from typing import Any, Callable, List, Literal, Optional, Type, Union
 
 import typer
 from click import Context, Parameter
 from click.shell_completion import CompletionItem
-from pygments import styles
 from rich import box, console, panel, syntax
 
 from nbpreview import __version__, option_values
-from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum, ThemeEnum
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -33,53 +30,25 @@ def version_callback(value: Optional[bool] = None) -> None:
     pass
 
 
-def _get_all_available_themes(list_duplicate_alias: bool = False) -> Iterable[str]:
-    """Return the available theme names."""
-    theme_alias: Iterable[str] = ["light", "dark"]
-    if list_duplicate_alias:
-        theme_alias = itertools.chain(
-            theme_alias, (f"ansi_{alias}" for alias in theme_alias)
-        )
-    available_themes = itertools.chain(styles.get_all_styles(), theme_alias)
-    yield from available_themes
-
-
-def complete_theme(ctx: Context, param: Parameter, incomplete: str) -> List[str]:
-    """Completion options for theme argument."""
-    available_themes = _get_all_available_themes(list_duplicate_alias=True)
-    completion_suggestions = [
-        theme for theme in available_themes if theme.startswith(incomplete.lower())
-    ]
-    return completion_suggestions
-
-
-@typing.overload
-def _theme_callback(theme_argument: str) -> str:
+def _theme_callback(theme_argument: Union[ThemeEnum, None]) -> Union[str, None]:
     """Convert theme argument to one recognized by rich."""
-    ...
-
-
-@typing.overload
-def _theme_callback(theme_argument: None) -> None:
-    """Convert theme argument to one recognized by rich."""
-    ...
-
-
-def _theme_callback(theme_argument: Union[str, None]) -> Union[str, None]:
-    """Convert theme argument to one recognized by rich."""
-    translated_theme: Union[str, None]
+    translated_theme: Union[ThemeEnum, None]
     if theme_argument is not None:
-        theme_alias = {
-            "dark": "ansi_dark",
-            "light": "ansi_light",
-        }
-        lowered_theme_argument = theme_argument.lower()
-        translated_theme = theme_alias.get(
-            lowered_theme_argument, lowered_theme_argument
-        )
+        translated_theme = _translate_theme(theme_argument.value)
     else:
         translated_theme = None
     return translated_theme
+
+
+def _translate_theme(theme_value: str) -> str:
+    """Translate the theme from CLI value to pygments theme."""
+    theme_alias = {
+        "dark": "ansi_dark",
+        "light": "ansi_light",
+    }
+    lowered_theme_argument = theme_value.lower()
+    pygments_theme = theme_alias.get(lowered_theme_argument, lowered_theme_argument)
+    return pygments_theme
 
 
 def _list_themes_callback(value: Optional[bool] = None) -> None:
@@ -107,8 +76,8 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
     if value:
         stdout_console = console.Console(file=sys.stdout)
         panel_width = min(stdout_console.width, 88)
-        for theme in _get_all_available_themes(list_duplicate_alias=False):
-            translated_theme = _theme_callback(theme)
+        for theme in option_values.get_all_available_themes(list_duplicate_alias=False):
+            translated_theme = _translate_theme(theme)
             theme_title = (
                 f"{theme} / ansi_{theme}" if theme in ("dark", "light") else theme
             )
@@ -298,11 +267,10 @@ theme_option = typer.Option(
     None,
     "--theme",
     "-t",
-    help="The theme to use for syntax highlighting. May be 'light',"
-    " 'dark', or any Pygments theme. By default adjusts based on"
-    " terminal. Call --list-themes to preview all available themes.",
+    help="The theme to use for syntax highlighting."
+    " By default adjusts based on terminal."
+    " Call --list-themes to preview all available themes.",
     envvar="NBPREVIEW_THEME",
-    shell_complete=complete_theme,
     callback=_theme_callback,
 )
 list_themes_option = typer.Option(
