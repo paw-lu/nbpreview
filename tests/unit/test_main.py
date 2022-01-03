@@ -17,6 +17,7 @@ from typing import (
     Generator,
     Iterable,
     Iterator,
+    List,
     Mapping,
     Optional,
     Protocol,
@@ -28,7 +29,7 @@ import nbformat
 import pytest
 import rich
 from _pytest.monkeypatch import MonkeyPatch
-from click import shell_completion, testing
+from click import testing
 from click.testing import CliRunner, Result
 from nbformat.notebooknode import NotebookNode
 from pytest_mock import MockerFixture
@@ -513,7 +514,7 @@ def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
     time pygments adds or removes a style
     """
     mock = mocker.patch(
-        "nbpreview.parameters.styles.get_all_styles",
+        "nbpreview.option_values.styles.get_all_styles",
         return_value=(style for style in ("material", "monokai", "zenburn")),
     )
     yield mock
@@ -605,12 +606,13 @@ def test_change_theme_notebook_file(
     test_cli: Callable[..., None],
 ) -> None:
     """It changes the theme of the notebook."""
-    arg = (
-        f"{option_name}={theme}"
+    args: List[Union[str, None]]
+    args = (
+        [option_name, theme]
         if theme is not None and option_name is not None
-        else None
+        else [None]
     )
-    test_cli(arg, nbpreview_theme=env)
+    test_cli(*args, nbpreview_theme=env)
 
 
 @pytest.mark.parametrize(
@@ -828,36 +830,6 @@ def test_color_system_notebook_file(
         else None
     )
     test_cli(arg, truecolor=False, nbpreview_color_system=env_value)
-
-
-@pytest.mark.parametrize("option_name", ("--theme", "-t"))
-def test_theme_completion(
-    option_name: str, runner: CliRunner, mock_pygment_styles: Mock
-) -> None:
-    """It autocompletes themes with appropriate names."""
-    prog_name = (
-        app_name if (app_name := __main__.app.info.name) is not None else "nbpreview"
-    )
-    nbpreview_shell_complete = shell_completion.ShellComplete(
-        __main__.typer_click_object,
-        ctx_args={},
-        prog_name=prog_name,
-        complete_var="_NBPREVIEW_COMPLETE",
-    )
-    completions = nbpreview_shell_complete.get_completions(
-        args=[option_name], incomplete=""
-    )
-    output = [completion.value for completion in completions]
-    expected_output = [
-        "material",
-        "monokai",
-        "zenburn",
-        "light",
-        "dark",
-        "ansi_light",
-        "ansi_dark",
-    ]
-    assert output == expected_output
 
 
 @pytest.mark.parametrize(
