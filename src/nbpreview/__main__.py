@@ -210,7 +210,6 @@ def main(
                     rendered_file = text.Text(
                         message, style=style.Style(color="color(178)")
                     )
-                    pass
 
                 else:
                     successful_render = True

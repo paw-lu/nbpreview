@@ -88,6 +88,7 @@ def precommit(session: Session) -> None:
     """Lint using pre-commit."""
     args = session.posargs or ["run", "--all-files", "--show-diff-on-failure"]
     session.install(
+        "autoflake",
         "black",
         "darglint",
         "flake8",

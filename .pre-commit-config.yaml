@@ -33,6 +33,13 @@ repos:
         language: system
         types: [python]
         require_serial: true
+      - id: autoflake
+        name: autoflake
+        entry: autoflake
+        language: system
+        types: [python]
+        require_serial: true
+        args: ["--in-place", "--remove-all-unused-imports"]
       - id: interrogate
         name: interrogate
         entry: interrogate
@@ -41,8 +48,10 @@ repos:
       - id: isort
         name: isort
         entry: isort
+        require_serial: true
         language: system
-        types: [python]
+        types_or: [cython, pyi, python]
+        args: ["--filter-files"]
       - id: nbqa-black
         name: nbqa-black
         entry: nbqa black

@@ -27,7 +27,6 @@ def version_callback(value: Optional[bool] = None) -> None:
     if value:
         typer.echo(f"nbpreview {__version__}")
         raise typer.Exit()
-    pass
 
 
 def _theme_callback(theme_argument: Union[ThemeEnum, None]) -> Union[str, None]:
@@ -102,7 +101,6 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
             else:
                 stdout_console.print(theme_title)
         raise typer.Exit()
-    pass
 
 
 def _image_drawing_option_callback(
