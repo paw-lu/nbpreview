@@ -70,6 +70,7 @@ tryceratops = "^1.0.1"
 isort = "^5.10.1"
 nbqa = "^1.2.2"
 click = "^8.0.3"
+autoflake = "^1.4"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"
