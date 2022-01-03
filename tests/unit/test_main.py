@@ -535,6 +535,21 @@ def mock_terminal(mocker: MockerFixture) -> Iterator[Mock]:
     yield mock
 
 
+def test_default_color_system_auto(
+    runner: CliRunner,
+    mocker: MockerFixture,
+    notebook_path: Path,
+) -> None:
+    """Its default value is 'auto'."""
+    mock = mocker.patch("nbpreview.__main__.console.Console")
+    runner.invoke(
+        __main__.typer_click_object, args=[os.fsdecode(notebook_path)], color=True
+    )
+    # console.Console is called multiple times, first time should be
+    # console representing terminal
+    assert mock.call_args_list[0].kwargs["color_system"] == "auto"
+
+
 def test_list_themes(
     runner: CliRunner,
     mocker: MockerFixture,
