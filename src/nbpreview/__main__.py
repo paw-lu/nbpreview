@@ -15,7 +15,7 @@ from rich.text import Text
 
 from nbpreview import errors, notebook, parameters
 from nbpreview.notebook import Notebook
-from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum
+from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum, ThemeEnum
 
 # Prevent typeguard from being a non-development dependency
 # https://github.com/agronholm/typeguard/issues/179#issue-832697465
@@ -144,7 +144,7 @@ def _title_output(
 @app.command()
 def main(
     file: List[Path] = parameters.file_argument,
-    theme: Optional[str] = parameters.theme_option,
+    theme: Optional[ThemeEnum] = parameters.theme_option,
     list_themes: Optional[bool] = parameters.list_themes_option,
     plain: Optional[bool] = parameters.plain_option,
     unicode: Optional[bool] = parameters.unicode_option,
