@@ -25,6 +25,8 @@ class ColorSystemEnum(str, LowerNameEnum):
     TRUECOLOR: Literal["truecolor"] = enum.auto()  # type: ignore[assignment]
     WINDOWS: Literal["windows"] = enum.auto()  # type: ignore[assignment]
     NONE: Literal["none"] = enum.auto()  # type: ignore[assignment]
+    # Add AUTO because callbacks must return values associated with types
+    AUTO: Literal["auto"] = enum.auto()  # type: ignore[assignment]
 
 
 @enum.unique
