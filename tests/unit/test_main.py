@@ -238,6 +238,7 @@ def cli_arg(
         truecolor: bool = True,
         paging: Union[bool, None] = False,
         material_theme: bool = True,
+        images: bool = True,
         **kwargs: Union[str, None],
     ) -> str:
         """Apply given arguments to cli.
@@ -252,6 +253,7 @@ def cli_arg(
                 corresponds to '--no-paging'.
             material_theme (bool): Whether to set the theme to
                 'material'. By default True.
+            images (bool): Whether to pass '--images'. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
@@ -263,6 +265,8 @@ def cli_arg(
             name.upper(): value for name, value in kwargs.items() if value is not None
         }
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
+        if images:
+            cli_args.append("--images")
         if material_theme:
             cli_args.append("--theme=material")
         if truecolor:
@@ -297,6 +301,7 @@ def test_cli(
         truecolor: bool = True,
         paging: Union[bool, None] = False,
         material_theme: bool = True,
+        images: bool = True,
         **kwargs: Union[str, None],
     ) -> None:
         """Tests expected argument output.
@@ -311,6 +316,7 @@ def test_cli(
                 corresponds to '--no-paging'.
             material_theme (bool): Whether to set the theme to
                 'material'. By default True.
+            images (bool): Whether to pass '--images'. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
         """
@@ -319,6 +325,7 @@ def test_cli(
             truecolor=truecolor,
             paging=paging,
             material_theme=material_theme,
+            images=images,
             **kwargs,
         )
         assert output == remove_link_ids(expected_output)
@@ -732,16 +739,24 @@ def test_hyperlink_hints_output_notebook_file(
     "option_name, env",
     [
         ("--no-images", None),
+        ("-e", None),
+        ("--images", None),
         ("-i", None),
         (None, None),
         (None, "1"),
+        (None, "0"),
     ],
 )
 def test_image_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
     """It does not draw images when specified."""
-    test_cli(option_name, nbpreview_no_images=env)
+    test_cli(option_name, nbpreview_images=env, images=False)
+
+
+def test_no_color_no_image(test_cli: Callable[..., None]) -> None:
+    """By default images will not render if no color."""
+    test_cli("--no-color", images=False)
 
 
 @pytest.mark.parametrize(

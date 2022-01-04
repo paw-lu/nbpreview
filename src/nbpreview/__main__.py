@@ -154,7 +154,7 @@ def main(
     positive_space: bool = parameters.positive_space_option,
     hyperlinks: bool = parameters.hyperlinks_option,
     hide_hyperlink_hints: bool = parameters.hide_hyperlink_hints_option,
-    no_images: bool = parameters.no_images_option,
+    images: Optional[bool] = parameters.no_images_option,
     image_drawing: Optional[ImageDrawingEnum] = parameters.image_drawing_option,
     color: Optional[bool] = parameters.color_option,
     color_system: Optional[ColorSystemEnum] = parameters.color_system_option,
@@ -168,7 +168,6 @@ def main(
     no_color = not color if color is not None else color
     files = not no_files
     negative_space = not positive_space
-    images = not no_images
 
     output_console = console.Console(
         width=width,

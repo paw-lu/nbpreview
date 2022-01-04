@@ -353,11 +353,12 @@ hide_hyperlink_hints_option = typer.Option(
     envvar="NBPREVIEW_HIDE_HYPERLINK_HINTS",
 )
 no_images_option = typer.Option(
-    False,
-    "--no-images",
-    "-i",
-    help="Do not render images. May significancy speed up rendering.",
-    envvar="NBPREVIEW_NO_IMAGES",
+    None,
+    "--images / --no-images",
+    "-i / -e",
+    help="Whether to render images. By default will autodetect."
+    " May significancy affect performance.",
+    envvar="NBPREVIEW_IMAGES",
 )
 image_drawing_option = typer.Option(
     None,
