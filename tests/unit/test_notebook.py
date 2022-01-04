@@ -44,6 +44,7 @@ class RichOutput(Protocol):
         self,
         cell: Union[Dict[str, Any], None],
         plain: bool = False,
+        theme: str = "material",
         no_wrap: bool = False,
         unicode: Optional[bool] = None,
         hide_output: bool = False,
@@ -129,6 +130,7 @@ def rich_notebook_output(
     def _rich_notebook_output(
         cell: Union[Dict[str, Any], None],
         plain: Optional[bool] = None,
+        theme: str = "material",
         no_wrap: Optional[bool] = None,
         unicode: Optional[bool] = None,
         hide_output: bool = False,
@@ -148,6 +150,7 @@ def rich_notebook_output(
         notebook_node = make_notebook(cell)
         rendered_notebook = notebook.Notebook(
             notebook_node,
+            theme=theme,
             plain=plain,
             unicode=unicode,
             hide_output=hide_output,
@@ -190,7 +193,7 @@ def test_automatic_plain(
         force_terminal=False,
     )
     notebook_node = make_notebook(code_cell)
-    rendered_notebook = notebook.Notebook(notebook_node)
+    rendered_notebook = notebook.Notebook(notebook_node, theme="material")
     con.print(rendered_notebook)
     output = output_file.getvalue()
     expected_output = (
