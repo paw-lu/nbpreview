@@ -5,7 +5,7 @@ repos:
         name: black
         entry: black
         language: system
-        types: [python]
+        types: [python, jupyter]
         require_serial: true
       - id: check-added-large-files
         name: Check for added large files
@@ -52,12 +52,6 @@ repos:
         language: system
         types_or: [cython, pyi, python]
         args: ["--filter-files"]
-      - id: nbqa-black
-        name: nbqa-black
-        entry: nbqa black
-        language: system
-        require_serial: true
-        types: [jupyter]
       - id: nbqa-flake8
         name: nbqa-flake8
         entry: nbqa flake8
