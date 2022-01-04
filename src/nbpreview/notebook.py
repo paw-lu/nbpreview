@@ -322,8 +322,8 @@ class Notebook:
         hyperlinks = pick_option(
             self.hyperlinks, detector=not options.legacy_windows and options.is_terminal
         )
-        images = pick_option(self.images, detector=options.is_terminal)
         color = pick_option(self.color, detector=options.is_terminal)
+        images = pick_option(self.images, detector=options.is_terminal and color)
         image_drawing = _pick_image_drawing(
             self.image_drawing, unicode=unicode, color=color
         )
