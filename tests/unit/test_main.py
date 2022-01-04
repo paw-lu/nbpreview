@@ -185,7 +185,13 @@ def run_cli(
         notebook_path = write_notebook(cell)
         if isinstance(args, str):
             args = shlex.split(args)
-        default_args = ["--decorated", "--unicode", "--width=80", notebook_path]
+        default_args = [
+            "--decorated",
+            "--unicode",
+            "--width=80",
+            "--theme=material",
+            notebook_path,
+        ]
         full_args = [*args, *default_args] if args is not None else default_args
         result = runner.invoke(
             __main__.typer_click_object,
@@ -231,6 +237,7 @@ def cli_arg(
         *args: Union[str, None],
         truecolor: bool = True,
         paging: Union[bool, None] = False,
+        material_theme: bool = True,
         **kwargs: Union[str, None],
     ) -> str:
         """Apply given arguments to cli.
@@ -243,6 +250,8 @@ def cli_arg(
             paging (Union[bool, None]): Whether to pass '--paging' or
                 '--no-paging' option. By default False, which
                 corresponds to '--no-paging'.
+            material_theme (bool): Whether to set the theme to
+                'material'. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
@@ -254,6 +263,8 @@ def cli_arg(
             name.upper(): value for name, value in kwargs.items() if value is not None
         }
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
+        if material_theme:
+            cli_args.append("--theme=material")
         if truecolor:
             cli_args.append("--color-system=truecolor")
         if paging is True:
@@ -285,6 +296,7 @@ def test_cli(
         *args: Union[str, None],
         truecolor: bool = True,
         paging: Union[bool, None] = False,
+        material_theme: bool = True,
         **kwargs: Union[str, None],
     ) -> None:
         """Tests expected argument output.
@@ -292,16 +304,22 @@ def test_cli(
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
-            truecolor (bool): Whether to pass
-                '--color-system=truecolor' option. By default True.
+            truecolor (bool): Whether to pass '--color-system=truecolor'
+                option. By default True.
             paging (Union[bool, None]): Whether to pass '--paging' or
                 '--no-paging' option. By default False, which
                 corresponds to '--no-paging'.
+            material_theme (bool): Whether to set the theme to
+                'material'. By default True.
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
         """
         output = cli_arg(
-            *args, truecolor=truecolor, paging=paging, **kwargs
+            *args,
+            truecolor=truecolor,
+            paging=paging,
+            material_theme=material_theme,
+            **kwargs,
         )
         assert output == remove_link_ids(expected_output)
 
@@ -604,7 +622,7 @@ def test_change_theme_notebook_file(
         if theme is not None and option_name is not None
         else [None]
     )
-    test_cli(*args, nbpreview_theme=env)
+    test_cli(*args, nbpreview_theme=env, material_theme=False)
 
 
 @pytest.mark.parametrize(
@@ -919,7 +937,7 @@ def test_render_stdin(
 ) -> None:
     """It treats stdin as a file's text and renders a notebook."""
     stdin = notebook_path.read_text()
-    args = ["--color-system=truecolor", "--no-images"]
+    args = ["--color-system=truecolor", "--no-images", "--theme=material"]
     if file_argument is not None:
         args.append(file_argument)
     result = runner.invoke(__main__.typer_click_object, args=args, input=stdin)
@@ -945,7 +963,7 @@ def test_stdin_cwd_path(
     current_working_directory = pathlib.Path.cwd()
     result = runner.invoke(
         __main__.typer_click_object,
-        args=["--color-system=truecolor", "--no-images"],
+        args=["--color-system=truecolor", "--no-images", "--theme=material"],
         input=notebook_stdin,
     )
     output = result.output
@@ -983,6 +1001,7 @@ def test_multiple_files(
             code_notebook_path,
             code_notebook_path,
             "--color-system=truecolor",
+            "--theme=material",
         ],
     )
     output = result.output
@@ -1094,7 +1113,7 @@ def test_file_and_stdin(
     stdin = pathlib.Path(code_notebook_path).read_text()
     result = runner.invoke(
         __main__.typer_click_object,
-        args=["--color-system=truecolor", code_notebook_path, "-"],
+        args=["--color-system=truecolor", "--theme=material", code_notebook_path, "-"],
         input=stdin,
     )
     output = result.output
@@ -1200,6 +1219,7 @@ def test_multiple_files_plain(
         args=[
             "--color-system=truecolor",
             "--plain",
+            "--theme=material",
             code_notebook_path,
             code_notebook_path,
         ],
@@ -1311,7 +1331,12 @@ def test_multiple_files_some_fail(
     invalid_file_path = os.fsdecode(pathlib.Path(__file__))
     result = runner.invoke(
         __main__.typer_click_object,
-        args=["--color-system=truecolor", code_notebook_path, invalid_file_path],
+        args=[
+            "--color-system=truecolor",
+            "--theme=material",
+            code_notebook_path,
+            invalid_file_path,
+        ],
     )
     output = result.output
     path_width = 80 - 6

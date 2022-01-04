@@ -25,7 +25,7 @@ else:
     from typing import no_type_check as typeguard_ignore
 
 app = typer.Typer()
-traceback.install(theme="material")
+traceback.install(theme="ansi_dark")
 
 
 def _detect_paging(
@@ -144,7 +144,7 @@ def _title_output(
 @app.command()
 def main(
     file: List[Path] = parameters.file_argument,
-    theme: Optional[ThemeEnum] = parameters.theme_option,
+    theme: ThemeEnum = parameters.theme_option,
     list_themes: Optional[bool] = parameters.list_themes_option,
     plain: Optional[bool] = parameters.plain_option,
     unicode: Optional[bool] = parameters.unicode_option,

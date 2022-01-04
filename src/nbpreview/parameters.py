@@ -29,13 +29,9 @@ def version_callback(value: Optional[bool] = None) -> None:
         raise typer.Exit()
 
 
-def _theme_callback(theme_argument: Union[ThemeEnum, None]) -> Union[str, None]:
+def _theme_callback(theme_argument: ThemeEnum) -> str:
     """Convert theme argument to one recognized by rich."""
-    translated_theme: Union[ThemeEnum, None]
-    if theme_argument is not None:
-        translated_theme = _translate_theme(theme_argument.value)
-    else:
-        translated_theme = None
+    translated_theme = _translate_theme(theme_argument.value)
     return translated_theme
 
 
@@ -262,12 +258,11 @@ file_argument = stdin_path_argument(
     " standard input."
 )
 theme_option = typer.Option(
-    None,
+    "dark",
     "--theme",
     "-t",
     help="The theme to use for syntax highlighting."
-    " By default adjusts based on terminal."
-    " Call --list-themes to preview all available themes.",
+    " Call '--list-themes' to preview all available themes.",
     envvar="NBPREVIEW_THEME",
     callback=_theme_callback,
 )

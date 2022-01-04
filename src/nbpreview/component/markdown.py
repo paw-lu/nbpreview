@@ -277,7 +277,7 @@ class MarkdownOverwrite(markdown.Markdown):
         style: Union[str, Style] = "none",
         hyperlinks: bool = True,
         inline_code_lexer: Optional[str] = None,
-        inline_code_theme: Optional[str] = None,
+        inline_code_theme: str = "dark",
         nerd_font: bool = False,
         unicode: bool = True,
         images: bool = True,
