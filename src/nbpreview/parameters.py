@@ -357,12 +357,12 @@ hide_hyperlink_hints_option = typer.Option(
     help="Hide text hints that hyperlinks are clickable.",
     envvar="NBPREVIEW_HIDE_HYPERLINK_HINTS",
 )
-images_option = typer.Option(
+no_images_option = typer.Option(
     False,
-    "--images",
+    "--no-images",
     "-i",
-    help="Render images. See image-drawing-option for render modes.",
-    envvar="NBPREVIEW_IMAGES",
+    help="Do not render images. May significancy speed up rendering.",
+    envvar="NBPREVIEW_NO_IMAGES",
 )
 image_drawing_option = typer.Option(
     None,

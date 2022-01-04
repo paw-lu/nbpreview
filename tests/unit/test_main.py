@@ -229,7 +229,6 @@ def cli_arg(
 
     def _cli_arg(
         *args: Union[str, None],
-        images: bool = True,
         truecolor: bool = True,
         paging: Union[bool, None] = False,
         **kwargs: Union[str, None],
@@ -239,8 +238,6 @@ def cli_arg(
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
-            images (bool): Whether to pass the '--images' option. By
-                default True.
             truecolor (bool): Whether to pass
                 '--color-system=truecolor' option. By default True.
             paging (Union[bool, None]): Whether to pass '--paging' or
@@ -257,8 +254,6 @@ def cli_arg(
             name.upper(): value for name, value in kwargs.items() if value is not None
         }
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
-        if images:
-            cli_args.append("--images")
         if truecolor:
             cli_args.append("--color-system=truecolor")
         if paging is True:
@@ -288,7 +283,6 @@ def test_cli(
 
     def _test_cli(
         *args: Union[str, None],
-        images: bool = True,
         truecolor: bool = True,
         paging: Union[bool, None] = False,
         **kwargs: Union[str, None],
@@ -298,8 +292,6 @@ def test_cli(
         Args:
             *args (Union[str, None]): The extra arguments to pass to the
                 command.
-            images (bool): Whether to pass the '--images' option. By
-                default True.
             truecolor (bool): Whether to pass
                 '--color-system=truecolor' option. By default True.
             paging (Union[bool, None]): Whether to pass '--paging' or
@@ -309,7 +301,7 @@ def test_cli(
                 Will be uppercased.
         """
         output = cli_arg(
-            *args, images=images, truecolor=truecolor, paging=paging, **kwargs
+            *args, truecolor=truecolor, paging=paging, **kwargs
         )
         assert output == remove_link_ids(expected_output)
 
@@ -720,22 +712,18 @@ def test_hyperlink_hints_output_notebook_file(
 
 @pytest.mark.parametrize(
     "option_name, env",
-    (
-        ("--images", None),
+    [
+        ("--no-images", None),
         ("-i", None),
         (None, None),
         (None, "1"),
-    ),
+    ],
 )
 def test_image_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
-    """It draws images only when option is set."""
-    test_cli(
-        option_name,
-        images=False,
-        nbpreview_images=env,
-    )
+    """It does not draw images when specified."""
+    test_cli(option_name, nbpreview_no_images=env)
 
 
 @pytest.mark.parametrize(
@@ -931,7 +919,7 @@ def test_render_stdin(
 ) -> None:
     """It treats stdin as a file's text and renders a notebook."""
     stdin = notebook_path.read_text()
-    args = ["--color-system=truecolor"]
+    args = ["--color-system=truecolor", "--no-images"]
     if file_argument is not None:
         args.append(file_argument)
     result = runner.invoke(__main__.typer_click_object, args=args, input=stdin)
@@ -957,7 +945,7 @@ def test_stdin_cwd_path(
     current_working_directory = pathlib.Path.cwd()
     result = runner.invoke(
         __main__.typer_click_object,
-        args=["--color-system=truecolor"],
+        args=["--color-system=truecolor", "--no-images"],
         input=notebook_stdin,
     )
     output = result.output
