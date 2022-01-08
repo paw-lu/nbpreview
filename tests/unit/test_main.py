@@ -1,7 +1,10 @@
 """Test cases for the __main__ module."""
+import collections
 import functools
 import io
+import itertools
 import json
+import operator
 import os
 import pathlib
 import shlex
@@ -331,6 +334,23 @@ def test_cli(
         assert output == remove_link_ids(expected_output)
 
     return _test_cli
+
+
+def test_no_duplicate_parameter_names() -> None:
+    """It has only unique parameter names."""
+    cli_parameters = __main__.typer_click_object.params
+    all_options = itertools.chain(
+        *(
+            option_getter(parameter)
+            for parameter in cli_parameters
+            for option_getter in [
+                operator.attrgetter("opts"),
+                operator.attrgetter("secondary_opts"),
+            ]
+        )
+    )
+    option_count = collections.Counter(all_options)
+    assert max(option_count.values()) == 1
 
 
 def test_main_succeeds(run_cli: RunCli) -> None:
@@ -693,7 +713,7 @@ def test_files_output_notebook_file(
 
 @pytest.mark.parametrize(
     "option_name, env",
-    (("--positive-space", None), ("-p", None), (None, "1")),
+    (("--positive-space", None), ("-s", None), (None, "1")),
 )
 def test_positive_space_output_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
