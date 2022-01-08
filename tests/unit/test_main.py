@@ -713,7 +713,7 @@ def test_files_output_notebook_file(
 
 @pytest.mark.parametrize(
     "option_name, env",
-    (("--positive-space", None), ("-p", None), (None, "1")),
+    (("--positive-space", None), ("-s", None), (None, "1")),
 )
 def test_positive_space_output_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
