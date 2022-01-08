@@ -329,7 +329,7 @@ no_files_option = typer.Option(
 positive_space_option = typer.Option(
     False,
     "--positive-space",
-    "-p",
+    "-s",
     help="Draw character images in positive space."
     " Generally negative space works best on charts or images with"
     " light backgrounds, while positive space will look best on dark"
