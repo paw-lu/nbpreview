@@ -1,5 +1,6 @@
 """Override rich's markdown renderer with custom components."""
 import dataclasses
+import enum
 import io
 import os
 import pathlib
@@ -53,22 +54,20 @@ class CustomCodeBlock(markdown.CodeBlock):
         yield rendered_syntax
 
 
+@enum.unique
+class HeadingColorEnum(enum.Enum):
+    """The heading color."""
+
+    PURPLE = enum.auto()
+    TEAL = enum.auto()
+
+
 class CustomHeading(markdown.Heading):
     """A custom rendered markdown heading."""
 
     def __init__(self, level: int) -> None:
         """Constructor."""
         self.level = level
-        if self.level == 1:
-            self.color = "#6002EE"
-            self.style_name = style.Style(
-                color="#FFFFFF", bgcolor=self.color, bold=True
-            )  # type: ignore[assignment]
-        else:
-            self.color = "#03DAC5"
-            self.style_name = style.Style(
-                color=self.color, bold=True
-            )  # type: ignore[assignment]
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -77,22 +76,38 @@ class CustomHeading(markdown.Heading):
         source_text = self.text
         source_text.justify = "left"
         if self.level == 1:
+            header_color = (
+                "color(57)"
+                if console.color_system in ["truecolor", "256"]
+                else "color(5)"
+            )
+            header_style = style.Style(
+                color="color(231)", bgcolor=header_color, bold=True
+            )
+            source_text.stylize(header_style)
             if source_text.cell_len < console.width:
-                source_text = text.Text(" ", style=self.style_name) + source_text
+                source_text = text.Text(" ", style=header_style) + source_text
             if source_text.cell_len < console.width:
-                source_text = source_text + text.Text(" ", style=self.style_name)
+                source_text = source_text + text.Text(" ", style=header_style)
 
             yield source_text
         else:
+            header_color = (
+                "color(37)"
+                if console.color_system in ["truecolor", "256"]
+                else "color(6)"
+            )
+            header_style = style.Style(color=header_color, bold=True)
+            source_text.stylize(header_style)
             source_text = (
-                text.Text(self.level * "#" + " ", style=self.style_name) + source_text
+                text.Text(self.level * "#" + " ", style=header_style) + source_text
             )
             if self.level <= 3:
                 yield text.Text("")
             yield source_text
 
         if self.level < 3:
-            yield rule.Rule(style=style.Style(color=self.color, dim=True, bold=False))
+            yield rule.Rule(style=style.Style(color=header_color, dim=True, bold=False))
 
 
 class CustomBlockQuote(markdown.BlockQuote):
