@@ -2,7 +2,8 @@
 import pathlib
 import re
 import subprocess
-from typing import Tuple
+from pathlib import Path
+from typing import Iterator, Tuple
 
 
 def split_string(
@@ -59,3 +60,21 @@ def write_output(string: str, test_name: str, replace_links: bool = True) -> Non
         ".txt"
     )
     expected_output_file.write_text(string)
+
+
+def _get_all_expected_output_paths() -> Iterator[Path]:
+    """Get the paths of all the expected output files."""
+    file_dir = pathlib.Path(__file__).parent
+    expected_outputs = (
+        file_dir.parent / pathlib.Path("unit", "expected_outputs")
+    ).glob("**/*.txt")
+    yield from expected_outputs
+
+
+def replace_expected_section(old: str, new: str) -> None:
+    """Replace all occurrences of a section in the expected output."""
+    expected_output_paths = _get_all_expected_output_paths()
+    for expected_output_path in expected_output_paths:
+        old_text = expected_output_path.read_text()
+        new_text = old_text.replace(old, new)
+        expected_output_path.write_text(new_text)
