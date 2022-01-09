@@ -7,6 +7,7 @@ import json
 import operator
 import os
 import pathlib
+import platform
 import shlex
 import sys
 import tempfile
@@ -1439,3 +1440,40 @@ def test_multiple_files_some_fail(
         f"━━━━━━━━━━━━━━━┛\n\n{file.getvalue()}\n"
     )
     assert output == expected_output
+
+
+def test_help(runner: CliRunner) -> None:
+    """It returns a help message when prompted."""
+    result = runner.invoke(__main__.typer_click_object, args=["--help"])
+    output = result.output
+    expected_prefix = """\
+Usage: main [OPTIONS] [FILE]...
+
+  Render a Jupyter Notebook in the terminal.
+
+Options:
+  [FILE]...                       Jupyter notebook file(s) to render on the
+                                  terminal. Use a dash ('-') or pipe in data to
+                                  the command to read from standard input."""
+    assert output.startswith(expected_prefix)
+
+
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="Does not colorize on Windows terminals."
+)
+def test_color_help(runner: CliRunner) -> None:
+    """It colors the help message when prompted."""
+    result = runner.invoke(__main__.typer_click_object, args=["--help"], color=True)
+    output = result.output
+    expected_prefix = (
+        "\x1b[35mUsage: \x1b[0mmain [OPTIONS] [FILE]..."
+        "\n\n  Render a Jupyter Notebook in the ter"
+        "minal.\n\n\x1b[35mOptions\x1b[0m:\n  \x1b[36m[FILE]."
+        "..\x1b[0m                       Jupyter not"
+        "ebook file(s) to render on the\n         "
+        "                         terminal. Use a"
+        " dash ('-') or pipe in data to\n         "
+        "                         the command to "
+        "read from standard input."
+    )
+    assert output.startswith(expected_prefix)
