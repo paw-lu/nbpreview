@@ -13,7 +13,7 @@ from rich import box, console, panel, style, text, traceback
 from rich.console import Capture, Console, RenderableType
 from rich.text import Text
 
-from nbpreview import errors, notebook, parameters
+from nbpreview import _color_typer, errors, notebook, parameters
 from nbpreview.notebook import Notebook
 from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum, ThemeEnum
 
@@ -24,7 +24,8 @@ if typing.TYPE_CHECKING:  # pragma: no cover
 else:
     from typing import no_type_check as typeguard_ignore
 
-app = typer.Typer()
+# app = typer.Typer()
+app = _color_typer.ColorTyper()
 traceback.install(theme="ansi_dark")
 
 
