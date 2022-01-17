@@ -6,9 +6,12 @@ author = "Paulo S. Costa"
 copyright = f"{datetime.now().year}, {author}"
 extensions = [
     "myst_parser",
+    "sphinx_click",
+    "sphinx_copybutton",
+    "sphinx_inline_tabs",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_click",
+    "sphinxext.opengraph",
 ]
 autodoc_typehints = "description"
 html_theme = "furo"
