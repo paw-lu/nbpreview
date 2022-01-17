@@ -207,7 +207,13 @@ def docs_build(session: Session) -> None:
         args.insert(0, "--color")
 
     session.install(".")
-    session.install("myst-parser", "sphinx", "sphinx-click", "furo")
+    session.install(
+        "furo",
+        "myst-parser",
+        "sphinx-click",
+        "sphinx-copybutton",
+        "sphinx",
+    )
 
     build_dir = Path("docs", "_build")
     if build_dir.exists():
@@ -221,7 +227,14 @@ def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
     session.install(".")
-    session.install("myst-parser", "sphinx", "sphinx-autobuild", "sphinx-click", "furo")
+    session.install(
+        "furo",
+        "myst-parser",
+        "sphinx-autobuild",
+        "sphinx-click",
+        "sphinx-copybutton",
+        "sphinx",
+    )
 
     build_dir = Path("docs", "_build")
     if build_dir.exists():
