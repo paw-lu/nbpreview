@@ -10,7 +10,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_click",
+    "sphinxext.opengraph",
 ]
 autodoc_typehints = "description"
 html_theme = "furo"

@@ -213,6 +213,7 @@ def docs_build(session: Session) -> None:
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx",
+        "sphinxext-opengraph",
     )
 
     build_dir = Path("docs", "_build")
@@ -234,6 +235,7 @@ def docs(session: Session) -> None:
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx",
+        "sphinxext-opengraph",
     )
 
     build_dir = Path("docs", "_build")

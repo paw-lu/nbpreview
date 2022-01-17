@@ -73,6 +73,7 @@ nbqa = "^1.2.3"
 click = "^8.0.3"
 autoflake = "^1.4"
 myst-parser = "^0.16.1"
+sphinxext-opengraph = "^0.5.1"
 sphinx-copybutton = "^0.4.0"
 
 [tool.poetry.scripts]
