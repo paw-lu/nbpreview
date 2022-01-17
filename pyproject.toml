@@ -75,8 +75,8 @@ click = "^8.0.3"
 autoflake = "^1.4"
 myst-parser = "^0.16.1"
 sphinxext-opengraph = "^0.5.1"
-sphinx-inline-tabs = "^2022.1.2-beta.11"
 sphinx-copybutton = "^0.4.0"
+sphinx-design = "^0.0.13"
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"

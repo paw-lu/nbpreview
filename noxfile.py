@@ -212,7 +212,7 @@ def docs_build(session: Session) -> None:
         "myst-parser",
         "sphinx-click",
         "sphinx-copybutton",
-        "sphinx-inline-tabs",
+        "sphinx-design",
         "sphinx",
         "sphinxext-opengraph",
     )
@@ -235,7 +235,7 @@ def docs(session: Session) -> None:
         "sphinx-autobuild",
         "sphinx-click",
         "sphinx-copybutton",
-        "sphinx-inline-tabs",
+        "sphinx-design",
         "sphinx",
         "sphinxext-opengraph",
     )
