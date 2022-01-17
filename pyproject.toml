@@ -17,6 +17,7 @@ classifiers = [
 
 [tool.poetry.urls]
 Changelog = "https://github.com/paw-lu/nbpreview/releases"
+Issues = "https://github.com/paw-lu/nbpreview/issues"
 
 [tool.poetry.dependencies]
 python = "^3.8.0"
