@@ -8,7 +8,7 @@ extensions = [
     "myst_parser",
     "sphinx_click",
     "sphinx_copybutton",
-    "sphinx_inline_tabs",
+    "sphinx_design",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinxext.opengraph",
