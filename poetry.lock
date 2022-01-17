@@ -1586,21 +1586,6 @@ theme_rtd = ["sphinx-rtd-theme (>=0.5.0,<0.6.0)"]
 theme_sbt = ["sphinx-book-theme (>=0.1.2,<0.2.0)"]
 
 [[package]]
-name = "sphinx-inline-tabs"
-version = "2022.1.2b11"
-description = "Add inline tabbed content to your Sphinx documentation."
-category = "dev"
-optional = false
-python-versions = ">=3.8"
-
-[package.dependencies]
-sphinx = ">=3"
-
-[package.extras]
-doc = ["myst-parser", "furo"]
-test = ["pytest", "pytest-cov", "pytest-xdist"]
-
-[[package]]
 name = "sphinxcontrib-applehelp"
 version = "1.0.2"
 description = "sphinxcontrib-applehelp is a sphinx extension which outputs Apple help books"
@@ -1955,7 +1940,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "6d080199df3828ec4cb50a21ee766d0cdc36c1665051c513a25fb10d27d89981"
+content-hash = "1193e95db21fce4b1c438874f295d2ebf9a9dfbc2a538b5bd6dc8b791d73d660"
 
 [metadata.files]
 alabaster = [
@@ -2936,10 +2921,6 @@ sphinx-copybutton = [
 sphinx-design = [
     {file = "sphinx_design-0.0.13-py3-none-any.whl", hash = "sha256:fc90fd7195ad04d97f6cb00e71e7e30ccf3b9d6843792a55702fa3f0b5b5ffdd"},
     {file = "sphinx_design-0.0.13.tar.gz", hash = "sha256:c719d02bea29a31f143a294d632a5f435b9652ce1f80930e887bc066c3e94bef"},
-]
-sphinx-inline-tabs = [
-    {file = "sphinx_inline_tabs-2022.1.2b11-py3-none-any.whl", hash = "sha256:bb4e807769ef52301a186d0678da719120b978a1af4fd62a1e9453684e962dbc"},
-    {file = "sphinx_inline_tabs-2022.1.2b11.tar.gz", hash = "sha256:afb9142772ec05ccb07f05d8181b518188fc55631b26ee803c694e812b3fdd73"},
 ]
 sphinxcontrib-applehelp = [
     {file = "sphinxcontrib-applehelp-1.0.2.tar.gz", hash = "sha256:a072735ec80e7675e3f432fcae8610ecf509c5f1869d17e2eecff44389cdbc58"},
