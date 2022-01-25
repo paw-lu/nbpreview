@@ -1,0 +1,209 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
+@font-face {
+  font-family: "Fira Code";
+  src: url("../fonts/FiraCode-Regular.woff2") format("woff2"),
+    url("../fonts/FiraCode-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Fira Code";
+  src: url("../fonts/FiraCode-Bold.woff2") format("woff2"),
+    url("../fonts/FiraCode-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: bold;
+}
+h1 {
+  font-size: 2.8125rem;
+  font-weight: 400;
+  letter-spacing: 0rem;
+  line-height: 3.25rem;
+  margin-block-end: 2px;
+  margin-block-start: 0px;
+  margin-bottom: 2px;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  text-transform: none;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 2.5rem;
+  letter-spacing: 0rem;
+  margin-block-end: 1rem;
+  margin-block-start: 0px;
+  margin-bottom: 1rem;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  position: relative;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  text-transform: none;
+}
+h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0rem;
+  line-height: 2rem;
+  margin-block-end: 2px;
+  margin-block-start: 0px;
+  margin-bottom: 2px;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  text-transform: none;
+}
+h4 {
+  font-size: 1.375rem;
+  font-weight: 400;
+  letter-spacing: 0rem;
+  line-height: 1.75rem;
+  margin-block-end: 2rem;
+  margin-block-start: 0px;
+  margin-bottom: 2rem;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  pointer-events: auto;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  text-transform: none;
+}
+.content {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  letter-spacing: 0.01rem;
+  margin-block-end: 1rem;
+  margin-block-start: 1rem;
+  margin-bottom: 1rem;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 1rem;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+}
+.footnote {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  letter-spacing: 0.015rem;
+}
+p.admonition-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.reference:hover {
+  border-radius: 18px;
+}
+.sig:hover {
+  border-radius: 18px;
+}
+.sidebar-drawer {
+  border-right-color: transparent;
+}
+.sidebar-container {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.sidebar-search {
+  border-left: 1px solid var(--color-sidebar-search-border);
+  border-right: 1px solid var(--color-sidebar-search-border);
+  border-radius: 18px;
+}
+.terminal-container {
+  display: flex;
+  font-weight: 400;
+  letter-spacing: 0.114286px;
+  line-height: 24px;
+  margin-bottom: 16px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 16px;
+  text-decoration-thickness: auto;
+  text-size-adjust: 100%;
+}
+.highlight,
+.terminal {
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-style: none;
+  border-left-width: 0px;
+  border-right-style: none;
+  border-right-width: 0px;
+  border-top-style: none;
+  border-top-width: 0px;
+  box-sizing: border-box;
+  cursor: text;
+  direction: ltr;
+  display: block;
+  font-size: 14px;
+  font-stretch: 100%;
+  font-style: normal;
+  font-variant-caps: normal;
+  font-variant-east-asian: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-weight: 400;
+  line-height: 16px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  min-height: 1px;
+  padding-left: 0px;
+  padding-right: 0px;
+  border-radius: 8px;
+  overflow: auto;
+}
+.terminal {
+  width: 100%;
+  color: #e9e9f4;
+  background-color: #263238;
+}
+pre[id^="codecell"],
+.terminal-content {
+  font-size: 14px;
+  font-stretch: 100%;
+  font-style: normal;
+  font-variant-caps: normal;
+  font-variant-east-asian: normal;
+  font-variant-ligatures: contextual;
+  font-variant-numeric: normal;
+  font-weight: 400;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 4px;
+  padding-top: 16px;
+  position: relative;
+  vertical-align: baseline;
+  overflow: auto;
+}

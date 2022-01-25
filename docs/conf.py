@@ -104,3 +104,5 @@ html_theme_options = {
         "color-admonition-title-background--hint": "#4A4458",
     },
 }
+html_static_path = ["_static"]
+html_css_files = ["css/custom.css"]
