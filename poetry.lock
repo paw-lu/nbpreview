@@ -789,7 +789,7 @@ source = ["Cython (>=0.29.7)"]
 
 [[package]]
 name = "markdown-it-py"
-version = "2.0.0"
+version = "2.0.1"
 description = "Python port of markdown-it. Markdown parsing, done right!"
 category = "main"
 optional = false
@@ -2359,8 +2359,8 @@ lxml = [
     {file = "lxml-4.7.1.tar.gz", hash = "sha256:a1613838aa6b89af4ba10a0f3a972836128801ed008078f8c1244e65958f1b24"},
 ]
 markdown-it-py = [
-    {file = "markdown-it-py-2.0.0.tar.gz", hash = "sha256:c138a596f6c9988e0b5fa3299bc38ffa76c75076bc178e8dfac40a84343c7022"},
-    {file = "markdown_it_py-2.0.0-py3-none-any.whl", hash = "sha256:15cc69c5b7c493ba8603722b710e39ce3fab2961994179fb4fa1c99b070d2059"},
+    {file = "markdown-it-py-2.0.1.tar.gz", hash = "sha256:7b5c153ae1ab2cde00a33938bce68f3ad5d68fbe363f946de7d28555bed4e08a"},
+    {file = "markdown_it_py-2.0.1-py3-none-any.whl", hash = "sha256:31974138ca8cafbcb62213f4974b29571b940e78364584729233f59b8dfdb8bd"},
 ]
 markupsafe = [
     {file = "MarkupSafe-2.0.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:d8446c54dc28c01e5a2dbac5a25f071f6653e6e40f3a8818e8b45d790fe6ef53"},
