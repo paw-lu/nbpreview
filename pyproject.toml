@@ -43,7 +43,7 @@ click-help-colors = "^0.9.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-coverage = { extras = ["toml"], version = "^6.0" }
+coverage = { extras = ["toml"], version = "^6.3" }
 safety = "^1.10.3"
 mypy = "^0.931"
 typeguard = "^2.13.3"
