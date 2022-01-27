@@ -300,7 +300,7 @@ unicode_option = typer.Option(
     None,
     "--unicode / --no-unicode",
     "-u / -x",
-    help="Force the display or replacement of unicode chartacters"
+    help="Force the display or replacement of Unicode characters"
     " instead of determining automatically.",
     envvar="NBPREVIEW_UNICODE",
 )
@@ -331,10 +331,10 @@ positive_space_option = typer.Option(
     "--positive-space",
     "-s",
     help="Draw character images in positive space."
-    " Generally negative space works best on charts or images with"
+    " Generally, negative space works best on charts or images with"
     " light backgrounds, while positive space will look best on dark"
-    " background images. Only has effect on character drawings. By"
-    " default set to negative space.",
+    " background images. Only affects character drawings. By default"
+    " set to negative space.",
     envvar="NBPREVIEW_POSITIVE_SPACE",
 )
 hyperlinks_option = typer.Option(
@@ -357,7 +357,7 @@ no_images_option = typer.Option(
     "--images / --no-images",
     "-i / -e",
     help="Whether to render images. By default will autodetect."
-    " May significancy affect performance.",
+    " May significantly affect performance.",
     envvar="NBPREVIEW_IMAGES",
 )
 image_drawing_option = typer.Option(
@@ -400,7 +400,7 @@ code_wrap_option = typer.Option(
     False,
     "--code-wrap",
     "-q",
-    help="Wrap code onto next line if it does not fit in width."
+    help="Wrap code onto the next line if it does not fit in width."
     " May be used with --line-numbers for clarity.",
     envvar="NBPREVIEW_CODE_WRAP",
 )
