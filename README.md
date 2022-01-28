@@ -33,7 +33,7 @@ $ pip install nbpreview
 
 ## Usage
 
-Please see the [Command-line Reference][usage] for details.
+Please see the [command-line reference][usage] for details.
 
 ## Contributing
 
