@@ -11,6 +11,7 @@ maxdepth: 1
 ---
 
 usage
+configure
 reference
 contributing
 Code of Conduct <codeofconduct>
@@ -21,3 +22,4 @@ GitHub Repository <https://github.com/paw-lu/nbpreview>
 
 [contributor guide]: contributing
 [usage]: usage
+[configure]: configure
