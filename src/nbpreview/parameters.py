@@ -262,7 +262,7 @@ theme_option = typer.Option(
     "--theme",
     "-t",
     help="The theme to use for syntax highlighting."
-    " Call '--list-themes' to preview all available themes.",
+    " Call ``--list-themes`` to preview all available themes.",
     envvar="NBPREVIEW_THEME",
     callback=_theme_callback,
 )
@@ -401,7 +401,7 @@ code_wrap_option = typer.Option(
     "--code-wrap",
     "-q",
     help="Wrap code onto the next line if it does not fit in width."
-    " May be used with --line-numbers for clarity.",
+    " May be used with ``--line-numbers`` for clarity.",
     envvar="NBPREVIEW_CODE_WRAP",
 )
 paging_option = typer.Option(
