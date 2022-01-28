@@ -11,6 +11,7 @@ maxdepth: 1
 ---
 
 usage
+features
 configure
 reference
 contributing
@@ -22,4 +23,5 @@ GitHub Repository <https://github.com/paw-lu/nbpreview>
 
 [contributor guide]: contributing
 [usage]: usage
+[features]: features
 [configure]: configure
