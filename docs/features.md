@@ -2,14 +2,14 @@
 
 ## Flexible `FILE` argument
 
-nbpreview has only one required argument—`FILE`—which
+nbpreview has only one required argument—{option}`FILE <nbpreview FILE>`—which
 expects a Jupyter notebook (`.ipynb`) file path.
 
 ```console
 % nbpreview notebook.ipynb
 ```
 
-`FILE` is a flexible argument.
+{option}`FILE <nbpreview FILE>` is a flexible argument.
 It can take it multiple files,
 and will render them all at once.
 nbpreview will accept multiple file paths manually listed out,
@@ -24,7 +24,7 @@ or a glob that expands to one or more notebook file.
 % nbpreview notebooks/*.ipynb
 ```
 
-`FILE` also accepts text from stdin
+{option}`FILE <nbpreview FILE>` also accepts text from stdin
 and treats the text as the contents of a notebook file.
 This can be used to easily view notebooks from the web[^web_warning] using [curl][curl_manpage][^curl].
 
