@@ -62,7 +62,7 @@ This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter]
 [pip]: https://pip.pypa.io/
 [pypi]: https://pypi.org/
 
-% github-only
+<!-- github-only -->
 
 [contributor guide]: CONTRIBUTING.md
 [usage]: https://nbpreview.readthedocs.io/en/latest/usage.html
