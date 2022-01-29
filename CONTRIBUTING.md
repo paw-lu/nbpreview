@@ -1,4 +1,4 @@
-# Contributor Guide
+# Contributor guide
 
 Thank you for your interest in improving this project.
 This project is open-source under the [MIT license] and
