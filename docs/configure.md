@@ -1,6 +1,6 @@
 # Configure
 
-Every option in nbpreview has an associated environmental variable
+Every option in {program}`nbpreview` has an associated environmental variable
 that can be set to provide a default value.
 For example,
 to set the theme to `'material'`,
@@ -11,11 +11,11 @@ run:
 ```
 
 To apply the `'material'` theme
-without having to specify it in the `--theme` option,
+without having to specify it in the {option}`--theme <nbpreview --theme>` option,
 set the environmental variable associated with the command-line option.
 The environmental variables for each option
 are explicitly listed at the end of the [command-line usage].
-They may also be found in the `--help` message under `env var:`.
+They may also be found in the {option}`--help` message under `env var:`.
 
 ```console
 % nbpreview --help
@@ -27,8 +27,8 @@ They may also be found in the `--help` message under `env var:`.
                                   NBPREVIEW_THEME; default: dark]
 ```
 
-In the case of `--theme`,
-the environmental variable is `NBPREVIEW_THEME`.
+In the case of {option}`--theme <nbpreview --theme>`,
+the environmental variable is {ref}`NBPREVIEW_THEME <nbpreview-theme-NBPREVIEW_THEME>`.
 Set it by running
 
 ```console
@@ -36,11 +36,11 @@ Set it by running
 ```
 
 Now, whenever nbpreview is run,
-it will automatically set the `--theme` value to `'material'`.
+it will automatically set the {option}`--theme <nbpreview --theme>` value to `'material'`.
 To set this permanently,
 set the environmental variable in the shell's startup file—such as
 `~/.zshrc`, `~/.zshenv`, `~/.bashrc`, `~/.bash_profile`, etc.
 Environmental variables set the new default for nbpreview,
 but they can still be overridden anytime by manually the relevant command-line option.
 
-[command-line usage]: usage.html
+[command-line usage]: usage
