@@ -190,38 +190,47 @@ class Notebook:
     """Construct a Notebook object to render Jupyter Notebooks.
 
     Args:
-        notebook_node (NotebookNode): A NotebookNode of the notebook to
-            render.
-        theme (Optional[str]): The theme to use for syntax highlighting.
-            May be "ansi_light", "ansi_dark", or any Pygments theme. If
-            By default "ansi_dark".
+        notebook_node (NotebookNode):
+            A NotebookNode of the notebook to render.
+        theme (str): The theme to use for syntax highlighting. May be
+            ``'ansi_light'``, ``'ansi_dark'``, or any Pygments theme. By
+            default ``'ansi_dark'``.
         plain (bool): Only show plain style. No decorations such as
-            boxes or execution counts. By default will autodetect.
+            boxes or execution counts. If set to ``None`` will
+            autodetect. By default ``None``.
         unicode (Optional[bool]): Whether to use unicode characters to
-            render the notebook. By default will autodetect.
+            render the notebook. If set to ``None`` will autodetect. By
+            default ``None``.
         hide_output (bool): Do not render the notebook outputs. By
-            default False.
+            default ``False``.
         nerd_font (bool): Use nerd fonts when appropriate. By default
-            False.
+            ``False``.
         files (bool): Create files when needed to render HTML content.
-        hyperlinks (bool): Whether to use hyperlinks. If false will
-            explicitly print out path.
+            By default ``True``.
+        negative_space (bool): Whether render character images in
+            negative space. By default ``True``
+        hyperlinks (bool): Whether to use hyperlinks. If ``False`` will
+            explicitly print out path. If set to ``None`` will
+            autodetect. By default ``None``.
         hide_hyperlink_hints (bool): Hide text hints of when content is
-            clickable.
-        images (Optional[str]): Whether to render images. If None will
-            attempt to autodetect. By default None.
-        image_drawing (Optional[str]): How to render images. Options are
-            "block" or None. If None will attempt to autodetect. By
-            default None.
-        color (Optional[bool]): Whether to use color. If None will
-            attempt to autodetect. By default None.
-        relative_dir (Optional[Path]): The directory to prefix relative
-            paths to convert them to absolute. If None will assume
-            current directory is relative prefix.
+            clickable. By default ``False``.
+        images (Optional[str]): Whether to render images. If set to
+            ``None`` will autodetect. By default ``None``.
+        image_drawing (Optional[ImageDrawing]): The characters used to
+            render images. Options are ``'block'``, ``'character'``,
+            ``'braille'`` or ``None``. If set to ``None``
+            will autodetect. By default ``None``.
+        color (Optional[bool]): Whether to use color. If set to
+            ``None``
+            will autodetect. By default ``None``.
+        relative_dir (Optional[Path]): The
+            directory to prefix relative paths to convert them to
+            absolute. If ``None`` will assume current directory is
+            relative prefix. By default ``None``.
         line_numbers (bool): Whether to render line numbers in code
-            cells. By default False.
+            cells. By default ``False``.
         code_wrap (bool): Whether to wrap code if it does not fit. By
-            default False.
+            default ``False``.
     """
 
     notebook_node: NotebookNode
@@ -256,7 +265,7 @@ class Notebook:
     def from_file(
         cls,
         file: Union[Path, IO[AnyStr], KeepOpenFileType[AnyStr]],
-        theme: str = "dark",
+        theme: str = "ansi_dark",
         plain: Optional[bool] = None,
         unicode: Optional[bool] = None,
         hide_output: bool = False,
@@ -271,7 +280,57 @@ class Notebook:
         line_numbers: bool = False,
         code_wrap: bool = False,
     ) -> "Notebook":
-        """Create Notebook from notebook file."""
+        """Create a Notebook from notebook file.
+
+        Args:
+            file (Union[Path, IO[AnyStr], KeepOpenFileType[AnyStr]]):
+                A path to a Jupyter Notebook file.
+            theme (str): The theme to use for syntax highlighting. May
+                be ``'ansi_light'``, ``'ansi_dark'``, or any Pygments
+                theme. By default ``'ansi_dark'``.
+            plain (bool): Only show plain style. No decorations such as
+                boxes or execution counts. If set to ``None``
+                will autodetect. By default ``None``.
+            unicode (Optional[bool]): Whether to use unicode characters
+                to render the notebook. If set to ``None`` will
+                autodetect. By default ``None``.
+            hide_output (bool): Do not render the notebook outputs. By
+                default ``False``.
+            nerd_font (bool): Use nerd fonts when appropriate. By
+                default ``False``.
+            files (bool): Create files when needed to render HTML
+                content. By default ``True``.
+            negative_space (bool): Whether render character images in
+                negative space. By default ``True``.
+            hyperlinks (bool): Whether to use hyperlinks. If
+                ``False`` will explicitly print out path. If set
+                to ``None`` will autodetect. By default
+                ``None``.
+            hide_hyperlink_hints (bool): Hide text hints of when content
+                is clickable. By default ``False``.
+            images (Optional[str]): Whether to render images. If set to
+                ``None`` will autodetect. By default
+                ``None``.
+            image_drawing (Optional[ImageDrawing]): The characters used
+                to render images. Options are ``'block'``,
+                ``'character'``, ``'braille'`` or ``None``. If
+                set to ``None`` will autodetect. By default
+                ``None``.
+            color (Optional[bool]): Whether to use color. If set to
+                ``None`` will autodetect. By default
+                ``None``.
+            line_numbers (bool): Whether to render line numbers in code
+                cells. By default ``False``.
+            code_wrap (bool): Whether to wrap code if it does not fit.
+                By default ``False``.
+
+        Returns:
+            Notebook: A Notebook object created from the file.
+
+        Raises:
+            InvalidNotebookError: If the file is not a valid Jupyter
+                notebook.
+        """
         try:
             notebook_node = nbformat.read(file, as_version=4)
         except (
