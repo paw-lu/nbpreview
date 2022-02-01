@@ -210,6 +210,7 @@ def docs_build(session: Session) -> None:
     session.install(
         "furo",
         "myst-parser",
+        "sphinx-autodoc-typehints",
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx-design",
@@ -233,6 +234,7 @@ def docs(session: Session) -> None:
         "furo",
         "myst-parser",
         "sphinx-autobuild",
+        "sphinx-autodoc-typehints",
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx-design",

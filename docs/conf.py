@@ -12,6 +12,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",  # Must be loaded after sphinx.ext.napoleon
     "sphinxext.opengraph",
 ]
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}

@@ -190,46 +190,46 @@ class Notebook:
     """Construct a Notebook object to render Jupyter Notebooks.
 
     Args:
-        notebook_node (NotebookNode):
+        notebook_node:
             A NotebookNode of the notebook to render.
-        theme (str): The theme to use for syntax highlighting. May be
+        theme: The theme to use for syntax highlighting. May be
             ``'ansi_light'``, ``'ansi_dark'``, or any Pygments theme. By
             default ``'ansi_dark'``.
-        plain (bool): Only show plain style. No decorations such as
+        plain: Only show plain style. No decorations such as
             boxes or execution counts. If set to ``None`` will
             autodetect. By default ``None``.
-        unicode (Optional[bool]): Whether to use unicode characters to
+        unicode: Whether to use unicode characters to
             render the notebook. If set to ``None`` will autodetect. By
             default ``None``.
-        hide_output (bool): Do not render the notebook outputs. By
+        hide_output: Do not render the notebook outputs. By
             default ``False``.
-        nerd_font (bool): Use nerd fonts when appropriate. By default
+        nerd_font: Use nerd fonts when appropriate. By default
             ``False``.
-        files (bool): Create files when needed to render HTML content.
+        files: Create files when needed to render HTML content.
             By default ``True``.
-        negative_space (bool): Whether render character images in
+        negative_space: Whether render character images in
             negative space. By default ``True``
-        hyperlinks (bool): Whether to use hyperlinks. If ``False`` will
+        hyperlinks: Whether to use hyperlinks. If ``False`` will
             explicitly print out path. If set to ``None`` will
             autodetect. By default ``None``.
-        hide_hyperlink_hints (bool): Hide text hints of when content is
+        hide_hyperlink_hints: Hide text hints of when content is
             clickable. By default ``False``.
-        images (Optional[str]): Whether to render images. If set to
+        images: Whether to render images. If set to
             ``None`` will autodetect. By default ``None``.
-        image_drawing (Optional[ImageDrawing]): The characters used to
+        image_drawing: The characters used to
             render images. Options are ``'block'``, ``'character'``,
             ``'braille'`` or ``None``. If set to ``None``
             will autodetect. By default ``None``.
-        color (Optional[bool]): Whether to use color. If set to
+        color: Whether to use color. If set to
             ``None``
             will autodetect. By default ``None``.
-        relative_dir (Optional[Path]): The
+        relative_dir: The
             directory to prefix relative paths to convert them to
             absolute. If ``None`` will assume current directory is
             relative prefix. By default ``None``.
-        line_numbers (bool): Whether to render line numbers in code
+        line_numbers: Whether to render line numbers in code
             cells. By default ``False``.
-        code_wrap (bool): Whether to wrap code if it does not fit. By
+        code_wrap: Whether to wrap code if it does not fit. By
             default ``False``.
     """
 
@@ -283,45 +283,45 @@ class Notebook:
         """Create a Notebook from notebook file.
 
         Args:
-            file (Union[Path, IO[AnyStr], KeepOpenFileType[AnyStr]]):
+            file:
                 A path to a Jupyter Notebook file.
-            theme (str): The theme to use for syntax highlighting. May
+            theme: The theme to use for syntax highlighting. May
                 be ``'ansi_light'``, ``'ansi_dark'``, or any Pygments
                 theme. By default ``'ansi_dark'``.
-            plain (bool): Only show plain style. No decorations such as
+            plain: Only show plain style. No decorations such as
                 boxes or execution counts. If set to ``None``
                 will autodetect. By default ``None``.
-            unicode (Optional[bool]): Whether to use unicode characters
+            unicode: Whether to use unicode characters
                 to render the notebook. If set to ``None`` will
                 autodetect. By default ``None``.
-            hide_output (bool): Do not render the notebook outputs. By
+            hide_output: Do not render the notebook outputs. By
                 default ``False``.
-            nerd_font (bool): Use nerd fonts when appropriate. By
+            nerd_font: Use nerd fonts when appropriate. By
                 default ``False``.
-            files (bool): Create files when needed to render HTML
+            files: Create files when needed to render HTML
                 content. By default ``True``.
-            negative_space (bool): Whether render character images in
+            negative_space: Whether render character images in
                 negative space. By default ``True``.
-            hyperlinks (bool): Whether to use hyperlinks. If
+            hyperlinks: Whether to use hyperlinks. If
                 ``False`` will explicitly print out path. If set
                 to ``None`` will autodetect. By default
                 ``None``.
-            hide_hyperlink_hints (bool): Hide text hints of when content
+            hide_hyperlink_hints: Hide text hints of when content
                 is clickable. By default ``False``.
-            images (Optional[str]): Whether to render images. If set to
+            images: Whether to render images. If set to
                 ``None`` will autodetect. By default
                 ``None``.
-            image_drawing (Optional[ImageDrawing]): The characters used
+            image_drawing: The characters used
                 to render images. Options are ``'block'``,
                 ``'character'``, ``'braille'`` or ``None``. If
                 set to ``None`` will autodetect. By default
                 ``None``.
-            color (Optional[bool]): Whether to use color. If set to
+            color: Whether to use color. If set to
                 ``None`` will autodetect. By default
                 ``None``.
-            line_numbers (bool): Whether to render line numbers in code
+            line_numbers: Whether to render line numbers in code
                 cells. By default ``False``.
-            code_wrap (bool): Whether to wrap code if it does not fit.
+            code_wrap: Whether to wrap code if it does not fit.
                 By default ``False``.
 
         Returns:
