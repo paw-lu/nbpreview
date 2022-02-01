@@ -14,6 +14,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinxext.opengraph",
 ]
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 autodoc_typehints = "description"
 myst_heading_anchors = 2
 html_theme = "furo"
