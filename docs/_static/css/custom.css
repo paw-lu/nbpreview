@@ -184,8 +184,14 @@ p.admonition-title {
 }
 .terminal {
   width: 100%;
+}
+.dark-terminal {
   color: #e9e9f4;
   background-color: #263238;
+}
+.light-terminal {
+  color: #90a4ae;
+  background-color: #fafafa;
 }
 pre[id^="codecell"],
 .terminal-content {
@@ -206,4 +212,37 @@ pre[id^="codecell"],
   position: relative;
   vertical-align: baseline;
   overflow: auto;
+}
+.terminal .top {
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+}
+.terminal .buttons {
+  top: 7px;
+  left: 5px;
+}
+.terminal .circle {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 15px;
+  margin-left: 4px;
+}
+.dark-red {
+  background: #f07178;
+}
+.light-red {
+  background: #e53935;
+}
+.dark-green {
+  background: #c3e88d;
+}
+.light-green {
+  background: #91b859;
+}
+.dark-yellow {
+  background: #ffcb6b;
+}
+.light-yellow {
+  background: #e2931d;
 }
