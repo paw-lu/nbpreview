@@ -1,5 +1,6 @@
 """Nox sessions."""
 import os
+import pathlib
 import shutil
 import sys
 from pathlib import Path
@@ -121,7 +122,12 @@ def safety(session: Session) -> None:
 @session(python=python_versions)
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
-    args = session.posargs or ["src", "tests", "docs/conf.py"]
+    args = session.posargs or [
+        "src",
+        "tests",
+        "docs/conf.py",
+        "docs/generate_examples.py",
+    ]
     session.install(".")
     session.install("mypy", "pytest", "typeguard")
     session.run("mypy", *args)
@@ -247,3 +253,21 @@ def docs(session: Session) -> None:
         shutil.rmtree(build_dir)
 
     session.run("sphinx-autobuild", *args)
+
+
+@session(python="3.10")
+def examples(session: Session) -> None:
+    """Generate examples for the documentation."""
+    session.install(".")
+    session.install("tomli")
+    session.run("python", "docs/generate_examples.py")
+    generated_examples = (
+        os.fsdecode(file)
+        for file in (
+            pathlib.Path(__file__).parent / pathlib.Path("docs", "_static", "examples")
+        ).glob("*.html")
+    )
+    session.notify(
+        "pre-commit",
+        posargs=["run", "--files", *generated_examples],
+    )
