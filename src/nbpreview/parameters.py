@@ -53,6 +53,7 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
     """Example syntax highlighting."""
     from typing import Iterator
 
+
     class Math:
         """An example class."""
 
@@ -63,6 +64,7 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
             while a < n:
                 yield a
                 a, b = b, a + b
+
 
     result = sum(Math.fib(42))
     print(f"The answer is {result}")
