@@ -112,18 +112,91 @@ run:
 
 ### Automatic pager
 
-% MyST will not render these properly if they are broken up into multiple lines
-[^web_warning]: Like always, do not view notebooks from untrusted sources.
-[^jq]: [jq][jq_documentation] is a command-line JSON processor. Since Jupyter notebook (`ipynb`) files are in a JSON format, it can be used to filter and transform cells.
-[^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
-[^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
+% TODO: content here
 
-[fgrep_manpage]: https://linux.die.net/man/1/fgrep
-[jq_documentation]: https://stedolan.github.io/jq/
-[curl_manpage]: https://linux.die.net/man/1/curl
+## Syntax highlighting
 
+### Themes
+
+Thanks to [Pygments] and {class}`Rich <rich.syntax.Syntax>`,
+nbpreview comes with many different syntax highlighting themes.
+They can be applied using the {option}`--theme <nbpreview --theme>`
+(or {option}`-t <nbpreview -t>`)
+option.
+Some themes may clash with the terminal theme,
+but `'dark'`—the
+default theme—and
+`'light'` will match the terminal's colors,
+and are the most likely to look best across different terminals.
+
+`````{tab-set}
+
+````{tab-item} material
 ```{raw} html
 ---
-file: _static/rendered_notebook.html
+file: _static/examples/theme_material.html
 ---
 ```
+````
+
+````{tab-item} dracula
+```{raw} html
+---
+file: _static/examples/theme_dracula.html
+---
+```
+````
+
+````{tab-item} one-dark
+```{raw} html
+---
+file: _static/examples/theme_one_dark.html
+---
+```
+````
+
+````{tab-item} monokai
+```{raw} html
+---
+file: _static/examples/theme_monokai.html
+---
+```
+````
+
+````{tab-item} paraiso-light
+```{raw} html
+---
+file: _static/examples/theme_paraiso_light.html
+---
+```
+````
+
+````{tab-item} rainbow_dash
+```{raw} html
+---
+file: _static/examples/theme_rainbow_dash.html
+---
+```
+````
+
+`````
+
+For a list of all available themes
+along with a preview of how they look on the terminal
+use the {option}`--list-themes <nbpreview --list-themes>` option.
+
+```console
+% nbpreview --list-themes
+```
+
+% MyST will not render these properly if they are broken up into multiple lines
+[^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
+[^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
+[^jq]: [jq][jq_documentation] is a command-line JSON processor. Since Jupyter notebook (`ipynb`) files are in a JSON format, it can be used to filter and transform cells.
+[^web_warning]: Like always, do not view notebooks from untrusted sources.
+
+[curl_manpage]: https://linux.die.net/man/1/curl
+[fgrep_manpage]: https://linux.die.net/man/1/fgrep
+[jq_documentation]: https://stedolan.github.io/jq/
+[pygments]: https://github.com/pygments/pygments
+[rich]: https://github.com/Textualize/rich

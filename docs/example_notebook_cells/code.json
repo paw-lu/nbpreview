@@ -1,0 +1,28 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": null,
+    "id": "b010271b-f5ee-4d81-aa17-a1c48b701ed0",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+      "from typing import Iterator\n",
+      "\n",
+      "\n",
+      "class Math:\n",
+      "    \"\"\"An example class.\"\"\"\n",
+      "\n",
+      "    @staticmethod\n",
+      "    def fib(n: int) -> Iterator[int]:\n",
+      "        \"\"\"Fibonacci series up to n.\"\"\"\n",
+      "        a, b = 0, 1  # Manually set first two terms\n",
+      "        while a < n:\n",
+      "            yield a\n",
+      "            a, b = b, a + b\n",
+      "\n",
+      "\n",
+      "result = sum(Math.fib(42))\n",
+      "print(f\"The answer is {result}\")"
+    ]
+  }
+]

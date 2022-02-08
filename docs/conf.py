@@ -15,7 +15,10 @@ extensions = [
     "sphinx_autodoc_typehints",  # Must be loaded after sphinx.ext.napoleon
     "sphinxext.opengraph",
 ]
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "rich": ("https://rich.readthedocs.io/en/latest/", None),
+}
 autodoc_typehints = "description"
 myst_heading_anchors = 2
 html_theme = "furo"

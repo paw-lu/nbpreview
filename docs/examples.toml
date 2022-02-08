@@ -1,0 +1,37 @@
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "material"
+example_filename = "theme_material.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "one-dark"
+example_filename = "theme_one_dark.html"
+args = ["nbpreview", "--theme", "one-dark", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "dracula"
+example_filename = "theme_dracula.html"
+args = ["nbpreview", "--theme", "dracula", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "monokai"
+example_filename = "theme_monokai.html"
+args = ["nbpreview", "--theme", "monokai", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "paraiso-light"
+example_filename = "theme_paraiso_light.html"
+args = ["nbpreview", "--theme", "paraiso-light", "notebook.ipynb"]
+light_theme = true
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "rainbow_dash"
+example_filename = "theme_rainbow_dash.html"
+args = ["nbpreview", "--theme", "rainbow_dash", "notebook.ipynb"]
+light_theme = true
