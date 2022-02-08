@@ -64,5 +64,5 @@ This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter]
 
 <!-- github-only -->
 
-[contributor guide]: CONTRIBUTING.md
+[contributor guide]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
 [usage]: https://nbpreview.readthedocs.io/en/latest/usage.html
