@@ -15,8 +15,7 @@ features
 configure
 reference
 contributing
-Code of Conduct <codeofconduct>
-License <license>
+prior_art
 Changelog <https://github.com/paw-lu/nbpreview/releases>
 GitHub Repository <https://github.com/paw-lu/nbpreview>
 ```

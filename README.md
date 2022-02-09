@@ -51,6 +51,65 @@ _nbpreview_ is free and open source software.
 If you encounter any problems,
 please [file an issue] along with a detailed description.
 
+## Prior art
+
+### Similar tools
+
+<!-- similar-tools-start -->
+
+Thanks to [@joouha](https://github.com/joouha) for [maintaining list of these tools](https://euporie.readthedocs.io/en/latest/pages/related.html#notebook-viewers).
+Many of the projects here were found directly on their page.
+
+- [ipynb-term](https://github.com/PaulEcoffet/ipynbviewer)
+- [ipynbat](https://github.com/edgarogh/ipynbat)
+- [ipynbviewer](https://github.com/edgarogh/ipynbat)
+- [jcat](https://github.com/ktw361/jcat)
+- [jupview](https://github.com/Artiomio/jupview)
+- [jupytui](https://github.com/mosiman/jupytui)
+- [jut](https://github.com/kracekumar/jut)
+- [nbcat](https://github.com/jlumpe/nbcat)
+- [nbtui](https://github.com/chentau/nbtui)
+- [nbv](https://github.com/lepisma/nbv)
+- [Read-Jupyter-Notebook](https://github.com/qcw171717/Read-Jupyter-Notebook)
+
+<!-- similar-tools-end -->
+
+### Complimentary tools
+
+<!-- complimentary-tools-start -->
+
+If you're interested in complimentary tools
+that help improve the terminal experience for notebooks,
+there are many amazing projects out there.
+
+- **[bat](https://github.com/sharkdp/bat)**
+  is not a tool for notebooks specifically.
+  But similar to nbpreview,
+  it provides a rich output for many types of files on the terminal,
+  and is the primary inspiration for nbpreview.
+- **[euporie](https://github.com/joouha/euporie)**
+  is a really exciting project
+  that allows you to edit and run Jupyter notebooks on the terminal.
+- **[nbclient](https://github.com/jupyter/nbclient)**
+  is a library for executing notebooks from the command line.
+- **[nbqa](https://github.com/nbQA-dev/nbQA)**
+  allows the use of linters and formatters on notebooks.
+  It's also used by this project.
+- **[jpterm](https://github.com/davidbrochart/jpterm)**
+  is and up-and-coming successor to [nbterm]
+  which will be accompanied by a web client.
+  Looking forward to seeing this develop.
+- **[nbtermix](https://github.com/mtatton/nbtermix)**
+  is an actively-developed fork of [nbterm].
+- **[nbterm](https://github.com/davidbrochart/nbterm)**
+  lets you edit and execute Jupyter Notebooks on the terminal.
+- **[papermill](https://github.com/nteract/papermill)**
+  allows the parameterization and execution of Jupyter Notebooks.
+
+[nbterm]: https://github.com/davidbrochart/nbterm
+
+<!-- complimentary-tools-end -->
+
 ## Credits
 
 This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
