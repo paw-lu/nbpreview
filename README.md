@@ -26,11 +26,28 @@ A terminal viewer for Jupyter notebooks.
 
 ## Installation
 
-You can install _nbpreview_ via [pip] from [PyPI]:
+<!-- installation-start -->
+
+nbpreview can be installed through [pipx] or [pip] from [PyPI](https://pypi.org/).
+
+[pipx] provides an easy way to install Python applications in isolated environments.
+[See the documentation for how to install pipx.](https://pypa.github.io/pipx/installation/#install-pipx)
 
 ```console
-$ pip install nbpreview
+% pipx install nbpreview
 ```
+
+If [pipx] is not installed,
+nbpreview may also be installed via [pip]:
+
+```console
+% python -m pip install nbpreview
+```
+
+[pipx]: https://pypa.github.io/pipx/
+[pip]: https://pip.pypa.io/
+
+<!-- installation-end -->
 
 ## Usage
 

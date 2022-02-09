@@ -10,6 +10,7 @@ hidden: true
 maxdepth: 1
 ---
 
+installation
 usage
 features
 configure
