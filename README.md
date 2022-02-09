@@ -129,17 +129,34 @@ there are many amazing projects out there.
 
 ## Credits
 
-This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
+<!-- credits-start -->
 
-[@cjolowicz]: https://github.com/cjolowicz
-[cookiecutter]: https://github.com/audreyr/cookiecutter
-[file an issue]: https://github.com/paw-lu/nbpreview/issues
-[hypermodern python cookiecutter]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-[mit license]: https://opensource.org/licenses/MIT
-[pip]: https://pip.pypa.io/
-[pypi]: https://pypi.org/
+nbpreview relies on a lot of fantastic projects.
+Check out the [dependencies] for a complete list of libraries that are leveraged.
 
-<!-- github-only -->
+Besides the direct dependencies,
+there are some other projects that directly enabled the development of nbpreview.
+
+- **[bat]**
+  is not explicitly used in this project,
+  but served as the primary inspiration.
+  This projects strives to be [bat]—but
+  for notebooks.
+  Many of nbpreview's features and command-line options are directly adopted from [bat].
+- **[Hypermodern Python Cookiecutter](https://github.com/cjolowicz/cookiecutter-hypermodern-python)**
+  is the template this project was generated on.
+  It is a fantastic template that integrates [Poetry](https://python-poetry.org/),
+  [Nox](https://nox.thea.codes/en/stable/),
+  and [pre-commit](https://pre-commit.com/).
+  It's responsible for most of the underlying structure of this project's CI.
+- **[justcharts](https://github.com/koaning/justcharts)**
+  is used in this project
+  to generate the Vega and Vega-Lite charts.
+
+[bat]: https://github.com/sharkdp/bat
+
+<!-- credits-end -->
 
 [contributor guide]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
+[dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
 [usage]: https://nbpreview.readthedocs.io/en/latest/usage.html

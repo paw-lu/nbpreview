@@ -17,6 +17,8 @@ configure
 reference
 contributing
 prior_art
+credits
+dependencies
 Changelog <https://github.com/paw-lu/nbpreview/releases>
 GitHub Repository <https://github.com/paw-lu/nbpreview>
 ```
