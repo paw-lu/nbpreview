@@ -19,11 +19,11 @@ contributing
 prior_art
 credits
 dependencies
+codeofconduct
+license
+Issues <https://github.com/paw-lu/nbpreview/issues>
 Changelog <https://github.com/paw-lu/nbpreview/releases>
 GitHub Repository <https://github.com/paw-lu/nbpreview>
 ```
 
-[contributor guide]: contributing
-[usage]: usage
 [features]: features
-[configure]: configure

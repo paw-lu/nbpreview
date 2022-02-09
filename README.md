@@ -17,8 +17,7 @@ A terminal viewer for Jupyter notebooks.
 
 ## Features
 
-- Render accurate(ish) Jupyter notebooks in your terminal.
-  Like cat (or bat) for ipynb files.
+<!-- github-only -->
 
 ## Requirements
 
@@ -63,17 +62,17 @@ See the [command-line reference](https://nbpreview.readthedocs.io/en/latest/usag
 ## Contributing
 
 Contributions are very welcome.
-To learn more, see the [Contributor Guide].
+To learn more, see the [contributor guide](https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md).
 
 ## License
 
-Distributed under the terms of the [MIT license],
+Distributed under the terms of the [MIT license](https://opensource.org/licenses/MIT),
 _nbpreview_ is free and open source software.
 
 ## Issues
 
 If you encounter any problems,
-please [file an issue] along with a detailed description.
+please [file an issue](https://github.com/paw-lu/nbpreview/issues) along with a detailed description.
 
 ## Prior art
 
@@ -164,5 +163,4 @@ there are some other projects that directly enabled the development of nbpreview
 
 <!-- credits-end -->
 
-[contributor guide]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
 [dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
