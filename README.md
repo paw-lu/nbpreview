@@ -51,7 +51,14 @@ nbpreview may also be installed via [pip]:
 
 ## Usage
 
-Please see the [command-line reference][usage] for details.
+To use nbpreview,
+simply type `nbpreview` into your terminal followed by the path of the notebook you wish to view.
+
+```console
+% nbpreview notebook.ipynb
+```
+
+See the [command-line reference](https://nbpreview.readthedocs.io/en/latest/usage.html) for details on options.
 
 ## Contributing
 
@@ -159,4 +166,3 @@ there are some other projects that directly enabled the development of nbpreview
 
 [contributor guide]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
 [dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
-[usage]: https://nbpreview.readthedocs.io/en/latest/usage.html
