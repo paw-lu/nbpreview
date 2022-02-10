@@ -110,9 +110,33 @@ run:
 % export NBPREVIEW_PLAIN=1
 ```
 
-### Automatic pager
+### Automatic paging
 
-% TODO: content here
+nbpreview will automatically view the output in a pager
+if the output is longer than the terminal—which
+is often.
+Similar to the [automatic plain output](#automatic-plain-output),
+this will be automatically disabled when piping to other commands.
+
+Thanks to {func}`Click <click.echo_via_pager>`,
+nbpreview attempts to choose a pager than renders the notebook in color.
+If the {envvar}`PAGER` environmental variable is set,
+nbpreview will use the value as the pager command.
+To disable the automatic paging,
+use the {option}`--no-paging <nbpreview --no-paging>`
+(or {option}`-f <nbpreview -f>`) option.
+
+```console
+% nbpreview --no-paging notebook.ipynb
+```
+
+Conversely,
+to manually force paging,
+use the {option}`--paging <nbpreview --paging>`
+(or {option}`-g <nbpreview -g>`)
+option.
+This can be configured by setting
+the {ref}`NBPREVIEW_PAGING <nbpreview-paging-NBPREVIEW_PAGING>` environmental variable.
 
 ## Syntax highlighting
 
@@ -199,4 +223,3 @@ use the {option}`--list-themes <nbpreview --list-themes>` option.
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
 [jq_documentation]: https://stedolan.github.io/jq/
 [pygments]: https://github.com/pygments/pygments
-[rich]: https://github.com/Textualize/rich

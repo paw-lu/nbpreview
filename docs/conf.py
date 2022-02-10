@@ -16,11 +16,12 @@ extensions = [
     "sphinxext.opengraph",
 ]
 intersphinx_mapping = {
+    "click": ("https://click.palletsprojects.com/en/8.0.x/", None),
     "python": ("https://docs.python.org/3", None),
     "rich": ("https://rich.readthedocs.io/en/latest/", None),
 }
 autodoc_typehints = "description"
-myst_heading_anchors = 2
+myst_heading_anchors = 3
 html_theme = "furo"
 pygments_style = "material"
 pygments_dark_style = "material"
