@@ -213,6 +213,32 @@ use the {option}`--list-themes <nbpreview --list-themes>` option.
 % nbpreview --list-themes
 ```
 
+### Cell magic
+
+Certain cell magics may be used to run other languages in a Jupyter Notebook cell.
+nbpreview detects the use of these magic commands
+and adjusts its syntax highlighting to match it.
+For example,
+here it switches to bash syntax highlighting when the `%%bash` cell magic is used.
+
+```{raw} html
+---
+file: _static/examples/cell_magic_syntax_highlight.html
+---
+```
+
+### Multi-language support
+
+Jupyter Notebooks are not Python exclusive.
+nbpreview will detect the usage of other languages—such
+as Julia.
+
+```{raw} html
+---
+file: _static/examples/julia_syntax_highlight.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.

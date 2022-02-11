@@ -1,0 +1,15 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": 2,
+    "id": "925471a9-c56e-4e04-8e46-276d62ce00e2",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+      "function printx(x)\n",
+      "    println(\"x = $x\")\n",
+      "    return nothing\n",
+      "end"
+    ]
+  }
+]

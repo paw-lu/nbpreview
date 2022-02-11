@@ -8,7 +8,7 @@ import re
 import textwrap
 import typing
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Sequence, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple
 
 import nbformat
 import tomli
@@ -22,7 +22,18 @@ from rich.text import Text
 from nbpreview import notebook
 
 
-def create_notebook(cells: List[Dict[str, Any]]) -> NotebookNode:
+def _override_notebook(notebook_dict: Dict[str, Any], override: Dict[str, Any]) -> None:
+    """Override notebook cells with given override in place."""
+    for key, value in override.items():
+        if isinstance(value, dict):
+            _override_notebook(notebook_dict[key], override=value)
+        else:
+            notebook_dict[key] = value
+
+
+def create_notebook(
+    cells: List[Dict[str, Any]], override: Optional[Dict[str, Any]] = None
+) -> NotebookNode:
     """Create valid notebook dictionary around cells."""
     # "source" is stored as a list, but processed as one string
     for cell in cells:
@@ -56,15 +67,19 @@ def create_notebook(cells: List[Dict[str, Any]]) -> NotebookNode:
         "nbformat": 4,
         "nbformat_minor": 5,
     }
+    if override is not None:
+        _override_notebook(notebook_dict, override=override)
     notebook_node = nbformat.from_dict(notebook_dict)
     nbformat.validate(notebook_node)
     return notebook_node
 
 
-def load_notebook_cells(file_path: Path) -> NotebookNode:
+def load_notebook_cells(
+    file_path: Path, override: Optional[dict[str, Any]] = None
+) -> NotebookNode:
     """Create a notebook from a file of cells."""
     notebook_cells = json.load(file_path.open())
-    notebook_node = create_notebook(notebook_cells)
+    notebook_node = create_notebook(notebook_cells, override=override)
     return notebook_node
 
 
@@ -239,7 +254,9 @@ def generate_examples() -> None:
         example_notebook_cell_path = example_notebook_cell_directory / pathlib.Path(
             example.cells_filename
         ).with_suffix(".json")
-        notebook_node = load_notebook_cells(example_notebook_cell_path)
+        notebook_node = load_notebook_cells(
+            example_notebook_cell_path, override=example.override
+        )
 
         example_command = make_example_command(example.args)
         example_console.print(example_command)

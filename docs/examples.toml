@@ -35,3 +35,18 @@ notebook_kwargs.theme = "rainbow_dash"
 example_filename = "theme_rainbow_dash.html"
 args = ["nbpreview", "--theme", "rainbow_dash", "notebook.ipynb"]
 light_theme = true
+
+[[examples]]
+cells_filename = "bash_cell_magic.json"
+notebook_kwargs.theme = "material"
+example_filename = "cell_magic_syntax_highlight.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "julia_code.json"
+notebook_kwargs.theme = "material"
+example_filename = "julia_syntax_highlight.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+override.metadata.kernelspec.display_name = "Julia 1.7.2"
+override.metadata.kernelspec.language = "julia"
+override.metadata.kernelspec.name = "julia-1.7"

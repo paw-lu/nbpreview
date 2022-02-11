@@ -1,0 +1,16 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": null,
+    "id": "a942b2f6-670c-4f47-b3be-e677a468b449",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+      "%%bash\n",
+      "for file in *.csv; do\n",
+      "    echo \"$file\"\n",
+      "    awk -F ',' '{print $5}' \"$file\" | sort | uniq -c\n",
+      "done"
+    ]
+  }
+]
