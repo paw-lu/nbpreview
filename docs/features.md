@@ -239,6 +239,64 @@ file: _static/examples/julia_syntax_highlight.html
 ---
 ```
 
+## Markdown rendering
+
+Thanks to {class}`Rich <rich.markdown.Markdown>`,
+[markdown-it-py](https://markdown-it-py.readthedocs.io/en/latest/),
+and [pylatexenc](https://pylatexenc.readthedocs.io/en/latest/),
+nbpreview renders markdown content with some extensions.
+In addition to typical CommonMark,
+nbpreview will also render markdown tables,
+create clickable hyperlinks
+(if its supported by the terminal),
+syntax highlight code blocks
+(which respect {option}`--theme <nbpreview --theme>`),
+and render block math equations.
+It will even render images—which
+respect {option}`--image-drawing <nbpreview --image-drawing>`.
+For example,
+
+````markdown
+# Lorem ipsum
+
+Lorem ipsum dolor sit amet,
+consectetur **adipiscing** elit,
+sed do eiusmod tempor incididunt
+ut labore et dolore magna [aliqua](https://github.com/paw-lu/nbpreview).
+
+$$
+\alpha \sim \text{Normal(0, 1)}
+$$
+
+_Ut enim ad minim veniam_,
+quis nostrud exercitation ullamco
+Excepteur sint occaecat `cupidatat` non proident,
+sunt in culpa qui.
+
+![Turtle](emoji_u1f422.png)
+
+## At ultrices
+
+```python
+def add(x: float, y: float) -> float:
+    """Add two numbers."""
+    return x + y
+```
+
+| Lorep | ipsum | doret |
+| ----- | ----- | ----- |
+| 1     | 2     | 3     |
+| 4     | 5     | 6     |
+````
+
+renders as
+
+```{raw} html
+---
+file: _static/examples/markdown.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.

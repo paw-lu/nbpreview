@@ -50,3 +50,11 @@ args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 override.metadata.kernelspec.display_name = "Julia 1.7.2"
 override.metadata.kernelspec.language = "julia"
 override.metadata.kernelspec.name = "julia-1.7"
+
+[[examples]]
+cells_filename = "markdown.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.relative_dir = "_static/images"
+example_filename = "markdown.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.1 = "_static/images/emoji_u1f422.png"
