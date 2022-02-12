@@ -223,10 +223,9 @@ class Notebook:
         color: Whether to use color. If set to
             ``None``
             will autodetect. By default ``None``.
-        relative_dir: The
-            directory to prefix relative paths to convert them to
-            absolute. If ``None`` will assume current directory is
-            relative prefix. By default ``None``.
+        relative_dir: The directory to prefix relative paths to convert
+            them to absolute. If ``None`` will assume current directory
+            is relative prefix. By default ``None``.
         line_numbers: Whether to render line numbers in code
             cells. By default ``False``.
         code_wrap: Whether to wrap code if it does not fit. By
