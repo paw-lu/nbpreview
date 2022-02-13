@@ -72,3 +72,9 @@ notebook_kwargs.theme = "material"
 example_filename = "vega.html"
 args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 substitute_links.0 = "_static/generated_html/vega.html"
+
+[[examples]]
+cells_filename = "latex.json"
+notebook_kwargs.theme = "material"
+example_filename = "latex.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]

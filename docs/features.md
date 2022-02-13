@@ -323,6 +323,17 @@ file: _static/examples/vega.html
 ---
 ```
 
+## $\LaTeX$
+
+Thanks to {class}`pylatexenc <pylatexenc.latex2text.LatexNodes2Text>`,
+nbpreview can render $\LaTeX$ as unicode characters.
+
+```{raw} html
+---
+file: _static/examples/latex.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
