@@ -65,3 +65,10 @@ notebook_kwargs.theme = "material"
 example_filename = "dataframe.html"
 args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 substitute_links.0 = "_static/generated_html/dataframe.html"
+
+[[examples]]
+cells_filename = "vega.json"
+notebook_kwargs.theme = "material"
+example_filename = "vega.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/vega.html"

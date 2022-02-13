@@ -312,6 +312,17 @@ file: _static/examples/dataframe.html
 nbpreview will use the fallback default text representation of the DataFrame
 if the {option}`--plain <nbpreview --plain>` option is used.
 
+## Vega and VegaLite charts
+
+nbpreview will renderer static previews of [Vega and VegaLite charts][vega_example]
+along with a link to an interactive version (thanks to [justcharts]).
+
+```{raw} html
+---
+file: _static/examples/vega.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
@@ -321,4 +332,6 @@ if the {option}`--plain <nbpreview --plain>` option is used.
 [curl_manpage]: https://linux.die.net/man/1/curl
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
 [jq_documentation]: https://stedolan.github.io/jq/
+[justcharts]: https://github.com/koaning/justcharts
 [pygments]: https://github.com/pygments/pygments
+[vega_example]: https://github.com/jupyterlab/jupyterlab/blob/master/examples/vega/vega-extension.ipynb

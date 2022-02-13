@@ -93,4 +93,5 @@ repos:
     rev: v2.3.0
     hooks:
       - id: prettier
+        exclude: "docs/_static/generated_html/vega.html"
 exclude: "^tests/unit/expected_outputs"
