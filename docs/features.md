@@ -297,6 +297,21 @@ file: _static/examples/markdown.html
 ---
 ```
 
+## DataFrame rendering
+
+Thanks to {class}`Rich <rich.table.Table>`
+and {class}`lxml <lxml.html.HtmlElement>`,
+nbpreview renders Pandas DataFrame as a table.
+
+```{raw} html
+---
+file: _static/examples/dataframe.html
+---
+```
+
+nbpreview will use the fallback default text representation of the DataFrame
+if the {option}`--plain <nbpreview --plain>` option is used.
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.

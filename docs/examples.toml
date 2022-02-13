@@ -58,3 +58,10 @@ notebook_kwargs.relative_dir = "_static/images"
 example_filename = "markdown.html"
 args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 substitute_links.1 = "_static/images/emoji_u1f422.png"
+
+[[examples]]
+cells_filename = "dataframe.json"
+notebook_kwargs.theme = "material"
+example_filename = "dataframe.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/dataframe.html"

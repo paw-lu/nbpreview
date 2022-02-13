@@ -18,6 +18,7 @@ extensions = [
 intersphinx_mapping = {
     "click": ("https://click.palletsprojects.com/en/8.0.x/", None),
     "python": ("https://docs.python.org/3", None),
+    "lxml": ("https://lxml.de/apidoc/", None),
     "rich": ("https://rich.readthedocs.io/en/latest/", None),
 }
 autodoc_typehints = "description"
