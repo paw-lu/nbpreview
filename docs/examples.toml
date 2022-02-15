@@ -78,3 +78,18 @@ cells_filename = "latex.json"
 notebook_kwargs.theme = "material"
 example_filename = "latex.html"
 args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "long_code.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.line_numbers = true
+notebook_kwargs.code_wrap = true
+example_filename = "long_code.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--code-wrap",
+    "--line-numbers",
+    "notebook.ipynb",
+]

@@ -239,6 +239,27 @@ file: _static/examples/julia_syntax_highlight.html
 ---
 ```
 
+### Wrapping and line numbers
+
+Depending on your terminal size,
+code cell contents might be too long to fit on the terminal.
+By default,
+nbpreview truncates the long code.
+But if {option}`--code-wrap <nbpreview --code-wrap>`
+(or {option}`-q <nbpreview -q>`)
+is used,
+nbpreview will wrap the code around so that it's all visible.
+It's usually best to use this will {option}`--line-numbers <nbpreview --line-numbers>`
+(or {option}`-m <nbpreview -m>`)
+to enable line numbers—so
+that wrapping is clearly distinguished from a line break.
+
+```{raw} html
+---
+file: _static/examples/long_code.html
+---
+```
+
 ## Markdown rendering
 
 Thanks to {class}`Rich <rich.markdown.Markdown>`,
