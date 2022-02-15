@@ -355,6 +355,19 @@ file: _static/examples/latex.html
 ---
 ```
 
+## HTML
+
+Thanks to [html2text],
+nbpreview renders basic HTML.
+It will also generate a link to the output
+so it can be easily previewed in the browser.
+
+```{raw} html
+---
+file: _static/examples/html.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
@@ -363,6 +376,7 @@ file: _static/examples/latex.html
 
 [curl_manpage]: https://linux.die.net/man/1/curl
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
+[html2text]: http://alir3z4.github.io/html2text/
 [jq_documentation]: https://stedolan.github.io/jq/
 [justcharts]: https://github.com/koaning/justcharts
 [pygments]: https://github.com/pygments/pygments

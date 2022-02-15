@@ -93,3 +93,10 @@ args = [
     "--line-numbers",
     "notebook.ipynb",
 ]
+
+[[examples]]
+cells_filename = "html.json"
+notebook_kwargs.theme = "material"
+example_filename = "html.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/html.html"
