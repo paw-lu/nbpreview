@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <script src="https://cdn.jsdelivr.net/gh/koaning/justcharts/justcharts.js"></script>
+    <title>Vega chart</title>
+</head>
+<body>
+    <vegachart style="width: 100%">
+        {"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "data": {"url": "https://raw.githubusercontent.com/vega/vega-datasets/next/data/unemployment-across-industries.json"}, "encoding": {"color": {"field": "series", "scale": {"scheme": "category20b"}}, "x": {"axis": {"format": "%Y"}, "field": "date", "timeUnit": "yearmonth"}, "y": {"aggregate": "sum", "field": "count"}}, "height": 200, "mark": "area", "width": 300}
+    </vegachart>
+</body>
+<html></html>
+</html>

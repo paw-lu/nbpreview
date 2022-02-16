@@ -368,6 +368,44 @@ file: _static/examples/html.html
 ---
 ```
 
+## Hyperlinks
+
+With certain complex content—such
+as images
+and HTML—nbpreview
+will display hyperlinks to them in the render.
+
+```{raw} html
+---
+file: _static/examples/links.html
+---
+```
+
+The hyperlinks will only work if supported by the terminal.
+nbpreview attempts to detect this,
+but it can be manually controlled
+through the {option}`--hyperlinks <nbpreview --hyperlinks>`
+or {option}`--no-hyperlinks <nbpreview --no-hyperlinks>` options.
+If hyperlinks are not enabled,
+the link address will instead be directly printed to the terminal
+so that it's easy to click or copy.
+
+By default,
+nbpreview displays a hint message
+that prompts the user to click on the link.
+These hints may be removed
+by using the {option}`--hide-hyperlink-hints <nbpreview --hide-hyperlink-hints>`
+(or {option}`-y <nbpreview -y>`)
+option.
+
+In order to create previews,
+nbpreview will write the content to temporary files
+as the notebook is rendered.
+To prevent nbpreview from writing files to your machine,
+use the {option}`--no-files <nbpreview --no-files>`
+(or {option}`-l <nbpreview -l>`)
+option.
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
