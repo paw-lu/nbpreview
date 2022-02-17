@@ -406,16 +406,28 @@ use the {option}`--no-files <nbpreview --no-files>`
 (or {option}`-l <nbpreview -l>`)
 option.
 
+## Nerd fonts
+
+By default,
+nbpreview uses emoji icons to denote certain
+content—[like clickable links][hyperlinks].
+nbpreview also supports using icons from [Nerd Fonts][nerd fonts][^nerd_fonts].
+Simply use the {option}`--nerd-font <nbpreview --nerd-font>` option
+to enable them.
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
 [^jq]: [jq][jq_documentation] is a command-line JSON processor. Since Jupyter notebook (`ipynb`) files are in a JSON format, it can be used to filter and transform cells.
+[^nerd_fonts]: [Nerd Fonts] are fonts patched with support for extra icons.
 [^web_warning]: Like always, do not view notebooks from untrusted sources.
 
 [curl_manpage]: https://linux.die.net/man/1/curl
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
 [html2text]: http://alir3z4.github.io/html2text/
+[hyperlinks]: #hyperlinks
 [jq_documentation]: https://stedolan.github.io/jq/
 [justcharts]: https://github.com/koaning/justcharts
+[nerd fonts]: https://www.nerdfonts.com/
 [pygments]: https://github.com/pygments/pygments
 [vega_example]: https://github.com/jupyterlab/jupyterlab/blob/master/examples/vega/vega-extension.ipynb
