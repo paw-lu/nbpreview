@@ -518,12 +518,23 @@ file: _static/examples/dark_plot_block.html
 
 `````
 
-### Disabling images
+### Enabling and disabling image rendering
 
-- images and not images perfomrance
-- block not windows
-- image drawing
-- background dark/light
+By default,
+nbpreview will attempt to detect
+if images can be viewed on the terminal.
+This can be manually controlled via the
+{option}`--images <nbpreview --images>`
+or {option}`--no-images <nbpreview --no-images>`
+options.
+
+```{caution}
+Rendering images can impact nbpreview's performance—especially
+if the notebook contains many images.
+The drawing type selected
+via {option}`--image-drawing <nbpreview --image-drawing>`
+can play a role in how severe the performance impact is.
+```
 
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
