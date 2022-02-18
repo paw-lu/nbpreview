@@ -109,3 +109,49 @@ args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 substitute_links.0 = "_static/generated_html/links_table.html"
 substitute_links.1 = "_static/images/links_plot.png"
 substitute_links.2 = "_static/generated_html/links_vega.html"
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+example_filename = "images_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "images_braille.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
+
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "block"
+example_filename = "images_block.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "block",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
