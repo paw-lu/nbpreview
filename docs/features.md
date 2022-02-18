@@ -415,13 +415,125 @@ nbpreview also supports using icons from [Nerd Fonts][nerd fonts][^nerd_fonts].
 Simply use the {option}`--nerd-font <nbpreview --nerd-font>` option
 to enable them.
 
+## Images
+
+Thanks to [Picharsso]
+and [Terminedia],
+nbpreview renders images.
+
+### Drawing types
+
+The {option}`--image-drawing <nbpreview --image-drawing>`
+(or {option}`--id <nbpreview --id>`)
+option can be used to control the method nbpreview uses to draw images.
+
+```{attention}
+{option}`--image-drawing='block' <nbpreview --image-drawing>`
+is currently not supported on Windows.[^windows_support]
+```
+
+`````{tab-set}
+
+````{tab-item} character
+```{raw} html
+---
+file: _static/examples/images_character.html
+---
+```
+````
+
+````{tab-item} braille
+```{raw} html
+---
+file: _static/examples/images_braille.html
+---
+```
+````
+
+````{tab-item} block
+```{raw} html
+---
+file: _static/examples/images_block.html
+---
+```
+````
+
+`````
+
+### Negative and positive space
+
+By default,
+nbpreview draws figures in negative space—meaning
+characters are used to draw the dark portions of the image.
+This works well as a default since most graphs have a light background.
+However, when working with darker images—such
+as using a dark theme on plots—the
+drawing can be switched to positive space
+using the {option}`--positive-space <nbpreview --positive-space>`
+(or {option}`-s <nbpreview -s>`)
+option.
+
+```{attention}
+{option}`--positive-space <nbpreview --positive-space>`
+only works on {option}`--image-drawing='character' <nbpreview --image-drawing>`—the
+default value.
+{option}`--image-drawing='braille' <nbpreview --image-drawing>`
+only draws in positive space.
+```
+
+`````{tab-set}
+
+````{tab-item} character (positive space)
+```{raw} html
+---
+file: _static/examples/dark_plot_positive_character.html
+---
+```
+````
+
+````{tab-item} character (negative space)
+```{raw} html
+---
+file: _static/examples/dark_plot_negative_character.html
+---
+```
+````
+
+````{tab-item} braille
+```{raw} html
+---
+file: _static/examples/dark_plot_braille.html
+---
+```
+````
+
+````{tab-item} block
+```{raw} html
+---
+file: _static/examples/dark_plot_block.html
+---
+```
+
+````
+
+`````
+
+### Disabling images
+
+- images and not images perfomrance
+- block not windows
+- image drawing
+- background dark/light
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
 [^jq]: [jq][jq_documentation] is a command-line JSON processor. Since Jupyter notebook (`ipynb`) files are in a JSON format, it can be used to filter and transform cells.
 [^nerd_fonts]: [Nerd Fonts] are fonts patched with support for extra icons.
 [^web_warning]: Like always, do not view notebooks from untrusted sources.
+[^windows_support]: This is due to a dependency on {py:mod}`fcntl`—which is not available on Windows. See [#26].
 
+[#26]: https://github.com/jsbueno/terminedia/issues/26
 [curl_manpage]: https://linux.die.net/man/1/curl
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
 [html2text]: http://alir3z4.github.io/html2text/
@@ -429,5 +541,7 @@ to enable them.
 [jq_documentation]: https://stedolan.github.io/jq/
 [justcharts]: https://github.com/koaning/justcharts
 [nerd fonts]: https://www.nerdfonts.com/
+[terminedia]: https://github.com/jsbueno/terminedia
+[picharsso]: https://kelvindecosta.github.io/picharsso/
 [pygments]: https://github.com/pygments/pygments
 [vega_example]: https://github.com/jupyterlab/jupyterlab/blob/master/examples/vega/vega-extension.ipynb

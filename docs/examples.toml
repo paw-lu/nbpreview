@@ -155,3 +155,66 @@ args = [
     "notebook.ipynb",
 ]
 substitute_links.0 = "_static/images/image_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+notebook_kwargs.negative_space = false
+example_filename = "dark_plot_positive_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "--positive-space",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+notebook_kwargs.negative_space = true
+example_filename = "dark_plot_negative_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "dark_plot_braille.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "block"
+example_filename = "dark_plot_block.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "block",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
