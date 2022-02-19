@@ -9,6 +9,7 @@ extensions = [
     "sphinx_click",
     "sphinx_copybutton",
     "sphinx_design",
+    "sphinx-favicon",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
@@ -119,3 +120,40 @@ html_theme_options = {
 }
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
+favicons = [
+    {
+        "rel": "apple-touch-icon",
+        "sizes": "180x180",
+        "static-file": "images/favicon/apple-touch-icon.png",
+    },
+    {
+        "rel": "icon",
+        "type": "image/png",
+        "sizes": "32x32",
+        "static-file": "images/favicon/favicon-32x32.png",
+    },
+    {
+        "rel": "icon",
+        "type": "image/png",
+        "sizes": "16x16",
+        "static-file": "images/favicon/favicon-16x16.png",
+    },
+    {
+        "rel": "manifest",
+        "static-file": "images/favicon/site.webmanifest",
+    },
+    {
+        "rel": "mask-icon",
+        "static-file": "images/favicon/safari-pinned-tab.svg",
+        "color": "#6750a4",
+    },
+    {
+        "rel": "shortcut icon",
+        "static-file": "images/favicon/favicon.ico",
+    },
+    {
+        "rel": "icon",
+        "type": "image/svg+xml",
+        "static-file": "images/favicon/favicon.svg",
+    },
+]

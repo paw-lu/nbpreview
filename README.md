@@ -1,7 +1,7 @@
 <!-- title-start -->
 
 ![nbpreview light logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_light.svg?raw=True#gh-light-mode-only)
-![nbpreview dark logo](docs/_static/images/logo_dark.svg#gh-dark-mode-only)
+![nbpreview dark logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_dark.svg?raw=True#gh-dark-mode-only)
 
 # nbpreview
 
