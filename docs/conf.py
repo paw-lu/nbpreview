@@ -28,6 +28,9 @@ html_theme = "furo"
 pygments_style = "material"
 pygments_dark_style = "material"
 html_theme_options = {
+    "light_logo": "images/logo_light.svg",
+    "dark_logo": "images/logo_dark.svg",
+    "sidebar_hide_name": True,
     "light_css_variables": {
         "color-problematic": "#21005D",
         "color-foreground-primary": "#1C1B1F",

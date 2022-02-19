@@ -1,5 +1,14 @@
+```{image} _static/images/logo_light.svg
+:class: only-light
+```
+
+```{image} _static/images/logo_dark.svg
+:class: only-dark
+```
+
 ```{include} ../README.md
 ---
+start-after: <!-- title-end -->
 end-before: <!-- github-only -->
 ---
 ```
