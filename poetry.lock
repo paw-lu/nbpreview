@@ -1604,6 +1604,17 @@ theme_rtd = ["sphinx-rtd-theme (>=0.5.0,<0.6.0)"]
 theme_sbt = ["sphinx-book-theme (>=0.1.2,<0.2.0)"]
 
 [[package]]
+name = "sphinx-favicon"
+version = "0.2"
+description = "Sphinx Extension adding support for custom favicons"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+sphinx = ">=3.4"
+
+[[package]]
 name = "sphinxcontrib-applehelp"
 version = "1.0.2"
 description = "sphinxcontrib-applehelp is a sphinx extension which outputs Apple help books"
@@ -1958,7 +1969,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "898a62a0901698a95da23d17cd852fcd52165d1385aaff061adc07f4db497703"
+content-hash = "b30cfc6ceb39e8cb6fb1ddf4d3987b60377921ea2291429c7d6b6ffd30261c82"
 
 [metadata.files]
 alabaster = [
@@ -2945,6 +2956,10 @@ sphinx-copybutton = [
 sphinx-design = [
     {file = "sphinx_design-0.0.13-py3-none-any.whl", hash = "sha256:fc90fd7195ad04d97f6cb00e71e7e30ccf3b9d6843792a55702fa3f0b5b5ffdd"},
     {file = "sphinx_design-0.0.13.tar.gz", hash = "sha256:c719d02bea29a31f143a294d632a5f435b9652ce1f80930e887bc066c3e94bef"},
+]
+sphinx-favicon = [
+    {file = "sphinx-favicon-0.2.tar.gz", hash = "sha256:73436a1f5f80c4fcae6eadd2520b9c2bc6c1aec0d91d153b3774359bdd103a58"},
+    {file = "sphinx_favicon-0.2-py3-none-any.whl", hash = "sha256:0b17cb0f9b97fb99172d47fb11fbdd0aadb26cbe0f6368e81843176ca18d06e6"},
 ]
 sphinxcontrib-applehelp = [
     {file = "sphinxcontrib-applehelp-1.0.2.tar.gz", hash = "sha256:a072735ec80e7675e3f432fcae8610ecf509c5f1869d17e2eecff44389cdbc58"},

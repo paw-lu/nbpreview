@@ -220,6 +220,7 @@ def docs_build(session: Session) -> None:
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx-design",
+        "sphinx-favicon",
         "sphinx",
         "sphinxext-opengraph",
     )
@@ -244,6 +245,7 @@ def docs(session: Session) -> None:
         "sphinx-click",
         "sphinx-copybutton",
         "sphinx-design",
+        "sphinx-favicon",
         "sphinx",
         "sphinxext-opengraph",
     )
