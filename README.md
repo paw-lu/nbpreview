@@ -21,10 +21,25 @@
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
 A terminal viewer for Jupyter notebooks.
+It can be thought of as [cat](https://man7.org/linux/man-pages/man1/cat.1.html) for ipynb files.
+
+<!-- github-only -->
 
 ## Features
 
-<!-- github-only -->
+nbpreview can:
+
+- [Syntax highlight code cells](https://nbpreview.readthedocs.io/en/latest/features.html#syntax-highlighting)
+- [Render markdown](https://nbpreview.readthedocs.io/en/latest/features.html#markdown-rendering)
+- [Draw images](https://nbpreview.readthedocs.io/en/latest/features.html#images)
+- [Render DataFrame](https://nbpreview.readthedocs.io/en/latest/features.html#dataframe-rendering)
+- [Create previews for Vega charts](https://nbpreview.readthedocs.io/en/latest/features.html#vega-and-vegalite-charts)
+- [Render LaTeX](https://nbpreview.readthedocs.io/en/latest/features.html#latex)
+- [Parse HTML](https://nbpreview.readthedocs.io/en/latest/features.html#html)
+- [Create hyperlinks for complex content](https://nbpreview.readthedocs.io/en/latest/features.html#hyperlinks)
+- [Use Nerd Font icons](https://nbpreview.readthedocs.io/en/latest/features.html#nerd-fonts)
+- [Render stderr output](https://nbpreview.readthedocs.io/en/latest/features.html#stderr)
+- [Render tracebacks](https://nbpreview.readthedocs.io/en/latest/features.html#tracebacks)
 
 ## Requirements
 
