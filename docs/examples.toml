@@ -220,6 +220,12 @@ args = [
 substitute_links.0 = "_static/images/dark_plot.png"
 
 [[examples]]
+cells_filename = "traceback.json"
+notebook_kwargs.theme = "material"
+example_filename = "traceback.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
 cells_filename = "stderr.json"
 notebook_kwargs.theme = "material"
 example_filename = "stderr.html"
