@@ -536,6 +536,17 @@ nbpreview also supports using icons from [Nerd Fonts][nerd fonts][^nerd_fonts].
 Simply use the {option}`--nerd-font <nbpreview --nerd-font>` option
 to enable them.
 
+## Stderr
+
+Similar to Jupyter Notebooks,
+stderr text is highlighted in a bright red box.
+
+```{raw} html
+---
+file: _static/examples/stderr.html
+---
+```
+
 % MyST will not render these properly if they are broken up into multiple lines
 [^curl]: [curl][curl_manpage] is a command-line tool to transfer data from servers. In this example it was used to download the file contents from an address.
 [^fgrep]: [fgrep][fgrep_manpage] is equivalent to running `grep -F`—which searches an input file for the literal text given.
