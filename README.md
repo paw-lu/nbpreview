@@ -92,22 +92,22 @@ simply type `nbpreview` into your terminal followed by the path of the notebook 
 % nbpreview notebook.ipynb
 ```
 
-See the [command-line reference](https://nbpreview.readthedocs.io/en/latest/usage.html) for details on options.
+See the [command-line reference][usage] for details on options.
 
 ## Contributing
 
 Contributions are very welcome.
-To learn more, see the [contributor guide](https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md).
+To learn more, see the [contributor guide][contributing].
 
 ## License
 
-Distributed under the terms of the [MIT license](https://opensource.org/licenses/MIT),
+Distributed under the terms of the [MIT license][license],
 _nbpreview_ is free and open source software.
 
 ## Issues
 
 If you encounter any problems,
-please [file an issue](https://github.com/paw-lu/nbpreview/issues) along with a detailed description.
+please [file an issue][issues] along with a detailed description.
 
 ## Prior art
 
@@ -115,7 +115,7 @@ please [file an issue](https://github.com/paw-lu/nbpreview/issues) along with a 
 
 <!-- similar-tools-start -->
 
-Thanks to [@joouha](https://github.com/joouha) for [maintaining list of these tools](https://euporie.readthedocs.io/en/latest/pages/related.html#notebook-viewers).
+Thanks to [@joouha] for [maintaining list of these tools][euporie_similar_tools].
 Many of the projects here were found directly on their page.
 
 - [ipynb-term](https://github.com/PaulEcoffet/ipynbviewer)
@@ -129,6 +129,9 @@ Many of the projects here were found directly on their page.
 - [nbtui](https://github.com/chentau/nbtui)
 - [nbv](https://github.com/lepisma/nbv)
 - [Read-Jupyter-Notebook](https://github.com/qcw171717/Read-Jupyter-Notebook)
+
+[@joouha]: https://github.com
+[euporie_similar_tools]: https://euporie.readthedocs.io/en/latest/pages/related.html#notebook-viewers
 
 <!-- similar-tools-end -->
 
@@ -145,26 +148,33 @@ there are many amazing projects out there.
   But similar to nbpreview,
   it provides a rich output for many types of files on the terminal,
   and is the primary inspiration for nbpreview.
-- **[euporie](https://github.com/joouha/euporie)**
+- **[euporie]**
   is a really exciting project
   that allows you to edit and run Jupyter notebooks on the terminal.
-- **[nbclient](https://github.com/jupyter/nbclient)**
+- **[nbclient]**
   is a library for executing notebooks from the command line.
-- **[nbqa](https://github.com/nbQA-dev/nbQA)**
+- **[nbqa]**
   allows the use of linters and formatters on notebooks.
   It's also used by this project.
-- **[jpterm](https://github.com/davidbrochart/jpterm)**
+- **[jpterm]**
   is and up-and-coming successor to [nbterm]
   which will be accompanied by a web client.
   Looking forward to seeing this develop.
-- **[nbtermix](https://github.com/mtatton/nbtermix)**
+- **[nbtermix]**
   is an actively-developed fork of [nbterm].
-- **[nbterm](https://github.com/davidbrochart/nbterm)**
+- **[nbterm]**
   lets you edit and execute Jupyter Notebooks on the terminal.
-- **[papermill](https://github.com/nteract/papermill)**
+- **[papermill]**
   allows the parameterization and execution of Jupyter Notebooks.
 
 [nbterm]: https://github.com/davidbrochart/nbterm
+[euporie]: https://github.com/joouha/euporie
+[nbclient]: https://github.com/jupyter/nbclient
+[nbqa]: https://github.com/nbQA-dev/nbQA
+[jpterm]: https://github.com/davidbrochart/jpterm
+[nbtermix]: https://github.com/mtatton/nbtermix
+[nbterm]: https://github.com/davidbrochart/nbterm
+[papermill]: https://github.com/nteract/papermill
 
 <!-- complimentary-tools-end -->
 
@@ -184,23 +194,34 @@ there are some other projects that directly enabled the development of nbpreview
   This projects strives to be [bat]—but
   for notebooks.
   Many of nbpreview's features and command-line options are directly adopted from [bat].
-- **[Hypermodern Python Cookiecutter](https://github.com/cjolowicz/cookiecutter-hypermodern-python)**
+- **[Hypermodern Python Cookiecutter]**
   is the template this project was generated on.
-  It is a fantastic template that integrates [Poetry](https://python-poetry.org/),
-  [Nox](https://nox.thea.codes/en/stable/),
-  and [pre-commit](https://pre-commit.com/).
+  It is a fantastic template that integrates [Poetry],
+  [Nox],
+  and [pre-commit].
   It's responsible for most of the underlying structure of this project's CI.
-- **[justcharts](https://github.com/koaning/justcharts)**
+- **[justcharts]**
   is used in this project
   to generate the Vega and Vega-Lite charts.
 
 [bat]: https://github.com/sharkdp/bat
+[hypermodern python cookiecutter]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
+[justcharts]: https://github.com/koaning/justcharts
+[nox]: https://nox.thea.codes/en/stable/
+[poetry]: https://python-poetry.org/
+[pre-commit]: https://pre-commit.com/
 
 <!-- credits-end -->
 
 [^documentation]: Thanks to [Furo], [MyST], and [Rich][exporting_rich_console].
 
 [configure]: https://nbpreview.readthedocs.io/configure.html
+[contributing]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
 [dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
+[exporting_rich_console]: https://rich.readthedocs.io/en/stable/console.html#exporting
 [features]: https://nbpreview.readthedocs.io/features.html
+[furo]: https://pradyunsg.me/furo/quickstart/
+[issues]: https://github.com/paw-lu/nbpreview/issues
+[license]: https://opensource.org/licenses/MIT
+[myst]: https://myst-parser.readthedocs.io/en/latest/
 [usage]: https://nbpreview.readthedocs.io/en/latest/usage.html
