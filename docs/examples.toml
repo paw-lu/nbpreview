@@ -231,3 +231,23 @@ notebook_kwargs.theme = "material"
 example_filename = "stderr.html"
 args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
 substitute_links.0 = "_static/generated_html/stderr.html"
+
+[[examples]]
+cells_filename = "example_notebook.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "example_notebook.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.2 = "_static/generated_html/example_notebook_dataframe.html"
+substitute_links.3 = "/_static/images/example_notebook_length_scatter.png"
+substitute_links.4 = "_static/generated_html/example_notebook_sampling_progress_bar.html"
+substitute_links.5 = "_static/generated_html/example_notebook_posterior_predictive_progress_bar.html"
+substitute_links.6 = "/_static/images/example_notebook_hdi_plot.png"
+substitute_links.7 = "/_static/images/example_notebook_length_distribution_plot.png"

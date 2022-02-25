@@ -13,6 +13,12 @@ end-before: <!-- github-only -->
 ---
 ```
 
+```{raw} html
+---
+file: _static/examples/example_notebook.html
+---
+```
+
 ```{toctree}
 ---
 hidden: true

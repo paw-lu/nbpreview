@@ -11,6 +11,7 @@ repos:
         name: Check for added large files
         entry: check-added-large-files
         language: system
+        exclude: docs/_static/images/hero_image.png
       - id: check-toml
         name: Check Toml
         entry: check-toml
@@ -70,6 +71,7 @@ repos:
         language: system
         require_serial: true
         types: [jupyter]
+        args: [--project=model, --project=plots]
       - id: pyupgrade
         name: pyupgrade
         description: Automatically upgrade syntax for newer versions.

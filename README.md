@@ -25,6 +25,8 @@ It can be thought of as [cat](https://man7.org/linux/man-pages/man1/cat.1.html) 
 
 <!-- github-only -->
 
+![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png?raw=True)
+
 ## Features
 
 nbpreview can:
