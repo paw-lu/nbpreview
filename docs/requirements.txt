@@ -1,5 +1,6 @@
 furo==2022.1.2
 myst-parser==0.16.1
+sphinx-autodoc-typehints==1.16.0
 sphinx-click==3.0.3
 sphinx-copybutton==0.4.0
 sphinx-design==0.0.13
