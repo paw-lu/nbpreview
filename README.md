@@ -115,7 +115,7 @@ please [file an issue][issues] along with a detailed description.
 
 <!-- similar-tools-start -->
 
-Thanks to [@joouha] for [maintaining list of these tools][euporie_similar_tools].
+Thanks to [@joouha] for [maintaining a list of these tools][euporie_similar_tools].
 Many of the projects here were found directly on their page.
 
 - [ipynb-term](https://github.com/PaulEcoffet/ipynbviewer)
