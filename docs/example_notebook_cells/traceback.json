@@ -1,0 +1,22 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": 1,
+    "id": "798ad0a3-4c8b-4957-bd3d-8cae4502e09e",
+    "metadata": {},
+    "outputs": [
+      {
+        "ename": "ZeroDivisionError",
+        "evalue": "division by zero",
+        "output_type": "error",
+        "traceback": [
+          "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+          "\u001b[1;31mZeroDivisionError\u001b[0m                         Traceback (most recent call last)",
+          "\u001b[1;32m<ipython-input-1-bc757c3fda29>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[1;32m----> 1\u001b[1;33m \u001b[1;36m1\u001b[0m \u001b[1;33m/\u001b[0m \u001b[1;36m0\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+          "\u001b[1;31mZeroDivisionError\u001b[0m: division by zero"
+        ]
+      }
+    ],
+    "source": ["1 / 0"]
+  }
+]

@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <script src="https://cdn.jsdelivr.net/gh/koaning/justcharts/justcharts.js"></script>
+    <title>Vega chart</title>
+</head>
+<body>
+    <vegachart style="width: 100%">
+        {"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "data": {"url": "https://raw.githubusercontent.com/vega/vega-datasets/next/data/stocks.csv"}, "description": "Google's stock price over time.", "encoding": {"x": {"field": "date", "type": "temporal"}, "y": {"field": "price", "type": "quantitative"}}, "mark": {"color": {"gradient": "linear", "stops": [{"color": "white", "offset": 0}, {"color": "darkgreen", "offset": 1}], "x1": 1, "x2": 1, "y1": 1, "y2": 0}, "line": {"color": "darkgreen"}, "type": "area"}, "transform": [{"filter": "datum.symbol==='GOOG'"}]}
+    </vegachart>
+</body>
+<html></html>
+</html>

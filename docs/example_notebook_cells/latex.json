@@ -1,0 +1,31 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": 22,
+    "id": "74fddfe7-a49d-40ad-af6f-0ca5d5d8faab",
+    "metadata": {},
+    "outputs": [
+      {
+        "data": {
+          "text/latex": [
+            "$\\text{y_pred} \\sim \\text{Normal}(\\mathit{mu}=\\text{mu},~\\mathit{sigma}=f(\\text{epsilon}))$"
+          ],
+          "text/plain": ["y_pred ~ Normal"]
+        },
+        "execution_count": 22,
+        "metadata": {},
+        "output_type": "execute_result"
+      }
+    ],
+    "source": [
+      "with pm.Model() as model:\n",
+      "    alpha = pm.Normal(\"alpha\", mu=0, sd=10)\n",
+      "    beta = pm.Normal(\"beta\", mu=0, sd=1)\n",
+      "    epsilon = pm.HalfCauchy(\"epsilon\", beta=5)\n",
+      "\n",
+      "    mu = pm.Deterministic(\"mu\", var=alpha + beta * x)\n",
+      "    y_pred = pm.Normal(\"y_pred\", mu=mu, sd=epsilon, observed=y)\n",
+      "y_pred"
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": 5,
+    "id": "74fddfe7-a49d-40ad-af6f-0ca5d5d8faab",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+      "(\n",
+      "    df.loc[lambda _df: (_df[\"sepal.length\"] < 6.0) & (_df[\"petal.length\"] < 3.5)]\n",
+      "    .groupby(\"variety\")[\"petal.width\"]\n",
+      "    .mean()\n",
+      ")"
+    ]
+  }
+]

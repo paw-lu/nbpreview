@@ -1,8 +1,6 @@
 # Reference
 
-## nbpreview
-
 ```{eval-rst}
-.. automodule:: nbpreview
+.. autoclass:: nbpreview.notebook.Notebook
    :members:
 ```

@@ -19,6 +19,8 @@ classifiers = [
 Changelog = "https://github.com/paw-lu/nbpreview/releases"
 Issues = "https://github.com/paw-lu/nbpreview/issues"
 
+# dependencies-start
+
 [tool.poetry.dependencies]
 python = "^3.8.0"
 rich = "^10.9.0"
@@ -77,6 +79,11 @@ myst-parser = "^0.16.1"
 sphinxext-opengraph = "^0.5.1"
 sphinx-copybutton = "^0.4.0"
 sphinx-design = "^0.0.13"
+sphinx-autodoc-typehints = "^1.16.0"
+tomli = "^2.0.0"
+sphinx-favicon = "^0.2"
+
+# dependencies-end
 
 [tool.poetry.scripts]
 nbpreview = "nbpreview.__main__:app"

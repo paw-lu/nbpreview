@@ -1,0 +1,40 @@
+[
+  {
+    "cell_type": "code",
+    "execution_count": 15,
+    "id": "54c45742-5f28-4b50-8c53-913fcb75d623",
+    "metadata": {},
+    "outputs": [
+      {
+        "data": {
+          "text/html": [
+            "<p>\n",
+            "    Lorem <em>ipsum</em> dolor sit amet,\n",
+            "    consectetur adipiscing elit,\n",
+            "    sed do eiusmod tempor\n",
+            "    <q>incididunt ut labore et dolore magna aliqua.</q>\n",
+            "</p>\n",
+            "<p>\n",
+            "    Sit amet consectetur <b>adipiscing</b> elit pellentesque habitant.\n",
+            "</p>\n"
+          ],
+          "text/plain": ["<IPython.core.display.HTML object>"]
+        },
+        "metadata": {},
+        "output_type": "display_data"
+      }
+    ],
+    "source": [
+      "%%html\n",
+      "<p>\n",
+      "    Lorem <em>ipsum</em> dolor sit amet,\n",
+      "    consectetur adipiscing elit,\n",
+      "    sed do eiusmod tempor\n",
+      "    <q>incididunt ut labore et dolore magna aliqua.</q>\n",
+      "</p>\n",
+      "<p>\n",
+      "    Sit amet consectetur <b>adipiscing</b> elit pellentesque habitant.\n",
+      "</p>"
+    ]
+  }
+]

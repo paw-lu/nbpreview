@@ -1,0 +1,253 @@
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "material"
+example_filename = "theme_material.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "one-dark"
+example_filename = "theme_one_dark.html"
+args = ["nbpreview", "--theme", "one-dark", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "dracula"
+example_filename = "theme_dracula.html"
+args = ["nbpreview", "--theme", "dracula", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "monokai"
+example_filename = "theme_monokai.html"
+args = ["nbpreview", "--theme", "monokai", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "paraiso-light"
+example_filename = "theme_paraiso_light.html"
+args = ["nbpreview", "--theme", "paraiso-light", "notebook.ipynb"]
+light_theme = true
+
+[[examples]]
+cells_filename = "code.json"
+notebook_kwargs.theme = "rainbow_dash"
+example_filename = "theme_rainbow_dash.html"
+args = ["nbpreview", "--theme", "rainbow_dash", "notebook.ipynb"]
+light_theme = true
+
+[[examples]]
+cells_filename = "bash_cell_magic.json"
+notebook_kwargs.theme = "material"
+example_filename = "cell_magic_syntax_highlight.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "julia_code.json"
+notebook_kwargs.theme = "material"
+example_filename = "julia_syntax_highlight.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+override.metadata.kernelspec.display_name = "Julia 1.7.2"
+override.metadata.kernelspec.language = "julia"
+override.metadata.kernelspec.name = "julia-1.7"
+
+[[examples]]
+cells_filename = "markdown.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.relative_dir = "_static/images"
+example_filename = "markdown.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.1 = "_static/images/emoji_u1f422.png"
+
+[[examples]]
+cells_filename = "dataframe.json"
+notebook_kwargs.theme = "material"
+example_filename = "dataframe.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/dataframe.html"
+
+[[examples]]
+cells_filename = "vega.json"
+notebook_kwargs.theme = "material"
+example_filename = "vega.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/vega.html"
+
+[[examples]]
+cells_filename = "latex.json"
+notebook_kwargs.theme = "material"
+example_filename = "latex.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "long_code.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.line_numbers = true
+notebook_kwargs.code_wrap = true
+example_filename = "long_code.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--code-wrap",
+    "--line-numbers",
+    "notebook.ipynb",
+]
+
+[[examples]]
+cells_filename = "html.json"
+notebook_kwargs.theme = "material"
+example_filename = "html.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/html.html"
+
+[[examples]]
+cells_filename = "links.json"
+notebook_kwargs.theme = "material"
+example_filename = "links.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/links_table.html"
+substitute_links.1 = "_static/images/links_plot.png"
+substitute_links.2 = "_static/generated_html/links_vega.html"
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+example_filename = "images_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "images_braille.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
+
+
+[[examples]]
+cells_filename = "images.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "block"
+example_filename = "images_block.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "block",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/image_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+notebook_kwargs.negative_space = false
+example_filename = "dark_plot_positive_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "--positive-space",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
+notebook_kwargs.negative_space = true
+example_filename = "dark_plot_negative_character.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "dark_plot_braille.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "dark_plot.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "block"
+example_filename = "dark_plot_block.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "block",
+    "notebook.ipynb",
+]
+substitute_links.0 = "_static/images/dark_plot.png"
+
+[[examples]]
+cells_filename = "traceback.json"
+notebook_kwargs.theme = "material"
+example_filename = "traceback.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+
+[[examples]]
+cells_filename = "stderr.json"
+notebook_kwargs.theme = "material"
+example_filename = "stderr.html"
+args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+substitute_links.0 = "_static/generated_html/stderr.html"
+
+[[examples]]
+cells_filename = "example_notebook.json"
+notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "braille"
+example_filename = "example_notebook.html"
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "braille",
+    "notebook.ipynb",
+]
+substitute_links.2 = "_static/generated_html/example_notebook_dataframe.html"
+substitute_links.3 = "/_static/images/example_notebook_length_scatter.png"
+substitute_links.4 = "_static/generated_html/example_notebook_sampling_progress_bar.html"
+substitute_links.5 = "_static/generated_html/example_notebook_posterior_predictive_progress_bar.html"
+substitute_links.6 = "/_static/images/example_notebook_hdi_plot.png"
+substitute_links.7 = "/_static/images/example_notebook_length_distribution_plot.png"

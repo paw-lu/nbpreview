@@ -1,4 +1,4 @@
-# Contributor Guide
+# Contributor guide
 
 Thank you for your interest in improving this project.
 This project is open-source under the [MIT license] and
@@ -107,6 +107,6 @@ This will allow a chance to talk it over with the owners and validate your appro
 [pytest]: https://pytest.readthedocs.io/
 [source code]: https://github.com/paw-lu/nbpreview
 
-% github-only
+<!-- github-only -->
 
 [code of conduct]: CODE_OF_CONDUCT.md

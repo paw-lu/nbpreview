@@ -209,6 +209,91 @@ def test_automatic_plain(
     assert output == expected_output
 
 
+def test_julia_syntax() -> None:
+    """It highlights Julia code."""
+    julia_notebook = {
+        "cells": [
+            {
+                "cell_type": "code",
+                "execution_count": 2,
+                "id": "925471a9-c56e-4e04-8e46-276d62ce00e2",
+                "metadata": {},
+                "outputs": [
+                    {
+                        "data": {
+                            "text/plain": "printx (generic function with 1 method)"
+                        },
+                        "execution_count": 2,
+                        "metadata": {},
+                        "output_type": "execute_result",
+                    }
+                ],
+                "source": (
+                    "function printx(x)\n"
+                    '    println("x = $x")\n'
+                    "    return nothing\n"
+                    "end"
+                ),
+            }
+        ],
+        "metadata": {
+            "kernelspec": {
+                "display_name": "Julia 1.7.2",
+                "language": "julia",
+                "name": "julia-1.7",
+            },
+            "language_info": {
+                "file_extension": ".jl",
+                "mimetype": "application/julia",
+                "name": "julia",
+                "version": "1.7.2",
+            },
+        },
+        "nbformat": 4,
+        "nbformat_minor": 5,
+    }
+    julia_notebook_node = nbformat.from_dict(julia_notebook)
+    output_file = io.StringIO()
+    con = console.Console(
+        file=output_file,
+        width=80,
+        color_system="truecolor",
+        legacy_windows=False,
+        force_terminal=False,
+    )
+    rendered_notebook = notebook.Notebook(julia_notebook_node, theme="material")
+    con.print(rendered_notebook)
+    output = output_file.getvalue()
+    expected_output = (
+        "\x1b[38;2;187;128;179;49mfunction\x1b[0m\x1b[38;2"
+        ";238;255;255;49m \x1b[0m\x1b[38;2;238;255;255;"
+        "49mprintx\x1b[0m\x1b[38;2;137;221;255;49m(\x1b[0m"
+        "\x1b[38;2;238;255;255;49mx\x1b[0m\x1b[38;2;137;22"
+        "1;255;49m)\x1b[0m                          "
+        "                                    \n\x1b[3"
+        "8;2;238;255;255;49m    \x1b[0m\x1b[38;2;238;25"
+        "5;255;49mprintln\x1b[0m\x1b[38;2;137;221;255;4"
+        '9m(\x1b[0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2'
+        ";195;232;141;49mx = \x1b[0m\x1b[38;2;137;221;2"
+        '55;49m$x\x1b[0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b'
+        "[38;2;137;221;255;49m)\x1b[0m              "
+        "                                        "
+        "     \n\x1b[38;2;238;255;255;49m    \x1b[0m\x1b[38"
+        ";2;187;128;179;49mreturn\x1b[0m\x1b[38;2;238;2"
+        "55;255;49m \x1b[0m\x1b[38;2;130;170;255;49mnot"
+        "hing\x1b[0m                                "
+        "                              \n\x1b[38;2;18"
+        "7;128;179;49mend\x1b[0m                    "
+        "                                        "
+        "                 \n                      "
+        "                                        "
+        "                  \nprintx (generic funct"
+        "ion with 1 method)                      "
+        "                   \n"
+    )
+    assert output == expected_output
+
+
 def test_notebook_markdown_cell(rich_notebook_output: RichOutput) -> None:
     """It renders a markdown cell."""
     markdown_cell = {

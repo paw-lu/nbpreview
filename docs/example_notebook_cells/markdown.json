@@ -1,0 +1,40 @@
+[
+  {
+    "cell_type": "markdown",
+    "id": "fdc518a2-2c5d-4313-b987-098d90b673da",
+    "metadata": {},
+    "source": [
+      "# Lorem ipsum\n",
+      "\n",
+      "Lorem ipsum dolor sit amet,\n",
+      "consectetur **adipiscing** elit,\n",
+      "sed do eiusmod tempor incididunt\n",
+      "ut labore et dolore magna [aliqua](https://github.com/paw-lu/nbpreview).\n",
+      "\n",
+      "$$\n",
+      "\\alpha \\sim \\text{Normal(0, 1)}\n",
+      "$$\n",
+      "\n",
+      "\n",
+      "_Ut enim ad minim veniam_,\n",
+      "quis nostrud exercitation ullamco\n",
+      "Excepteur sint occaecat `cupidatat` non proident,\n",
+      "sunt in culpa qui.\n",
+      "\n",
+      "![Turtle](emoji_u1f422.png)\n",
+      "\n",
+      "## At ultrices\n",
+      "\n",
+      "```python\n",
+      "def add(x: float, y: float) -> float:\n",
+      "    \"\"\"Add two numbers.\"\"\"\n",
+      "    return x + y\n",
+      "```\n",
+      "\n",
+      "| Lorep | ipsum | doret |\n",
+      "| ----- | ----- | ----- |\n",
+      "| 1     | 2     | 3     |\n",
+      "| 4     | 5     | 6     |"
+    ]
+  }
+]
