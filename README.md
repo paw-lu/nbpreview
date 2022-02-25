@@ -11,7 +11,7 @@
 [![Status](https://img.shields.io/pypi/status/nbpreview.svg)](https://pypi.org/project/nbpreview/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nbpreview)](https://pypi.org/project/nbpreview)
 [![License](https://img.shields.io/pypi/l/nbpreview)](https://opensource.org/licenses/MIT)
-[![Read the documentation at https://nbpreview.readthedocs.io/](https://img.shields.io/readthedocs/nbpreview/latest.svg?label=Read%20the%20Docs)](https://nbpreview.readthedocs.io/)
+[![Read the documentation at https://nbpreview.readthedocs.io/](https://img.shields.io/readthedocs/nbpreview/latest.svg?label=Read%20the%20Docs)][documentation]
 [![Tests](https://github.com/paw-lu/nbpreview/workflows/Tests/badge.svg)](https://github.com/paw-lu/nbpreview/actions?workflow=Tests)
 [![Codecov](https://codecov.io/gh/paw-lu/nbpreview/branch/main/graph/badge.svg)](https://codecov.io/gh/paw-lu/nbpreview)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
@@ -21,11 +21,19 @@
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
 A terminal viewer for Jupyter notebooks.
-It can be thought of as [cat](https://man7.org/linux/man-pages/man1/cat.1.html) for ipynb files.
+
+[documentation]: https://nbpreview.readthedocs.io/
 
 <!-- github-only -->
 
 ![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png?raw=True)
+
+## Documentation
+
+nbpreview's [documentation] contains
+a detailed breakdown of its [features],
+[command-line usage][usage],
+and [instructions on how configure][configure] the tool.[^documentation]
 
 ## Features
 
@@ -187,4 +195,9 @@ there are some other projects that directly enabled the development of nbpreview
 
 <!-- credits-end -->
 
+[^documentation]: Thanks to [Furo], [MyST], and [Rich][exporting_rich_console].
+
+[configure]: https://nbpreview.readthedocs.io/configure.html
 [dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
+[features]: https://nbpreview.readthedocs.io/features.html
+[usage]: https://nbpreview.readthedocs.io/en/latest/usage.html
