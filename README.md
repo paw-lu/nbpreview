@@ -21,6 +21,9 @@
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
 A terminal viewer for Jupyter notebooks.
+It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipynb files.
+
+[^cat]: No, _nbpreview does not actually concatenate files_—but it does print them.
 
 [documentation]: https://nbpreview.readthedocs.io/
 
