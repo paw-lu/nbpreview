@@ -25,6 +25,7 @@ intersphinx_mapping = {
 }
 autodoc_typehints = "description"
 myst_heading_anchors = 3
+myst_enable_extensions = ["dollarmath"]
 html_theme = "furo"
 pygments_style = "material"
 pygments_dark_style = "material"
