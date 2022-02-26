@@ -6,4 +6,4 @@ sphinx-copybutton==0.4.0
 sphinx-design==0.0.13
 sphinx-favicon==0.2
 sphinx==4.4.0
-sphinxext-opengraph==0.5.1
+sphinxext-opengraph==0.6.1
