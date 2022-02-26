@@ -10,22 +10,22 @@ expects a Jupyter notebook (`.ipynb`) file path.
 ```
 
 {option}`FILE <nbpreview FILE>` is a flexible argument.
-It can take it multiple files,
-and will render them all at once.
+It can take in multiple files
+and render them all at once.
 nbpreview will accept multiple file paths manually listed out,
 
 ```console
 % nbpreview notebook1.ipynb notebook2.ipynb
 ```
 
-or a glob that expands to one or more notebook file.
+or a glob that expands to one or more notebook files.
 
 ```console
 % nbpreview notebooks/*.ipynb
 ```
 
 {option}`FILE <nbpreview FILE>` also accepts text from stdin
-and treats the text as the contents of a notebook file.
+and treats it as the contents of a notebook file.
 This can be used to easily view notebooks from the web[^web_warning] using [curl][curl_manpage][^curl].
 
 ```console
@@ -49,7 +49,7 @@ nbpreview is smart about its output.
 By default it will strip out decorations—such
 as boxes, execution counts, and extra spacing—when
 its output is piped to stdout.
-Making it usable as a preprocessor for other command-line tools.
+This makes nbpreview usable as a preprocessor for other command-line tools.
 For example,
 if [fgrep][fgrep_manpage][^fgrep] is used to search a notebook file for the string `'parietal'`,
 the output can be difficult to parse.
@@ -69,8 +69,8 @@ the output can be difficult to parse.
 ```
 
 Instead,
-if the notebook is ran through nbpreview first,
-it will process the file before passing onto fgrep,
+if the notebook is run through nbpreview first,
+it will process the file before passing it onto fgrep,
 creating a more human-readable output.
 
 ```console
@@ -119,7 +119,7 @@ Similar to the [automatic plain output](#automatic-plain-output),
 this will be automatically disabled when piping to other commands.
 
 Thanks to {func}`Click <click.echo_via_pager>`,
-nbpreview attempts to choose a pager than renders the notebook in color.
+nbpreview attempts to choose a pager that renders the notebook in color.
 If the {envvar}`PAGER` environmental variable is set,
 nbpreview will use the value as the pager command.
 To disable the automatic paging,
@@ -150,8 +150,7 @@ option.
 Some themes may clash with the terminal theme,
 but `'dark'`—the
 default theme—and
-`'light'` will match the terminal's colors,
-and are the most likely to look best across different terminals.
+`'light'` will match the terminal's colors.
 
 `````{tab-set}
 
@@ -269,7 +268,7 @@ nbpreview renders markdown content with some extensions.
 In addition to typical CommonMark,
 nbpreview will also render markdown tables,
 create clickable hyperlinks
-(if its supported by the terminal),
+(if it's supported by the terminal),
 syntax highlight code blocks
 (which respect {option}`--theme <nbpreview --theme>`),
 and render block math equations.
@@ -368,9 +367,9 @@ file: _static/examples/images_block.html
 By default,
 nbpreview draws figures in negative space—meaning
 characters are used to draw the dark portions of the image.
-This works well as a default since most graphs have a light background.
-However, when working with darker images—such
-as using a dark theme on plots—the
+This works well as a default since most charts have a light background by default.
+However, when working with darker images—like
+if a dark theme is being used on a plot—the
 drawing can be switched to positive space
 using the {option}`--positive-space <nbpreview --positive-space>`
 (or {option}`-s <nbpreview -s>`)
@@ -519,7 +518,7 @@ by using the {option}`--hide-hyperlink-hints <nbpreview --hide-hyperlink-hints>`
 (or {option}`-y <nbpreview -y>`)
 option.
 
-In order to create previews,
+To create previews,
 nbpreview will write the content to temporary files
 as the notebook is rendered.
 To prevent nbpreview from writing files to your machine,
