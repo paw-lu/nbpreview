@@ -36,7 +36,7 @@ It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipyn
 nbpreview's [documentation] contains
 a detailed breakdown of its [features],
 [command-line usage][usage],
-and [instructions on how configure][configure] the tool.[^documentation]
+and [instructions on how to configure][configure] the tool.[^documentation]
 
 ## Features
 
@@ -195,12 +195,12 @@ there are some other projects that directly enabled the development of nbpreview
   Many of nbpreview's features and command-line options are directly adopted from [bat].
 - **[Hypermodern Python Cookiecutter]**
   is the template this project was generated on.
-  It is a fantastic template that integrates [Poetry],
+  It is a fantastic project that integrates [Poetry],
   [Nox],
   and [pre-commit].
-  It's responsible for most of the underlying structure of this project's CI.
+  It's responsible for most of this project's CI.
 - **[justcharts]**
-  is used in this project
+  is directly used by this project
   to generate the Vega and Vega-Lite charts.
 
 [bat]: https://github.com/sharkdp/bat
