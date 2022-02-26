@@ -2,7 +2,7 @@ furo==2022.2.23
 myst-parser==0.16.1
 sphinx-autodoc-typehints==1.16.0
 sphinx-click==3.1.0
-sphinx-copybutton==0.4.0
+sphinx-copybutton==0.5.0
 sphinx-design==0.0.13
 sphinx-favicon==0.2
 sphinx==4.4.0
