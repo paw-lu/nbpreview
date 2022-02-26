@@ -609,7 +609,7 @@ tests = ["pytest", "pytest-cov", "pytest-mock"]
 
 [[package]]
 name = "ipykernel"
-version = "6.7.0"
+version = "6.9.1"
 description = "IPython Kernel for Jupyter"
 category = "dev"
 optional = false
@@ -1969,7 +1969,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "67e4912ff86fadab4d7983377ce2bc756586826b4ddb828f45c0a880d9d6faec"
+content-hash = "7602f2d9c0b6fe0eda32b0e636b03b93d9058b3968f7ee8d39dda45f98a60b5a"
 
 [metadata.files]
 alabaster = [
@@ -2302,8 +2302,8 @@ interrogate = [
     {file = "interrogate-1.5.0.tar.gz", hash = "sha256:b6f325f0aa84ac3ac6779d8708264d366102226c5af7d69058cecffcff7a6d6c"},
 ]
 ipykernel = [
-    {file = "ipykernel-6.7.0-py3-none-any.whl", hash = "sha256:6203ccd5510ff148e9433fd4a2707c5ce8d688f026427f46e13d7ebf9b3e9787"},
-    {file = "ipykernel-6.7.0.tar.gz", hash = "sha256:d82b904fdc2fd8c7b1fbe0fa481c68a11b4cd4c8ef07e6517da1f10cc3114d24"},
+    {file = "ipykernel-6.9.1-py3-none-any.whl", hash = "sha256:4fae9df6e192837552b2406a6052d707046dd2e153860be73c68484bacba18ed"},
+    {file = "ipykernel-6.9.1.tar.gz", hash = "sha256:f95070a2dfd3147f8ab19f18ee46733310813758593745e07ec18fb08b409f1d"},
 ]
 ipython = [
     {file = "ipython-8.0.1-py3-none-any.whl", hash = "sha256:c503a0dd6ccac9c8c260b211f2dd4479c042b49636b097cc9a0d55fe62dff64c"},
