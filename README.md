@@ -173,7 +173,6 @@ there are many amazing projects out there.
 [nbqa]: https://github.com/nbQA-dev/nbQA
 [jpterm]: https://github.com/davidbrochart/jpterm
 [nbtermix]: https://github.com/mtatton/nbtermix
-[nbterm]: https://github.com/davidbrochart/nbterm
 [papermill]: https://github.com/nteract/papermill
 
 <!-- complimentary-tools-end -->
