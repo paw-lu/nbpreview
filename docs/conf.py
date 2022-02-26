@@ -157,3 +157,6 @@ favicons = [
         "static-file": "images/favicon/favicon.svg",
     },
 ]
+ogp_site_url = "https://nbpreview.readthedocs.io/"
+ogp_site_name = "nbpreview"
+ogp_image = "https://nbpreview.readthedocs.io/en/latest/_images/logo_light.svg"
