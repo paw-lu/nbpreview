@@ -1,7 +1,7 @@
 <!-- title-start -->
 
-![nbpreview light logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_light.svg?raw=True#gh-light-mode-only)
-![nbpreview dark logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_dark.svg?raw=True#gh-dark-mode-only)
+![nbpreview light logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_light.svg#gh-light-mode-only)
+![nbpreview dark logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_dark.svg#gh-dark-mode-only)
 
 # nbpreview
 
@@ -29,14 +29,14 @@ It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipyn
 
 <!-- github-only -->
 
-![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png?raw=True)
+![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png)
 
 ## Documentation
 
 nbpreview's [documentation] contains
 a detailed breakdown of its [features],
 [command-line usage][usage],
-and [instructions on how configure][configure] the tool.[^documentation]
+and [instructions on how to configure][configure] the tool.[^documentation]
 
 ## Features
 
@@ -115,7 +115,7 @@ please [file an issue][issues] along with a detailed description.
 
 <!-- similar-tools-start -->
 
-Thanks to [@joouha] for [maintaining list of these tools][euporie_similar_tools].
+Thanks to [@joouha] for [maintaining a list of these tools][euporie_similar_tools].
 Many of the projects here were found directly on their page.
 
 - [ipynb-term](https://github.com/PaulEcoffet/ipynbviewer)
@@ -173,7 +173,6 @@ there are many amazing projects out there.
 [nbqa]: https://github.com/nbQA-dev/nbQA
 [jpterm]: https://github.com/davidbrochart/jpterm
 [nbtermix]: https://github.com/mtatton/nbtermix
-[nbterm]: https://github.com/davidbrochart/nbterm
 [papermill]: https://github.com/nteract/papermill
 
 <!-- complimentary-tools-end -->
@@ -196,12 +195,12 @@ there are some other projects that directly enabled the development of nbpreview
   Many of nbpreview's features and command-line options are directly adopted from [bat].
 - **[Hypermodern Python Cookiecutter]**
   is the template this project was generated on.
-  It is a fantastic template that integrates [Poetry],
+  It is a fantastic project that integrates [Poetry],
   [Nox],
   and [pre-commit].
-  It's responsible for most of the underlying structure of this project's CI.
+  It's responsible for most of this project's CI.
 - **[justcharts]**
-  is used in this project
+  is directly used by this project
   to generate the Vega and Vega-Lite charts.
 
 [bat]: https://github.com/sharkdp/bat
