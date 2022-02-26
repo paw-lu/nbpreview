@@ -1,4 +1,5 @@
 """Nox sessions."""
+import datetime
 import os
 import pathlib
 import shutil
@@ -116,7 +117,13 @@ def safety(session: Session) -> None:
     """Scan dependencies for insecure packages."""
     requirements = session.poetry.export_requirements()
     session.install("safety")
-    session.run("safety", "check", "--full-report", f"--file={requirements}")
+    # Safety should update its DB within a month
+    if datetime.date(2022, 3, 22) < datetime.date.today():
+        raise ValueError("Remove 44715 ignore.")  # noqa: TC003
+    # https://github.com/numpy/numpy/issues/19038
+    session.run(
+        "safety", "check", "--ignore=44715", "--full-report", f"--file={requirements}"
+    )
 
 
 @session(python=python_versions)
