@@ -8,7 +8,7 @@
 
 ```{include} ../README.md
 ---
-start-after: <!-- title-end -->
+start-after: <!-- non-https-badges-end -->
 end-before: <!-- github-only -->
 ---
 ```
