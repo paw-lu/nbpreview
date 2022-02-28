@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nbpreview"
-version = "0.6.0"
+version = "0.7.0"
 description = "nbpreview"
 authors = ["Paulo S. Costa <Paulo.S.Costa5@gmail.com>"]
 license = "MIT"
@@ -9,7 +9,7 @@ homepage = "https://github.com/paw-lu/nbpreview"
 repository = "https://github.com/paw-lu/nbpreview"
 documentation = "https://nbpreview.readthedocs.io"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -79,7 +79,7 @@ myst-parser = "^0.17.0"
 sphinxext-opengraph = "^0.6.1"
 sphinx-copybutton = "^0.5.0"
 sphinx-design = "^0.0.13"
-sphinx-autodoc-typehints = "^1.16.0"
+sphinx-autodoc-typehints = "^1.17.0"
 tomli = "^2.0.1"
 sphinx-favicon = "^0.2"
 

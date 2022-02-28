@@ -25,6 +25,7 @@ intersphinx_mapping = {
 }
 autodoc_typehints = "description"
 myst_heading_anchors = 3
+myst_enable_extensions = ["dollarmath"]
 html_theme = "furo"
 pygments_style = "material"
 pygments_dark_style = "material"
@@ -157,3 +158,6 @@ favicons = [
         "static-file": "images/favicon/favicon.svg",
     },
 ]
+ogp_site_url = "https://nbpreview.readthedocs.io/"
+ogp_site_name = "nbpreview"
+ogp_image = "https://nbpreview.readthedocs.io/en/latest/_images/logo_light.svg"
