@@ -146,10 +146,25 @@ class HTMLDataFrameRender:
     """Rich counterpart of HTML table."""
 
     unicode: bool
+    min_width: int = 4
 
     def __post_init__(self) -> None:
         """Constructor."""
         self.table = table.create_table(unicode=self.unicode)
+        self.column_widths: Union[List[int], None] = None
+
+    def _update_column_widths(self, row: List[Text]) -> None:
+        """Update the column widths with the current row."""
+        row_widths = [text.cell_len for text in row]
+        if self.column_widths is None:
+            self.column_widths = row_widths
+        else:
+            self.column_widths = [
+                max(current_column_width, row_column_width)
+                for current_column_width, row_column_width in zip(
+                    self.column_widths, row_widths
+                )
+            ]
 
     def add_headers(self, column_rows: List[HtmlElement]) -> None:
         """Add headers to table."""
@@ -169,6 +184,7 @@ class HTMLDataFrameRender:
                 table_row.extend(table_element)
 
             end_section = i == n_column_rows - 1
+            self._update_column_widths(table_row)
             self.table.add_row(*table_row, end_section=end_section)
 
     def add_data(self, data_rows: List[HtmlElement]) -> None:
@@ -202,6 +218,7 @@ class HTMLDataFrameRender:
                 + current_row_spans.get(column, 0)
                 for column in previous_row_spans.keys() | current_row_spans.keys()
             }
+            self._update_column_widths(table_row)
             self.table.add_row(*table_row)
 
         if table.is_only_header(self.table):
@@ -212,6 +229,11 @@ class HTMLDataFrameRender:
         self, console: Console, options: ConsoleOptions
     ) -> Iterator[Table]:
         """Render the DataFrame table."""
+        if self.column_widths is not None:
+            for table_column, column_width in zip(
+                self.table.columns, self.column_widths
+            ):
+                table_column.min_width = min(column_width, self.min_width)
         yield self.table
 
     def __rich_measure__(

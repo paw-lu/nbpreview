@@ -1178,6 +1178,134 @@ def test_render_dataframe(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def test_render_wide_dataframe(
+    rich_notebook_output: RichOutput,
+    mock_tempfile_file: Generator[Mock, None, None],
+    remove_link_ids: Callable[[str], str],
+    tempfile_path: Path,
+) -> None:
+    """It enforces a minimum width when rendering wide DataFrame."""
+    code_cell = {
+        "cell_type": "code",
+        "execution_count": 5,
+        "id": "8159273d-c026-41eb-9ce1-d65eee43d996",
+        "metadata": {},
+        "outputs": [
+            {
+                "data": {
+                    "text/html": (
+                        "<div>\n"
+                        "<style scoped>\n"
+                        "    .dataframe tbody tr th:only-of-type {\n"
+                        "        vertical-align: middle;\n"
+                        "    }\n"
+                        "\n"
+                        "    .dataframe tbody tr th {\n"
+                        "        vertical-align: top;\n"
+                        "    }\n"
+                        "\n"
+                        "    .dataframe thead th {\n"
+                        "        text-align: right;\n"
+                        "    }\n"
+                        "</style>\n"
+                        '<table border="1" class="dataframe">\n'
+                        "  <thead>\n"
+                        '    <tr style="text-align: right;">\n'
+                        "      <th></th>\n"
+                        "      <th>column_a</th>\n"
+                        "      <th>column_b</th>\n"
+                        "      <th>column_c</th>\n"
+                        "      <th>column_d</th>\n"
+                        "      <th>column_e</th>\n"
+                        "      <th>column_f</th>\n"
+                        "      <th>column_g</th>\n"
+                        "      <th>column_h</th>\n"
+                        "      <th>column_i</th>\n"
+                        "      <th>column_j</th>\n"
+                        "      <th>column_k</th>\n"
+                        "      <th>column_l</th>\n"
+                        "      <th>column_m</th>\n"
+                        "      <th>column_n</th>\n"
+                        "      <th>column_o</th>\n"
+                        "      <th>column_p</th>\n"
+                        "    </tr>\n"
+                        "  </thead>\n"
+                        "  <tbody>\n"
+                        "    <tr>\n"
+                        "      <th>0</th>\n"
+                        "      <td>0.224255</td>\n"
+                        "      <td>0.955221</td>\n"
+                        "      <td>0.118847</td>\n"
+                        "      <td>0.915454</td>\n"
+                        "      <td>0.227949</td>\n"
+                        "      <td>0.217764</td>\n"
+                        "      <td>0.274089</td>\n"
+                        "      <td>0.647812</td>\n"
+                        "      <td>0.597965</td>\n"
+                        "      <td>0.730008</td>\n"
+                        "      <td>0.138971</td>\n"
+                        "      <td>0.990093</td>\n"
+                        "      <td>0.606002</td>\n"
+                        "      <td>0.49736</td>\n"
+                        "      <td>0.249054</td>\n"
+                        "      <td>0.782283</td>\n"
+                        "    </tr>\n"
+                        "  </tbody>\n"
+                        "</table>\n"
+                        "</div>"
+                    ),
+                    "text/plain": (
+                        "   column_a  column_b  column_c  column_d"
+                        "  column_e  column_f  column_g  \\\n"
+                        "0  0.224255  0.955221  0.118847  0.915454"
+                        "  0.227949  0.217764  0.274089   \n"
+                        "\n"
+                        "   column_h column_i  column_j  column_k"
+                        "  column_l  column_m  column_n  \\\n"
+                        "0  0.647812  0.597965  0.730008  0.138971"
+                        "  0.990093  0.606002   0.49736   \n"
+                        "\n"
+                        "   column_o  column_p  \n"
+                        "0  0.249054  0.782283  "
+                    ),
+                },
+                "execution_count": 5,
+                "metadata": {},
+                "output_type": "execute_result",
+            }
+        ],
+        "source": "",
+    }
+    output = rich_notebook_output(code_cell)
+    expected_output = (
+        "     ╭──────────────────────────────────"
+        "───────────────────────────────────────╮"
+        "\n\x1b[38;5;247m[5]:\x1b[0m │                  "
+        "                                        "
+        "               │\n     ╰─────────────────"
+        "────────────────────────────────────────"
+        "────────────────╯\n                      "
+        "                                        "
+        "                  \n\x1b[38;5;247m[5]:\x1b[0m  "
+        f"\x1b]8;id=757847;file://{tempfile_path}0.html"
+        "\x1b\\\x1b[94m🌐 Click to view"
+        " HTML\x1b[0m\x1b]8;;\x1b\\                        "
+        "                             \n          "
+        "                                        "
+        "                              \n\x1b[38;5;24"
+        "7m[5]:\x1b[0m   \x1b[1m \x1b[0m   \x1b[1mcol…\x1b[0m   "
+        "\x1b[1mcol…\x1b[0m   \x1b[1mcol…\x1b[0m   \x1b[1mcol…\x1b["
+        "0m   \x1b[1mcol…\x1b[0m   \x1b[1mcol…\x1b[0m   \x1b[1mc"
+        "ol…\x1b[0m   \x1b[1mcol…\x1b[0m   \x1b[1mcol…\x1b[0m   "
+        "\x1b[1mcol…\x1b[0m  \n      ───────────────────"
+        "────────────────────────────────────────"
+        "───────────────\n       \x1b[1m0\x1b[0m   0.2… "
+        "  0.9…   0.1…   0.9…   0.2…   0.2…   0.2"
+        "…   0.6…   0.5…   0.7…  \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
 def test_only_header_dataframe(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
