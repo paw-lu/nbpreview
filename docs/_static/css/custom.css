@@ -30,6 +30,7 @@ h1 {
   text-decoration-style: solid;
   text-decoration-thickness: auto;
   text-transform: none;
+  padding-left: 0px;
 }
 h2 {
   font-size: 2rem;
@@ -49,6 +50,7 @@ h2 {
   text-decoration-style: solid;
   text-decoration-thickness: auto;
   text-transform: none;
+  padding-left: 0px;
 }
 h3 {
   font-size: 1.5rem;
@@ -67,6 +69,7 @@ h3 {
   text-decoration-style: solid;
   text-decoration-thickness: auto;
   text-transform: none;
+  padding-left: 0px;
 }
 h4 {
   font-size: 1.375rem;
@@ -86,6 +89,7 @@ h4 {
   text-decoration-style: solid;
   text-decoration-thickness: auto;
   text-transform: none;
+  padding-left: 0px;
 }
 .content {
   font-size: 1rem;
