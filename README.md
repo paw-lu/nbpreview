@@ -1,18 +1,13 @@
 <!-- title-start -->
 
-![nbpreview light logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_light.svg#gh-light-mode-only)
-![nbpreview dark logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_dark.svg#gh-dark-mode-only)
+![nbpreview light logo](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/logo_light.svg#gh-light-mode-only)
+![nbpreview dark logo](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/logo_dark.svg#gh-dark-mode-only)
 
 # nbpreview
 
 <!-- title-end -->
 
-<!-- non-https-badges-start -->
-
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-
-<!-- non-https-badges-end -->
-
 [![PyPI](https://img.shields.io/pypi/v/nbpreview.svg)](https://pypi.org/project/nbpreview/)
 [![Status](https://img.shields.io/pypi/status/nbpreview.svg)](https://pypi.org/project/nbpreview/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nbpreview)](https://pypi.org/project/nbpreview)
@@ -32,7 +27,7 @@ It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html) for ipynb file
 
 <!-- github-only -->
 
-![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png)
+![Hero image](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/hero_image.png)
 
 ## Documentation
 

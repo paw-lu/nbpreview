@@ -8,7 +8,7 @@
 
 ```{include} ../README.md
 ---
-start-after: <!-- non-https-badges-end -->
+start-after: (http://mypy-lang.org/)
 end-before: <!-- github-only -->
 ---
 ```
