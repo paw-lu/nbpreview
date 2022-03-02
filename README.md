@@ -26,9 +26,7 @@
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
 A terminal viewer for Jupyter notebooks.
-It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipynb files.
-
-[^cat]: No, _nbpreview does not actually concatenate files_—but it does print them.
+It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html) for ipynb files.
 
 [documentation]: https://nbpreview.readthedocs.io/
 
@@ -41,7 +39,7 @@ It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipyn
 nbpreview's [documentation] contains
 a detailed breakdown of its [features],
 [command-line usage][usage],
-and [instructions on how to configure][configure] the tool.[^documentation]
+and [instructions on how to configure][configure] the tool.
 
 ## Features
 
@@ -216,8 +214,6 @@ there are some other projects that directly enabled the development of nbpreview
 [pre-commit]: https://pre-commit.com/
 
 <!-- credits-end -->
-
-[^documentation]: Thanks to [Furo], [MyST], and [Rich][exporting_rich_console].
 
 [configure]: https://nbpreview.readthedocs.io/configure.html
 [contributing]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
