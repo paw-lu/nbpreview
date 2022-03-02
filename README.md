@@ -1,7 +1,7 @@
 <!-- title-start -->
 
-![nbpreview light logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_light.svg#gh-light-mode-only)
-![nbpreview dark logo](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/logo_dark.svg#gh-dark-mode-only)
+![nbpreview light logo](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/logo_light.svg#gh-light-mode-only)
+![nbpreview dark logo](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/logo_dark.svg#gh-dark-mode-only)
 
 # nbpreview
 
@@ -34,7 +34,7 @@ It's like [cat](https://man7.org/linux/man-pages/man1/cat.1.html)[^cat] for ipyn
 
 <!-- github-only -->
 
-![Hero image](https://github.com/paw-lu/nbpreview/blob/main/docs/_static/images/hero_image.png)
+![Hero image](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/images/hero_image.png)
 
 ## Documentation
 
