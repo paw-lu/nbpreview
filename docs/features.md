@@ -450,9 +450,6 @@ file: _static/examples/dataframe.html
 ---
 ```
 
-nbpreview will use the fallback default text representation of the DataFrame
-if the {option}`--plain <nbpreview --plain>` option is used.
-
 ## Vega and VegaLite charts
 
 nbpreview will renderer static previews of [Vega and VegaLite charts][vega_example]
