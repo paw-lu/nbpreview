@@ -3,6 +3,7 @@ import collections
 import dataclasses
 import enum
 import json
+import re
 from pathlib import Path
 from typing import ClassVar, Dict, Iterator, List, Optional, Union
 
@@ -474,45 +475,13 @@ class PDFDisplay(DisplayData):
         return cls(content, nerd_font=nerd_font, unicode=unicode)
 
 
-def _render_html(
-    data: Data,
-    theme: str,
-    nerd_font: bool,
-    unicode: bool,
-    images: bool,
-    image_drawing: ImageDrawing,
-    color: bool,
-    negative_space: bool,
-    hyperlinks: bool,
-    files: bool,
-    hide_hyperlink_hints: bool,
-    relative_dir: Path,
-    characters: Optional[str] = None,
-) -> Union[DataFrameDisplay, HTMLDisplay]:
-    """Render HTML output."""
-    display_data: Union[DataFrameDisplay, HTMLDisplay]
-    html_data = data["text/html"]
-    dataframe_display_type = DataFrameDisplay.dataframe_display_type(html_data)
-    styled = dataframe_display_type == DataFrameDisplayType.STYLED
-    if dataframe_display_type is not None:
-        display_data = DataFrameDisplay.from_data(data, unicode=unicode, styled=styled)
-    else:
-        display_data = HTMLDisplay.from_data(
-            data,
-            theme=theme,
-            nerd_font=nerd_font,
-            unicode=unicode,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-            relative_dir=relative_dir,
-        )
-    return display_data
+def _has_custom_repr(data: Data) -> bool:
+    """Rough logic to check if data has a custom representation."""
+    repr_pattern = r"\<([^\s<>]|[^\S\n\v\f\r\u2028\u2029])+\>"
+    has_custom_repr = (
+        plain_text := data.get("text/plain")
+    ) is not None and re.fullmatch(repr_pattern, plain_text, flags=re.UNICODE) is None
+    return has_custom_repr
 
 
 def _choose_basic_renderer(
@@ -529,9 +498,44 @@ def _choose_basic_renderer(
     hide_hyperlink_hints: bool,
     relative_dir: Path,
     characters: Optional[str] = None,
-) -> Union[MarkdownDisplay, LaTeXDisplay, JSONDisplay, PDFDisplay, PlainDisplay, None]:
+) -> Union[
+    DataFrameDisplay,
+    HTMLDisplay,
+    MarkdownDisplay,
+    LaTeXDisplay,
+    JSONDisplay,
+    PDFDisplay,
+    PlainDisplay,
+    None,
+]:
     """Render straightforward text data."""
     display_data: DisplayData
+    if (html_data := data.get("text/html")) is not None:
+        if (
+            dataframe_display_type := DataFrameDisplay.dataframe_display_type(html_data)
+        ) is not None:
+            styled = dataframe_display_type == DataFrameDisplayType.STYLED
+            display_data = DataFrameDisplay.from_data(
+                data, unicode=unicode, styled=styled
+            )
+            return display_data
+        if not _has_custom_repr(data):
+            display_data = HTMLDisplay.from_data(
+                data,
+                theme=theme,
+                nerd_font=nerd_font,
+                unicode=unicode,
+                images=images,
+                image_drawing=image_drawing,
+                color=color,
+                negative_space=negative_space,
+                hyperlinks=hyperlinks,
+                files=files,
+                hide_hyperlink_hints=hide_hyperlink_hints,
+                characters=characters,
+                relative_dir=relative_dir,
+            )
+            return display_data
     if "text/markdown" in data:
         display_data = MarkdownDisplay.from_data(
             data,
@@ -603,37 +607,19 @@ def render_display_data(
                 if display_data is not None:
                     return display_data
 
-    if not plain and "text/html" in data:
-        display_data = _render_html(
-            data,
-            unicode=unicode,
-            theme=theme,
-            nerd_font=nerd_font,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-            relative_dir=relative_dir,
-        )
-        return display_data
-    else:
-        display_data = _choose_basic_renderer(
-            data,
-            unicode=unicode,
-            nerd_font=nerd_font,
-            theme=theme,
-            images=images,
-            image_drawing=image_drawing,
-            color=color,
-            negative_space=negative_space,
-            hyperlinks=hyperlinks,
-            files=files,
-            hide_hyperlink_hints=hide_hyperlink_hints,
-            characters=characters,
-            relative_dir=relative_dir,
-        )
-        return display_data
+    display_data = _choose_basic_renderer(
+        data,
+        unicode=unicode,
+        nerd_font=nerd_font,
+        theme=theme,
+        images=images,
+        image_drawing=image_drawing,
+        color=color,
+        negative_space=negative_space,
+        hyperlinks=hyperlinks,
+        files=files,
+        hide_hyperlink_hints=hide_hyperlink_hints,
+        characters=characters,
+        relative_dir=relative_dir,
+    )
+    return display_data
