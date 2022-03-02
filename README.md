@@ -7,12 +7,7 @@
 
 <!-- title-end -->
 
-<!-- non-https-badges-start -->
-
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-
-<!-- non-https-badges-end -->
-
 [![PyPI](https://img.shields.io/pypi/v/nbpreview.svg)](https://pypi.org/project/nbpreview/)
 [![Status](https://img.shields.io/pypi/status/nbpreview.svg)](https://pypi.org/project/nbpreview/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nbpreview)](https://pypi.org/project/nbpreview)
