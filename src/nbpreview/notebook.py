@@ -17,12 +17,6 @@ from nbpreview import errors
 from nbpreview.component import row
 from nbpreview.component.content.output.result.drawing import ImageDrawing
 
-# terminedia depends on fcntl, which is not present on Windows platforms
-try:
-    import terminedia  # noqa: F401
-except ModuleNotFoundError:
-    pass
-
 # Fake KeepOpenFile used to avoid non-subscriptable error
 # https://github.com/python/mypy/issues/5264
 if typing.TYPE_CHECKING:  # pragma: no cover

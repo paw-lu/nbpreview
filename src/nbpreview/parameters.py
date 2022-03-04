@@ -12,7 +12,7 @@ from click.shell_completion import CompletionItem
 from rich import box, console, panel, syntax
 
 from nbpreview import __version__, option_values
-from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum, ThemeEnum
+from nbpreview.option_values import ColorSystemEnum, ThemeEnum
 
 
 def version_callback(value: Optional[bool] = None) -> None:
@@ -99,28 +99,6 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
             else:
                 stdout_console.print(theme_title)
         raise typer.Exit()
-
-
-def _image_drawing_option_callback(
-    ctx: Context, image_drawing_value: Union[ImageDrawingEnum, None]
-) -> Union[str, None]:
-    """Check if the image drawing option is valid."""
-    if image_drawing_value == option_values.ImageDrawingEnum.BLOCK:
-        try:
-            import terminedia  # noqa: F401
-
-        except ModuleNotFoundError as exception:
-            message = (
-                f"'{image_drawing_value.value}' cannot be"
-                " used on this system. This might be because it is"
-                " being run on Windows."
-            )
-            raise typer.BadParameter(message=message, ctx=ctx) from exception
-    if image_drawing_value is None:
-        return image_drawing_value
-
-    else:
-        return image_drawing_value.value
 
 
 def _stdin_path_callback(ctx: Context, file_value: List[Path]) -> List[Path]:
@@ -370,7 +348,6 @@ image_drawing_option = typer.Option(
     " 'character', or 'braille'. 'block' might raise issues on Windows.",
     envvar="NBPREVIEW_IMAGE_DRAWING",
     case_sensitive=False,
-    callback=_image_drawing_option_callback,
 )
 color_option = typer.Option(
     None,
