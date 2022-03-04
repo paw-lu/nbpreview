@@ -320,7 +320,7 @@ file: _static/examples/markdown.html
 ## Images
 
 Thanks to [Picharsso]
-and [Terminedia],
+and {class}`term-img <term_img.image.TermImage>`,
 nbpreview renders images.
 
 ### Drawing types
@@ -329,12 +329,15 @@ The {option}`--image-drawing <nbpreview --image-drawing>`
 (or {option}`--id <nbpreview --id>`)
 option can be used to control the method nbpreview uses to draw images.
 
-```{attention}
-{option}`--image-drawing='block' <nbpreview --image-drawing>`
-is currently not supported on Windows.[^windows_support]
-```
-
 `````{tab-set}
+
+````{tab-item} block
+```{raw} html
+---
+file: _static/examples/images_block.html
+---
+```
+````
 
 ````{tab-item} character
 ```{raw} html
@@ -348,14 +351,6 @@ file: _static/examples/images_character.html
 ```{raw} html
 ---
 file: _static/examples/images_braille.html
----
-```
-````
-
-````{tab-item} block
-```{raw} html
----
-file: _static/examples/images_block.html
 ---
 ```
 ````
@@ -559,9 +554,7 @@ file: _static/examples/traceback.html
 [^jq]: [jq][jq_documentation] is a command-line JSON processor. Since Jupyter notebook (`ipynb`) files are in a JSON format, it can be used to filter and transform cells.
 [^nerd_fonts]: [Nerd Fonts] are fonts patched with support for extra icons.
 [^web_warning]: Like always, do not view notebooks from untrusted sources.
-[^windows_support]: This is due to a dependency on {py:mod}`fcntl`—which is not available on Windows. See [#26].
 
-[#26]: https://github.com/jsbueno/terminedia/issues/26
 [curl_manpage]: https://linux.die.net/man/1/curl
 [fgrep_manpage]: https://linux.die.net/man/1/fgrep
 [html2text]: http://alir3z4.github.io/html2text/
@@ -569,7 +562,6 @@ file: _static/examples/traceback.html
 [jq_documentation]: https://stedolan.github.io/jq/
 [justcharts]: https://github.com/koaning/justcharts
 [nerd fonts]: https://www.nerdfonts.com/
-[terminedia]: https://github.com/jsbueno/terminedia
 [picharsso]: https://kelvindecosta.github.io/picharsso/
 [pygments]: https://github.com/pygments/pygments
 [vega_example]: https://github.com/jupyterlab/jupyterlab/blob/master/examples/vega/vega-extension.ipynb

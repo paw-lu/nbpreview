@@ -345,7 +345,7 @@ image_drawing_option = typer.Option(
     "--image-drawing",
     "--id",
     help="The type of image drawing. Accepted values are 'block',"
-    " 'character', or 'braille'. 'block' might raise issues on Windows.",
+    " 'character', or 'braille'.",
     envvar="NBPREVIEW_IMAGE_DRAWING",
     case_sensitive=False,
 )
