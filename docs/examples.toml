@@ -54,9 +54,17 @@ override.metadata.kernelspec.name = "julia-1.7"
 [[examples]]
 cells_filename = "markdown.json"
 notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
 notebook_kwargs.relative_dir = "_static/images"
 example_filename = "markdown.html"
-args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
 substitute_links.1 = "_static/images/emoji_u1f422.png"
 
 [[examples]]
@@ -69,8 +77,16 @@ substitute_links.0 = "_static/generated_html/dataframe.html"
 [[examples]]
 cells_filename = "vega.json"
 notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "character"
 example_filename = "vega.html"
-args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "character",
+    "notebook.ipynb",
+]
 substitute_links.0 = "_static/generated_html/vega.html"
 
 [[examples]]
@@ -104,8 +120,16 @@ substitute_links.0 = "_static/generated_html/html.html"
 [[examples]]
 cells_filename = "links.json"
 notebook_kwargs.theme = "material"
+notebook_kwargs.image_drawing = "block"
 example_filename = "links.html"
-args = ["nbpreview", "--theme", "material", "notebook.ipynb"]
+args = [
+    "nbpreview",
+    "--theme",
+    "material",
+    "--image-drawing",
+    "block",
+    "notebook.ipynb",
+]
 substitute_links.0 = "_static/generated_html/links_table.html"
 substitute_links.1 = "_static/images/links_plot.png"
 substitute_links.2 = "_static/generated_html/links_vega.html"
