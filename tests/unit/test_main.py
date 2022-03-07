@@ -784,6 +784,7 @@ def test_no_color_no_image(test_cli: Callable[..., None]) -> None:
         ("--image-drawing", "braille", None),
         ("--id", "character", None),
         (None, None, "braille"),
+        ("--image-drawing", "block", None),
     ),
 )
 def test_image_drawing_notebook_file(
