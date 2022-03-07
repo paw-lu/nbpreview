@@ -331,11 +331,6 @@ def _render_character_drawing(
     characters = characters if characters is not None else gradient.DEFAULT_CHARSET
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-
-    except PIL.UnidentifiedImageError:
-        rendered_character_drawing = (render_fallback_text(fallback_text),)
-
-    else:
         dimensions = DrawingDimension(
             image=pil_image, max_width=max_width, max_height=max_height
         )
@@ -351,6 +346,11 @@ def _render_character_drawing(
             negative=negative_space,
         )
         drawing = drawer(pil_image)
+
+    except (PIL.UnidentifiedImageError, ValueError):
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
         pil_image.close()
 
         decoder = ansi.AnsiDecoder()
@@ -451,11 +451,6 @@ def _render_braille_drawing(
     rendered_character_drawing: Tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-
-    except PIL.UnidentifiedImageError:
-        rendered_character_drawing = (render_fallback_text(fallback_text),)
-
-    else:
         dimensions = DrawingDimension(
             image=pil_image, max_width=max_width, max_height=max_height
         )
@@ -471,6 +466,10 @@ def _render_braille_drawing(
         drawing = drawer(pil_image)
         pil_image.close()
 
+    except (PIL.UnidentifiedImageError, ValueError):
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
         decoder = ansi.AnsiDecoder()
         rendered_character_drawing = tuple(decoder.decode(drawing))
 
