@@ -76,6 +76,9 @@ def _pick_image_drawing(
     option: Union[ImageDrawing, None],
     unicode: bool,
     color: bool,
+    legacy_windows: bool,
+    ascii_only: bool,
+    color_system: Union[str, None],
 ) -> ImageDrawing:
     """Pick an image render option.
 
@@ -86,6 +89,11 @@ def _pick_image_drawing(
         unicode (bool): Whether to use unicode characters to
             render the notebook. By default will autodetect.
         color (bool): Whether to use color.
+        legacy_windows (bool): Whether rendering to a legacy windows
+            terminal.
+        ascii_only (bool): Whether to render using only ascii
+            characters.
+        color_system (Union[str, None]): The color system to use.
 
     Returns:
         Union[Literal["block", "character", "braille"] ImageDrawingEnum]:
@@ -93,10 +101,19 @@ def _pick_image_drawing(
     """
     image_render: ImageDrawing
     if option is None:
-        # Block is too slow to offer as a sensible default
-        # Braille can not do negative space, and most notebook's primary
-        # images are plots with light backgrounds
-        image_render = "character"
+        image_render = (
+            "block"
+            if all(
+                [
+                    unicode,
+                    color,
+                    not legacy_windows,
+                    not ascii_only,
+                    color_system is not None,
+                ]
+            )
+            else "character"
+        )
 
     else:
         image_render = option
@@ -377,7 +394,12 @@ class Notebook:
         color = pick_option(self.color, detector=options.is_terminal)
         images = pick_option(self.images, detector=options.is_terminal and color)
         image_drawing = _pick_image_drawing(
-            self.image_drawing, unicode=unicode, color=color
+            self.image_drawing,
+            unicode=unicode,
+            color=color,
+            legacy_windows=options.legacy_windows,
+            ascii_only=options.ascii_only,
+            color_system=console.color_system,
         )
         rendered_notebook = _render_notebook(
             self.cells,
