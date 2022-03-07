@@ -806,6 +806,17 @@ def test_image_drawing_notebook_file(
 
 
 @pytest.mark.parametrize(
+    "option_name, drawing_type",
+    [("--image-drawing", "braille"), ("--image-drawing", "block")],
+)
+def test_render_narrow_notebook(
+    option_name: str, drawing_type: str, test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook when the width is small."""
+    test_cli(f"{option_name}={drawing_type}", "--width=4")
+
+
+@pytest.mark.parametrize(
     "option_name, env_name, env_value",
     (
         ("--color", None, None),
