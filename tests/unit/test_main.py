@@ -718,7 +718,7 @@ def test_positive_space_output_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
     """It draws images in positive space if options are specified."""
-    test_cli(option_name, nbpreview_positive_space=env)
+    test_cli(option_name, "--image-drawing=character", nbpreview_positive_space=env)
 
 
 @pytest.mark.parametrize(
