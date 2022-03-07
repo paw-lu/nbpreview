@@ -372,8 +372,7 @@ option.
 
 ```{attention}
 {option}`--positive-space <nbpreview --positive-space>`
-only works on {option}`--image-drawing='character' <nbpreview --image-drawing>`—the
-default value.
+only works on {option}`--image-drawing='character' <nbpreview --image-drawing>`.
 {option}`--image-drawing='braille' <nbpreview --image-drawing>`
 only draws in positive space.
 ```
