@@ -18,8 +18,8 @@ def image() -> Image:
 
 def test_drawing_repr() -> None:
     """It has a string representation."""
-    draw = drawing.UnicodeDrawing(image=b"123", fallback_text="Hello")
-    expected_output = "UnicodeDrawing(image=123, fallback_text=Hello)"
+    draw = drawing.BlockDrawing(image=b"123", fallback_text="Hello")
+    expected_output = "BlockDrawing(image=123, fallback_text=Hello)"
     output = draw.__repr__()
     assert output == expected_output
 
@@ -206,8 +206,8 @@ def image_data() -> Data:
 
 def test_unicode_drawing_from_data(image_data: Data) -> None:
     """It instantiates from image data."""
-    output = drawing.UnicodeDrawing.from_data(data=image_data, image_type="image")
-    expected_output = drawing.UnicodeDrawing(image=b"a", fallback_text="fallback_text")
+    output = drawing.BlockDrawing.from_data(data=image_data, image_type="image")
+    expected_output = drawing.BlockDrawing(image=b"a", fallback_text="fallback_text")
     assert output.__dict__ == expected_output.__dict__
 
 

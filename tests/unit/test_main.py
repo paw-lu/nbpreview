@@ -9,7 +9,6 @@ import os
 import pathlib
 import platform
 import shlex
-import sys
 import tempfile
 import textwrap
 from pathlib import Path
@@ -41,7 +40,6 @@ from rich import box, console, panel, style, text
 
 import nbpreview
 from nbpreview import __main__
-from tests.unit import test_notebook
 
 
 class RunCli(Protocol):
@@ -720,7 +718,7 @@ def test_positive_space_output_notebook_file(
     option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
 ) -> None:
     """It draws images in positive space if options are specified."""
-    test_cli(option_name, nbpreview_positive_space=env)
+    test_cli(option_name, "--image-drawing=character", nbpreview_positive_space=env)
 
 
 @pytest.mark.parametrize(
@@ -786,6 +784,7 @@ def test_no_color_no_image(test_cli: Callable[..., None]) -> None:
         ("--image-drawing", "braille", None),
         ("--id", "character", None),
         (None, None, "braille"),
+        ("--image-drawing", "block", None),
     ),
 )
 def test_image_drawing_notebook_file(
@@ -806,22 +805,15 @@ def test_image_drawing_notebook_file(
     )
 
 
-@pytest.mark.xfail(
-    "terminedia" in sys.modules,
-    reason=test_notebook.SKIP_TERMINEDIA_REASON,
-    strict=True,
+@pytest.mark.parametrize(
+    "option_name, drawing_type",
+    [("--image-drawing", "braille"), ("--image-drawing", "block")],
 )
-def test_message_failed_terminedia_import(cli_arg: Callable[..., str]) -> None:
-    """It raises a user-friendly warning message if import fails."""
-    output = cli_arg("--image-drawing=block")
-    expected_output = (
-        "Usage: main [OPTIONS] [FILE]..."
-        "\nTry 'main --help' for help."
-        "\n\nError: Invalid value for '--image-drawing' / '--id':"
-        " 'block' cannot be used on this system."
-        " This might be because it is being run on Windows.\n"
-    )
-    assert output == expected_output
+def test_render_narrow_notebook(
+    option_name: str, drawing_type: str, test_cli: Callable[..., None]
+) -> None:
+    """It renders a notebook when the width is small."""
+    test_cli(f"{option_name}={drawing_type}", "--width=4")
 
 
 @pytest.mark.parametrize(

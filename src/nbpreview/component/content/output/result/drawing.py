@@ -18,15 +18,10 @@ from rich import ansi, measure, style, text
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
+from term_img import image as term_image
 
 from nbpreview.data import Data
 from nbpreview.option_values import ImageDrawingEnum
-
-# terminedia depends on fcntl, which is not present on Windows platforms
-try:
-    import terminedia
-except ModuleNotFoundError:
-    pass
 
 
 class Size(typing.NamedTuple):
@@ -96,7 +91,7 @@ def choose_drawing(
     rendered_image: Drawing
     if image is not None and image_type != "image/svg+xml":
         if image_drawing == "block":
-            rendered_image = UnicodeDrawing(image=image, fallback_text=fallback_text)
+            rendered_image = BlockDrawing(image=image, fallback_text=fallback_text)
             return rendered_image
 
         elif image_drawing == "braille":
@@ -237,7 +232,7 @@ def render_fallback_text(fallback_text: str) -> Text:
     return rendered_fallback_text
 
 
-@functools.lru_cache(maxsize=2 ** 12)
+@functools.lru_cache(maxsize=2**12)
 def _render_block_drawing(
     image: bytes, max_width: int, max_height: int, fallback_text: str
 ) -> Tuple[Text, ...]:
@@ -245,47 +240,23 @@ def _render_block_drawing(
     rendered_unicode_drawing: Tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
+        block_image = term_image.TermImage(pil_image)
+        block_image.set_size(maxsize=(max_width, max_height))
+        string_image = str(block_image)
+        pil_image.close()
 
-    except PIL.UnidentifiedImageError:
+    except (PIL.UnidentifiedImageError, ValueError):
         rendered_unicode_drawing = (render_fallback_text(fallback_text=fallback_text),)
 
     else:
-        dimensions = DrawingDimension(
-            pil_image, max_width=max_width, max_height=max_height
-        )
-        character_dimensions = CharacterDimensions(
-            bottleneck=dimensions.bottleneck, max_width=max_width, max_height=max_height
-        )
-        # terminedia takes a scaled versions of y
-        scaled_y = (
-            character_dimensions.height * dimensions.scaling_factor
-            if character_dimensions.height is not None
-            else None
-        )
-        size = Size(
-            x=character_dimensions.width,
-            y=scaled_y,
-        )
-
-        shape = terminedia.shape(
-            pil_image,
-            size=size,
-            promote=True,
-            resolution="square",
-        )
-        pil_image.close()
-
-        output = io.StringIO()
-        shape.render(output=output, backend="ANSI")
-        string_image = output.getvalue()
         decoder = ansi.AnsiDecoder()
         rendered_unicode_drawing = tuple(decoder.decode(string_image))
 
     return rendered_unicode_drawing
 
 
-class UnicodeDrawing(Drawing):
-    """A unicode representation of an image."""
+class BlockDrawing(Drawing):
+    """A block representation of an image."""
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -300,7 +271,7 @@ class UnicodeDrawing(Drawing):
         yield from rendered_unicode_drawing
 
     @classmethod
-    def from_data(cls, data: Data, image_type: str) -> "UnicodeDrawing":
+    def from_data(cls, data: Data, image_type: str) -> "BlockDrawing":
         """Create a drawing from notebook data."""
         encoded_image = data[image_type]
         fallback_text = data.get("text/plain", "Image")
@@ -345,7 +316,7 @@ class CharacterDimensions:
         self.height = height
 
 
-@functools.lru_cache(maxsize=2 ** 12)
+@functools.lru_cache(maxsize=2**12)
 def _render_character_drawing(
     image: bytes,
     color: bool,
@@ -360,11 +331,6 @@ def _render_character_drawing(
     characters = characters if characters is not None else gradient.DEFAULT_CHARSET
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-
-    except PIL.UnidentifiedImageError:
-        rendered_character_drawing = (render_fallback_text(fallback_text),)
-
-    else:
         dimensions = DrawingDimension(
             image=pil_image, max_width=max_width, max_height=max_height
         )
@@ -380,6 +346,11 @@ def _render_character_drawing(
             negative=negative_space,
         )
         drawing = drawer(pil_image)
+
+    except (PIL.UnidentifiedImageError, ValueError):
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
         pil_image.close()
 
         decoder = ansi.AnsiDecoder()
@@ -468,7 +439,7 @@ class CharacterDrawing(Drawing):
         return measure.Measurement(minimum=minimum, maximum=options.max_width)
 
 
-@functools.lru_cache(maxsize=2 ** 12)
+@functools.lru_cache(maxsize=2**12)
 def _render_braille_drawing(
     image: bytes,
     color: bool,
@@ -480,11 +451,6 @@ def _render_braille_drawing(
     rendered_character_drawing: Tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-
-    except PIL.UnidentifiedImageError:
-        rendered_character_drawing = (render_fallback_text(fallback_text),)
-
-    else:
         dimensions = DrawingDimension(
             image=pil_image, max_width=max_width, max_height=max_height
         )
@@ -500,6 +466,10 @@ def _render_braille_drawing(
         drawing = drawer(pil_image)
         pil_image.close()
 
+    except (PIL.UnidentifiedImageError, ValueError):
+        rendered_character_drawing = (render_fallback_text(fallback_text),)
+
+    else:
         decoder = ansi.AnsiDecoder()
         rendered_character_drawing = tuple(decoder.decode(drawing))
 

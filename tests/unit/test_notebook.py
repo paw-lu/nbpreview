@@ -5,7 +5,6 @@ import json
 import os
 import pathlib
 import re
-import sys
 import textwrap
 from pathlib import Path
 from typing import (
@@ -30,11 +29,6 @@ from rich import console
 
 from nbpreview import notebook
 from nbpreview.component.content.output.result.drawing import ImageDrawing
-
-SKIP_TERMINEDIA_REASON = (
-    "terminedia is used to draw the images using block characters, and"
-    " is not importable on some systems due to a dependency on fcntl."
-)
 
 
 class RichOutput(Protocol):
@@ -4556,10 +4550,6 @@ def test_render_unknown_data_type(rich_notebook_output: RichOutput) -> None:
     assert output == expected_output
 
 
-@pytest.mark.skipif(
-    "terminedia" not in sys.modules,
-    reason=SKIP_TERMINEDIA_REASON,
-)
 def test_render_block_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
@@ -4710,10 +4700,6 @@ def test_render_block_image(
     assert remove_link_ids(output) == expected_output
 
 
-@pytest.mark.skipif(
-    "terminedia" not in sys.modules,
-    reason=SKIP_TERMINEDIA_REASON,
-)
 def test_render_invalid_block_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
@@ -4775,10 +4761,6 @@ def test_render_invalid_block_image(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
-@pytest.mark.skipif(
-    "terminedia" not in sys.modules,
-    reason=SKIP_TERMINEDIA_REASON,
-)
 def test_render_height_constrained_block_image(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
