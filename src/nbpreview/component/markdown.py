@@ -219,7 +219,7 @@ class CustomImageItem(markdown.ImageItem):
         self.destination = destination
         if not validators.url(self.destination):
             # destination comes in a url quoted format, which will turn
-            # Windows-like paths into %5c, unquote here to that pathlib
+            # Windows-like paths into %5c, unquote here so that pathlib
             # understands correctly
             destination_path = pathlib.Path(parse.unquote(self.destination))
 
