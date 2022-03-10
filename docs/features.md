@@ -520,11 +520,18 @@ option.
 ## Nerd Fonts
 
 By default,
-nbpreview uses emoji icons to denote certain
-content—[like clickable links][hyperlinks].
+nbpreview uses emoji to highlight certain content
+([like clickable links][hyperlinks]).
+Instead of using emoji,
 nbpreview also supports using icons from [Nerd Fonts][nerd fonts][^nerd_fonts].
 Simply use the {option}`--nerd-font <nbpreview --nerd-font>` option
 to enable them.
+
+```{attention}
+You'll need to have a [Nerd Font][nerd fonts] installed and applied
+to your terminal to view the Nerd Font icons—or
+else you'll get tofu (`􏿾`) characters where the icons should be.
+```
 
 ## Stderr
 
