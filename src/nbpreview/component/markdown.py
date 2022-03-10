@@ -177,6 +177,27 @@ def _get_url_content(url: str) -> Union[BytesIO, None]:
     return content
 
 
+def _expand_image_path(image_path: Path) -> Path:
+    """Expand the image path.
+
+    Args:
+        image_path (Path): The image path to expand.
+
+    Returns:
+        Path: The expanded path.
+
+    Raises:
+        RuntimeError: If the expanded path still contains the expansion
+            character.
+    """
+    expanded_destination_path = image_path.expanduser()
+    # This check is automatically done in Python > 3.10
+    # Keep it here to support older Python
+    if str(expanded_destination_path)[:1] == "~":
+        raise RuntimeError
+    return expanded_destination_path
+
+
 class CustomImageItem(markdown.ImageItem):
     """Renders a placeholder for an image."""
 
@@ -198,22 +219,30 @@ class CustomImageItem(markdown.ImageItem):
         self.destination = destination
         if not validators.url(self.destination):
             # destination comes in a url quoted format, which will turn
-            # Windows-like paths into %5c, unquote here to that pathlib
+            # Windows-like paths into %5c, unquote here so that pathlib
             # understands correctly
-            if (
-                destination_path := pathlib.Path(parse.unquote(self.destination))
-            ).is_absolute():
+            destination_path = pathlib.Path(parse.unquote(self.destination))
+
+            try:
+                expanded_destination_path = _expand_image_path(destination_path)
+            except RuntimeError:
                 self.path = destination_path
             else:
-                self.path = self.relative_dir / destination_path
-            self.path = self.path.resolve()
+                if expanded_destination_path.is_absolute():
+                    self.path = expanded_destination_path
+                else:
+                    self.path = self.relative_dir / expanded_destination_path
+                self.path = self.path.resolve()
+
             self.destination = os.fsdecode(self.path)
             content = self.path
             self.is_url = False
+
         else:
             self.is_url = True
             self.path = pathlib.Path(yarl.URL(self.destination).path)
             content = _get_url_content(self.destination)
+
         self.extension = self.path.suffix.lstrip(".")
         if content is not None and (self.images or (self.is_url and self.files)):
             try:

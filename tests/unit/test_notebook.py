@@ -23,6 +23,7 @@ import httpx
 import nbformat
 import pytest
 from _pytest.config import _PluggyPlugin
+from _pytest.monkeypatch import MonkeyPatch
 from nbformat import NotebookNode
 from pytest_mock import MockerFixture
 from rich import console
@@ -515,6 +516,62 @@ def test_image_markdown_cell(
     }
     output = rich_notebook_output(markdown_cell, image_drawing="braille")
     assert remove_link_ids(output) == expected_output
+
+
+def test_image_path_expansion_markdown_cell(
+    rich_notebook_output: RichOutput,
+    remove_link_ids: Callable[[str], str],
+    monkeypatch: MonkeyPatch,
+    tempfile_path: Path,
+) -> None:
+    """It renders a markdown cell with an image."""
+    monkeypatch.setenv("HOME", "/Users/user")
+    monkeypatch.setenv("USERPROFILE", "C:\\Users\\username")  # Windows
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![image_link](~/path/image.png)",
+    }
+    output = rich_notebook_output(markdown_cell)
+    file_path = pathlib.Path("~/path/image.png").expanduser()
+    expected_output = (
+        f"  \x1b]8;id=609045;file://{file_path}"
+        "\x1b\\\x1b[94m🖼 Click to view image_li"
+        "nk\x1b[0m\x1b]8;;\x1b\\                           "
+        "                         \n              "
+        "                                        "
+        "                          \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_image_path_failed_expansion_markdown_cell(
+    rich_notebook_output: RichOutput,
+    remove_link_ids: Callable[[str], str],
+    monkeypatch: MonkeyPatch,
+    tempfile_path: Path,
+) -> None:
+    """It keeps the image path if it fails to expand it."""
+    monkeypatch.setenv("HOME", "~~~")
+    monkeypatch.setenv("USERPROFILE", "~~~")  # Windows
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "![image_link](~/path/image.png)",
+    }
+    output = rich_notebook_output(markdown_cell)
+    file_path = pathlib.Path("~/path/image.png")
+    expected_output = (
+        f"  \x1b]8;id=717109;file://{file_path}\x1b"
+        "\\\x1b[94m🖼 Click to view image_link\x1b[0m\x1b]8;"
+        ";\x1b\\                                     "
+        "               \n                        "
+        "                                        "
+        "                \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
 def test_image_markdown_cell_no_drawing(
