@@ -89,6 +89,14 @@ simply type `nbpreview` into your terminal followed by the path of the notebook 
 ```console
 % nbpreview notebook.ipynb
 ```
+## Try it out
+
+You can try out nbpreview without installing anything more than `wget` and `pipx`.
+
+```console
+% wget https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/example_notebook_cells/hero_notebook.ipynb
+% pipx run nbpreview notebook.ipynb
+```
 
 See the [command-line reference][usage] for details on options.
 
