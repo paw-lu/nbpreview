@@ -25,7 +25,7 @@ Issues = "https://github.com/paw-lu/nbpreview/issues"
 python = "^3.8.0"
 rich = "^10.9.0"
 typer = "^0.4.0"
-nbformat = "^5.1.2"
+nbformat = {extras = ["fast"], version = "^5.2.0"}
 Pygments = "^2.10.0"
 ipython = ">=7.27,<9.0"
 lxml = "^4.6.3"
@@ -116,7 +116,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "click_help_colors,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_img,validators"
+module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_img,validators"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
