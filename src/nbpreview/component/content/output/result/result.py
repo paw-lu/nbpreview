@@ -15,7 +15,6 @@ Result = Union[FileLink, DisplayData, Drawing]
 
 def render_result(
     output: NotebookNode,
-    plain: bool,
     unicode: bool,
     execution: Union[Execution, None],
     hyperlinks: bool,
@@ -43,7 +42,6 @@ def render_result(
     main_result = display_data.render_display_data(
         data,
         unicode=unicode,
-        plain=plain,
         nerd_font=nerd_font,
         theme=theme,
         images=images,

@@ -1,9 +1,12 @@
 """Override rich's markdown renderer with custom components."""
+import base64
+import binascii
 import dataclasses
 import enum
 import io
 import os
 import pathlib
+import re
 import textwrap
 from io import BytesIO
 from pathlib import Path
@@ -198,6 +201,91 @@ def _expand_image_path(image_path: Path) -> Path:
     return expanded_destination_path
 
 
+def _remove_prefix(self: str, prefix: str, /) -> str:
+    """Remove the prefix from the string.
+
+    Implementation of Python 3.9 str.removeprefix method taken from PEP
+    616.
+    """
+    if self.startswith(prefix):
+        return self[len(prefix) :]
+    else:
+        return self[:]
+
+
+@dataclasses.dataclass
+class MarkdownImageReference:
+    """A markdown image reference.
+
+    Can be a hyperlink, a local image, or an encoded image.
+    """
+
+    destination: str
+    relative_dir: Path
+
+    def __post_init__(self) -> None:
+        """Post constructor."""
+        self.content: Union[None, Path, BytesIO] = None
+        self.image_type: Union[str, None] = None
+        self.path: Union[Path, None] = None
+        self.is_url: bool = False
+        if not validators.url(self.destination):
+            # destination comes in a url quoted format, which will turn
+            # Windows-like paths into %5c, unquote here so that pathlib
+            # understands correctly
+            unquoted_path = parse.unquote(self.destination)
+            html_link_pattern = (
+                r"^data:(?P<image_type>[^\s;,]+);"
+                r"(?P<metadata>[^\s,;]+,)*"
+                r"(?P<content>[^\s;,]+)$"
+            )
+            if (link_match := re.match(html_link_pattern, unquoted_path)) is not None:
+                self.destination = ""
+                self.image_type = link_match.group("image_type")
+                if link_match.group("metadata").startswith(
+                    "base64"
+                ) and self.image_type.startswith("image"):
+                    try:
+                        decoded_image = base64.b64decode(link_match.group("content"))
+                    except binascii.Error:
+                        self.content = None
+                    else:
+                        self.content = io.BytesIO(decoded_image)
+
+            else:
+                destination_path = pathlib.Path(unquoted_path)
+                try:
+                    expanded_destination_path = _expand_image_path(destination_path)
+                except RuntimeError:
+                    self.path = destination_path
+                else:
+                    if expanded_destination_path.is_absolute():
+                        self.path = expanded_destination_path
+                    else:
+                        self.path = self.relative_dir / expanded_destination_path
+                    self.path = self.path.resolve()
+
+                self.destination = os.fsdecode(self.path)
+                self.content = self.path
+
+        else:
+            self.is_url = True
+            self.path = pathlib.Path(yarl.URL(self.destination).path)
+            self.content = _get_url_content(self.destination)
+
+    @property
+    def extension(self) -> Union[str, None]:
+        """Return the extension of the image."""
+        extension = (
+            self.path.suffix.lstrip(".")
+            if self.path is not None
+            else _remove_prefix(self.image_type, "image/")
+            if self.image_type is not None
+            else None
+        )
+        return extension
+
+
 class CustomImageItem(markdown.ImageItem):
     """Renders a placeholder for an image."""
 
@@ -214,92 +302,84 @@ class CustomImageItem(markdown.ImageItem):
 
     def __init__(self, destination: str, hyperlinks: bool) -> None:
         """Constructor."""
-        content: Union[None, Path, BytesIO]
         self.image_data: Union[None, bytes]
-        self.destination = destination
-        if not validators.url(self.destination):
-            # destination comes in a url quoted format, which will turn
-            # Windows-like paths into %5c, unquote here so that pathlib
-            # understands correctly
-            destination_path = pathlib.Path(parse.unquote(self.destination))
-
+        self.markdown_image_reference = MarkdownImageReference(
+            destination, relative_dir=self.relative_dir
+        )
+        if (
+            self.markdown_image_reference.content is not None
+            and (self.images or (self.markdown_image_reference.is_url and self.files))
+            and self.markdown_image_reference.extension is not None
+        ):
             try:
-                expanded_destination_path = _expand_image_path(destination_path)
-            except RuntimeError:
-                self.path = destination_path
-            else:
-                if expanded_destination_path.is_absolute():
-                    self.path = expanded_destination_path
-                else:
-                    self.path = self.relative_dir / expanded_destination_path
-                self.path = self.path.resolve()
-
-            self.destination = os.fsdecode(self.path)
-            content = self.path
-            self.is_url = False
-
-        else:
-            self.is_url = True
-            self.path = pathlib.Path(yarl.URL(self.destination).path)
-            content = _get_url_content(self.destination)
-
-        self.extension = self.path.suffix.lstrip(".")
-        if content is not None and (self.images or (self.is_url and self.files)):
-            try:
-                with Image.open(content) as image:
+                with Image.open(self.markdown_image_reference.content) as image:
                     with io.BytesIO() as output:
                         try:
-                            format = Image.EXTENSION[f".{self.extension}"]
+                            format = Image.EXTENSION[
+                                f".{self.markdown_image_reference.extension}"
+                            ]
                         except KeyError:
                             self.image_data = None
                         else:
                             image.save(output, format=format)
                             self.image_data = output.getvalue()
-            except (FileNotFoundError, PIL.UnidentifiedImageError):
+            except (
+                PIL.UnidentifiedImageError,
+                OSError,  # If file name is too long, also covers FileNotFoundError
+            ):
                 self.image_data = None
 
         else:
             self.image_data = None
 
-        super().__init__(destination=self.destination, hyperlinks=hyperlinks)
+        self.image_type = (
+            self.markdown_image_reference.image_type
+            or f"image/{self.markdown_image_reference.extension}"
+        )
+        super().__init__(
+            destination=self.markdown_image_reference.destination, hyperlinks=hyperlinks
+        )
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         """Render the image."""
-        title = self.text.plain or self.destination
-        if self.is_url:
-            rendered_link = link.Link(
-                path=self.destination,
-                nerd_font=self.nerd_font,
-                unicode=self.unicode,
-                subject=title,
-                emoji_name="globe_with_meridians",
-                nerd_font_icon="爵",
-                hyperlinks=self.hyperlinks,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-            )
+        title = self.text.plain or self.markdown_image_reference.destination
+        if self.markdown_image_reference.destination:
+            if self.markdown_image_reference.is_url:
+                rendered_link = link.Link(
+                    path=self.markdown_image_reference.destination,
+                    nerd_font=self.nerd_font,
+                    unicode=self.unicode,
+                    subject=title,
+                    emoji_name="globe_with_meridians",
+                    nerd_font_icon="爵",
+                    hyperlinks=self.hyperlinks,
+                    hide_hyperlink_hints=self.hide_hyperlink_hints,
+                )
 
-        else:
-            rendered_link = link.Link(
-                path=f"file://{self.destination}",
-                nerd_font=self.nerd_font,
-                unicode=self.unicode,
-                subject=title,
-                emoji_name="framed_picture",
-                nerd_font_icon="",
-                hyperlinks=self.hyperlinks,
-                hide_hyperlink_hints=self.hide_hyperlink_hints,
-            )
+            else:
+                rendered_link = link.Link(
+                    path=f"file://{self.markdown_image_reference.destination}",
+                    nerd_font=self.nerd_font,
+                    unicode=self.unicode,
+                    subject=title,
+                    emoji_name="framed_picture",
+                    nerd_font_icon="",
+                    hyperlinks=self.hyperlinks,
+                    hide_hyperlink_hints=self.hide_hyperlink_hints,
+                )
 
-        yield rendered_link
+            yield rendered_link
 
         if self.images:
-            fallback_title = self.destination.strip("/").rsplit("/", 1)[-1]
+            fallback_title = self.markdown_image_reference.destination.strip(
+                "/"
+            ).rsplit("/", 1)[-1]
             rendered_drawing = drawing.choose_drawing(
                 image=self.image_data,
                 fallback_text=self.text.plain or fallback_title,
-                image_type=f"image/{self.extension}",
+                image_type=self.image_type,
                 image_drawing=self.image_drawing,
                 color=self.color,
                 negative_space=self.negative_space,
