@@ -5984,3 +5984,103 @@ def test_code_wrap(rich_notebook_output: RichOutput) -> None:
     )
     output = rich_notebook_output(code_cell, code_wrap=True)
     assert output == expected_output
+
+
+def test_html_encoded_image_link_text(
+    rich_console: Callable[[Any, Union[bool, None]], str],
+    expected_output: str,
+    remove_link_ids: Callable[[str], str],
+    mock_tempfile_file: Generator[Mock, None, None],
+) -> None:
+    """It extracts an encoded image from an HTML link."""
+    notebook_path = pathlib.Path(__file__).parent / pathlib.Path(
+        "assets", "link_encoded_image.ipynb"
+    )
+    nbpreview_notebook = notebook.Notebook.from_file(notebook_path)
+    output = rich_console(nbpreview_notebook, False)
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+def test_long_path(
+    rich_notebook_output: RichOutput,
+    remove_link_ids: Callable[[str], str],
+) -> None:
+    """It skips attempting to render an image if path is too long."""
+    file_path = pathlib.Path("/", "user") / ("a" * 1_000)
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": f"![]({file_path.as_posix()})",
+    }
+    output = rich_notebook_output(markdown_cell)
+    resolved_path = file_path.resolve()
+    cropped_path = str(resolved_path)[:77]
+    expected_output = (
+        f"  \x1b]8;id=876470;file://{resolved_path}\x1b\\\x1b[94m🖼 Cl"
+        "ick to view \x1b[0m\x1b]8;;\x1b\\                 "
+        "                                        "
+        "     \n  \x1b]8;id=876470;"
+        f"file://{resolved_path}\x1b\\\x1b[9"
+        f"4m{cropped_path}…"
+        "\x1b[0m\x1b]8;;\x1b\\\n                            "
+        "                                        "
+        "            \n"
+    )
+    assert remove_link_ids(output) == remove_link_ids(expected_output)
+
+
+@pytest.mark.parametrize(
+    "bad_reference", ["data:image/png;unknown,abc123", "data:unknown;base64,abc123"]
+)
+def test_unknown_data_link(
+    bad_reference: str, rich_notebook_output: RichOutput
+) -> None:
+    """It does not decode the data link if it is not identified."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": f"hey\n\n![Test image]({bad_reference})" "\n\nthere\n**hello**\n",
+    }
+    output = rich_notebook_output(markdown_cell, hyperlinks=True)
+    expected_output = (
+        "  hey                                   "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n                                      "
+        "                                        "
+        "  \n                                     "
+        "                                        "
+        "   \n  there \x1b[1mhello\x1b[0m               "
+        "                                        "
+        "            \n"
+    )
+    assert output == expected_output
+
+
+def test_bad_data_link_encode(rich_notebook_output: RichOutput) -> None:
+    """It skips rendering the encoded image on a failed decode."""
+    markdown_cell = {
+        "cell_type": "markdown",
+        "id": "academic-bride",
+        "metadata": {},
+        "source": "hey\n\n![Test image](data:image/png;base64,abc123)"
+        "\n\nthere\n**hello**\n",
+    }
+    output = rich_notebook_output(markdown_cell, hyperlinks=True)
+    expected_output = (
+        "  hey                                   "
+        "                                        "
+        "\n                                       "
+        "                                        "
+        " \n                                      "
+        "                                        "
+        "  \n                                     "
+        "                                        "
+        "   \n  there \x1b[1mhello\x1b[0m               "
+        "                                        "
+        "            \n"
+    )
+    assert output == expected_output
