@@ -75,7 +75,7 @@ def create_notebook(
 
 
 def load_notebook_cells(
-    file_path: Path, override: Optional[dict[str, Any]] = None
+    file_path: Path, override: Optional[Dict[str, Any]] = None
 ) -> NotebookNode:
     """Create a notebook from a file of cells."""
     notebook_cells = json.load(file_path.open())
