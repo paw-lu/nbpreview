@@ -47,7 +47,7 @@ term-image = "^0.1.1"
 pytest = "^7.1.0"
 coverage = { extras = ["toml"], version = "^6.3" }
 safety = "^1.10.3"
-mypy = "^0.940"
+mypy = "^0.941"
 typeguard = "^2.13.3"
 xdoctest = { extras = ["colors"], version = "^0.15.10" }
 sphinx = "^4.4.0"
