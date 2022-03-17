@@ -6,8 +6,10 @@ from dataclasses import InitVar
 from pathlib import Path
 from typing import IO, Any, AnyStr, Iterator, List, Optional, Tuple, Type, Union
 
+import jsonschema
 import nbformat
 from click.utils import KeepOpenFile
+from nbformat import validator
 from nbformat.notebooknode import NotebookNode
 from rich import table
 from rich.console import Console, ConsoleOptions
@@ -343,8 +345,11 @@ class Notebook:
         """
         try:
             notebook_node = nbformat.read(file, as_version=4)
+            nbformat.validate(notebook_node)
         except (
             AttributeError,
+            validator.NotebookValidationError,
+            jsonschema.ValidationError,
             UnicodeDecodeError,  # Windows failures when reading invalid files
         ) as exception:
             raise errors.InvalidNotebookError from exception

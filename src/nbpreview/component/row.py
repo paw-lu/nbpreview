@@ -211,7 +211,6 @@ def render_output_row(
         elif output_type == "execute_result" or output_type == "display_data":
             rendered_execute_result = result.render_result(
                 output,
-                plain=plain,
                 unicode=unicode,
                 execution=execution,
                 hyperlinks=hyperlinks,

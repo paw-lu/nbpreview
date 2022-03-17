@@ -572,7 +572,6 @@ def _choose_basic_renderer(
 def render_display_data(
     data: Data,
     unicode: bool,
-    plain: bool,
     nerd_font: bool,
     theme: str,
     images: bool,
