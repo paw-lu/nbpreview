@@ -83,7 +83,8 @@ nbpreview may also be installed via [pip]:
 
 ## Usage
 
-To use nbpreview, type `nbpreview` into your terminal followed by the path of the notebook you wish to view.
+To use nbpreview,
+type `nbpreview` into your terminal followed by the path of the notebook you wish to view.
 
 ```console
 % nbpreview notebook.ipynb
