@@ -81,6 +81,15 @@ nbpreview may also be installed via [pip]:
 
 <!-- installation-end -->
 
+## Try it out
+
+Assuming [curl] and [pipx] are installed,
+nbpreview may be tried out on the terminal by running:
+
+```console
+% curl https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/example_notebook_cells/hero_notebook.ipynb | pipx run nbpreview
+```
+
 ## Usage
 
 To use nbpreview,
@@ -88,14 +97,6 @@ simply type `nbpreview` into your terminal followed by the path of the notebook 
 
 ```console
 % nbpreview notebook.ipynb
-```
-## Try it out
-
-You can try out nbpreview without installing anything more than `wget` and `pipx`.
-
-```console
-% wget https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/example_notebook_cells/hero_notebook.ipynb
-% pipx run nbpreview notebook.ipynb
 ```
 
 See the [command-line reference][usage] for details on options.
@@ -220,6 +221,7 @@ there are some other projects that directly enabled the development of nbpreview
 
 [configure]: https://nbpreview.readthedocs.io/configure.html
 [contributing]: https://github.com/paw-lu/nbpreview/blob/main/CONTRIBUTING.md
+[curl]: https://curl.se/docs/
 [dependencies]: https://github.com/paw-lu/nbpreview/blob/main/pyproject.toml
 [exporting_rich_console]: https://rich.readthedocs.io/en/stable/console.html#exporting
 [features]: https://nbpreview.readthedocs.io/features.html
