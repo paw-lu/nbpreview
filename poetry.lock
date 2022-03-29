@@ -1941,7 +1941,7 @@ python-versions = "*"
 
 [[package]]
 name = "xdoctest"
-version = "0.15.10"
+version = "1.0.0"
 description = "A rewrite of the builtin doctest module"
 category = "dev"
 optional = false
@@ -1949,15 +1949,15 @@ python-versions = "*"
 
 [package.dependencies]
 colorama = {version = "*", optional = true, markers = "platform_system == \"Windows\" and extra == \"colors\""}
-Pygments = {version = "*", optional = true, markers = "extra == \"colors\""}
+Pygments = {version = "*", optional = true, markers = "python_version >= \"3.5.0\" and extra == \"colors\""}
 six = "*"
 
 [package.extras]
-all = ["six", "codecov", "scikit-build", "cmake", "ninja", "pybind11", "pygments", "colorama", "pytest", "pytest", "pytest-cov", "pytest", "pytest", "pytest-cov", "typing", "nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel", "pytest", "pytest-cov"]
-colors = ["pygments", "colorama"]
-jupyter = ["nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel"]
-optional = ["pygments", "colorama", "nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel"]
-tests = ["codecov", "scikit-build", "cmake", "ninja", "pybind11", "pytest", "pytest", "pytest-cov", "pytest", "pytest", "pytest-cov", "typing", "nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel", "pytest", "pytest-cov"]
+all = ["ipython", "ipython", "pygments", "pygments", "attrs", "cmake", "codecov", "colorama", "debugpy", "ipykernel", "ipykernel", "jedi", "jinja2", "jupyter-client", "jupyter-client", "jupyter-core", "nbconvert", "ninja", "pybind11", "pytest-cov", "pytest-cov", "pytest-cov", "pytest-cov", "pytest", "pytest", "pytest", "pytest", "pytest", "pytest", "scikit-build", "six", "typing"]
+jupyter = ["ipython", "ipython", "attrs", "debugpy", "ipykernel", "ipykernel", "jedi", "jinja2", "jupyter-client", "jupyter-client", "jupyter-core", "nbconvert"]
+optional = ["ipython", "ipython", "pygments", "pygments", "attrs", "colorama", "debugpy", "ipykernel", "ipykernel", "jedi", "jinja2", "jupyter-client", "jupyter-client", "jupyter-core", "nbconvert"]
+colors = ["pygments", "pygments", "colorama"]
+tests = ["cmake", "codecov", "ninja", "pybind11", "pytest-cov", "pytest-cov", "pytest-cov", "pytest-cov", "pytest", "pytest", "pytest", "pytest", "pytest", "pytest", "scikit-build", "typing"]
 
 [[package]]
 name = "yarl"
@@ -1986,7 +1986,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "7f063facac1aae4385ce5fa8330d114b2aa8477bc8b345240880568deeddca89"
+content-hash = "bd69c31ae71fcfc6b3c4796af4508cf0687308d15c89bfaa680c24f6c3b99746"
 
 [metadata.files]
 alabaster = [
@@ -3177,8 +3177,9 @@ wmctrl = [
     {file = "wmctrl-0.4.tar.gz", hash = "sha256:66cbff72b0ca06a22ec3883ac3a4d7c41078bdae4fb7310f52951769b10e14e0"},
 ]
 xdoctest = [
-    {file = "xdoctest-0.15.10-py3-none-any.whl", hash = "sha256:7666bd0511df59275dfe94ef94b0fde9654afd14f00bf88902fdc9bcee77d527"},
-    {file = "xdoctest-0.15.10.tar.gz", hash = "sha256:5f16438f2b203860e75ec594dbc38020df7524db0b41bb88467ea0a6030e6685"},
+    {file = "xdoctest-1.0.0-py2-none-any.whl", hash = "sha256:0b0b5958e0ac0a28c5496f96b7f0adbeb0ea7e0c0a227de1ce3bc79ddb1a4f00"},
+    {file = "xdoctest-1.0.0-py3-none-any.whl", hash = "sha256:76f44dc74515ff4bdf3cc3e91a2e408cf5699cfa03367634efaadf138c7b132d"},
+    {file = "xdoctest-1.0.0.tar.gz", hash = "sha256:7ebba7e71457e6e7cf86c463699575e52b1c9cc32ee2ee5e72256d6cd3aaeb2d"},
 ]
 yarl = [
     {file = "yarl-1.7.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f2a8508f7350512434e41065684076f640ecce176d262a7d54f0da41d99c5a95"},
