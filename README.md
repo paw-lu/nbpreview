@@ -152,6 +152,10 @@ there are many amazing projects out there.
   that allows you to edit and run Jupyter notebooks on the terminal.
 - **[nbclient]**
   is a library for executing notebooks from the command line.
+- **[nbpreview]**
+  Another project that coincidentally shares a name with this project.
+  It allows for Jupyter notebooks to be rendered
+  without running a notebook server.
 - **[nbqa]**
   allows the use of linters and formatters on notebooks.
   It's also used by this project.
@@ -169,6 +173,7 @@ there are many amazing projects out there.
 [nbterm]: https://github.com/davidbrochart/nbterm
 [euporie]: https://github.com/joouha/euporie
 [nbclient]: https://github.com/jupyter/nbclient
+[nbpreview]: https://github.com/jsvine/nbpreview
 [nbqa]: https://github.com/nbQA-dev/nbQA
 [jpterm]: https://github.com/davidbrochart/jpterm
 [nbtermix]: https://github.com/mtatton/nbtermix
