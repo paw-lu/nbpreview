@@ -922,21 +922,20 @@ testing = ["beautifulsoup4", "coverage", "docutils (>=0.17.0,<0.18.0)", "pytest 
 
 [[package]]
 name = "nbformat"
-version = "5.2.0"
+version = "5.3.0"
 description = "The Jupyter Notebook format"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-fastjsonschema = {version = "*", optional = true, markers = "extra == \"fast\""}
-jsonschema = ">=2.4,<2.5.0 || >2.5.0"
+fastjsonschema = "*"
+jsonschema = ">=2.6"
 jupyter-core = "*"
 traitlets = ">=4.1"
 
 [package.extras]
-fast = ["fastjsonschema"]
-test = ["check-manifest", "fastjsonschema", "testpath", "pytest"]
+test = ["check-manifest", "testpath", "pytest", "pre-commit"]
 
 [[package]]
 name = "nbqa"
@@ -2580,8 +2579,8 @@ myst-parser = [
     {file = "myst_parser-0.17.0-py3-none-any.whl", hash = "sha256:555ec2950aba5ae5dac5c162c7e9a43ad4a7291cfac644d8f5f84da8efa6f356"},
 ]
 nbformat = [
-    {file = "nbformat-5.2.0-py3-none-any.whl", hash = "sha256:3e30424e8291b2188347f5c3ba5273ed3766f12f8c5137c2e456a0815f36e785"},
-    {file = "nbformat-5.2.0.tar.gz", hash = "sha256:93df0b9c67221d38fb970c48f6d361819a6c388299a0ef3171bbb912edfe1324"},
+    {file = "nbformat-5.3.0-py3-none-any.whl", hash = "sha256:38856d97de49e8292e2d5d8f595e9d26f02abfd87e075d450af4511870b40538"},
+    {file = "nbformat-5.3.0.tar.gz", hash = "sha256:fcc5ab8cb74e20b19570b5be809e2dba9b82836fd2761a89066ad43394ba29f5"},
 ]
 nbqa = [
     {file = "nbqa-1.3.1-py3-none-any.whl", hash = "sha256:feca5ae974a0657607d79fefe7cd29fe51f915f2824e11e86b94165bf3170a4e"},
