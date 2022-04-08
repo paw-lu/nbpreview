@@ -1,4 +1,4 @@
-furo==2022.3.4
+furo==2022.4.7
 myst-parser==0.17.0
 sphinx-autodoc-typehints==1.17.0
 sphinx-click==4.0.0
