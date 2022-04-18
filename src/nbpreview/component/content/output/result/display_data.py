@@ -438,7 +438,7 @@ class JSONDisplay(DisplayData):
         """Render the JSON display data."""
         rendered_json = syntax.Syntax(
             self.content,
-            lexer_name="json",
+            lexer="json",
             theme=self.theme,
             background_color="default",
         )

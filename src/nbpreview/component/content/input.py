@@ -124,7 +124,7 @@ class CodeCell(Cell):
         rendered_code_cell: Union[Syntax, Group]
         code_cell_renderer = functools.partial(
             syntax.Syntax,
-            lexer_name=self.default_lexer_name,
+            lexer=self.default_lexer_name,
             theme=self.theme,
             background_color="default",
             line_numbers=self.line_numbers,
@@ -138,7 +138,7 @@ class CodeCell(Cell):
                 body_lexer_name = pygments.lexers.get_lexer_by_name(language_name).name
                 rendered_magic = code_cell_renderer(magic)
                 rendered_body = code_cell_renderer(
-                    body, lexer_name=body_lexer_name, start_line=2
+                    body, lexer=body_lexer_name, start_line=2
                 )
                 rendered_code_cell = console.Group(rendered_magic, rendered_body)
 

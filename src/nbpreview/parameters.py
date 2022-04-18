@@ -83,7 +83,7 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
                     example_code,
                     theme=translated_theme,
                     background_color="default",
-                    lexer_name="python",
+                    lexer="python",
                 )
                 theme_example_panel = panel.Panel(
                     theme_example,
