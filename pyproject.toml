@@ -23,7 +23,7 @@ Issues = "https://github.com/paw-lu/nbpreview/issues"
 
 [tool.poetry.dependencies]
 python = "^3.8.0"
-rich = "^10.9.0"
+rich = "^12.2.0"
 typer = "^0.4.1"
 nbformat = { extras = ["fast"], version = "^5.2.0" }
 Pygments = "^2.10.0"
@@ -70,7 +70,6 @@ pdbpp = "^0.10.3"
 ipykernel = "^6.13.0"
 pytest-mock = "^3.7.0"
 interrogate = "^1.5.0"
-tryceratops = "^1.0.1"
 isort = "^5.10.1"
 nbqa = "^1.3.1"
 click = "^8.1.2"
