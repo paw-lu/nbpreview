@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="1220" viewBox="0 0 1236.1999999999998 1220">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r5 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r6 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r7 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r8 {color: #ffffff; text-decoration-color: #ffffff;background-color: #263238;}
+.r9 {color: #fcfcfc; text-decoration-color: #fcfcfc;background-color: #263238;}
+.r10 {color: #ababab; text-decoration-color: #ababab;background-color: #263238;}
+.r11 {color: #929292; text-decoration-color: #929292;background-color: #263238;}
+.r12 {color: #ececec; text-decoration-color: #ececec;background-color: #263238;}
+.r13 {color: #6b0eee; text-decoration-color: #6b0eee;background-color: #263238;}
+.r14 {color: #7016ef; text-decoration-color: #7016ef;background-color: #263238;}
+.r15 {color: #fcfbfe; text-decoration-color: #fcfbfe;background-color: #263238;}
+.r16 {color: #8a40f2; text-decoration-color: #8a40f2;background-color: #263238;}
+.r17 {color: #8132f1; text-decoration-color: #8132f1;background-color: #263238;}
+.r18 {color: #858585; text-decoration-color: #858585;background-color: #263238;}
+.r19 {color: #a9a9a9; text-decoration-color: #a9a9a9;background-color: #263238;}
+.r20 {color: #fafafa; text-decoration-color: #fafafa;background-color: #263238;}
+.r21 {color: #893ff1; text-decoration-color: #893ff1;background-color: #263238;}
+.r22 {color: #690aee; text-decoration-color: #690aee;background-color: #263238;}
+.r23 {color: #d3b7fa; text-decoration-color: #d3b7fa;background-color: #263238;}
+.r24 {color: #6300ee; text-decoration-color: #6300ee;background-color: #263238;}
+.r25 {color: #40b9c1; text-decoration-color: #40b9c1;background-color: #263238;}
+.r26 {color: #e3e3e3; text-decoration-color: #e3e3e3;background-color: #263238;}
+.r27 {color: #b1b1b1; text-decoration-color: #b1b1b1;background-color: #263238;}
+.r28 {color: #979797; text-decoration-color: #979797;background-color: #263238;}
+.r29 {color: #c5c5c5; text-decoration-color: #c5c5c5;background-color: #263238;}
+.r30 {color: #b6b6b6; text-decoration-color: #b6b6b6;background-color: #263238;}
+.r31 {color: #f9f9f9; text-decoration-color: #f9f9f9;background-color: #263238;}
+.r32 {color: #7e2cf0; text-decoration-color: #7e2cf0;background-color: #263238;}
+.r33 {color: #777777; text-decoration-color: #777777;background-color: #263238;}
+.r34 {color: #f1f1f1; text-decoration-color: #f1f1f1;background-color: #263238;}
+.r35 {color: #751def; text-decoration-color: #751def;background-color: #263238;}
+.r36 {color: #3fb5c0; text-decoration-color: #3fb5c0;background-color: #263238;}
+.r37 {color: #ffa368; text-decoration-color: #ffa368;background-color: #263238;}
+.r38 {color: #7620ef; text-decoration-color: #7620ef;background-color: #263238;}
+.r39 {color: #7219ef; text-decoration-color: #7219ef;background-color: #263238;}
+.r40 {color: #5c26e4; text-decoration-color: #5c26e4;background-color: #263238;}
+.r41 {color: #591ae4; text-decoration-color: #591ae4;background-color: #263238;}
+.r42 {color: #909090; text-decoration-color: #909090;background-color: #263238;}
+.r43 {color: #8032f1; text-decoration-color: #8032f1;background-color: #263238;}
+.r44 {color: #7017de; text-decoration-color: #7017de;background-color: #263238;}
+.r45 {color: #7a26f0; text-decoration-color: #7a26f0;background-color: #263238;}
+.r46 {color: #6809ee; text-decoration-color: #6809ee;background-color: #263238;}
+.r47 {color: #fefefe; text-decoration-color: #fefefe;background-color: #263238;}
+.r48 {color: #6a0dee; text-decoration-color: #6a0dee;background-color: #263238;}
+.r49 {color: #6302ed; text-decoration-color: #6302ed;background-color: #263238;}
+.r50 {color: #8e2dc8; text-decoration-color: #8e2dc8;background-color: #263238;}
+.r51 {color: #ce7090; text-decoration-color: #ce7090;background-color: #263238;}
+.r52 {color: #d0d0d0; text-decoration-color: #d0d0d0;background-color: #263238;}
+.r53 {color: #42abc3; text-decoration-color: #42abc3;background-color: #263238;}
+.r54 {color: #6e0ce3; text-decoration-color: #6e0ce3;background-color: #263238;}
+.r55 {color: #6300ed; text-decoration-color: #6300ed;background-color: #263238;}
+.r56 {color: #fbfbfb; text-decoration-color: #fbfbfb;background-color: #263238;}
+.r57 {color: #adadad; text-decoration-color: #adadad;background-color: #263238;}
+.r58 {color: #8e8e8e; text-decoration-color: #8e8e8e;background-color: #263238;}
+.r59 {color: #e5e5e5; text-decoration-color: #e5e5e5;background-color: #263238;}
+.r60 {color: #873cf1; text-decoration-color: #873cf1;background-color: #263238;}
+.r61 {color: #7a25f0; text-decoration-color: #7a25f0;background-color: #263238;}
+.r62 {color: #5d26e4; text-decoration-color: #5d26e4;background-color: #263238;}
+.r63 {color: #5132dd; text-decoration-color: #5132dd;background-color: #263238;}
+.r64 {color: #6301ee; text-decoration-color: #6301ee;background-color: #263238;}
+.r65 {color: #c8c8c8; text-decoration-color: #c8c8c8;background-color: #263238;}
+.r66 {color: #cdcdcd; text-decoration-color: #cdcdcd;background-color: #263238;}
+.r67 {color: #e8e8e8; text-decoration-color: #e8e8e8;background-color: #263238;}
+.r68 {color: #f7f7f7; text-decoration-color: #f7f7f7;background-color: #263238;}
+.r69 {color: #797979; text-decoration-color: #797979;background-color: #263238;}
+.r70 {color: #868686; text-decoration-color: #868686;background-color: #263238;}
+.r71 {color: #c3c3c3; text-decoration-color: #c3c3c3;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing character notebook.ipynb</span><span class="r1">          </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[4]:</span><span class="r1"> │ </span><span class="r4">(</span><span class="r1">                                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    sns</span><span class="r4">.</span><span class="r5">load_dataset</span><span class="r4">(</span><span class="r6">"penguins"</span><span class="r4">).</span><span class="r5">pipe</span><span class="r4">(</span><span class="r1">                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        </span><span class="r4">(</span><span class="r5">sns</span><span class="r4">.</span><span class="r5">kdeplot</span><span class="r4">,</span><span class="r5"> </span><span class="r6">"data"</span><span class="r4">),</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        x</span><span class="r4">=</span><span class="r6">"flipper_length_mm"</span><span class="r4">,</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        hue</span><span class="r4">=</span><span class="r6">"species"</span><span class="r4">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        multiple</span><span class="r4">=</span><span class="r6">"stack"</span><span class="r4">,</span><span class="r1">                                              │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    </span><span class="r4">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r4">)</span><span class="r1">                                                                     </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[4]:</span><span class="r1">  </span><span class="r1">&lt;AxesSubplot:xlabel='flipper_length_mm', ylabel='Density'&gt;               </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r7"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/image_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r8">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r8">       </span><span class="r9"> </span><span class="r8"> </span><span class="r10">!</span><span class="r11">?</span><span class="r12"> </span><span class="r8">                        </span><span class="r13">P</span><span class="r14">P</span><span class="r8">                                   </span></div>
+<div><span class="r1">      </span><span class="r8">                                   </span><span class="r15"> </span><span class="r16">PP</span><span class="r17">P</span><span class="r8">                                  </span></div>
+<div><span class="r1">      </span><span class="r8">         </span><span class="r18">?</span><span class="r19">!</span><span class="r8">    </span><span class="r20">                    </span><span class="r21">PPPP</span><span class="r22">P</span><span class="r20">                                </span><span class="r8"> </span></div>
+<div><span class="r1">      </span><span class="r8">                                  </span><span class="r23">:</span><span class="r16">PPPPP</span><span class="r8">               </span><span class="r24">G</span><span class="r25">!!!!</span><span class="r8"> </span><span class="r26">:</span><span class="r8"> </span><span class="r27">!</span><span class="r28">!</span><span class="r12"> </span><span class="r8"> </span><span class="r29">:</span><span class="r30">!</span><span class="r31"> </span><span class="r8">   </span></div>
+<div><span class="r1">      </span><span class="r8">                                  </span><span class="r16">PPPPPP</span><span class="r32">P</span><span class="r8">                                </span></div>
+<div><span class="r1">      </span><span class="r8">                                  </span><span class="r16">PPPPPPP</span><span class="r8">                                </span></div>
+<div><span class="r1">      </span><span class="r8">                                 </span><span class="r16">PPPPPPPPP</span><span class="r8">                               </span></div>
+<div><span class="r1">      </span><span class="r8">         </span><span class="r33">?</span><span class="r34"> </span><span class="r8">                      </span><span class="r16">PPPPPPPPP</span><span class="r8">       </span><span class="r35">P</span><span class="r36">?</span><span class="r37">!!</span><span class="r8">                    </span></div>
+<div><span class="r1">      </span><span class="r8">                                </span><span class="r38">P</span><span class="r16">PPPPPPPPP</span><span class="r39">P</span><span class="r8">     </span><span class="r40">P</span><span class="r41">P</span><span class="r37">!!!!</span><span class="r8">                   </span></div>
+<div><span class="r1">      </span><span class="r8"> </span><span class="r42">?</span><span class="r8">       </span><span class="r18">?</span><span class="r8">                      </span><span class="r16">PPPPPPPPPPP</span><span class="r8">    </span><span class="r43">P</span><span class="r44">P</span><span class="r37">!!!!!!</span><span class="r8">                  </span></div>
+<div><span class="r1">      </span><span class="r8">                               </span><span class="r16">PPPPPPPPPPPP</span><span class="r45">P</span><span class="r8">   </span><span class="r25">!</span><span class="r37">!!!!!!!!</span><span class="r8">                 </span></div>
+<div><span class="r1">      </span><span class="r8">                              </span><span class="r46">P</span><span class="r16">PPPPPPPPPPPPP</span><span class="r47"> </span><span class="r8"> </span><span class="r48">P</span><span class="r37">!!!!!!!!!</span><span class="r24">G</span><span class="r8">                </span></div>
+<div><span class="r1">      </span><span class="r8">                              </span><span class="r16">PPPPPPP</span><span class="r49">G</span><span class="r25">!!!!!</span><span class="r16">PPP</span><span class="r25">!</span><span class="r37">!!!!!!!!!!</span><span class="r50">P</span><span class="r8">               </span></div>
+<div><span class="r1">      </span><span class="r8">                             </span><span class="r16">PPPPPPP</span><span class="r25">!!!!!!!!!!</span><span class="r51">?</span><span class="r37">!!!!!!!!!!!!!</span><span class="r24">G</span><span class="r8">            </span></div>
+<div><span class="r1">      </span><span class="r8">         </span><span class="r33">?</span><span class="r52">:</span><span class="r8">                 </span><span class="r45">P</span><span class="r16">PPPPP</span><span class="r53">?</span><span class="r25">!!!!!!!!!!!</span><span class="r37">!!!!!!!!!!!!!!!</span><span class="r54">P</span><span class="r8">           </span></div>
+<div><span class="r1">      </span><span class="r8">                           </span><span class="r16">PPPPP</span><span class="r55">G</span><span class="r25">!!!!!!!!!!!!</span><span class="r37">!!!!!!!!!!!!!!!!!</span><span class="r24">G</span><span class="r8">          </span></div>
+<div><span class="r1">      </span><span class="r8">       </span><span class="r56"> </span><span class="r8"> </span><span class="r57">!</span><span class="r58">?</span><span class="r59">:</span><span class="r8">           </span><span class="r60">P</span><span class="r16">PP</span><span class="r61">P</span><span class="r62">P</span><span class="r25">!!!!!!!!!!!!!!</span><span class="r63">P</span><span class="r37">!!!!!!!!!!!!!!!!!!!!!</span><span class="r64">G</span><span class="r8">        </span></div>
+<div><span class="r1">      </span><span class="r8">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r8">                 </span><span class="r26">:</span><span class="r65">:</span><span class="r8">          </span><span class="r26">:</span><span class="r29">:</span><span class="r8">          </span><span class="r66">:</span><span class="r8">           </span><span class="r66">:</span><span class="r67">:</span><span class="r8">          </span><span class="r68"> </span><span class="r69">?</span><span class="r70">?</span><span class="r8">     </span></div>
+<div><span class="r1">      </span><span class="r8">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r8">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r8">                                            </span><span class="r71">:</span><span class="r8">                            </span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

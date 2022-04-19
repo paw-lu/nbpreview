@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="1308" viewBox="0 0 1236.1999999999998 1308">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r5 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r6 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r7 {color: #f78c6c; text-decoration-color: #f78c6c; background-color: #263238}
+.r8 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r9 {color: #1c1b1f; text-decoration-color: #1c1b1f;background-color: #263238;}
+.r10 {color: #4e485d; text-decoration-color: #4e485d;background-color: #263238;}
+.r11 {color: #3f3b4b; text-decoration-color: #3f3b4b;background-color: #263238;}
+.r12 {color: #4d475c; text-decoration-color: #4d475c;background-color: #263238;}
+.r13 {color: #747175; text-decoration-color: #747175;background-color: #263238;}
+.r14 {color: #3c3847; text-decoration-color: #3c3847;background-color: #263238;}
+.r15 {color: #4b4559; text-decoration-color: #4b4559;background-color: #263238;}
+.r16 {color: #2e2b35; text-decoration-color: #2e2b35;background-color: #263238;}
+.r17 {color: #353337; text-decoration-color: #353337;background-color: #263238;}
+.r18 {color: #c4c0c4; text-decoration-color: #c4c0c4;background-color: #263238;}
+.r19 {color: #dcd7db; text-decoration-color: #dcd7db;background-color: #263238;}
+.r20 {color: #1e1c21; text-decoration-color: #1e1c21;background-color: #263238;}
+.r21 {color: #c8b5f5; text-decoration-color: #c8b5f5;background-color: #263238;}
+.r22 {color: #cdb9fc; text-decoration-color: #cdb9fc;background-color: #263238;}
+.r23 {color: #4d485d; text-decoration-color: #4d485d;background-color: #263238;}
+.r24 {color: #5bab85; text-decoration-color: #5bab85;background-color: #263238;}
+.r25 {color: #1d1c20; text-decoration-color: #1d1c20;background-color: #263238;}
+.r26 {color: #d7d3d7; text-decoration-color: #d7d3d7;background-color: #263238;}
+.r27 {color: #6c6a6e; text-decoration-color: #6c6a6e;background-color: #263238;}
+.r28 {color: #4a484c; text-decoration-color: #4a484c;background-color: #263238;}
+.r29 {color: #d0bcff; text-decoration-color: #d0bcff;background-color: #263238;}
+.r30 {color: #4b6764; text-decoration-color: #4b6764;background-color: #263238;}
+.r31 {color: #485a5d; text-decoration-color: #485a5d;background-color: #263238;}
+.r32 {color: #495e5f; text-decoration-color: #495e5f;background-color: #263238;}
+.r33 {color: #2c413a; text-decoration-color: #2c413a;background-color: #263238;}
+.r34 {color: #cdb9fb; text-decoration-color: #cdb9fb;background-color: #263238;}
+.r35 {color: #8d8a8e; text-decoration-color: #8d8a8e;background-color: #263238;}
+.r36 {color: #5e5772; text-decoration-color: #5e5772;background-color: #263238;}
+.r37 {color: #4f6166; text-decoration-color: #4f6166;background-color: #263238;}
+.r38 {color: #6dd6a4; text-decoration-color: #6dd6a4;background-color: #263238;}
+.r39 {color: #509475; text-decoration-color: #509475;background-color: #263238;}
+.r40 {color: #2f483f; text-decoration-color: #2f483f;background-color: #263238;}
+.r41 {color: #485d5e; text-decoration-color: #485d5e;background-color: #263238;}
+.r42 {color: #4e485e; text-decoration-color: #4e485e;background-color: #263238;}
+.r43 {color: #444246; text-decoration-color: #444246;background-color: #263238;}
+.r44 {color: #70dba8; text-decoration-color: #70dba8;background-color: #263238;}
+.r45 {color: #488168; text-decoration-color: #488168;background-color: #263238;}
+.r46 {color: #414350; text-decoration-color: #414350;background-color: #263238;}
+.r47 {color: #9a8cbc; text-decoration-color: #9a8cbc;background-color: #263238;}
+.r48 {color: #4d4b4f; text-decoration-color: #4d4b4f;background-color: #263238;}
+.r49 {color: #484256; text-decoration-color: #484256;background-color: #263238;}
+.r50 {color: #c8b7f6; text-decoration-color: #c8b7f6;background-color: #263238;}
+.r51 {color: #6ac99d; text-decoration-color: #6ac99d;background-color: #263238;}
+.r52 {color: #335045; text-decoration-color: #335045;background-color: #263238;}
+.r53 {color: #2c4039; text-decoration-color: #2c4039;background-color: #263238;}
+.r54 {color: #1d1e21; text-decoration-color: #1d1e21;background-color: #263238;}
+.r55 {color: #4e475d; text-decoration-color: #4e475d;background-color: #263238;}
+.r56 {color: #e6e1e5; text-decoration-color: #e6e1e5;background-color: #263238;}
+.r57 {color: #5e5c60; text-decoration-color: #5e5c60;background-color: #263238;}
+.r58 {color: #222126; text-decoration-color: #222126;background-color: #263238;}
+.r59 {color: #31463f; text-decoration-color: #31463f;background-color: #263238;}
+.r60 {color: #375449; text-decoration-color: #375449;background-color: #263238;}
+.r61 {color: #355147; text-decoration-color: #355147;background-color: #263238;}
+.r62 {color: #8bd2c1; text-decoration-color: #8bd2c1;background-color: #263238;}
+.r63 {color: #4c5e62; text-decoration-color: #4c5e62;background-color: #263238;}
+.r64 {color: #443f51; text-decoration-color: #443f51;background-color: #263238;}
+.r65 {color: #4d475d; text-decoration-color: #4d475d;background-color: #263238;}
+.r66 {color: #25292b; text-decoration-color: #25292b;background-color: #263238;}
+.r67 {color: #314740; text-decoration-color: #314740;background-color: #263238;}
+.r68 {color: #314840; text-decoration-color: #314840;background-color: #263238;}
+.r69 {color: #222227; text-decoration-color: #222227;background-color: #263238;}
+.r70 {color: #554e66; text-decoration-color: #554e66;background-color: #263238;}
+.r71 {color: #55656c; text-decoration-color: #55656c;background-color: #263238;}
+.r72 {color: #576e72; text-decoration-color: #576e72;background-color: #263238;}
+.r73 {color: #58516a; text-decoration-color: #58516a;background-color: #263238;}
+.r74 {color: #484356; text-decoration-color: #484356;background-color: #263238;}
+.r75 {color: #232c2b; text-decoration-color: #232c2b;background-color: #263238;}
+.r76 {color: #335145; text-decoration-color: #335145;background-color: #263238;}
+.r77 {color: #2d443c; text-decoration-color: #2d443c;background-color: #263238;}
+.r78 {color: #47595b; text-decoration-color: #47595b;background-color: #263238;}
+.r79 {color: #516268; text-decoration-color: #516268;background-color: #263238;}
+.r80 {color: #4c6764; text-decoration-color: #4c6764;background-color: #263238;}
+.r81 {color: #454153; text-decoration-color: #454153;background-color: #263238;}
+.r82 {color: #2b3f38; text-decoration-color: #2b3f38;background-color: #263238;}
+.r83 {color: #374a47; text-decoration-color: #374a47;background-color: #263238;}
+.r84 {color: #457b63; text-decoration-color: #457b63;background-color: #263238;}
+.r85 {color: #374b48; text-decoration-color: #374b48;background-color: #263238;}
+.r86 {color: #434853; text-decoration-color: #434853;background-color: #263238;}
+.r87 {color: #9486b4; text-decoration-color: #9486b4;background-color: #263238;}
+.r88 {color: #bface9; text-decoration-color: #bface9;background-color: #263238;}
+.r89 {color: #304b41; text-decoration-color: #304b41;background-color: #263238;}
+.r90 {color: #6a7286; text-decoration-color: #6a7286;background-color: #263238;}
+.r91 {color: #7d809d; text-decoration-color: #7d809d;background-color: #263238;}
+.r92 {color: #485c5e; text-decoration-color: #485c5e;background-color: #263238;}
+.r93 {color: #aa9ad0; text-decoration-color: #aa9ad0;background-color: #263238;}
+.r94 {color: #c3b0ef; text-decoration-color: #c3b0ef;background-color: #263238;}
+.r95 {color: #494458; text-decoration-color: #494458;background-color: #263238;}
+.r96 {color: #cfcbcf; text-decoration-color: #cfcbcf;background-color: #263238;}
+.r97 {color: #908d91; text-decoration-color: #908d91;background-color: #263238;}
+.r98 {color: #4e4c50; text-decoration-color: #4e4c50;background-color: #263238;}
+.r99 {color: #646266; text-decoration-color: #646266;background-color: #263238;}
+.r100 {color: #dad5d9; text-decoration-color: #dad5d9;background-color: #263238;}
+.r101 {color: #817e82; text-decoration-color: #817e82;background-color: #263238;}
+.r102 {color: #5b595d; text-decoration-color: #5b595d;background-color: #263238;}
+.r103 {color: #454347; text-decoration-color: #454347;background-color: #263238;}
+.r104 {color: #9a969a; text-decoration-color: #9a969a;background-color: #263238;}
+.r105 {color: #ccc8cc; text-decoration-color: #ccc8cc;background-color: #263238;}
+.r106 {color: #2f2e32; text-decoration-color: #2f2e32;background-color: #263238;}
+.r107 {color: #b4b0b4; text-decoration-color: #b4b0b4;background-color: #263238;}
+.r108 {color: #a7a3a7; text-decoration-color: #a7a3a7;background-color: #263238;}
+.r109 {color: #a9a5a9; text-decoration-color: #a9a5a9;background-color: #263238;}
+.r110 {color: #5c5a5e; text-decoration-color: #5c5a5e;background-color: #263238;}
+.r111 {color: #676569; text-decoration-color: #676569;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing character --positive-space </span><span class="r1">       </span></div>
+<div><span class="r1">notebook.ipynb</span><span class="r1">                                                                 </span></div>
+<div><span class="r1">      ╭───────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[17]:</span><span class="r1"> │ </span><span class="r4">_</span><span class="r5">,</span><span class="r4"> ax </span><span class="r5">=</span><span class="r4"> plt</span><span class="r5">.</span><span class="r4">subplots</span><span class="r5">(</span><span class="r4">facecolor</span><span class="r5">=</span><span class="r6">"#1C1B1F"</span><span class="r5">)</span><span class="r1">                             │</span></div>
+<div><span class="r1">      │ </span><span class="r5">(</span><span class="r1">                                                                     │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    sns</span><span class="r5">.</span><span class="r4">load_dataset</span><span class="r5">(</span><span class="r6">"fmri"</span><span class="r5">).</span><span class="r4">pipe</span><span class="r5">(</span><span class="r1">                                    │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r5">(</span><span class="r4">sns</span><span class="r5">.</span><span class="r4">lineplot</span><span class="r5">,</span><span class="r4"> </span><span class="r6">"data"</span><span class="r5">),</span><span class="r1">                                       │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        x</span><span class="r5">=</span><span class="r6">"timepoint"</span><span class="r5">,</span><span class="r1">                                                │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        y</span><span class="r5">=</span><span class="r6">"signal"</span><span class="r5">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        hue</span><span class="r5">=</span><span class="r6">"region"</span><span class="r5">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        alpha</span><span class="r5">=</span><span class="r7">1</span><span class="r5">,</span><span class="r1">                                                      │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        ax</span><span class="r5">=</span><span class="r4">ax</span><span class="r5">,</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    </span><span class="r5">)</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r5">)</span><span class="r1">                                                                    </span><span class="r1"> │</span></div>
+<div><span class="r1">      ╰───────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[17]:</span><span class="r1">  </span><span class="r1">&lt;AxesSubplot:xlabel='timepoint', ylabel='signal'&gt;                       </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r8"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/dark_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::::::::::::::</span><span class="r10">!</span><span class="r11">::</span><span class="r12">!</span><span class="r9">:::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::</span><span class="r13">?</span><span class="r9">::::::::::::::::::</span><span class="r14">:</span><span class="r11">::::</span><span class="r15">!</span><span class="r9">::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::::::::::::</span><span class="r16">:</span><span class="r11">:::::::</span><span class="r9">:::::::::::::::::::::::::</span><span class="r17">:</span><span class="r9">:::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::</span><span class="r18">G</span><span class="r9">::</span><span class="r19">G</span><span class="r9">::::::::::::::::</span><span class="r20">:</span><span class="r11">:</span><span class="r21">G</span><span class="r11">:::</span><span class="r22">G</span><span class="r11">::</span><span class="r23">!</span><span class="r9">:::::::::::::::::::</span><span class="r24">????</span><span class="r9">::</span><span class="r25">:</span><span class="r26">G</span><span class="r27">?</span><span class="r9">:</span><span class="r28">!</span><span class="r9">::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::</span><span class="r11">:</span><span class="r29">G</span><span class="r30">!</span><span class="r31">!!!</span><span class="r32">!</span><span class="r29">G</span><span class="r11">::</span><span class="r9">::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::::::::::</span><span class="r10">!</span><span class="r29">G</span><span class="r31">!!</span><span class="r33">::</span><span class="r31">!!</span><span class="r32">!</span><span class="r34">G</span><span class="r11">::</span><span class="r9">:::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::</span><span class="r35">?</span><span class="r9">:::::::::::::::</span><span class="r36">!</span><span class="r31">!</span><span class="r37">!</span><span class="r38">P</span><span class="r33">::</span><span class="r39">?</span><span class="r40">:</span><span class="r31">!</span><span class="r41">!</span><span class="r29">G</span><span class="r11">:</span><span class="r42">!</span><span class="r9">::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::</span><span class="r43">!</span><span class="r9">:::::::::::::::::::::::</span><span class="r11">:</span><span class="r31">!</span><span class="r44">P</span><span class="r33">::::::</span><span class="r45">?</span><span class="r31">!</span><span class="r46">!</span><span class="r47">P</span><span class="r11">:</span><span class="r9">::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::</span><span class="r48">!</span><span class="r9">::::::::::::::::::::::</span><span class="r49">!</span><span class="r50">G</span><span class="r44">P</span><span class="r33">::</span><span class="r9">::::</span><span class="r33">::</span><span class="r44">P</span><span class="r31">!</span><span class="r11">:::</span><span class="r9">:::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::::::::</span><span class="r29">G</span><span class="r51">P</span><span class="r33">:</span><span class="r9">:::::::</span><span class="r52">!</span><span class="r33">:</span><span class="r44">P</span><span class="r31">!</span><span class="r11">:::</span><span class="r9">::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::</span><span class="r29">G</span><span class="r31">!</span><span class="r53">:</span><span class="r9">:::::::::</span><span class="r54">:</span><span class="r33">:</span><span class="r44">P</span><span class="r31">!</span><span class="r11">::</span><span class="r55">!</span><span class="r9">:::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::</span><span class="r56">G</span><span class="r57">!</span><span class="r9">:::</span><span class="r58">::</span><span class="r59">:</span><span class="r60">!</span><span class="r58">::</span><span class="r61">!</span><span class="r59">:</span><span class="r62">P</span><span class="r63">!</span><span class="r58">:::::::::::::</span><span class="r59">:</span><span class="r44">P</span><span class="r63">!!</span><span class="r64">!</span><span class="r65">!</span><span class="r58">:::::::::::::::::</span><span class="r66">:</span><span class="r67">!</span><span class="r60">!</span><span class="r68">!</span><span class="r59">:::</span><span class="r69">:</span><span class="r58">::</span><span class="r9">:</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::</span><span class="r70">!</span><span class="r30">!</span><span class="r71">!</span><span class="r63">!</span><span class="r72">!</span><span class="r73">!</span><span class="r74">!</span><span class="r9">:::::::::::::::</span><span class="r33">::</span><span class="r31">!!</span><span class="r11">::</span><span class="r9">:::::</span><span class="r75">:</span><span class="r33">::::</span><span class="r76">!</span><span class="r44">P</span><span class="r77">:</span><span class="r33">:</span><span class="r78">!</span><span class="r79">!</span><span class="r31">!</span><span class="r80">!!!!!</span><span class="r30">!</span><span class="r25">:</span><span class="r9">:::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::</span><span class="r55">!</span><span class="r81">!</span><span class="r9">:::::::::::::::::::</span><span class="r82">:</span><span class="r33">:</span><span class="r44">P</span><span class="r31">!</span><span class="r29">G</span><span class="r31">!!</span><span class="r83">!</span><span class="r33">:</span><span class="r84">!</span><span class="r38">P</span><span class="r33">:</span><span class="r85">!</span><span class="r31">!!</span><span class="r86">!</span><span class="r11">:</span><span class="r87">?</span><span class="r88">P</span><span class="r11">:::::::::</span><span class="r25">:</span><span class="r9">:::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::</span><span class="r89">!</span><span class="r33">:</span><span class="r31">!!</span><span class="r90">?</span><span class="r91">?</span><span class="r31">!!</span><span class="r92">!</span><span class="r11">:</span><span class="r93">P</span><span class="r94">P</span><span class="r11">::::</span><span class="r9">::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::::::::::::::::::::::::::::::::</span><span class="r11">::::::</span><span class="r95">!</span><span class="r9">::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::</span><span class="r96">G</span><span class="r9">:::</span><span class="r97">?</span><span class="r9">:::</span><span class="r58">::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span><span class="r9">:</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">:::::::::::::::::</span><span class="r98">!</span><span class="r9">:::::</span><span class="r99">!</span><span class="r9">:</span><span class="r100">G</span><span class="r9">::::</span><span class="r101">?</span><span class="r9">:</span><span class="r102">!</span><span class="r9">:::::::::::</span><span class="r103">!</span><span class="r35">?</span><span class="r104">P</span><span class="r9">::::</span><span class="r105">G</span><span class="r106">:</span><span class="r9">:</span><span class="r107">P</span><span class="r9">::::::</span><span class="r108">P</span><span class="r9">::::</span><span class="r109">P</span><span class="r9">:</span><span class="r110">!</span><span class="r9">:::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></div>
+<div><span class="r1">       </span><span class="r9">::::::::::::::::::::::::::::::::::::::::::</span><span class="r111">!</span><span class="r9">:::::::::::::::::::::::::::::</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

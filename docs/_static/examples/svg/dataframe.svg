@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="934" viewBox="0 0 1236.1999999999998 934">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r5 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r6 {color: #f78c6c; text-decoration-color: #f78c6c; background-color: #263238}
+.r7 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r8 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r9 {font-weight: bold;color: #e9e9f4; text-decoration-color: #e9e9f4;;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material notebook.ipynb</span><span class="r1">                                    </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[2]:</span><span class="r1"> │ </span><span class="r4">pd</span><span class="r5">.</span><span class="r4">DataFrame</span><span class="r5">(</span><span class="r1">                                                          │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    </span><span class="r5">[</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        </span><span class="r5">[</span><span class="r6">38.0</span><span class="r5">,</span><span class="r4"> </span><span class="r6">2.0</span><span class="r5">,</span><span class="r4"> </span><span class="r6">18.0</span><span class="r5">,</span><span class="r4"> </span><span class="r6">22.0</span><span class="r5">],</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        </span><span class="r5">[</span><span class="r6">19</span><span class="r5">,</span><span class="r4"> </span><span class="r6">439</span><span class="r5">,</span><span class="r4"> </span><span class="r6">6</span><span class="r5">,</span><span class="r4"> </span><span class="r6">452</span><span class="r5">],</span><span class="r1">                                             │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    </span><span class="r5">],</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    index</span><span class="r5">=</span><span class="r4">pd</span><span class="r5">.</span><span class="r4">Index</span><span class="r5">(</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        </span><span class="r5">[</span><span class="r7">"Tumour (Positive)"</span><span class="r5">,</span><span class="r4"> </span><span class="r7">"Non-Tumour (Negative)"</span><span class="r5">],</span><span class="r1">                │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        name</span><span class="r5">=</span><span class="r7">"Actual Label:"</span><span class="r5">,</span><span class="r1">                                          │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    </span><span class="r5">),</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    columns</span><span class="r5">=</span><span class="r4">pd</span><span class="r5">.</span><span class="r4">MultiIndex</span><span class="r5">.</span><span class="r4">from_product</span><span class="r5">(</span><span class="r1">                                │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        </span><span class="r5">[[</span><span class="r7">"Decision Tree"</span><span class="r5">,</span><span class="r4"> </span><span class="r7">"Regression"</span><span class="r5">],</span><span class="r4"> </span><span class="r5">[</span><span class="r7">"Tumour"</span><span class="r5">,</span><span class="r4"> </span><span class="r7">"Non-Tumour"</span><span class="r5">]],</span><span class="r1">   │</span></div>
+<div><span class="r1">     │ </span><span class="r4">        names</span><span class="r5">=[</span><span class="r7">"Model:"</span><span class="r5">,</span><span class="r4"> </span><span class="r7">"Predicted:"</span><span class="r5">],</span><span class="r1">                                │</span></div>
+<div><span class="r1">     │ </span><span class="r4">    </span><span class="r5">),</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r5">)</span><span class="r1">                                                                     </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[2]:</span><span class="r1">  </span><span class="r8"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/dataframe.html">🌐 Click to view HTML</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[2]:</span><span class="r1">   </span><span class="r9">               Model:</span><span class="r1">   </span><span class="r1">      </span><span class="r1">   </span><span class="r9">Decision Tree</span><span class="r1">   </span><span class="r1">      </span><span class="r1">   </span><span class="r9">Regression</span><span class="r1"> </span><span class="r1">   </span></div>
+<div><span class="r1">       </span><span class="r9">           Predicted:</span><span class="r1">   </span><span class="r9">Tumour</span><span class="r1">   </span><span class="r9">   Non-Tumour</span><span class="r1">   </span><span class="r9">Tumour</span><span class="r1">   </span><span class="r9">Non-Tumour</span><span class="r1"> </span><span class="r1">   </span></div>
+<div><span class="r1">       </span><span class="r9">        Actual Label:</span><span class="r1">   </span><span class="r9">      </span><span class="r1">   </span><span class="r9">             </span><span class="r1">   </span><span class="r9">      </span><span class="r1">   </span><span class="r9">          </span><span class="r1"> </span><span class="r1">   </span></div>
+<div><span class="r1">      ──────────────────────────────────────────────────────────────────────</span><span class="r1">   </span></div>
+<div><span class="r1">       </span><span class="r9">    Tumour (Positive)</span><span class="r1">   </span><span class="r1">  38.0</span><span class="r1">   </span><span class="r1">          2.0</span><span class="r1">   </span><span class="r1">  18.0</span><span class="r1">   </span><span class="r1">      22.0</span><span class="r1"> </span><span class="r1">   </span></div>
+<div><span class="r1">       </span><span class="r9">Non-Tumour (Negative)</span><span class="r1">   </span><span class="r1">  19.0</span><span class="r1">   </span><span class="r1">        439.0</span><span class="r1">   </span><span class="r1">   6.0</span><span class="r1">   </span><span class="r1">     452.0</span><span class="r1"> </span><span class="r1">   </span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

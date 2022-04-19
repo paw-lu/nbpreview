@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="1242" viewBox="0 0 1236.1999999999998 1242">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r5 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r6 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r7 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r8 {color: #ffffff; text-decoration-color: #ffffff;background-color: #263238;}
+.r9 {color: #848484; text-decoration-color: #848484;background-color: #263238;}
+.r10 {color: #bbbbbb; text-decoration-color: #bbbbbb;background-color: #263238;}
+.r11 {color: #a56cf5; text-decoration-color: #a56cf5;background-color: #263238;}
+.r12 {color: #9f63f4; text-decoration-color: #9f63f4;background-color: #263238;}
+.r13 {color: #aaaaaa; text-decoration-color: #aaaaaa;background-color: #263238;}
+.r14 {color: #8a40f2; text-decoration-color: #8a40f2;background-color: #263238;}
+.r15 {color: #741def; text-decoration-color: #741def;background-color: #263238;}
+.r16 {color: #7e7e7e; text-decoration-color: #7e7e7e;background-color: #263238;}
+.r17 {color: #f4f4f4; text-decoration-color: #f4f4f4;background-color: #263238;}
+.r18 {color: #bababa; text-decoration-color: #bababa;background-color: #263238;}
+.r19 {color: #8b8b8b; text-decoration-color: #8b8b8b;background-color: #263238;}
+.r20 {color: #cfb2f9; text-decoration-color: #cfb2f9;background-color: #263238;}
+.r21 {color: #6300ee; text-decoration-color: #6300ee;background-color: #263238;}
+.r22 {color: #818181; text-decoration-color: #818181;background-color: #263238;}
+.r23 {color: #e3e3e3; text-decoration-color: #e3e3e3;background-color: #263238;}
+.r24 {color: #e9e9e9; text-decoration-color: #e9e9e9;background-color: #263238;}
+.r25 {color: #9d9d9d; text-decoration-color: #9d9d9d;background-color: #263238;}
+.r26 {color: #b7b7b7; text-decoration-color: #b7b7b7;background-color: #263238;}
+.r27 {color: #701dee; text-decoration-color: #701dee;background-color: #263238;}
+.r28 {color: #eeeeee; text-decoration-color: #eeeeee;background-color: #263238;}
+.r29 {color: #6707ee; text-decoration-color: #6707ee;background-color: #263238;}
+.r30 {color: #fcfcfc; text-decoration-color: #fcfcfc;background-color: #263238;}
+.r31 {color: #ababab; text-decoration-color: #ababab;background-color: #263238;}
+.r32 {color: #f3f3f3; text-decoration-color: #f3f3f3;background-color: #263238;}
+.r33 {color: #ffa368; text-decoration-color: #ffa368;background-color: #263238;}
+.r34 {color: #f9f9f9; text-decoration-color: #f9f9f9;background-color: #263238;}
+.r35 {color: #979797; text-decoration-color: #979797;background-color: #263238;}
+.r36 {color: #898989; text-decoration-color: #898989;background-color: #263238;}
+.r37 {color: #f0f0f0; text-decoration-color: #f0f0f0;background-color: #263238;}
+.r38 {color: #761fef; text-decoration-color: #761fef;background-color: #263238;}
+.r39 {color: #751def; text-decoration-color: #751def;background-color: #263238;}
+.r40 {color: #fbfbfb; text-decoration-color: #fbfbfb;background-color: #263238;}
+.r41 {color: #adadad; text-decoration-color: #adadad;background-color: #263238;}
+.r42 {color: #909090; text-decoration-color: #909090;background-color: #263238;}
+.r43 {color: #e5e5e5; text-decoration-color: #e5e5e5;background-color: #263238;}
+.r44 {color: #5a31e1; text-decoration-color: #5a31e1;background-color: #263238;}
+.r45 {color: #f5f5f5; text-decoration-color: #f5f5f5;background-color: #263238;}
+.r46 {color: #c39ef8; text-decoration-color: #c39ef8;background-color: #263238;}
+.r47 {color: #e1cefb; text-decoration-color: #e1cefb;background-color: #263238;}
+.r48 {color: #7e2cf0; text-decoration-color: #7e2cf0;background-color: #263238;}
+.r49 {color: #40b9c1; text-decoration-color: #40b9c1;background-color: #263238;}
+.r50 {color: #f5996e; text-decoration-color: #f5996e;background-color: #263238;}
+.r51 {color: #e5d5fc; text-decoration-color: #e5d5fc;background-color: #263238;}
+.r52 {color: #be5f9d; text-decoration-color: #be5f9d;background-color: #263238;}
+.r53 {color: #7219ef; text-decoration-color: #7219ef;background-color: #263238;}
+.r54 {color: #5544dc; text-decoration-color: #5544dc;background-color: #263238;}
+.r55 {color: #6c0fee; text-decoration-color: #6c0fee;background-color: #263238;}
+.r56 {color: #5a17e5; text-decoration-color: #5a17e5;background-color: #263238;}
+.r57 {color: #787878; text-decoration-color: #787878;background-color: #263238;}
+.r58 {color: #e0e0e0; text-decoration-color: #e0e0e0;background-color: #263238;}
+.r59 {color: #8238ea; text-decoration-color: #8238ea;background-color: #263238;}
+.r60 {color: #6303ed; text-decoration-color: #6303ed;background-color: #263238;}
+.r61 {color: #38b1b9; text-decoration-color: #38b1b9;background-color: #263238;}
+.r62 {color: #4674ca; text-decoration-color: #4674ca;background-color: #263238;}
+.r63 {color: #721cec; text-decoration-color: #721cec;background-color: #263238;}
+.r64 {color: #f79b60; text-decoration-color: #f79b60;background-color: #263238;}
+.r65 {color: #8232f1; text-decoration-color: #8232f1;background-color: #263238;}
+.r66 {color: #620feb; text-decoration-color: #620feb;background-color: #263238;}
+.r67 {color: #6300ed; text-decoration-color: #6300ed;background-color: #263238;}
+.r68 {color: #40a5c3; text-decoration-color: #40a5c3;background-color: #263238;}
+.r69 {color: #40b3c1; text-decoration-color: #40b3c1;background-color: #263238;}
+.r70 {color: #3fafc1; text-decoration-color: #3fafc1;background-color: #263238;}
+.r71 {color: #7722f0; text-decoration-color: #7722f0;background-color: #263238;}
+.r72 {color: #757575; text-decoration-color: #757575;background-color: #263238;}
+.r73 {color: #d2d2d2; text-decoration-color: #d2d2d2;background-color: #263238;}
+.r74 {color: #eaeaea; text-decoration-color: #eaeaea;background-color: #263238;}
+.r75 {color: #b2b2b2; text-decoration-color: #b2b2b2;background-color: #263238;}
+.r76 {color: #acacac; text-decoration-color: #acacac;background-color: #263238;}
+.r77 {color: #7b7b7b; text-decoration-color: #7b7b7b;background-color: #263238;}
+.r78 {color: #7f7f7f; text-decoration-color: #7f7f7f;background-color: #263238;}
+.r79 {color: #9a9a9a; text-decoration-color: #9a9a9a;background-color: #263238;}
+.r80 {color: #c3c3c3; text-decoration-color: #c3c3c3;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing braille notebook.ipynb</span><span class="r1">            </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[4]:</span><span class="r1"> │ </span><span class="r4">(</span><span class="r1">                                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    sns</span><span class="r4">.</span><span class="r5">load_dataset</span><span class="r4">(</span><span class="r6">"penguins"</span><span class="r4">).</span><span class="r5">pipe</span><span class="r4">(</span><span class="r1">                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        </span><span class="r4">(</span><span class="r5">sns</span><span class="r4">.</span><span class="r5">kdeplot</span><span class="r4">,</span><span class="r5"> </span><span class="r6">"data"</span><span class="r4">),</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        x</span><span class="r4">=</span><span class="r6">"flipper_length_mm"</span><span class="r4">,</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        hue</span><span class="r4">=</span><span class="r6">"species"</span><span class="r4">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        multiple</span><span class="r4">=</span><span class="r6">"stack"</span><span class="r4">,</span><span class="r1">                                              │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    </span><span class="r4">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r4">)</span><span class="r1">                                                                     </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[4]:</span><span class="r1">  </span><span class="r1">&lt;AxesSubplot:xlabel='flipper_length_mm', ylabel='Density'&gt;               </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r7"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/image_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r9">⣿</span><span class="r10">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r11">⣿</span><span class="r12">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r13">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿</span><span class="r15">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿</span><span class="r16">⣿</span><span class="r8">⣿</span><span class="r17">⣿</span><span class="r18">⣿</span><span class="r19">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿</span><span class="r20">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r21">⣿</span><span class="r14">⣿⣿⣿⣿</span><span class="r8">⣿</span><span class="r22">⣿</span><span class="r23">⣿</span><span class="r8">⣿</span><span class="r24">⣿</span><span class="r25">⣿</span><span class="r26">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r27">⣟</span><span class="r21">⣛⣛⣛⣻</span><span class="r8">⣿⣿</span><span class="r28">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿</span><span class="r29">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿</span><span class="r30">⣿</span><span class="r8">⣿</span><span class="r31">⣿</span><span class="r8">⣿</span><span class="r32">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r21">⡿</span><span class="r33">⠿⠿⠿⢿</span><span class="r8">⣿</span><span class="r34">⣿</span><span class="r35">⣿</span><span class="r8">⣿</span><span class="r35">⣿</span><span class="r8">⣿</span><span class="r36">⣿</span><span class="r37">⣿</span><span class="r8">⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r38">⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿</span><span class="r39">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿</span><span class="r40">⣿</span><span class="r8">⣿</span><span class="r41">⣿</span><span class="r42">⣿</span><span class="r43">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r44">⣿</span><span class="r33">⣍</span><span class="r21">⡻</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿</span><span class="r45">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r46">⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r47">⣿</span><span class="r8">⣿⣿⣿⣿⣿</span><span class="r48">⡿</span><span class="r49">⣷</span><span class="r33">⣿⣿⣿</span><span class="r50">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿</span><span class="r8">⣿⣿⣿⣿</span><span class="r51">⣿</span><span class="r49">⣿</span><span class="r33">⣿⣿⣿⣿⣿</span><span class="r52">⡽</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿</span><span class="r16">⣿</span><span class="r8">⣿</span><span class="r45">⣿</span><span class="r8">⣿</span><span class="r9">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r53">⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⢿⣿⣿⣿</span><span class="r54">⣯</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿</span><span class="r21">⣽</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⣿⣿</span><span class="r55">⣿</span><span class="r56">⣼</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿⣷</span><span class="r8">⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r57">⣿</span><span class="r8">⣿⣿⣿⣿⣿</span><span class="r58">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r59">⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r60">⡿</span><span class="r61">⣿⣟</span><span class="r62">⣿</span><span class="r59">⣿⣿⣿</span><span class="r63">⣿</span><span class="r61">⣯</span><span class="r64">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟</span><span class="r58">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r65">⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿⣿</span><span class="r49">⣯⣾⣿⣿⣿⣿</span><span class="r66">⣿</span><span class="r14">⣿</span><span class="r67">⣿</span><span class="r68">⡾</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣞</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿</span><span class="r69">⢟</span><span class="r49">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣯⡿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿⣿⣿</span><span class="r49">⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r70">⣿</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣞</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r14">⣿⣿⣿⣿</span><span class="r71">⣿</span><span class="r49">⢟⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r33">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡽</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r72">⣿</span><span class="r73">⣿</span><span class="r8">⣿⣿⣿⣿</span><span class="r74">⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⢿⣿⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣝⢿⣿⣿⣿⣿⣿⣿⣿</span><span class="r8">⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r23">⣿</span><span class="r75">⣿</span><span class="r19">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r23">⣿</span><span class="r76">⣿</span><span class="r19">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r77">⣿</span><span class="r22">⣿</span><span class="r78">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r77">⣿⣿</span><span class="r78">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r72">⣿</span><span class="r8">⣿</span><span class="r45">⣿</span><span class="r8">⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r79">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1">      </span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r80">⣿</span><span class="r8">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>
