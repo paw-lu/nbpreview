@@ -1,0 +1,140 @@
+<svg width="1236.1999999999998" height="802" viewBox="0 0 1236.1999999999998 802"
+     xmlns="http://www.w3.org/2000/svg">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #c678dd; text-decoration-color: #c678dd; background-color: #263238}
+.r5 {color: #abb2bf; text-decoration-color: #abb2bf; background-color: #263238}
+.r6 {color: #e06c75; text-decoration-color: #e06c75; background-color: #263238}
+.r7 {color: #e5c07b; text-decoration-color: #e5c07b; background-color: #263238}
+.r8 {color: #98c379; text-decoration-color: #98c379; background-color: #263238}
+.r9 {color: #61afef; text-decoration-color: #61afef; background-color: #263238}
+.r10 {color: #61afef; text-decoration-color: #61afef; background-color: #263238; font-weight: bold}
+.r11 {color: #56b6c2; text-decoration-color: #56b6c2; background-color: #263238}
+.r12 {color: #d19a66; text-decoration-color: #d19a66; background-color: #263238}
+.r13 {color: #7f848e; text-decoration-color: #7f848e; background-color: #263238}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id='terminal-header'>
+                        <svg id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"/>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"/>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"/>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id='terminal-body'>
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme one-dark notebook.ipynb</span><span class="r1">                                    </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[ ]:</span><span class="r1"> │ </span><span class="r4">from</span><span class="r5"> </span><span class="r6">typing</span><span class="r5"> </span><span class="r4">import</span><span class="r5"> </span><span class="r6">Iterator</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r4">class</span><span class="r5"> </span><span class="r7">Math</span><span class="r5">:</span><span class="r1">                                                            │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    </span><span class="r8">&quot;&quot;&quot;An example class.&quot;&quot;&quot;</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    </span><span class="r9">@staticmethod</span><span class="r1">                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r5">    </span><span class="r4">def</span><span class="r5"> </span><span class="r10">fib</span><span class="r5">(</span><span class="r6">n</span><span class="r5">: </span><span class="r7">int</span><span class="r5">) </span><span class="r11">-&gt;</span><span class="r5"> </span><span class="r6">Iterator</span><span class="r5">[</span><span class="r7">int</span><span class="r5">]:</span><span class="r1">                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        </span><span class="r8">&quot;&quot;&quot;Fibonacci series up to n.&quot;&quot;&quot;</span><span class="r1">                                │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        </span><span class="r6">a</span><span class="r5">, </span><span class="r6">b</span><span class="r5"> </span><span class="r11">=</span><span class="r5"> </span><span class="r12">0</span><span class="r5">, </span><span class="r12">1</span><span class="r5">  </span><span class="r13"># Manually set first two terms</span><span class="r1">                    │</span></div>
+<div><span class="r1">     │ </span><span class="r5">        </span><span class="r4">while</span><span class="r5"> </span><span class="r6">a</span><span class="r5"> </span><span class="r11">&lt;</span><span class="r5"> </span><span class="r6">n</span><span class="r5">:</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r5">            </span><span class="r4">yield</span><span class="r5"> </span><span class="r6">a</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r5">            </span><span class="r6">a</span><span class="r5">, </span><span class="r6">b</span><span class="r5"> </span><span class="r11">=</span><span class="r5"> </span><span class="r6">b</span><span class="r5">, </span><span class="r6">a</span><span class="r5"> </span><span class="r11">+</span><span class="r5"> </span><span class="r6">b</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r6">result</span><span class="r5"> </span><span class="r11">=</span><span class="r5"> </span><span class="r7">sum</span><span class="r5">(</span><span class="r6">Math</span><span class="r11">.</span><span class="r6">fib</span><span class="r5">(</span><span class="r12">42</span><span class="r5">))</span><span class="r1">                                             │</span></div>
+<div><span class="r1">     │ </span><span class="r7">print</span><span class="r5">(</span><span class="r8">f&quot;The answer is {</span><span class="r6">result</span><span class="r8">}&quot;</span><span class="r5">)</span><span class="r1">                                      </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>
