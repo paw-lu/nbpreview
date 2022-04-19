@@ -38,8 +38,6 @@ and [instructions on how to configure][configure] the tool.
 
 ## Features
 
-nbpreview can:
-
 ### [Syntax highlight code cells](https://nbpreview.readthedocs.io/en/latest/features.html#syntax-highlighting)
 
 ![Material theme syntax highlighting](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/theme_material.svg)
