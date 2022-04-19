@@ -15,7 +15,7 @@ end-before: <!-- github-only -->
 
 ```{raw} html
 ---
-file: _static/examples/example_notebook.html
+file: _static/examples/html/example_notebook.html
 ---
 ```
 
