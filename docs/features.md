@@ -157,7 +157,7 @@ default theme—and
 ````{tab-item} material
 ```{raw} html
 ---
-file: _static/examples/theme_material.html
+file: _static/examples/html/theme_material.html
 ---
 ```
 ````
@@ -165,7 +165,7 @@ file: _static/examples/theme_material.html
 ````{tab-item} dracula
 ```{raw} html
 ---
-file: _static/examples/theme_dracula.html
+file: _static/examples/html/theme_dracula.html
 ---
 ```
 ````
@@ -173,7 +173,7 @@ file: _static/examples/theme_dracula.html
 ````{tab-item} one-dark
 ```{raw} html
 ---
-file: _static/examples/theme_one_dark.html
+file: _static/examples/html/theme_one_dark.html
 ---
 ```
 ````
@@ -181,7 +181,7 @@ file: _static/examples/theme_one_dark.html
 ````{tab-item} monokai
 ```{raw} html
 ---
-file: _static/examples/theme_monokai.html
+file: _static/examples/html/theme_monokai.html
 ---
 ```
 ````
@@ -189,7 +189,7 @@ file: _static/examples/theme_monokai.html
 ````{tab-item} paraiso-light
 ```{raw} html
 ---
-file: _static/examples/theme_paraiso_light.html
+file: _static/examples/html/theme_paraiso_light.html
 ---
 ```
 ````
@@ -197,7 +197,7 @@ file: _static/examples/theme_paraiso_light.html
 ````{tab-item} rainbow_dash
 ```{raw} html
 ---
-file: _static/examples/theme_rainbow_dash.html
+file: _static/examples/html/theme_rainbow_dash.html
 ---
 ```
 ````
@@ -222,7 +222,7 @@ here it switches to bash syntax highlighting when the `%%bash` cell magic is use
 
 ```{raw} html
 ---
-file: _static/examples/cell_magic_syntax_highlight.html
+file: _static/examples/html/cell_magic_syntax_highlight.html
 ---
 ```
 
@@ -234,7 +234,7 @@ as Julia.
 
 ```{raw} html
 ---
-file: _static/examples/julia_syntax_highlight.html
+file: _static/examples/html/julia_syntax_highlight.html
 ---
 ```
 
@@ -255,7 +255,7 @@ that wrapping is clearly distinguished from a line break.
 
 ```{raw} html
 ---
-file: _static/examples/long_code.html
+file: _static/examples/html/long_code.html
 ---
 ```
 
@@ -313,7 +313,7 @@ renders as
 
 ```{raw} html
 ---
-file: _static/examples/markdown.html
+file: _static/examples/html/markdown.html
 ---
 ```
 
@@ -334,7 +334,7 @@ option can be used to control the method nbpreview uses to draw images.
 ````{tab-item} block
 ```{raw} html
 ---
-file: _static/examples/images_block.html
+file: _static/examples/html/images_block.html
 ---
 ```
 ````
@@ -342,7 +342,7 @@ file: _static/examples/images_block.html
 ````{tab-item} character
 ```{raw} html
 ---
-file: _static/examples/images_character.html
+file: _static/examples/html/images_character.html
 ---
 ```
 ````
@@ -350,7 +350,7 @@ file: _static/examples/images_character.html
 ````{tab-item} braille
 ```{raw} html
 ---
-file: _static/examples/images_braille.html
+file: _static/examples/html/images_braille.html
 ---
 ```
 ````
@@ -382,7 +382,7 @@ only draws in positive space.
 ````{tab-item} character (positive space)
 ```{raw} html
 ---
-file: _static/examples/dark_plot_positive_character.html
+file: _static/examples/html/dark_plot_positive_character.html
 ---
 ```
 ````
@@ -390,7 +390,7 @@ file: _static/examples/dark_plot_positive_character.html
 ````{tab-item} character (negative space)
 ```{raw} html
 ---
-file: _static/examples/dark_plot_negative_character.html
+file: _static/examples/html/dark_plot_negative_character.html
 ---
 ```
 ````
@@ -398,7 +398,7 @@ file: _static/examples/dark_plot_negative_character.html
 ````{tab-item} braille
 ```{raw} html
 ---
-file: _static/examples/dark_plot_braille.html
+file: _static/examples/html/dark_plot_braille.html
 ---
 ```
 ````
@@ -406,7 +406,7 @@ file: _static/examples/dark_plot_braille.html
 ````{tab-item} block
 ```{raw} html
 ---
-file: _static/examples/dark_plot_block.html
+file: _static/examples/html/dark_plot_block.html
 ---
 ```
 
@@ -440,7 +440,7 @@ nbpreview renders Pandas DataFrame as a table.
 
 ```{raw} html
 ---
-file: _static/examples/dataframe.html
+file: _static/examples/html/dataframe.html
 ---
 ```
 
@@ -451,7 +451,7 @@ along with a link to an interactive version (thanks to [justcharts]).
 
 ```{raw} html
 ---
-file: _static/examples/vega.html
+file: _static/examples/html/vega.html
 ---
 ```
 
@@ -462,7 +462,7 @@ nbpreview can render $\LaTeX$ as unicode characters.
 
 ```{raw} html
 ---
-file: _static/examples/latex.html
+file: _static/examples/html/latex.html
 ---
 ```
 
@@ -475,7 +475,7 @@ so it can be easily previewed in the browser.
 
 ```{raw} html
 ---
-file: _static/examples/html.html
+file: _static/examples/html/html.html
 ---
 ```
 
@@ -488,7 +488,7 @@ will display hyperlinks to them in the render.
 
 ```{raw} html
 ---
-file: _static/examples/links.html
+file: _static/examples/html/links.html
 ---
 ```
 
@@ -540,7 +540,7 @@ stderr text is highlighted in a bright red box.
 
 ```{raw} html
 ---
-file: _static/examples/stderr.html
+file: _static/examples/html/stderr.html
 ---
 ```
 
@@ -550,7 +550,7 @@ Tracebacks are rendered with syntax highlighting.
 
 ```{raw} html
 ---
-file: _static/examples/traceback.html
+file: _static/examples/html/traceback.html
 ---
 ```
 
