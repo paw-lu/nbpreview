@@ -1,4 +1,5 @@
 """Nox sessions."""
+import itertools
 import os
 import pathlib
 import shutil
@@ -262,11 +263,15 @@ def examples(session: Session) -> None:
     session.install(".")
     session.install("tomli")
     session.run("python", "docs/generate_examples.py")
+    example_path = pathlib.Path(__file__).parent / pathlib.Path(
+        "docs", "_static", "examples"
+    )
+    html_examples = (pathlib.Path(__file__).parent / example_path / "html").glob(
+        "*.html"
+    )
+    svg_examples = (pathlib.Path(__file__).parent / example_path / "svg").glob("*.svg")
     generated_examples = (
-        os.fsdecode(file)
-        for file in (
-            pathlib.Path(__file__).parent / pathlib.Path("docs", "_static", "examples")
-        ).glob("*.html")
+        os.fsdecode(file) for file in itertools.chain(html_examples, svg_examples)
     )
     session.notify(
         "pre-commit",
