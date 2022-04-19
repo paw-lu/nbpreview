@@ -40,17 +40,47 @@ and [instructions on how to configure][configure] the tool.
 
 nbpreview can:
 
-- [Syntax highlight code cells](https://nbpreview.readthedocs.io/en/latest/features.html#syntax-highlighting)
-- [Render markdown](https://nbpreview.readthedocs.io/en/latest/features.html#markdown-rendering)
-- [Draw images](https://nbpreview.readthedocs.io/en/latest/features.html#images)
-- [Render DataFrame](https://nbpreview.readthedocs.io/en/latest/features.html#dataframe-rendering)
-- [Create previews for Vega charts](https://nbpreview.readthedocs.io/en/latest/features.html#vega-and-vegalite-charts)
-- [Render LaTeX](https://nbpreview.readthedocs.io/en/latest/features.html#latex)
-- [Parse HTML](https://nbpreview.readthedocs.io/en/latest/features.html#html)
-- [Create hyperlinks for complex content](https://nbpreview.readthedocs.io/en/latest/features.html#hyperlinks)
-- [Use Nerd Font icons](https://nbpreview.readthedocs.io/en/latest/features.html#nerd-fonts)
-- [Render stderr output](https://nbpreview.readthedocs.io/en/latest/features.html#stderr)
-- [Render tracebacks](https://nbpreview.readthedocs.io/en/latest/features.html#tracebacks)
+### [Syntax highlight code cells](https://nbpreview.readthedocs.io/en/latest/features.html#syntax-highlighting)
+
+![Material theme syntax highlighting](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/theme_material.svg)
+
+### [Render markdown](https://nbpreview.readthedocs.io/en/latest/features.html#markdown-rendering)
+
+![Markdown render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/markdown.svg)
+
+### [Draw images](https://nbpreview.readthedocs.io/en/latest/features.html#images)
+
+![Block drawing of image](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/images_block.svg)
+
+### [Render DataFrame](https://nbpreview.readthedocs.io/en/latest/features.html#dataframe-rendering)
+
+![DataFrame render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/dataframe.svg)
+
+### [Create previews for Vega charts](https://nbpreview.readthedocs.io/en/latest/features.html#vega-and-vegalite-charts)
+
+![DataFrame render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/vega.svg)
+
+### [Render LaTeX](https://nbpreview.readthedocs.io/en/latest/features.html#latex)
+
+![LaTeX render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/latex.svg)
+
+### [Parse HTML](https://nbpreview.readthedocs.io/en/latest/features.html#html)
+
+![HTML render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/html.svg)
+
+### [Create hyperlinks for complex content](https://nbpreview.readthedocs.io/en/latest/features.html#hyperlinks)
+
+![Hyperlink renders](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/links.svg)
+
+### [Render stderr output](https://nbpreview.readthedocs.io/en/latest/features.html#stderr)
+
+![Stderr render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/stderr.svg)
+
+### [Render tracebacks](https://nbpreview.readthedocs.io/en/latest/features.html#tracebacks)
+
+![Traceback render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/traceback.svg)
+
+### [Use Nerd Font icons](https://nbpreview.readthedocs.io/en/latest/features.html#nerd-fonts)
 
 ## Requirements
 
