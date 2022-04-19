@@ -191,7 +191,7 @@ there are many amazing projects out there.
 - **[nbclient]**
   is a library for executing notebooks from the command line.
 - **[nbpreview]**
-  Another project that coincidentally shares a name with this project.
+  is another project that coincidentally shares a name with this one.
   It allows for Jupyter notebooks to be rendered
   without running a notebook server.
 - **[nbqa]**
