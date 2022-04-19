@@ -5,14 +5,15 @@ import json
 import os
 import pathlib
 import re
-import textwrap
 import typing
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterator, List, Literal, Optional, Sequence, Tuple
 
+import jinja2
 import nbformat
 import tomli
-from lxml import html
+from jinja2 import select_autoescape
+from lxml import etree, html
 from nbformat import NotebookNode
 from rich import console, style, terminal_theme, text
 from rich.console import Console
@@ -170,26 +171,39 @@ def make_material_terminal_theme(light_theme: bool = False) -> TerminalTheme:
     return material_terminal_theme
 
 
-def make_code_format(light_theme: bool = False) -> str:
+def make_code_format(
+    file_type: Literal["svg", "html"],
+    light_theme: bool = False,
+) -> str:
     """Create code format template for rich."""
-    theme = "light" if light_theme else "dark"
-    code_format = textwrap.dedent(
-        f"""\
-            <div class="terminal-container">
-              <div class="terminal {theme}-terminal">
-                <div class="top">
-                  <div class="buttons">
-                    <span class="circle {theme}-red"></span>
-                    <span class="circle {theme}-yellow"></span>
-                    <span class="circle {theme}-green"></span>
-                  </div>
-                </div>
-                <code>
-                  <pre class="terminal-content">{{code}}</pre>
-                </code>
-              </div>
-            </div>
-        """
+    template_directory = pathlib.Path(__file__).parent / pathlib.Path(
+        "example_notebook_cells", "templates"
+    )
+    environment = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(template_directory),
+        autoescape=select_autoescape(),
+        keep_trailing_newline=True,
+    )
+    if light_theme:
+        theme = "light"
+        button_red = "#e53935"
+        button_yellow = "#e2931d"
+        button_green = "#91b859"
+        theme_title_tab_background_color = "#FAFAFA"
+    else:
+        theme = "dark"
+        button_red = "#f07178"
+        button_yellow = "#ffcb6b"
+        button_green = "#c3e88d"
+        theme_title_tab_background_color = "#192227"
+
+    template = environment.get_template(f"{file_type}_template.jinja")
+    code_format = template.render(
+        theme=theme,
+        button_red=button_red,
+        button_yellow=button_yellow,
+        button_green=button_green,
+        theme_title_tab_background_color=theme_title_tab_background_color,
     )
     return code_format
 
@@ -232,24 +246,98 @@ def make_example_command(args: Sequence[str]) -> Text:
 
 
 def substitute_example_links(
-    example_path: Path, substitute_links: Dict[str, str]
+    example_path: Path,
+    substitute_links: Dict[str, str],
 ) -> None:
     """Substitute links in example."""
     example_text = example_path.read_text()
-    example_html_element = html.fromstring(example_text)
-    example_links = example_html_element.xpath("//a")
+    file_type = example_path.suffix.lstrip(".")
+
+    if file_type == "html":
+        element = html.fromstring(example_text)
+        xpath = "//a"
+    elif file_type == "svg":
+        element = etree.fromstring(example_text)  # noqa: S320
+        xpath = "//svg:foreignObject//xhtml:a"
+    else:
+        raise ValueError("example_path bust be a HTML or SVG file.")
+
+    svg_xml_namespaces = {
+        "svg": "http://www.w3.org/2000/svg",
+        "xhtml": "http://www.w3.org/1999/xhtml",
+    }
+    example_links = element.xpath(xpath, namespaces=svg_xml_namespaces)
+
     for link_position, substitute_link in substitute_links.items():
         example_links[int(link_position)].set("href", substitute_link)
-    substituted_links_example = html.tostring(example_html_element, encoding="unicode")
+
+    substituted_links_example = html.tostring(element, encoding="unicode")
     example_path.write_text(substituted_links_example)
+
+
+def _make_svg_hyperlink_url(docs_file_path: str) -> str:
+    """Prefix the URL for hyperlinks in SVG examples.
+
+    HTML does not render in GitHub, so we replace them with the hosted
+    HTML on Read The Docs.
+    """
+    url_prefix = (
+        "https://nbpreview.readthedocs.io/en/latest/"
+        if docs_file_path.endswith(".html")
+        else "https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/"
+    )
+    full_url = f"{url_prefix}{docs_file_path}"
+    return full_url
+
+
+def save_example(
+    console: Console,
+    terminal_theme: TerminalTheme,
+    file_type: Literal["html", "svg"],
+    file_name: str,
+    light_theme: bool = False,
+    substitute_links: Optional[Dict[str, str]] = None,
+) -> None:
+    """Record the example and save to file."""
+    example_path = (
+        pathlib.Path(__file__).parent
+        / pathlib.Path("_static", "examples", file_type, file_name)
+    ).with_suffix(f".{file_type}")
+    code_format = make_code_format(file_type=file_type, light_theme=light_theme)
+    if file_type == "html":
+        console.save_html(
+            os.fsdecode(example_path),
+            theme=terminal_theme,
+            inline_styles=True,
+            code_format=code_format,
+            clear=False,
+        )
+    elif file_type == "svg":
+        console.save_svg(
+            os.fsdecode(example_path),
+            code_format=code_format,
+            theme=terminal_theme,
+            clear=False,
+        )
+    else:
+        raise ValueError("file_type must be 'html' or 'svg'.")
+    if substitute_links is not None:
+        _substitute_links = (
+            {
+                link_position: _make_svg_hyperlink_url(docs_file_path)
+                for link_position, docs_file_path in substitute_links.items()
+            }
+            if file_type == "svg"
+            else substitute_links
+        )
+        substitute_example_links(example_path, substitute_links=_substitute_links)
 
 
 def generate_examples() -> None:
     """Generate the examples for the documentation."""
     example_notebook_cell_directory = pathlib.Path(__file__).parent / pathlib.Path(
-        "example_notebook_cells"
+        "example_notebook_cells", "content"
     )
-    example_console = make_example_console()
     for example in get_examples():
         example_notebook_cell_path = example_notebook_cell_directory / pathlib.Path(
             example.cells_filename
@@ -259,25 +347,22 @@ def generate_examples() -> None:
         )
 
         example_command = make_example_command(example.args)
-        example_console.print(example_command)
         nbpreview_notebook = notebook.Notebook(notebook_node, **example.notebook_kwargs)
+        example_console = make_example_console()
+        example_console.print(example_command)
         example_console.print(nbpreview_notebook)
 
-        example_path = (
-            pathlib.Path(__file__).parent
-            / pathlib.Path("_static", "examples")
-            / pathlib.Path(example.example_filename).with_suffix(".html")
-        )
         material_terminal_theme = make_material_terminal_theme(example.light_theme)
-        code_format = make_code_format(example.light_theme)
-        example_console.save_html(
-            os.fsdecode(example_path),
-            theme=material_terminal_theme,
-            inline_styles=True,
-            code_format=code_format,
-        )
-        if (substitute_links := example.substitute_links) is not None:
-            substitute_example_links(example_path, substitute_links=substitute_links)
+
+        for file_type in typing.get_args(typing.Literal["html", "svg"]):
+            save_example(
+                console=example_console,
+                terminal_theme=material_terminal_theme,
+                file_type=file_type,
+                file_name=example.example_filename,
+                light_theme=example.light_theme,
+                substitute_links=example.substitute_links,
+            )
 
 
 if __name__ == "__main__":
