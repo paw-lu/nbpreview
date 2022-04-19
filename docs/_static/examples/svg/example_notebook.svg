@@ -1,0 +1,412 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="5686" viewBox="0 0 1236.1999999999998 5686">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #ffffff; text-decoration-color: #ffffff; background-color: #5f00ff; font-weight: bold}
+.r4 {color: #42199b; text-decoration-color: #42199b;background-color: #263238;}
+.r5 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r6 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238; font-style: italic}
+.r7 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r8 {color: #ffcb6b; text-decoration-color: #ffcb6b; background-color: #263238}
+.r9 {color: #bb80b3; text-decoration-color: #bb80b3; background-color: #263238}
+.r10 {color: #ffffff; text-decoration-color: #ffffff; background-color: #000000}
+.r11 {color: #82aaff; text-decoration-color: #82aaff; font-style: italic;background-color: #263238;}
+.r12 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r13 {color: #00afaf; text-decoration-color: #00afaf; font-weight: bold;background-color: #263238;}
+.r14 {color: #137073; text-decoration-color: #137073;background-color: #263238;}
+.r15 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r16 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r17 {color: #82aaff; text-decoration-color: #82aaff; background-color: #263238}
+.r18 {color: #f78c6c; text-decoration-color: #f78c6c; background-color: #263238}
+.r19 {font-weight: bold;color: #e9e9f4; text-decoration-color: #e9e9f4;;background-color: #263238;}
+.r20 {color: #ffffff; text-decoration-color: #ffffff;background-color: #263238;}
+.r21 {color: #1c1b1f; text-decoration-color: #1c1b1f;background-color: #263238;}
+.r22 {color: #d0bcff; text-decoration-color: #d0bcff;background-color: #263238;}
+.r23 {color: #6d6384; text-decoration-color: #6d6384;background-color: #263238;}
+.r24 {color: #201e24; text-decoration-color: #201e24;background-color: #263238;}
+.r25 {color: #7a6f95; text-decoration-color: #7a6f95;background-color: #263238;}
+.r26 {color: #cfbbfe; text-decoration-color: #cfbbfe;background-color: #263238;}
+.r27 {color: #3b3645; text-decoration-color: #3b3645;background-color: #263238;}
+.r28 {color: #c7b4f4; text-decoration-color: #c7b4f4;background-color: #263238;}
+.r29 {color: #b1a0d9; text-decoration-color: #b1a0d9;background-color: #263238;}
+.r30 {color: #b5a4dd; text-decoration-color: #b5a4dd;background-color: #263238;}
+.r31 {color: #c8b5f6; text-decoration-color: #c8b5f6;background-color: #263238;}
+.r32 {color: #546e7a; text-decoration-color: #546e7a; background-color: #263238; font-style: italic}
+.r33 {background-color: #d78787;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r34 {color: #3a3a3a; text-decoration-color: #3a3a3a; background-color: #d78787}
+.r35 {color: #59a783; text-decoration-color: #59a783;background-color: #263238;}
+.r36 {color: #6cd2a2; text-decoration-color: #6cd2a2;background-color: #263238;}
+.r37 {color: #70dba8; text-decoration-color: #70dba8;background-color: #263238;}
+.r38 {color: #2b3e38; text-decoration-color: #2b3e38;background-color: #263238;}
+.r39 {color: #6bcf9f; text-decoration-color: #6bcf9f;background-color: #263238;}
+.r40 {color: #25302e; text-decoration-color: #25302e;background-color: #263238;}
+.r41 {color: #324e44; text-decoration-color: #324e44;background-color: #263238;}
+.r42 {color: #467c64; text-decoration-color: #467c64;background-color: #263238;}
+.r43 {color: #232d2b; text-decoration-color: #232d2b;background-color: #263238;}
+.r44 {color: #cdb9fc; text-decoration-color: #cdb9fc;background-color: #263238;}
+.r45 {color: #ffb683; text-decoration-color: #ffb683;background-color: #263238;}
+.r46 {color: #acc7ff; text-decoration-color: #acc7ff;background-color: #263238;}
+.r47 {color: #e2bbad; text-decoration-color: #e2bbad;background-color: #263238;}
+.r48 {color: #6fd9a7; text-decoration-color: #6fd9a7;background-color: #263238;}
+.r49 {color: #fdb683; text-decoration-color: #fdb683;background-color: #263238;}
+.r50 {color: #91d29f; text-decoration-color: #91d29f;background-color: #263238;}
+.r51 {color: #c6b3f2; text-decoration-color: #c6b3f2;background-color: #263238;}
+.r52 {color: #78d8af; text-decoration-color: #78d8af;background-color: #263238;}
+.r53 {color: #c1c0f1; text-decoration-color: #c1c0f1;background-color: #263238;}
+.r54 {color: #f5b792; text-decoration-color: #f5b792;background-color: #263238;}
+.r55 {color: #f8b78c; text-decoration-color: #f8b78c;background-color: #263238;}
+.r56 {color: #b6c4ef; text-decoration-color: #b6c4ef;background-color: #263238;}
+.r57 {color: #b5c5f1; text-decoration-color: #b5c5f1;background-color: #263238;}
+.r58 {color: #b1c5f7; text-decoration-color: #b1c5f7;background-color: #263238;}
+.r59 {color: #84d4c6; text-decoration-color: #84d4c6;background-color: #263238;}
+.r60 {color: #78d8b4; text-decoration-color: #78d8b4;background-color: #263238;}
+.r61 {color: #c8c1d4; text-decoration-color: #c8c1d4;background-color: #263238;}
+.r62 {color: #f4b892; text-decoration-color: #f4b892;background-color: #263238;}
+.r63 {color: #f1b897; text-decoration-color: #f1b897;background-color: #263238;}
+.r64 {color: #a2bbf0; text-decoration-color: #a2bbf0;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing braille notebook.ipynb</span><span class="r1">            </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r3"> nbpreview                                                               </span></div>
+<div><span class="r1">      </span><span class="r4">─────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[1]:</span><span class="r1"> │ </span><span class="r6">from</span><span class="r7"> </span><span class="r8">typing</span><span class="r7"> </span><span class="r6">import</span><span class="r7"> Optional</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r6">import</span><span class="r7"> </span><span class="r8">arviz</span><span class="r7"> </span><span class="r9">as</span><span class="r7"> </span><span class="r8">az</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">     │ </span><span class="r6">import</span><span class="r7"> </span><span class="r8">matplotlib.pyplot</span><span class="r7"> </span><span class="r9">as</span><span class="r7"> </span><span class="r8">plt</span><span class="r1">                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r6">import</span><span class="r7"> </span><span class="r8">pandas</span><span class="r7"> </span><span class="r9">as</span><span class="r7"> </span><span class="r8">pd</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r6">import</span><span class="r7"> </span><span class="r8">pymc</span><span class="r7"> </span><span class="r9">as</span><span class="r7"> </span><span class="r8">pm</span><span class="r1">                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r6">from</span><span class="r7"> </span><span class="r8">arviz</span><span class="r7"> </span><span class="r6">import</span><span class="r7"> InferenceData</span><span class="r1">                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r6">from</span><span class="r7"> </span><span class="r8">matplotlib.axes</span><span class="r7"> </span><span class="r6">import</span><span class="r7"> Axes</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r6">from</span><span class="r7"> </span><span class="r8">matplotlib.axes._subplots</span><span class="r7"> </span><span class="r6">import</span><span class="r7"> Subplot</span><span class="r1">                          │</span></div>
+<div><span class="r1">     │ </span><span class="r6">from</span><span class="r7"> </span><span class="r8">pandas</span><span class="r7"> </span><span class="r6">import</span><span class="r7"> DataFrame</span><span class="r1">                                           │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r6">import</span><span class="r7"> </span><span class="r8">plots</span><span class="r1">                                                          </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  Thanks for checking out </span><span class="r10">nbpreview</span><span class="r1">. This example notebook is inspired by  </span></div>
+<div><span class="r1">      an example in </span><span class="r11"><a href="https://www.amazon.com/Bayesian-Analysis-Python-Introduction-probabilistic-ebook/dp/B07HHBCR9G">Bayesian Analysis with Python</a></span><span class="r1"> by Osvaldo Martin. A more    </span></div>
+<div><span class="r1">      detailed breakdown of how </span><span class="r10">nbpreview</span><span class="r1"> renders notebooks, examples, and     </span></div>
+<div><span class="r1">      command-line options may be found in the </span><span class="r12"><a href="https://nbpreview.readthedocs.io/">documentation</a></span><span class="r1">.                  </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r13">## Load data                                                             </span></div>
+<div><span class="r1">      </span><span class="r14">─────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  This dataset contains the heights (</span><span class="r10">Length</span><span class="r1">) and age (</span><span class="r10">Month</span><span class="r1">) of newborn    </span></div>
+<div><span class="r1">      girls.                                                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[2]:</span><span class="r1"> │ </span><span class="r7">babies_data </span><span class="r15">=</span><span class="r7"> pd</span><span class="r15">.</span><span class="r7">read_csv</span><span class="r15">(</span><span class="r1">                                             │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r16">"https://github.com/aloctavodia/BAP/blob/master/code/data/babies.…</span><span class="r1"> │</span></div>
+<div><span class="r1">     │ </span><span class="r15">).</span><span class="r7">rename</span><span class="r15">(</span><span class="r7">columns</span><span class="r15">={</span><span class="r16">"Lenght"</span><span class="r15">:</span><span class="r7"> </span><span class="r16">"Length"</span><span class="r15">})</span><span class="r1">                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r7">months_of_interest </span><span class="r15">=</span><span class="r7"> </span><span class="r17">list</span><span class="r15">(</span><span class="r17">range</span><span class="r15">(</span><span class="r18">0</span><span class="r15">,</span><span class="r7"> </span><span class="r18">13</span><span class="r15">,</span><span class="r7"> </span><span class="r18">4</span><span class="r15">))</span><span class="r1">                             │</span></div>
+<div><span class="r1">     │ </span><span class="r15">(</span><span class="r1">                                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    babies_data</span><span class="r15">.</span><span class="r7">groupby</span><span class="r15">(</span><span class="r16">"Month"</span><span class="r15">)</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">.</span><span class="r7">agg</span><span class="r15">(</span><span class="r1">                                                              │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        mean_length</span><span class="r15">=(</span><span class="r16">"Length"</span><span class="r15">,</span><span class="r7"> </span><span class="r16">"mean"</span><span class="r15">),</span><span class="r1">                                │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        median_length</span><span class="r15">=(</span><span class="r16">"Length"</span><span class="r15">,</span><span class="r7"> </span><span class="r16">"median"</span><span class="r15">),</span><span class="r1">                            │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        mean_std</span><span class="r15">=(</span><span class="r16">"Length"</span><span class="r15">,</span><span class="r7"> </span><span class="r16">"std"</span><span class="r15">),</span><span class="r1">                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        measurement_count</span><span class="r15">=(</span><span class="r16">"Month"</span><span class="r15">,</span><span class="r7"> </span><span class="r16">"count"</span><span class="r15">),</span><span class="r1">                          │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">.</span><span class="r7">loc</span><span class="r15">[</span><span class="r7">months_of_interest</span><span class="r15">]</span><span class="r1">                                           │</span></div>
+<div><span class="r1">     │ </span><span class="r15">)</span><span class="r1">                                                                     </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r5">[2]:</span><span class="r1">  </span><span class="r12"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/example_notebook_dataframe.html">🌐 Click to view HTML</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r5">[2]:</span><span class="r1">   </span><span class="r19">     </span><span class="r1">   </span><span class="r19">mean_length</span><span class="r1">   </span><span class="r19">median_length</span><span class="r1">   </span><span class="r19">mean_std</span><span class="r1">   </span><span class="r19">measurement_count</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">       </span><span class="r19">Month</span><span class="r1">   </span><span class="r19">           </span><span class="r1">   </span><span class="r19">             </span><span class="r1">   </span><span class="r19">        </span><span class="r1">   </span><span class="r19">                 </span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">      ────────────────────────────────────────────────────────────────────</span><span class="r1">     </span></div>
+<div><span class="r1">       </span><span class="r19">    0</span><span class="r1">   </span><span class="r1">  49.458333</span><span class="r1">   </span><span class="r1">        49.25</span><span class="r1">   </span><span class="r1">1.824285</span><span class="r1">   </span><span class="r1">               48</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">       </span><span class="r19">    4</span><span class="r1">   </span><span class="r1">  62.060606</span><span class="r1">   </span><span class="r1">        62.50</span><span class="r1">   </span><span class="r1">2.548767</span><span class="r1">   </span><span class="r1">               33</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">       </span><span class="r19">    8</span><span class="r1">   </span><span class="r1">  68.809524</span><span class="r1">   </span><span class="r1">        69.00</span><span class="r1">   </span><span class="r1">2.677714</span><span class="r1">   </span><span class="r1">               42</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">       </span><span class="r19">   12</span><span class="r1">   </span><span class="r1">  74.456522</span><span class="r1">   </span><span class="r1">        74.50</span><span class="r1">   </span><span class="r1">2.549122</span><span class="r1">   </span><span class="r1">               23</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[3]:</span><span class="r1"> │ </span><span class="r7">babies_data</span><span class="r15">.</span><span class="r7">plot</span><span class="r15">.</span><span class="r7">scatter</span><span class="r15">(</span><span class="r1">                                              │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    x</span><span class="r15">=</span><span class="r16">"Month"</span><span class="r15">,</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    y</span><span class="r15">=</span><span class="r16">"Length"</span><span class="r15">,</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    figsize</span><span class="r15">=(</span><span class="r18">30</span><span class="r15">,</span><span class="r7"> </span><span class="r18">7</span><span class="r15">),</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    s</span><span class="r15">=</span><span class="r18">500</span><span class="r15">,</span><span class="r1">                                                             │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    xticks</span><span class="r15">=[],</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    yticks</span><span class="r15">=[],</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r15">);</span><span class="r1">                                                                    </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r12"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/example_notebook_length_scatter.png">🖼 Click to view Image</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r20">⣿⡏</span><span class="r21">⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⢉⡉⠉⣉⠉⠉</span><span class="r22">⣯</span><span class="r21">⠉⢩⡍⠉⢉⡉⠉</span><span class="r22">⣿</span><span class="r21">⠉⠉⢹</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⡀⠀⢠⡄⠀⢀⠀⠀</span><span class="r22">⣦</span><span class="r21">⠀⢸</span><span class="r23">⡇</span><span class="r21">⠀</span><span class="r22">⣾</span><span class="r21">⠀⠀</span><span class="r22">⣿</span><span class="r21">⠀⢸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r22">⢸</span><span class="r21">⡇⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⣀⠀⢀⣄⠀</span><span class="r24">⢸</span><span class="r21">⡇⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀</span><span class="r22">⣿</span><span class="r21">⠀</span><span class="r25">⢸⡇</span><span class="r21">⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀</span><span class="r22">⡿</span><span class="r21">⠀⢸</span><span class="r26">⡇</span><span class="r21">⠀</span><span class="r22">⣻</span><span class="r21">⠂⠀</span><span class="r22">⣿</span><span class="r21">⠀⢸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r22">⠸</span><span class="r21">⠇⠀</span><span class="r22">⠿</span><span class="r21">⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀</span><span class="r22">⣠</span><span class="r21">⡄⠀</span><span class="r22">⣶</span><span class="r21">⠀⢸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r22">⢸</span><span class="r21">⡇⠀</span><span class="r22">⣿</span><span class="r21">⠀⠸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r22">⢸</span><span class="r21">⡇⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀</span><span class="r22">⡿</span><span class="r21">⠀</span><span class="r27">⢸⡇</span><span class="r21">⠀⠈⠀⠀⠉⠀⠘⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⢀⡀⠀</span><span class="r22">⣲</span><span class="r21">⠀⠀</span><span class="r22">⣷</span><span class="r21">⠀⢸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r22">⣿</span><span class="r21">⡇⠀</span><span class="r22">⣿</span><span class="r21">⠀⠸</span><span class="r22">⡇</span><span class="r21">⠀</span><span class="r26">⠘</span><span class="r21">⠃⠀</span><span class="r28">⠛</span><span class="r21">⠀⠐</span><span class="r22">⠆</span><span class="r21">⠀⠈⠁⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀⠀⠀⠀</span><span class="r22">⢶</span><span class="r21">⠀⠀</span><span class="r22">⣿</span><span class="r21">⠀⢸</span><span class="r26">⡇</span><span class="r21">⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀</span><span class="r29">⠛</span><span class="r21">⠀⠘</span><span class="r30">⠃</span><span class="r21">⠀</span><span class="r22">⠸</span><span class="r21">⠅⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀</span><span class="r31">⢰</span><span class="r21">⡆⠀</span><span class="r22">⣿</span><span class="r21">⠀⠀</span><span class="r22">⠿</span><span class="r21">⠀⠈⠁⠀⠙⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⡇</span><span class="r21">⠀⠀</span><span class="r22">⢸</span><span class="r21">⡇⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r20">⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣾</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r13">## Make model                                                            </span></div>
+<div><span class="r1">      </span><span class="r14">─────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  We'll model </span><span class="r10">Length</span><span class="r1"> as a linear function of the square root of </span><span class="r10">Month</span><span class="r1">.     </span></div>
+<div><span class="r1">      </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r1"> Length  ∼𝒩(μ= α+ β√(Month), ϵ)                                          </span></div>
+<div><span class="r1">      </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      Where the variance itself is also a linear function of </span><span class="r10">Month</span><span class="r1">.            </span></div>
+<div><span class="r1">      </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r1"> ϵ∼γ+ σMonth                                                             </span></div>
+<div><span class="r1">      </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[4]:</span><span class="r1"> │ </span><span class="r9">with</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">Model</span><span class="r15">(</span><span class="r7">coords</span><span class="r15">={</span><span class="r16">"time_idx"</span><span class="r15">:</span><span class="r7"> babies_data</span><span class="r15">.</span><span class="r7">index</span><span class="r15">})</span><span class="r7"> </span><span class="r9">as</span><span class="r7"> babies_model</span><span class="r15">:</span><span class="r1"> │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r32"># Priors</span><span class="r1">                                                           │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    alpha </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">Normal</span><span class="r15">(</span><span class="r16">"alpha"</span><span class="r15">,</span><span class="r7"> sigma</span><span class="r15">=</span><span class="r18">10</span><span class="r15">)</span><span class="r1">                               │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    beta </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">Normal</span><span class="r15">(</span><span class="r16">"beta"</span><span class="r15">,</span><span class="r7"> sigma</span><span class="r15">=</span><span class="r18">10</span><span class="r15">)</span><span class="r1">                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    gamma </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">HalfNormal</span><span class="r15">(</span><span class="r16">"gamma"</span><span class="r15">,</span><span class="r7"> sigma</span><span class="r15">=</span><span class="r18">10</span><span class="r15">)</span><span class="r1">                           │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    sigma </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">HalfNormal</span><span class="r15">(</span><span class="r16">"sigma"</span><span class="r15">,</span><span class="r7"> sigma</span><span class="r15">=</span><span class="r18">10</span><span class="r15">)</span><span class="r1">                           │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    month </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">MutableData</span><span class="r15">(</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r16">"month"</span><span class="r15">,</span><span class="r1">                                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        value</span><span class="r15">=</span><span class="r7">babies_data</span><span class="r15">[</span><span class="r16">"Month"</span><span class="r15">].</span><span class="r7">astype</span><span class="r15">(</span><span class="r17">float</span><span class="r15">),</span><span class="r1">                      │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    mu </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">Deterministic</span><span class="r15">(</span><span class="r1">                                             │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r16">"mu"</span><span class="r15">,</span><span class="r1">                                                          │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        alpha </span><span class="r15">+</span><span class="r7"> beta </span><span class="r15">*</span><span class="r7"> month </span><span class="r15">**</span><span class="r7"> </span><span class="r18">0.5</span><span class="r15">,</span><span class="r1">                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        dims</span><span class="r15">=</span><span class="r16">"time_idx"</span><span class="r15">,</span><span class="r1">                                               │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    epsilon </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">Deterministic</span><span class="r15">(</span><span class="r1">                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r16">"epsilon"</span><span class="r15">,</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        gamma </span><span class="r15">+</span><span class="r7"> sigma </span><span class="r15">*</span><span class="r7"> month</span><span class="r15">,</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        dims</span><span class="r15">=</span><span class="r16">"time_idx"</span><span class="r15">,</span><span class="r1">                                               │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    pm</span><span class="r15">.</span><span class="r7">Normal</span><span class="r15">(</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r16">"length"</span><span class="r15">,</span><span class="r1">                                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        mu</span><span class="r15">=</span><span class="r7">mu</span><span class="r15">,</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        sigma</span><span class="r15">=</span><span class="r7">epsilon</span><span class="r15">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        observed</span><span class="r15">=</span><span class="r7">babies_data</span><span class="r15">[</span><span class="r16">"Length"</span><span class="r15">],</span><span class="r1">                                │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        dims</span><span class="r15">=</span><span class="r16">"time_idx"</span><span class="r15">,</span><span class="r1">                                               │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r32"># Sample model</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    babies_idata </span><span class="r15">=</span><span class="r7"> pm</span><span class="r15">.</span><span class="r7">sample</span><span class="r15">(</span><span class="r7">tune</span><span class="r15">=</span><span class="r18">2_000</span><span class="r15">,</span><span class="r7"> return_inferencedata</span><span class="r15">=True)</span><span class="r1">    │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    babies_idata</span><span class="r15">.</span><span class="r7">extend</span><span class="r15">(</span><span class="r7">pm</span><span class="r15">.</span><span class="r7">sample_posterior_predictive</span><span class="r15">(</span><span class="r7">babies_idata</span><span class="r15">))</span><span class="r1"> </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r33">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">Auto-assigning NUTS sampler...                                         </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">Initializing NUTS using jitter+adapt_diag...                           </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">Multiprocess sampling (4 chains in 4 jobs)                             </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">NUTS: [alpha, beta, gamma, sigma]                                      </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">                                                                       </span><span class="r33"> </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r12"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/example_notebook_sampling_progress_bar.html">🌐 Click to view HTML</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  100.00% [12000/12000 00:07&lt;00:00 Sampling 4 chains, 0 divergences]       </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r33">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">Sampling 4 chains for 2_000 tune and 1_000 draw iterations (8_000 +    </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">4_000 draws total) took 20 seconds.                                    </span><span class="r33"> </span></div>
+<div><span class="r1">      </span><span class="r33"> </span><span class="r34">                                                                       </span><span class="r33"> </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r12"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/example_notebook_posterior_predictive_progress_bar.html">🌐 Click to view HTML</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  100.00% [4000/4000 00:00&lt;00:00]                                          </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[5]:</span><span class="r1"> │ </span><span class="r7">epsilon</span><span class="r1">                                                               </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r5">[5]:</span><span class="r1">  </span><span class="r1">epsilon∼Deterministic(f(gamma, sigma))                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r1">                                                                         </span></div>
+<div><span class="r1">      </span><span class="r13">## Plots                                                                 </span></div>
+<div><span class="r1">      </span><span class="r14">─────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  Let's plot the fit as a band where we expect 95% of the data to be       </span></div>
+<div><span class="r1">      contained in.                                                            </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[6]:</span><span class="r1"> │ </span><span class="r7">_</span><span class="r15">,</span><span class="r7"> hdi_ax </span><span class="r15">=</span><span class="r7"> plt</span><span class="r15">.</span><span class="r7">subplots</span><span class="r15">(</span><span class="r7">figsize</span><span class="r15">=(</span><span class="r18">25</span><span class="r15">,</span><span class="r7"> </span><span class="r18">5</span><span class="r15">))</span><span class="r1">                              │</span></div>
+<div><span class="r1">     │ </span><span class="r7">az</span><span class="r15">.</span><span class="r7">plot_hdi</span><span class="r15">(</span><span class="r1">                                                           │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    x</span><span class="r15">=</span><span class="r7">babies_data</span><span class="r15">[</span><span class="r16">"Month"</span><span class="r15">],</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    y</span><span class="r15">=</span><span class="r7">babies_idata</span><span class="r15">[</span><span class="r16">"posterior_predictive"</span><span class="r15">][</span><span class="r16">"length"</span><span class="r15">],</span><span class="r1">                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    hdi_prob</span><span class="r15">=</span><span class="r18">0.95</span><span class="r15">,</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    fill_kwargs</span><span class="r15">={</span><span class="r16">"alpha"</span><span class="r15">:</span><span class="r7"> </span><span class="r18">1.0</span><span class="r15">},</span><span class="r1">                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    ax</span><span class="r15">=</span><span class="r7">hdi_ax</span><span class="r15">,</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r15">).</span><span class="r7">set</span><span class="r15">(</span><span class="r7">xticks</span><span class="r15">=[],</span><span class="r7"> yticks</span><span class="r15">=[]);</span><span class="r1">                                          </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r12"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/example_notebook_hdi_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r21">⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⢉⣉⣉⣉⣉⣉⣩⣭⣭</span><span class="r35">⣭</span><span class="r21">⡍⠉⠉⢹</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀</span><span class="r36">⣤</span><span class="r37">⣤⣤⣤⣴⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r21">⡇⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀</span><span class="r38">⣀</span><span class="r37">⣠⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿</span><span class="r39">⠿</span><span class="r21">⠿⠟⠛⠛⠛⠛⠛⠛⠛⠉⠉⠉⠁⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀</span><span class="r40">⣀</span><span class="r37">⣀⣤⣤⣴⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿</span><span class="r41">⠿</span><span class="r21">⠿⠿⠛⠛⠛⠛⠛⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀</span><span class="r42">⣀</span><span class="r37">⣠⣤⣶⣾⣿⣿⣿⣿⣿⣿</span><span class="r43">⠿</span><span class="r21">⠿⠿⠛⠛⠛⠋⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⢀</span><span class="r37">⣤⣶⣿⣿⣿</span><span class="r21">⠿⠟⠛⠋⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⢸⠿⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  Let's directly compare the distributions of lengths for newborns that are</span></div>
+<div><span class="r1">      0, 4, 8, and 12 months old.                                              </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     ╭────────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r5">[7]:</span><span class="r1"> │ </span><span class="r7">_</span><span class="r15">,</span><span class="r7"> dist_ax </span><span class="r15">=</span><span class="r7"> plt</span><span class="r15">.</span><span class="r7">subplots</span><span class="r15">(</span><span class="r7">figsize</span><span class="r15">=(</span><span class="r18">25</span><span class="r15">,</span><span class="r7"> </span><span class="r18">5</span><span class="r15">))</span><span class="r1">                             │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r9">def</span><span class="r7"> </span><span class="r17">plot_length_dist</span><span class="r15">(</span><span class="r1">                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    babies_idata</span><span class="r15">:</span><span class="r7"> InferenceData</span><span class="r15">,</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    babies_data</span><span class="r15">:</span><span class="r7"> DataFrame</span><span class="r15">,</span><span class="r1">                                            │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    month</span><span class="r15">:</span><span class="r7"> </span><span class="r17">int</span><span class="r15">,</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    ax</span><span class="r15">:</span><span class="r7"> Optional</span><span class="r15">[</span><span class="r7">Axes</span><span class="r15">]</span><span class="r7"> </span><span class="r15">=</span><span class="r7"> </span><span class="r15">None,</span><span class="r1">                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    color</span><span class="r15">:</span><span class="r7"> Optional</span><span class="r15">[</span><span class="r17">str</span><span class="r15">]</span><span class="r7"> </span><span class="r15">=</span><span class="r7"> </span><span class="r15">None,</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r15">)</span><span class="r7"> </span><span class="r15">-&gt;</span><span class="r7"> Subplot</span><span class="r15">:</span><span class="r1">                                                          │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r32">"""Plot the length distribution given an age in months."""</span><span class="r1">         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r9">if</span><span class="r7"> ax </span><span class="r6">is</span><span class="r7"> </span><span class="r15">None:</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        ax </span><span class="r15">=</span><span class="r7"> plt</span><span class="r15">.</span><span class="r7">gca</span><span class="r15">()</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    length_data </span><span class="r15">=</span><span class="r7"> babies_idata</span><span class="r15">.</span><span class="r7">sel</span><span class="r15">(</span><span class="r1">                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        time_idx</span><span class="r15">=</span><span class="r7">babies_data</span><span class="r15">.</span><span class="r7">loc</span><span class="r15">[</span><span class="r9">lambda</span><span class="r7"> df</span><span class="r15">:</span><span class="r7"> df</span><span class="r15">[</span><span class="r16">"Month"</span><span class="r15">]</span><span class="r7"> </span><span class="r15">==</span><span class="r7"> month</span><span class="r15">].</span><span class="r7">ind…</span><span class="r1"> │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)[</span><span class="r16">"posterior_predictive"</span><span class="r15">].</span><span class="r7">stack</span><span class="r15">(</span><span class="r1">                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        dim</span><span class="r15">=[</span><span class="r1">                                                          │</span></div>
+<div><span class="r1">     │ </span><span class="r7">            </span><span class="r16">"chain"</span><span class="r15">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">            </span><span class="r16">"draw"</span><span class="r15">,</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r7">            </span><span class="r16">"time_idx"</span><span class="r15">,</span><span class="r1">                                                │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r15">]</span><span class="r1">                                                              │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)[</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        </span><span class="r16">"length"</span><span class="r1">                                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">]</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    plot </span><span class="r15">=</span><span class="r7"> az</span><span class="r15">.</span><span class="r7">plot_dist</span><span class="r15">(</span><span class="r1">                                               │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        length_data</span><span class="r15">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        fill_kwargs</span><span class="r15">={</span><span class="r16">"alpha"</span><span class="r15">:</span><span class="r7"> </span><span class="r18">1</span><span class="r15">},</span><span class="r1">                                      │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        ax</span><span class="r15">=</span><span class="r7">ax</span><span class="r15">,</span><span class="r1">                                                         │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        color</span><span class="r15">=</span><span class="r7">color</span><span class="r15">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">)</span><span class="r1">                                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r9">return</span><span class="r7"> plot</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │                                                                        │</span></div>
+<div><span class="r1">     │ </span><span class="r9">for</span><span class="r7"> idx</span><span class="r15">,</span><span class="r7"> month </span><span class="r6">in</span><span class="r7"> </span><span class="r17">enumerate</span><span class="r15">(</span><span class="r7">months_of_interest</span><span class="r15">):</span><span class="r1">                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    color </span><span class="r15">=</span><span class="r7"> </span><span class="r9">f</span><span class="r16">"C</span><span class="r15">{</span><span class="r7">idx</span><span class="r15">}</span><span class="r16">"</span><span class="r1">                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    plot_length_dist</span><span class="r15">(</span><span class="r1">                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        babies_idata</span><span class="r15">,</span><span class="r1">                                                  │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        babies_data</span><span class="r15">=</span><span class="r7">babies_data</span><span class="r15">,</span><span class="r1">                                       │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        month</span><span class="r15">=</span><span class="r7">month</span><span class="r15">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        color</span><span class="r15">=</span><span class="r7">color</span><span class="r15">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">     │ </span><span class="r7">        ax</span><span class="r15">=</span><span class="r7">dist_ax</span><span class="r15">,</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">     │ </span><span class="r7">    </span><span class="r15">).</span><span class="r7">set</span><span class="r15">(</span><span class="r7">xticks</span><span class="r15">=[],</span><span class="r7"> yticks</span><span class="r15">=[]);</span><span class="r1">                                      </span><span class="r1"> │</span></div>
+<div><span class="r1">     ╰────────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r12"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/example_notebook_length_distribution_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">    </span><span class="r1">  </span><span class="r21">⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⣩</span><span class="r22">⣭</span><span class="r21">⡉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⢉⣉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⢹</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r44">⣰</span><span class="r22">⣿⣿⣿</span><span class="r21">⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r37">⣰⣿⣿⣷</span><span class="r21">⡀⠀⠀⠀⠀</span><span class="r45">⣰⣾⣶</span><span class="r21">⡄⠀⠀⠀</span><span class="r46">⣠⣤</span><span class="r21">⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r22">⢰⣿⣿⣿⣿⣿</span><span class="r21">⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r37">⣰⣿⣿⣿⣿⣷</span><span class="r21">⡀⠀⠀</span><span class="r45">⣼⣿⣿⣿⣿⣄</span><span class="r21">⢀</span><span class="r46">⣾⣿⣿⣿⣷</span><span class="r21">⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠</span><span class="r22">⣿⣿⣿⣿⣿⣿⣷</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r37">⣰⣿⣿⣿⣿⣿⣿⣧</span><span class="r21">⠀</span><span class="r45">⣼⣿⣿⣿⣿⣿</span><span class="r47">⣿</span><span class="r46">⣾⣿⣿⣿⣿⣿⣷</span><span class="r21">⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀</span><span class="r22">⣾⣿⣿⣿⣿⣿⣿⣿⣧</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r48">⢠</span><span class="r37">⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r45">⣿⣿⣿⣿⣿⣿</span><span class="r46">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄</span><span class="r21">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r26">⢠</span><span class="r22">⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧</span><span class="r21">⡀⠀⠀⠀⠀⠀⠀⠀⠀</span><span class="r37">⣰⣿⣿⣿⣿⣿⣿⣿</span><span class="r49">⣿</span><span class="r45">⣿⣿⣿</span><span class="r50">⣿</span><span class="r45">⣿⣿</span><span class="r46">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦</span><span class="r21">⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸</span></div>
+<div><span class="r1">      </span><span class="r21">⡇⠀⠀⠀</span><span class="r51">⠀</span><span class="r22">⠀⠀⢀⣀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r52">⣦</span><span class="r37">⣀⣀⠀</span><span class="r22">⣀⣀</span><span class="r53">⣤</span><span class="r54">⣾</span><span class="r55">⣿</span><span class="r45">⣿⣿⣿</span><span class="r56">⣿</span><span class="r57">⣿</span><span class="r58">⣿</span><span class="r46">⣿⣿⣿⣿⣿⣿⣿⣿⣿</span><span class="r59">⣿</span><span class="r37">⣿⣿</span><span class="r60">⣿</span><span class="r46">⣿⣿⣿⣿⣿</span><span class="r61">⣿</span><span class="r45">⣿⣿⣿</span><span class="r62">⣦</span><span class="r63">⣄</span><span class="r46">⣀⣀⠀⠀⠀</span><span class="r64">⠀</span><span class="r21">⠀⠀⠀⢸</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

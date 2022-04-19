@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="1792" viewBox="0 0 1236.1999999999998 1792">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #ffffff; text-decoration-color: #ffffff; background-color: #5f00ff; font-weight: bold}
+.r4 {color: #42199b; text-decoration-color: #42199b;background-color: #263238;}
+.r5 {font-weight: bold;color: #e9e9f4; text-decoration-color: #e9e9f4;;background-color: #263238;}
+.r6 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r7 {font-style: italic;color: #e9e9f4; text-decoration-color: #e9e9f4;;background-color: #263238;}
+.r8 {color: #ffffff; text-decoration-color: #ffffff; background-color: #000000}
+.r9 {color: #ffffff; text-decoration-color: #ffffff;background-color: #263238;}
+.r10 {color: #899a5f; text-decoration-color: #899a5f;background-color: #263238;}
+.r11 {color: #6e823a; text-decoration-color: #6e823a;background-color: #263238;}
+.r12 {color: #484e23; text-decoration-color: #484e23;background-color: #263238;}
+.r13 {color: #f4f4f1; text-decoration-color: #f4f4f1;background-color: #263238;}
+.r14 {color: #627233; text-decoration-color: #627233;background-color: #263238;}
+.r15 {color: #778a46; text-decoration-color: #778a46;background-color: #263238;}
+.r16 {color: #4f5827; text-decoration-color: #4f5827;background-color: #263238;}
+.r17 {color: #525b29; text-decoration-color: #525b29;background-color: #263238;}
+.r18 {color: #697c37; text-decoration-color: #697c37;background-color: #263238;}
+.r19 {color: #6c7f39; text-decoration-color: #6c7f39;background-color: #263238;}
+.r20 {color: #59652d; text-decoration-color: #59652d;background-color: #263238;}
+.r21 {color: #dae498; text-decoration-color: #dae498;background-color: #263238;}
+.r22 {color: #cedb75; text-decoration-color: #cedb75;background-color: #263238;}
+.r23 {color: #96a941; text-decoration-color: #96a941;background-color: #263238;}
+.r24 {color: #657534; text-decoration-color: #657534;background-color: #263238;}
+.r25 {color: #bdcf47; text-decoration-color: #bdcf47;background-color: #263238;}
+.r26 {color: #4d5526; text-decoration-color: #4d5526;background-color: #263238;}
+.r27 {color: #babcac; text-decoration-color: #babcac;background-color: #263238;}
+.r28 {color: #f3f6dc; text-decoration-color: #f3f6dc;background-color: #263238;}
+.r29 {color: #5d6b30; text-decoration-color: #5d6b30;background-color: #263238;}
+.r30 {color: #56622c; text-decoration-color: #56622c;background-color: #263238;}
+.r31 {color: #2a2b28; text-decoration-color: #2a2b28;background-color: #263238;}
+.r32 {color: #6a7336; text-decoration-color: #6a7336;background-color: #263238;}
+.r33 {color: #d6e18c; text-decoration-color: #d6e18c;background-color: #263238;}
+.r34 {color: #eaf0c5; text-decoration-color: #eaf0c5;background-color: #263238;}
+.r35 {color: #dee7a3; text-decoration-color: #dee7a3;background-color: #263238;}
+.r36 {color: #a1b041; text-decoration-color: #a1b041;background-color: #263238;}
+.r37 {color: #545e2a; text-decoration-color: #545e2a;background-color: #263238;}
+.r38 {color: #f7f9e8; text-decoration-color: #f7f9e8;background-color: #263238;}
+.r39 {color: #747e31; text-decoration-color: #747e31;background-color: #263238;}
+.r40 {color: #9aad41; text-decoration-color: #9aad41;background-color: #263238;}
+.r41 {color: #5b682f; text-decoration-color: #5b682f;background-color: #263238;}
+.r42 {color: #e2eaae; text-decoration-color: #e2eaae;background-color: #263238;}
+.r43 {color: #fbfcf3; text-decoration-color: #fbfcf3;background-color: #263238;}
+.r44 {color: #00afaf; text-decoration-color: #00afaf; font-weight: bold;background-color: #263238;}
+.r45 {color: #137073; text-decoration-color: #137073;background-color: #263238;}
+.r46 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r47 {color: #bb80b3; text-decoration-color: #bb80b3; background-color: #263238}
+.r48 {color: #82aaff; text-decoration-color: #82aaff; background-color: #263238}
+.r49 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r50 {color: #546e7a; text-decoration-color: #546e7a; background-color: #263238; font-style: italic}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing character notebook.ipynb</span><span class="r1">          </span></div>
+<div><span class="r1">  </span><span class="r3"> Lorem ipsum                                                                 </span></div>
+<div><span class="r1">  </span><span class="r4">─────────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  Lorem ipsum dolor sit amet, consectetur </span><span class="r5">adipiscing</span><span class="r1"> elit, sed do eiusmod      </span></div>
+<div><span class="r1">  tempor incididunt ut labore et dolore magna </span><span class="r6"><a href="https://github.com/paw-lu/nbpreview">aliqua</a></span><span class="r1">.                          </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r1"> α∼Normal(0, 1)                                                              </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r7">Ut enim ad minim veniam</span><span class="r1">, quis nostrud exercitation ullamco Excepteur sint    </span></div>
+<div><span class="r1">  occaecat </span><span class="r8">cupidatat</span><span class="r1"> non proident, sunt in culpa qui.                          </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r6"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/emoji_u1f422.png">🖼 Click to view Turtle</a></span><span class="r1">                                                       </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                  </span><span class="r10">?</span><span class="r11">????????????????</span><span class="r9">                          </span></div>
+<div><span class="r1">  </span><span class="r9">                             </span><span class="r11">?????????????????????????</span><span class="r12">PP</span><span class="r9">                     </span></div>
+<div><span class="r1">  </span><span class="r9">                         </span><span class="r13"> </span><span class="r14">P</span><span class="r11">??????????????????????????</span><span class="r12">PPP</span><span class="r11">???</span><span class="r9">                  </span></div>
+<div><span class="r1">  </span><span class="r9">                       </span><span class="r15">?</span><span class="r16">P</span><span class="r12">PPP</span><span class="r17">P</span><span class="r11">???????????????????</span><span class="r18">?</span><span class="r12">PPPPPPP</span><span class="r19">?</span><span class="r11">????</span><span class="r15">?</span><span class="r9">               </span></div>
+<div><span class="r1">  </span><span class="r9">                      </span><span class="r11">???</span><span class="r12">PPPPPPPPPPP</span><span class="r16">P</span><span class="r11">??????</span><span class="r20">P</span><span class="r12">PPPPPP</span><span class="r16">P</span><span class="r11">????</span><span class="r12">PPP</span><span class="r11">?????</span><span class="r9">              </span></div>
+<div><span class="r1">  </span><span class="r9">                    </span><span class="r10">?</span><span class="r11">???</span><span class="r12">PPP</span><span class="r11">?????</span><span class="r12">PPPPPPPPPPPPPP</span><span class="r11">??????????</span><span class="r12">PPP</span><span class="r16">P</span><span class="r11">?????</span><span class="r9">            </span></div>
+<div><span class="r1">  </span><span class="r9">                 </span><span class="r21">:</span><span class="r22">:</span><span class="r23">!</span><span class="r11">??</span><span class="r24">P</span><span class="r12">PPP</span><span class="r11">??????????????</span><span class="r12">PPPP</span><span class="r11">??????????????</span><span class="r12">PPP</span><span class="r11">?????</span><span class="r9">           </span></div>
+<div><span class="r1">  </span><span class="r9">          </span><span class="r25">!!!!!!!!!!!!!!!!</span><span class="r11">???????????????</span><span class="r12">PPP</span><span class="r11">???????????????</span><span class="r26">P</span><span class="r12">PPP</span><span class="r11">???</span><span class="r12">P</span><span class="r27">!</span><span class="r9">         </span></div>
+<div><span class="r1">  </span><span class="r9">       </span><span class="r28"> </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!</span><span class="r11">????????????</span><span class="r14">P</span><span class="r12">PP</span><span class="r29">P</span><span class="r11">????????????????</span><span class="r12">PPP</span><span class="r30">P</span><span class="r11">?</span><span class="r12">PP</span><span class="r9">    </span><span class="r25">!!</span><span class="r9">   </span></div>
+<div><span class="r1">  </span><span class="r9">      </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r11">???????????</span><span class="r12">PPP</span><span class="r11">?????????????????</span><span class="r12">PPPPPP</span><span class="r11">?</span><span class="r25">!!!!!</span><span class="r9">   </span></div>
+<div><span class="r1">  </span><span class="r9">    </span><span class="r22">:</span><span class="r25">!!!!</span><span class="r31">GGGG</span><span class="r25">!!!!!!!</span><span class="r32">P</span><span class="r31">GG</span><span class="r25">!!!!!!!!!</span><span class="r11">??????????</span><span class="r12">PPP</span><span class="r11">??????????????????</span><span class="r30">P</span><span class="r12">PPP</span><span class="r11">??</span><span class="r25">!!!!</span><span class="r9">    </span></div>
+<div><span class="r1">  </span><span class="r9">   </span><span class="r33">:</span><span class="r25">!!!!</span><span class="r31">GGGGGG</span><span class="r25">!!!!!</span><span class="r31">GGGGGG</span><span class="r25">!!!!!!!!</span><span class="r11">??????????</span><span class="r12">PPP</span><span class="r11">?????????????????</span><span class="r12">PPP</span><span class="r11">???</span><span class="r25">!!</span><span class="r34">:</span><span class="r9">     </span></div>
+<div><span class="r1">  </span><span class="r9">   </span><span class="r25">!!!!!!</span><span class="r31">GGGG</span><span class="r25">!!!!!!!</span><span class="r31">GGGGG</span><span class="r25">!!!!!!!!!</span><span class="r11">?????????</span><span class="r12">PPP</span><span class="r11">???????????????</span><span class="r12">PPPP</span><span class="r11">???</span><span class="r25">!!</span><span class="r9">       </span></div>
+<div><span class="r1">  </span><span class="r9">   </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r11">??????????</span><span class="r12">PPP</span><span class="r11">???????????</span><span class="r20">P</span><span class="r12">PPPP</span><span class="r11">????</span><span class="r25">!</span><span class="r35">:</span><span class="r9">        </span></div>
+<div><span class="r1">  </span><span class="r9">   </span><span class="r25">!!!!!!!!</span><span class="r31">GGG</span><span class="r25">!!!!</span><span class="r36">!</span><span class="r31">GG</span><span class="r36">!</span><span class="r25">!!!!!!!!!!!!!</span><span class="r11">?????????</span><span class="r12">PPP</span><span class="r11">??????</span><span class="r37">P</span><span class="r12">PPPPPP</span><span class="r19">?</span><span class="r11">?????</span><span class="r25">!!</span><span class="r9">         </span></div>
+<div><span class="r1">  </span><span class="r9">   </span><span class="r38"> </span><span class="r25">!!!!!!!!!</span><span class="r31">GGGGGG</span><span class="r36">!</span><span class="r25">!!!!!!!!!!!!!!!</span><span class="r39">?</span><span class="r12">PPPPPPPPPPPPPPPPPPPPP</span><span class="r11">???????</span><span class="r25">!!!!!</span><span class="r9">        </span></div>
+<div><span class="r1">  </span><span class="r9">    </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r40">!</span><span class="r11">???</span><span class="r14">P</span><span class="r17">P</span><span class="r12">PPP</span><span class="r17">P</span><span class="r41">P</span><span class="r11">??????????????</span><span class="r25">!!!!!!!!</span><span class="r9">        </span></div>
+<div><span class="r1">  </span><span class="r9">     </span><span class="r22">:</span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r11">???????????????????</span><span class="r25">!!!!!!!!!!!!</span><span class="r33">:</span><span class="r9">       </span></div>
+<div><span class="r1">  </span><span class="r9">       </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r9">       </span></div>
+<div><span class="r1">  </span><span class="r9">          </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r9">  </span><span class="r42">:</span><span class="r25">!!!!!!!!!!</span><span class="r9">        </span></div>
+<div><span class="r1">  </span><span class="r9">            </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r9">          </span><span class="r22">::</span><span class="r34">:</span><span class="r9">            </span></div>
+<div><span class="r1">  </span><span class="r9">            </span><span class="r25">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span><span class="r9">                            </span></div>
+<div><span class="r1">  </span><span class="r9">           </span><span class="r25">!!!!!!!!!!!!</span><span class="r9">              </span><span class="r25">!!!!!!!!!!!!</span><span class="r22">:</span><span class="r9">                           </span></div>
+<div><span class="r1">  </span><span class="r9">           </span><span class="r25">!!!!!!!!!!!!</span><span class="r9">              </span><span class="r25">!!!!!!!!!!!!!</span><span class="r9">                           </span></div>
+<div><span class="r1">  </span><span class="r9">            </span><span class="r25">!!!!!!!!!!!</span><span class="r9">              </span><span class="r25">!!!!!!!!!!!!!</span><span class="r9">                           </span></div>
+<div><span class="r1">  </span><span class="r9">                                     </span><span class="r25">!!!!!!!!!!!!</span><span class="r9">                            </span></div>
+<div><span class="r1">  </span><span class="r9">                                       </span><span class="r25">!!!!!!!</span><span class="r43"> </span><span class="r9">                              </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r9">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r44">## At ultrices                                                               </span></div>
+<div><span class="r1">  </span><span class="r45">─────────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">  </span><span class="r46">    </span><span class="r47">def</span><span class="r46"> </span><span class="r48">add</span><span class="r49">(</span><span class="r46">x</span><span class="r49">:</span><span class="r46"> </span><span class="r48">float</span><span class="r49">,</span><span class="r46"> y</span><span class="r49">:</span><span class="r46"> </span><span class="r48">float</span><span class="r49">)</span><span class="r46"> </span><span class="r49">-&gt;</span><span class="r46"> </span><span class="r48">float</span><span class="r49">:</span><span class="r1">                                    </span></div>
+<div><span class="r1">  </span><span class="r46">        </span><span class="r50">"""Add two numbers."""</span><span class="r1">                                               </span></div>
+<div><span class="r1">  </span><span class="r46">        </span><span class="r47">return</span><span class="r46"> x </span><span class="r49">+</span><span class="r46"> y</span><span class="r1">                                                         </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1">   </span><span class="r5">Lorep</span><span class="r1">                     </span><span class="r5">ipsum</span><span class="r1">                     </span><span class="r5">doret</span><span class="r1">                   </span></div>
+<div><span class="r1">  ─────────────────────────────────────────────────────────────────────────────</span></div>
+<div><span class="r1">   1                         2                         3                       </span></div>
+<div><span class="r1">   4                         5                         6                       </span></div>
+<div><span class="r1">  </span><span class="r1">                                                                             </span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

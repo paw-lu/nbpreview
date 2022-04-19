@@ -1,0 +1,742 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="1330" viewBox="0 0 1236.1999999999998 1330">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r5 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r6 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r7 {color: #f78c6c; text-decoration-color: #f78c6c; background-color: #263238}
+.r8 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r9 {background-color: #1c1b1f;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r10 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1c1b1e}
+.r11 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1b1a1e}
+.r12 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1c1b1f}
+.r13 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1d1c20}
+.r14 {color: #1f1d23; text-decoration-color: #1f1d23; background-color: #383442}
+.r15 {color: #232128; text-decoration-color: #232128; background-color: #403c4c}
+.r16 {color: #26242b; text-decoration-color: #26242b; background-color: #413c4d}
+.r17 {color: #212026; text-decoration-color: #212026; background-color: #393543}
+.r18 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1c1b1f}
+.r19 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #19181c}
+.r20 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #363438}
+.r21 {color: #19181c; text-decoration-color: #19181c; background-color: #58565a}
+.r22 {color: #1a191d; text-decoration-color: #1a191d; background-color: #525054}
+.r23 {color: #1a1a1e; text-decoration-color: #1a1a1e; background-color: #504e52}
+.r24 {color: #1a191d; text-decoration-color: #1a191d; background-color: #4f4d51}
+.r25 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #222125}
+.r26 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1a1a1d}
+.r27 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1b1b1e}
+.r28 {background-color: #1b1a1e;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r29 {background-color: #1f1e22;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r30 {color: #4d4b4f; text-decoration-color: #4d4b4f; background-color: #4a484c}
+.r31 {color: #39373b; text-decoration-color: #39373b; background-color: #3f3e42}
+.r32 {color: #535155; text-decoration-color: #535155; background-color: #4e4c50}
+.r33 {color: #49474b; text-decoration-color: #49474b; background-color: #454347}
+.r34 {color: #49474b; text-decoration-color: #49474b; background-color: #1c1b1f}
+.r35 {color: #1f1e22; text-decoration-color: #1f1e22; background-color: #1d1c20}
+.r36 {color: #242328; text-decoration-color: #242328; background-color: #1f1e22}
+.r37 {color: #242228; text-decoration-color: #242228; background-color: #1f1d22}
+.r38 {color: #232126; text-decoration-color: #232126; background-color: #1e1d21}
+.r39 {color: #2e2b34; text-decoration-color: #2e2b34; background-color: #383542}
+.r40 {color: #474254; text-decoration-color: #474254; background-color: #423e4f}
+.r41 {color: #454152; text-decoration-color: #454152; background-color: #413d4d}
+.r42 {color: #474254; text-decoration-color: #474254; background-color: #423e4e}
+.r43 {color: #302d37; text-decoration-color: #302d37; background-color: #3c3847}
+.r44 {color: #232126; text-decoration-color: #232126; background-color: #1f1e23}
+.r45 {color: #242328; text-decoration-color: #242328; background-color: #1e1d22}
+.r46 {color: #242228; text-decoration-color: #242228; background-color: #1f1e22}
+.r47 {color: #242228; text-decoration-color: #242228; background-color: #1e1d21}
+.r48 {color: #242228; text-decoration-color: #242228; background-color: #1c1b1f}
+.r49 {color: #232126; text-decoration-color: #232126; background-color: #1c1b1f}
+.r50 {color: #312f34; text-decoration-color: #312f34; background-color: #1b1a1e}
+.r51 {color: #464449; text-decoration-color: #464449; background-color: #1c1a1f}
+.r52 {color: #575459; text-decoration-color: #575459; background-color: #1d1c20}
+.r53 {color: #424045; text-decoration-color: #424045; background-color: #1c1b1f}
+.r54 {color: #3e3c41; text-decoration-color: #3e3c41; background-color: #1c1b20}
+.r55 {color: #27262b; text-decoration-color: #27262b; background-color: #212024}
+.r56 {color: #222127; text-decoration-color: #222127; background-color: #222025}
+.r57 {color: #232227; text-decoration-color: #232227; background-color: #212024}
+.r58 {color: #232126; text-decoration-color: #232126; background-color: #28262b}
+.r59 {color: #242228; text-decoration-color: #242228; background-color: #211f24}
+.r60 {color: #222126; text-decoration-color: #222126; background-color: #1e1d21}
+.r61 {color: #222126; text-decoration-color: #222126; background-color: #1c1b1f}
+.r62 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #1a1a1d}
+.r63 {color: #232128; text-decoration-color: #232128; background-color: #322f3b}
+.r64 {color: #3f3b4b; text-decoration-color: #3f3b4b; background-color: #403b4b}
+.r65 {color: #3d3949; text-decoration-color: #3d3949; background-color: #4c475c}
+.r66 {color: #3e3a4a; text-decoration-color: #3e3a4a; background-color: #454052}
+.r67 {color: #3f3b4b; text-decoration-color: #3f3b4b; background-color: #3c3847}
+.r68 {color: #3f3b4b; text-decoration-color: #3f3b4b; background-color: #3d3948}
+.r69 {color: #413c4d; text-decoration-color: #413c4d; background-color: #403c4c}
+.r70 {color: #292730; text-decoration-color: #292730; background-color: #3a3645}
+.r71 {color: #1a1a1d; text-decoration-color: #1a1a1d; background-color: #1d1c20}
+.r72 {color: #1a1a1d; text-decoration-color: #1a1a1d; background-color: #1c1b1f}
+.r73 {color: #19191b; text-decoration-color: #19191b; background-color: #1c1b1f}
+.r74 {color: #34303d; text-decoration-color: #34303d; background-color: #1f1e23}
+.r75 {color: #645b77; text-decoration-color: #645b77; background-color: #25232a}
+.r76 {color: #625976; text-decoration-color: #625976; background-color: #25232a}
+.r77 {color: #635a77; text-decoration-color: #635a77; background-color: #25232a}
+.r78 {color: #5b546e; text-decoration-color: #5b546e; background-color: #242229}
+.r79 {color: #1e1d23; text-decoration-color: #1e1d23; background-color: #1a191d}
+.r80 {color: #403e41; text-decoration-color: #403e41; background-color: #403e42}
+.r81 {color: #666367; text-decoration-color: #666367; background-color: #49474b}
+.r82 {color: #5e5b5f; text-decoration-color: #5e5b5f; background-color: #3d3b3f}
+.r83 {color: #5a585c; text-decoration-color: #5a585c; background-color: #373539}
+.r84 {color: #646266; text-decoration-color: #646266; background-color: #3a393d}
+.r85 {color: #5b595d; text-decoration-color: #5b595d; background-color: #3e3c40}
+.r86 {color: #605e62; text-decoration-color: #605e62; background-color: #3c3a3e}
+.r87 {color: #201e22; text-decoration-color: #201e22; background-color: #1d1c20}
+.r88 {color: #19181c; text-decoration-color: #19181c; background-color: #39373b}
+.r89 {color: #1a191d; text-decoration-color: #1a191d; background-color: #2d2b2f}
+.r90 {color: #1a191d; text-decoration-color: #1a191d; background-color: #37363a}
+.r91 {color: #1a191d; text-decoration-color: #1a191d; background-color: #373539}
+.r92 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #201e23}
+.r93 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1f1e23}
+.r94 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1e1d21}
+.r95 {color: #201e24; text-decoration-color: #201e24; background-color: #302d38}
+.r96 {color: #3b3746; text-decoration-color: #3b3746; background-color: #413d4d}
+.r97 {color: #514b62; text-decoration-color: #514b62; background-color: #7c7197}
+.r98 {color: #8579a2; text-decoration-color: #8579a2; background-color: #4f4a5f}
+.r99 {color: #786e92; text-decoration-color: #786e92; background-color: #3e3a4a}
+.r100 {color: #786e92; text-decoration-color: #786e92; background-color: #4f485e}
+.r101 {color: #564f67; text-decoration-color: #564f67; background-color: #82779f}
+.r102 {color: #3c3847; text-decoration-color: #3c3847; background-color: #464153}
+.r103 {color: #413c4d; text-decoration-color: #413c4d; background-color: #423e4f}
+.r104 {color: #28262e; text-decoration-color: #28262e; background-color: #373340}
+.r105 {color: #1a1a1d; text-decoration-color: #1a1a1d; background-color: #1e1d21}
+.r106 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1e1c21}
+.r107 {color: #1b191d; text-decoration-color: #1b191d; background-color: #293432}
+.r108 {color: #18141a; text-decoration-color: #18141a; background-color: #3b5e50}
+.r109 {color: #18151a; text-decoration-color: #18151a; background-color: #3a5c4f}
+.r110 {color: #18151a; text-decoration-color: #18151a; background-color: #3b5d50}
+.r111 {color: #19151a; text-decoration-color: #19151a; background-color: #38574b}
+.r112 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1e1f22}
+.r113 {color: #212024; text-decoration-color: #212024; background-color: #4d4b4f}
+.r114 {color: #1a191d; text-decoration-color: #1a191d; background-color: #5b595d}
+.r115 {color: #161519; text-decoration-color: #161519; background-color: #4d4b4f}
+.r116 {color: #17161a; text-decoration-color: #17161a; background-color: #565458}
+.r117 {color: #18171b; text-decoration-color: #18171b; background-color: #545256}
+.r118 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #2d2c30}
+.r119 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1d1c21}
+.r120 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1f1e22}
+.r121 {color: #201f23; text-decoration-color: #201f23; background-color: #1c1b1f}
+.r122 {color: #585559; text-decoration-color: #585559; background-color: #27262a}
+.r123 {color: #3a383c; text-decoration-color: #3a383c; background-color: #212024}
+.r124 {color: #48474b; text-decoration-color: #48474b; background-color: #222125}
+.r125 {color: #4f4e52; text-decoration-color: #4f4e52; background-color: #252428}
+.r126 {color: #1f1e22; text-decoration-color: #1f1e22; background-color: #1c1b1f}
+.r127 {color: #232227; text-decoration-color: #232227; background-color: #1b1a1e}
+.r128 {color: #3b3745; text-decoration-color: #3b3745; background-color: #3d3848}
+.r129 {color: #5f5772; text-decoration-color: #5f5772; background-color: #7c7197}
+.r130 {color: #766d8f; text-decoration-color: #766d8f; background-color: #4e5661}
+.r131 {color: #48575b; text-decoration-color: #48575b; background-color: #475a5c}
+.r132 {color: #4a555d; text-decoration-color: #4a555d; background-color: #485b5d}
+.r133 {color: #42424f; text-decoration-color: #42424f; background-color: #475a5c}
+.r134 {color: #665d7b; text-decoration-color: #665d7b; background-color: #454b56}
+.r135 {color: #6c6382; text-decoration-color: #6c6382; background-color: #7d7298}
+.r136 {color: #413d4d; text-decoration-color: #413d4d; background-color: #413d4e}
+.r137 {color: #433e4f; text-decoration-color: #433e4f; background-color: #3f3b4b}
+.r138 {color: #25242a; text-decoration-color: #25242a; background-color: #27242c}
+.r139 {color: #232226; text-decoration-color: #232226; background-color: #1a191d}
+.r140 {color: #232126; text-decoration-color: #232126; background-color: #1b1a1e}
+.r141 {color: #272b2d; text-decoration-color: #272b2d; background-color: #1b191e}
+.r142 {color: #2e3c39; text-decoration-color: #2e3c39; background-color: #1a181c}
+.r143 {color: #2e3b39; text-decoration-color: #2e3b39; background-color: #1a181c}
+.r144 {color: #2d3937; text-decoration-color: #2d3937; background-color: #1a181d}
+.r145 {color: #222227; text-decoration-color: #222227; background-color: #1b1a1e}
+.r146 {color: #38363b; text-decoration-color: #38363b; background-color: #1a191d}
+.r147 {color: #474549; text-decoration-color: #474549; background-color: #19181c}
+.r148 {color: #4e4c51; text-decoration-color: #4e4c51; background-color: #19181c}
+.r149 {color: #464449; text-decoration-color: #464449; background-color: #19181c}
+.r150 {color: #4f4c51; text-decoration-color: #4f4c51; background-color: #19181c}
+.r151 {color: #575559; text-decoration-color: #575559; background-color: #18171b}
+.r152 {color: #2a292e; text-decoration-color: #2a292e; background-color: #1b1a1e}
+.r153 {color: #222126; text-decoration-color: #222126; background-color: #1b1a1e}
+.r154 {color: #222025; text-decoration-color: #222025; background-color: #1b1a1e}
+.r155 {color: #222025; text-decoration-color: #222025; background-color: #1c1b1f}
+.r156 {color: #26242b; text-decoration-color: #26242b; background-color: #322f3b}
+.r157 {color: #605773; text-decoration-color: #605773; background-color: #7e749a}
+.r158 {color: #6f6c89; text-decoration-color: #6f6c89; background-color: #4d5c63}
+.r159 {color: #445758; text-decoration-color: #445758; background-color: #485a5d}
+.r160 {color: #495b5f; text-decoration-color: #495b5f; background-color: #3a4a4a}
+.r161 {color: #495b5e; text-decoration-color: #495b5e; background-color: #405152}
+.r162 {color: #485b5d; text-decoration-color: #485b5d; background-color: #495b5e}
+.r163 {color: #435557; text-decoration-color: #435557; background-color: #485b5e}
+.r164 {color: #66607c; text-decoration-color: #66607c; background-color: #474d58}
+.r165 {color: #645b79; text-decoration-color: #645b79; background-color: #7d7298}
+.r166 {color: #3d3948; text-decoration-color: #3d3948; background-color: #413d4e}
+.r167 {color: #322f3b; text-decoration-color: #322f3b; background-color: #3b3746}
+.r168 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #1e1c21}
+.r169 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #1c1b1f}
+.r170 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #201f23}
+.r171 {color: #262428; text-decoration-color: #262428; background-color: #565458}
+.r172 {color: #212024; text-decoration-color: #212024; background-color: #3b393d}
+.r173 {color: #242327; text-decoration-color: #242327; background-color: #535155}
+.r174 {color: #242327; text-decoration-color: #242327; background-color: #504e52}
+.r175 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #26242a}
+.r176 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #252429}
+.r177 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #242328}
+.r178 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #2a282f}
+.r179 {color: #4d465c; text-decoration-color: #4d465c; background-color: #72698a}
+.r180 {color: #787a96; text-decoration-color: #787a96; background-color: #677281}
+.r181 {color: #455859; text-decoration-color: #455859; background-color: #495b5d}
+.r182 {color: #415655; text-decoration-color: #415655; background-color: #4e856d}
+.r183 {color: #40715b; text-decoration-color: #40715b; background-color: #467460}
+.r184 {color: #335145; text-decoration-color: #335145; background-color: #4a8068}
+.r185 {color: #324441; text-decoration-color: #324441; background-color: #477c64}
+.r186 {color: #455759; text-decoration-color: #455759; background-color: #425a55}
+.r187 {color: #435356; text-decoration-color: #435356; background-color: #4e6064}
+.r188 {color: #69627f; text-decoration-color: #69627f; background-color: #525564}
+.r189 {color: #605874; text-decoration-color: #605874; background-color: #7f7399}
+.r190 {color: #3d3948; text-decoration-color: #3d3948; background-color: #464253}
+.r191 {color: #25232b; text-decoration-color: #25232b; background-color: #393541}
+.r192 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #242327}
+.r193 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #262429}
+.r194 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #242227}
+.r195 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #424044}
+.r196 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #555256}
+.r197 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #1c1b1f}
+.r198 {color: #3c3a3e; text-decoration-color: #3c3a3e; background-color: #19181c}
+.r199 {color: #2a292d; text-decoration-color: #2a292d; background-color: #1b1a1e}
+.r200 {color: #333236; text-decoration-color: #333236; background-color: #1a191d}
+.r201 {color: #37363a; text-decoration-color: #37363a; background-color: #1a191d}
+.r202 {color: #1a1a1d; text-decoration-color: #1a1a1d; background-color: #1a191c}
+.r203 {color: #2f2c36; text-decoration-color: #2f2c36; background-color: #4b4459}
+.r204 {color: #807b9e; text-decoration-color: #807b9e; background-color: #787a96}
+.r205 {color: #4c5c61; text-decoration-color: #4c5c61; background-color: #4f7c6d}
+.r206 {color: #4d806c; text-decoration-color: #4d806c; background-color: #40715b}
+.r207 {color: #3c6754; text-decoration-color: #3c6754; background-color: #2a3c37}
+.r208 {color: #293a36; text-decoration-color: #293a36; background-color: #2c413a}
+.r209 {color: #2b3e38; text-decoration-color: #2b3e38; background-color: #2c413a}
+.r210 {color: #375b4d; text-decoration-color: #375b4d; background-color: #293a36}
+.r211 {color: #4b866c; text-decoration-color: #4b866c; background-color: #3e6d58}
+.r212 {color: #455859; text-decoration-color: #455859; background-color: #497164}
+.r213 {color: #435256; text-decoration-color: #435256; background-color: #455659}
+.r214 {color: #766c90; text-decoration-color: #766c90; background-color: #5d5d72}
+.r215 {color: #4f495f; text-decoration-color: #4f495f; background-color: #6c6282}
+.r216 {color: #393543; text-decoration-color: #393543; background-color: #3c3847}
+.r217 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #242229}
+.r218 {color: #19181c; text-decoration-color: #19181c; background-color: #18181c}
+.r219 {color: #363539; text-decoration-color: #363539; background-color: #3b393d}
+.r220 {color: #626064; text-decoration-color: #626064; background-color: #59575b}
+.r221 {color: #1e1d21; text-decoration-color: #1e1d21; background-color: #201f23}
+.r222 {color: #1e1d21; text-decoration-color: #1e1d21; background-color: #1b1a1e}
+.r223 {color: #1e1d21; text-decoration-color: #1e1d21; background-color: #1c1b1f}
+.r224 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1a191d}
+.r225 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1a191c}
+.r226 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #2c2832}
+.r227 {color: #6d6383; text-decoration-color: #6d6383; background-color: #7f789c}
+.r228 {color: #667a83; text-decoration-color: #667a83; background-color: #588b7a}
+.r229 {color: #4b846b; text-decoration-color: #4b846b; background-color: #345547}
+.r230 {color: #2a3d37; text-decoration-color: #2a3d37; background-color: #2b4039}
+.r231 {color: #2c423b; text-decoration-color: #2c423b; background-color: #283733}
+.r232 {color: #2c4039; text-decoration-color: #2c4039; background-color: #1d1e21}
+.r233 {color: #2c423b; text-decoration-color: #2c423b; background-color: #232d2c}
+.r234 {color: #2c413a; text-decoration-color: #2c413a; background-color: #2b4039}
+.r235 {color: #2d443c; text-decoration-color: #2d443c; background-color: #2a3d37}
+.r236 {color: #4c866d; text-decoration-color: #4c866d; background-color: #3b6654}
+.r237 {color: #475c5d; text-decoration-color: #475c5d; background-color: #4d796b}
+.r238 {color: #48545b; text-decoration-color: #48545b; background-color: #435356}
+.r239 {color: #7c7197; text-decoration-color: #7c7197; background-color: #6f6a88}
+.r240 {color: #423e4f; text-decoration-color: #423e4f; background-color: #58516a}
+.r241 {color: #302d38; text-decoration-color: #302d38; background-color: #383442}
+.r242 {background-color: #19181c;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r243 {color: #39383c; text-decoration-color: #39383c; background-color: #403e42}
+.r244 {color: #69676b; text-decoration-color: #69676b; background-color: #6a676b}
+.r245 {color: #353438; text-decoration-color: #353438; background-color: #1e1d21}
+.r246 {color: #1a191d; text-decoration-color: #1a191d; background-color: #1b1a1e}
+.r247 {color: #1a191d; text-decoration-color: #1a191d; background-color: #1c1b1f}
+.r248 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #201f23}
+.r249 {color: #3e3c40; text-decoration-color: #3e3c40; background-color: #545256}
+.r250 {color: #343337; text-decoration-color: #343337; background-color: #4b4a4e}
+.r251 {color: #444246; text-decoration-color: #444246; background-color: #585559}
+.r252 {color: #3c3b3f; text-decoration-color: #3c3b3f; background-color: #4f4d51}
+.r253 {color: #212024; text-decoration-color: #212024; background-color: #222126}
+.r254 {color: #211f24; text-decoration-color: #211f24; background-color: #222126}
+.r255 {color: #211f24; text-decoration-color: #211f24; background-color: #212025}
+.r256 {color: #1e1d21; text-decoration-color: #1e1d21; background-color: #252329}
+.r257 {color: #4e465c; text-decoration-color: #4e465c; background-color: #73688a}
+.r258 {color: #7f8da1; text-decoration-color: #7f8da1; background-color: #709f97}
+.r259 {color: #498168; text-decoration-color: #498168; background-color: #37574a}
+.r260 {color: #2e423c; text-decoration-color: #2e423c; background-color: #2b3836}
+.r261 {color: #2b3a37; text-decoration-color: #2b3a37; background-color: #222125}
+.r262 {color: #212025; text-decoration-color: #212025; background-color: #222025}
+.r263 {color: #201e23; text-decoration-color: #201e23; background-color: #222126}
+.r264 {color: #201d23; text-decoration-color: #201d23; background-color: #222126}
+.r265 {color: #232629; text-decoration-color: #232629; background-color: #211f24}
+.r266 {color: #2e403b; text-decoration-color: #2e403b; background-color: #262a2c}
+.r267 {color: #30463f; text-decoration-color: #30463f; background-color: #30433d}
+.r268 {color: #4f8970; text-decoration-color: #4f8970; background-color: #3c6453}
+.r269 {color: #4b6161; text-decoration-color: #4b6161; background-color: #558375}
+.r270 {color: #585e6e; text-decoration-color: #585e6e; background-color: #49575d}
+.r271 {color: #776b8f; text-decoration-color: #776b8f; background-color: #7e759a}
+.r272 {color: #403c4c; text-decoration-color: #403c4c; background-color: #4d475b}
+.r273 {color: #2b2830; text-decoration-color: #2b2830; background-color: #383441}
+.r274 {color: #201e22; text-decoration-color: #201e22; background-color: #212024}
+.r275 {color: #201e23; text-decoration-color: #201e23; background-color: #212024}
+.r276 {color: #201e23; text-decoration-color: #201e23; background-color: #1c1b1f}
+.r277 {color: #242327; text-decoration-color: #242327; background-color: #1b1a1e}
+.r278 {color: #2d2c30; text-decoration-color: #2d2c30; background-color: #1a191d}
+.r279 {color: #1d1b1f; text-decoration-color: #1d1b1f; background-color: #1c1b1f}
+.r280 {color: #232226; text-decoration-color: #232226; background-color: #1b1a1e}
+.r281 {color: #212024; text-decoration-color: #212024; background-color: #1b1a1e}
+.r282 {color: #222125; text-decoration-color: #222125; background-color: #1b1a1e}
+.r283 {color: #222125; text-decoration-color: #222125; background-color: #1c1b1f}
+.r284 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #19181b}
+.r285 {color: #332e3b; text-decoration-color: #332e3b; background-color: #636179}
+.r286 {color: #8892ac; text-decoration-color: #8892ac; background-color: #7fafab}
+.r287 {color: #518672; text-decoration-color: #518672; background-color: #37544a}
+.r288 {color: #293934; text-decoration-color: #293934; background-color: #202525}
+.r289 {color: #1d1e21; text-decoration-color: #1d1e21; background-color: #1b191e}
+.r290 {color: #1b191e; text-decoration-color: #1b191e; background-color: #1c1a1e}
+.r291 {color: #263431; text-decoration-color: #263431; background-color: #1f2123}
+.r292 {color: #2b423a; text-decoration-color: #2b423a; background-color: #2a3c37}
+.r293 {color: #4e886f; text-decoration-color: #4e886f; background-color: #3b6453}
+.r294 {color: #475f5e; text-decoration-color: #475f5e; background-color: #538073}
+.r295 {color: #66677e; text-decoration-color: #66677e; background-color: #49555d}
+.r296 {color: #655c7a; text-decoration-color: #655c7a; background-color: #7e7399}
+.r297 {color: #383543; text-decoration-color: #383543; background-color: #423d4f}
+.r298 {color: #1e1d22; text-decoration-color: #1e1d22; background-color: #29272f}
+.r299 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1b1a1d}
+.r300 {color: #1b1b1e; text-decoration-color: #1b1b1e; background-color: #1c1b1f}
+.r301 {color: #1a191d; text-decoration-color: #1a191d; background-color: #2a282c}
+.r302 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #252327}
+.r303 {color: #1a191d; text-decoration-color: #1a191d; background-color: #2b2a2e}
+.r304 {color: #1a191d; text-decoration-color: #1a191d; background-color: #28272b}
+.r305 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1c1b20}
+.r306 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1c1a1f}
+.r307 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1c1a1e}
+.r308 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1a181c}
+.r309 {color: #28282f; text-decoration-color: #28282f; background-color: #47675f}
+.r310 {color: #7da3a6; text-decoration-color: #7da3a6; background-color: #629588}
+.r311 {color: #547c71; text-decoration-color: #547c71; background-color: #354243}
+.r312 {color: #26302f; text-decoration-color: #26302f; background-color: #1c1c1f}
+.r313 {color: #1b191e; text-decoration-color: #1b191e; background-color: #1c1b1f}
+.r314 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1d1b20}
+.r315 {color: #242f2d; text-decoration-color: #242f2d; background-color: #1d1e21}
+.r316 {color: #2d443b; text-decoration-color: #2d443b; background-color: #293935}
+.r317 {color: #518a73; text-decoration-color: #518a73; background-color: #3e6957}
+.r318 {color: #475c5d; text-decoration-color: #475c5d; background-color: #537d72}
+.r319 {color: #6d6c87; text-decoration-color: #6d6c87; background-color: #4e5b63}
+.r320 {color: #5f5773; text-decoration-color: #5f5773; background-color: #7d7499}
+.r321 {color: #322f3b; text-decoration-color: #322f3b; background-color: #3e3a4a}
+.r322 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #232128}
+.r323 {color: #201f23; text-decoration-color: #201f23; background-color: #1d1c20}
+.r324 {color: #575458; text-decoration-color: #575458; background-color: #353438}
+.r325 {color: #4c4a4e; text-decoration-color: #4c4a4e; background-color: #313034}
+.r326 {color: #656266; text-decoration-color: #656266; background-color: #38373b}
+.r327 {color: #535155; text-decoration-color: #535155; background-color: #323135}
+.r328 {color: #262429; text-decoration-color: #262429; background-color: #1b1a1e}
+.r329 {color: #26252a; text-decoration-color: #26252a; background-color: #1d1e21}
+.r330 {color: #2f3e3b; text-decoration-color: #2f3e3b; background-color: #41725d}
+.r331 {color: #2d3837; text-decoration-color: #2d3837; background-color: #478167}
+.r332 {color: #292c2f; text-decoration-color: #292c2f; background-color: #3f6f5a}
+.r333 {color: #292b2f; text-decoration-color: #292b2f; background-color: #406f5a}
+.r334 {color: #2c3736; text-decoration-color: #2c3736; background-color: #498269}
+.r335 {color: #39574b; text-decoration-color: #39574b; background-color: #679a8d}
+.r336 {color: #76aaa1; text-decoration-color: #76aaa1; background-color: #7f88a0}
+.r337 {color: #505f66; text-decoration-color: #505f66; background-color: #28282f}
+.r338 {color: #27272c; text-decoration-color: #27272c; background-color: #1a181c}
+.r339 {color: #252328; text-decoration-color: #252328; background-color: #1c1b1f}
+.r340 {color: #252429; text-decoration-color: #252429; background-color: #1c1b1f}
+.r341 {color: #252228; text-decoration-color: #252228; background-color: #1c1b1f}
+.r342 {color: #2a3132; text-decoration-color: #2a3132; background-color: #1c1a1f}
+.r343 {color: #344c44; text-decoration-color: #344c44; background-color: #263431}
+.r344 {color: #56907a; text-decoration-color: #56907a; background-color: #3e6b58}
+.r345 {color: #4c6062; text-decoration-color: #4c6062; background-color: #538073}
+.r346 {color: #797c96; text-decoration-color: #797c96; background-color: #53616a}
+.r347 {color: #5f5772; text-decoration-color: #5f5772; background-color: #7b7497}
+.r348 {color: #3c3846; text-decoration-color: #3c3846; background-color: #3d3848}
+.r349 {color: #252429; text-decoration-color: #252429; background-color: #2a2831}
+.r350 {color: #252429; text-decoration-color: #252429; background-color: #1a1a1d}
+.r351 {color: #252429; text-decoration-color: #252429; background-color: #1b191e}
+.r352 {color: #252429; text-decoration-color: #252429; background-color: #1c1c20}
+.r353 {color: #252329; text-decoration-color: #252329; background-color: #1f2123}
+.r354 {color: #252228; text-decoration-color: #252228; background-color: #212828}
+.r355 {color: #252228; text-decoration-color: #252228; background-color: #232c2b}
+.r356 {color: #252328; text-decoration-color: #252328; background-color: #26322f}
+.r357 {color: #252429; text-decoration-color: #252429; background-color: #2b3e38}
+.r358 {color: #26262a; text-decoration-color: #26262a; background-color: #324f44}
+.r359 {color: #27282c; text-decoration-color: #27282c; background-color: #3b6452}
+.r360 {color: #292b2f; text-decoration-color: #292b2f; background-color: #40705b}
+.r361 {color: #2a2f31; text-decoration-color: #2a2f31; background-color: #437760}
+.r362 {color: #2c3435; text-decoration-color: #2c3435; background-color: #457d64}
+.r363 {color: #2d3937; text-decoration-color: #2d3937; background-color: #467f65}
+.r364 {color: #2e3c39; text-decoration-color: #2e3c39; background-color: #478066}
+.r365 {color: #30413d; text-decoration-color: #30413d; background-color: #478066}
+.r366 {color: #32443f; text-decoration-color: #32443f; background-color: #477f66}
+.r367 {color: #334741; text-decoration-color: #334741; background-color: #488368}
+.r368 {color: #2d3636; text-decoration-color: #2d3636; background-color: #314c41}
+.r369 {color: #252328; text-decoration-color: #252328; background-color: #1a161c}
+.r370 {color: #242227; text-decoration-color: #242227; background-color: #1c1b1f}
+.r371 {color: #19191d; text-decoration-color: #19191d; background-color: #1c1b1f}
+.r372 {color: #19181c; text-decoration-color: #19181c; background-color: #1c1b1f}
+.r373 {color: #1f1d22; text-decoration-color: #1f1d22; background-color: #1d1c20}
+.r374 {color: #565d6c; text-decoration-color: #565d6c; background-color: #5e5672}
+.r375 {color: #4c6163; text-decoration-color: #4c6163; background-color: #80759b}
+.r376 {color: #406558; text-decoration-color: #406558; background-color: #716b8b}
+.r377 {color: #446a5d; text-decoration-color: #446a5d; background-color: #797394}
+.r378 {color: #667682; text-decoration-color: #667682; background-color: #746a8d}
+.r379 {color: #857ea3; text-decoration-color: #857ea3; background-color: #454053}
+.r380 {color: #474355; text-decoration-color: #474355; background-color: #25232a}
+.r381 {color: #1b191d; text-decoration-color: #1b191d; background-color: #1b1a1d}
+.r382 {color: #1b191d; text-decoration-color: #1b191d; background-color: #1c1b1f}
+.r383 {color: #1c1a1e; text-decoration-color: #1c1a1e; background-color: #1c1b1f}
+.r384 {color: #202425; text-decoration-color: #202425; background-color: #1b1a1e}
+.r385 {color: #2b3f38; text-decoration-color: #2b3f38; background-color: #25322f}
+.r386 {color: #4b836a; text-decoration-color: #4b836a; background-color: #2e483e}
+.r387 {color: #4c6e67; text-decoration-color: #4c6e67; background-color: #518d74}
+.r388 {color: #787995; text-decoration-color: #787995; background-color: #506668}
+.r389 {color: #5a536d; text-decoration-color: #5a536d; background-color: #8483a5}
+.r390 {color: #393543; text-decoration-color: #393543; background-color: #4f5562}
+.r391 {color: #1f1d23; text-decoration-color: #1f1d23; background-color: #33343d}
+.r392 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #1e2122}
+.r393 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #202626}
+.r394 {color: #1b191e; text-decoration-color: #1b191e; background-color: #242e2c}
+.r395 {color: #1c1c1f; text-decoration-color: #1c1c1f; background-color: #283934}
+.r396 {color: #212727; text-decoration-color: #212727; background-color: #2b3e38}
+.r397 {color: #273431; text-decoration-color: #273431; background-color: #2f483f}
+.r398 {color: #293934; text-decoration-color: #293934; background-color: #3a6151}
+.r399 {color: #2b3e38; text-decoration-color: #2b3e38; background-color: #457c63}
+.r400 {color: #304b41; text-decoration-color: #304b41; background-color: #477f66}
+.r401 {color: #3b6352; text-decoration-color: #3b6352; background-color: #44705f}
+.r402 {color: #447a62; text-decoration-color: #447a62; background-color: #436059}
+.r403 {color: #488268; text-decoration-color: #488268; background-color: #415454}
+.r404 {color: #487d67; text-decoration-color: #487d67; background-color: #404c51}
+.r405 {color: #467161; text-decoration-color: #467161; background-color: #484d59}
+.r406 {color: #43665b; text-decoration-color: #43665b; background-color: #545366}
+.r407 {color: #405d55; text-decoration-color: #405d55; background-color: #5f5a74}
+.r408 {color: #3d5551; text-decoration-color: #3d5551; background-color: #6a6280}
+.r409 {color: #3d514f; text-decoration-color: #3d514f; background-color: #6e6585}
+.r410 {color: #3c4f4e; text-decoration-color: #3c4f4e; background-color: #706788}
+.r411 {color: #3b4d4d; text-decoration-color: #3b4d4d; background-color: #716889}
+.r412 {color: #394b4a; text-decoration-color: #394b4a; background-color: #6e6585}
+.r413 {color: #384b49; text-decoration-color: #384b49; background-color: #6c6582}
+.r414 {color: #2a3233; text-decoration-color: #2a3233; background-color: #413d4d}
+.r415 {color: #1b191d; text-decoration-color: #1b191d; background-color: #19181b}
+.r416 {color: #1a191d; text-decoration-color: #1a191d; background-color: #333236}
+.r417 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #4d4b4f}
+.r418 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #3a383c}
+.r419 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #545256}
+.r420 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #474549}
+.r421 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #242328}
+.r422 {color: #1b1a1d; text-decoration-color: #1b1a1d; background-color: #242227}
+.r423 {color: #201f25; text-decoration-color: #201f25; background-color: #232126}
+.r424 {color: #35313e; text-decoration-color: #35313e; background-color: #232126}
+.r425 {color: #574f68; text-decoration-color: #574f68; background-color: #29272e}
+.r426 {color: #554e66; text-decoration-color: #554e66; background-color: #2b2931}
+.r427 {color: #322f3b; text-decoration-color: #322f3b; background-color: #232227}
+.r428 {color: #242229; text-decoration-color: #242229; background-color: #222126}
+.r429 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #242227}
+.r430 {color: #1d1e21; text-decoration-color: #1d1e21; background-color: #232127}
+.r431 {color: #283934; text-decoration-color: #283934; background-color: #27292d}
+.r432 {color: #345648; text-decoration-color: #345648; background-color: #2f413c}
+.r433 {color: #548e77; text-decoration-color: #548e77; background-color: #45685d}
+.r434 {color: #5b6e76; text-decoration-color: #5b6e76; background-color: #5b937f}
+.r435 {color: #8282a2; text-decoration-color: #8282a2; background-color: #77a29f}
+.r436 {color: #49595e; text-decoration-color: #49595e; background-color: #718f94}
+.r437 {color: #405152; text-decoration-color: #405152; background-color: #517c70}
+.r438 {color: #31443f; text-decoration-color: #31443f; background-color: #538573}
+.r439 {color: #2c423a; text-decoration-color: #2c423a; background-color: #548c76}
+.r440 {color: #355749; text-decoration-color: #355749; background-color: #578878}
+.r441 {color: #42765f; text-decoration-color: #42765f; background-color: #4d6b65}
+.r442 {color: #488167; text-decoration-color: #488167; background-color: #475a5b}
+.r443 {color: #43705e; text-decoration-color: #43705e; background-color: #48595c}
+.r444 {color: #3e5a52; text-decoration-color: #3e5a52; background-color: #48575c}
+.r445 {color: #405252; text-decoration-color: #405252; background-color: #505562}
+.r446 {color: #415054; text-decoration-color: #415054; background-color: #67617d}
+.r447 {color: #444b55; text-decoration-color: #444b55; background-color: #7f739a}
+.r448 {color: #57546a; text-decoration-color: #57546a; background-color: #766c8f}
+.r449 {color: #72688a; text-decoration-color: #72688a; background-color: #59536b}
+.r450 {color: #7a6f94; text-decoration-color: #7a6f94; background-color: #474254}
+.r451 {color: #706687; text-decoration-color: #706687; background-color: #403c4c}
+.r452 {color: #665d7b; text-decoration-color: #665d7b; background-color: #3c3947}
+.r453 {color: #5a536d; text-decoration-color: #5a536d; background-color: #373440}
+.r454 {color: #564f67; text-decoration-color: #564f67; background-color: #34313b}
+.r455 {color: #544d65; text-decoration-color: #544d65; background-color: #322f39}
+.r456 {color: #534c63; text-decoration-color: #534c63; background-color: #302d37}
+.r457 {color: #564f68; text-decoration-color: #564f68; background-color: #2f2d36}
+.r458 {color: #5f5771; text-decoration-color: #5f5771; background-color: #2f2d36}
+.r459 {color: #3d3848; text-decoration-color: #3d3848; background-color: #29272f}
+.r460 {color: #18181b; text-decoration-color: #18181b; background-color: #232227}
+.r461 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #222126}
+.r462 {color: #312f33; text-decoration-color: #312f33; background-color: #1a191d}
+.r463 {color: #4b494d; text-decoration-color: #4b494d; background-color: #1b1a1e}
+.r464 {color: #3d3b3f; text-decoration-color: #3d3b3f; background-color: #1c1b1f}
+.r465 {color: #4c4a4e; text-decoration-color: #4c4a4e; background-color: #1b1a1e}
+.r466 {color: #454347; text-decoration-color: #454347; background-color: #1b1a1e}
+.r467 {color: #454347; text-decoration-color: #454347; background-color: #1c1b1f}
+.r468 {color: #1e1c21; text-decoration-color: #1e1c21; background-color: #1c1b1f}
+.r469 {color: #222728; text-decoration-color: #222728; background-color: #1b191e}
+.r470 {color: #2d403a; text-decoration-color: #2d403a; background-color: #202627}
+.r471 {color: #3c4f4d; text-decoration-color: #3c4f4d; background-color: #273833}
+.r472 {color: #4a6662; text-decoration-color: #4a6662; background-color: #364846}
+.r473 {color: #658987; text-decoration-color: #658987; background-color: #47575b}
+.r474 {color: #889daf; text-decoration-color: #889daf; background-color: #53606a}
+.r475 {color: #637880; text-decoration-color: #637880; background-color: #777994}
+.r476 {color: #495e5f; text-decoration-color: #495e5f; background-color: #7f7d9d}
+.r477 {color: #47585c; text-decoration-color: #47585c; background-color: #7a7997}
+.r478 {color: #48585d; text-decoration-color: #48585d; background-color: #7a7293}
+.r479 {color: #4c575f; text-decoration-color: #4c575f; background-color: #7a6f95}
+.r480 {color: #5c5c71; text-decoration-color: #5c5c71; background-color: #6d6384}
+.r481 {color: #736a8c; text-decoration-color: #736a8c; background-color: #534c64}
+.r482 {color: #7f7299; text-decoration-color: #7f7299; background-color: #403c4c}
+.r483 {color: #655c7a; text-decoration-color: #655c7a; background-color: #3d3949}
+.r484 {color: #464254; text-decoration-color: #464254; background-color: #3a3644}
+.r485 {color: #3f3b4b; text-decoration-color: #3f3b4b; background-color: #29272f}
+.r486 {color: #3a3745; text-decoration-color: #3a3745; background-color: #1d1c20}
+.r487 {color: #2d2b34; text-decoration-color: #2d2b34; background-color: #1a191d}
+.r488 {color: #232127; text-decoration-color: #232127; background-color: #1b1a1e}
+.r489 {color: #1f1d22; text-decoration-color: #1f1d22; background-color: #1c1b1e}
+.r490 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #19191d}
+.r491 {color: #1c1e20; text-decoration-color: #1c1e20; background-color: #1b1a1e}
+.r492 {color: #292e32; text-decoration-color: #292e32; background-color: #1a181c}
+.r493 {color: #3b3d48; text-decoration-color: #3b3d48; background-color: #1d1b20}
+.r494 {color: #3e3c4b; text-decoration-color: #3e3c4b; background-color: #2e2b36}
+.r495 {color: #464154; text-decoration-color: #464154; background-color: #3d3948}
+.r496 {color: #474154; text-decoration-color: #474154; background-color: #3e3a49}
+.r497 {color: #443f51; text-decoration-color: #443f51; background-color: #3d3949}
+.r498 {color: #403c4c; text-decoration-color: #403c4c; background-color: #3c3848}
+.r499 {color: #3c3948; text-decoration-color: #3c3948; background-color: #34313e}
+.r500 {color: #3f3b4b; text-decoration-color: #3f3b4b; background-color: #2a2730}
+.r501 {color: #3d3948; text-decoration-color: #3d3948; background-color: #1f1e23}
+.r502 {color: #2d2a34; text-decoration-color: #2d2a34; background-color: #1a191d}
+.r503 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #1b1a1e}
+.r504 {color: #242226; text-decoration-color: #242226; background-color: #3e3c40}
+.r505 {color: #39373b; text-decoration-color: #39373b; background-color: #59575b}
+.r506 {color: #28272b; text-decoration-color: #28272b; background-color: #312f33}
+.r507 {color: #373539; text-decoration-color: #373539; background-color: #535155}
+.r508 {color: #353337; text-decoration-color: #353337; background-color: #504e52}
+.r509 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #302e33}
+.r510 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #4e4b50}
+.r511 {color: #1d1c20; text-decoration-color: #1d1c20; background-color: #4c4a4f}
+.r512 {color: #1c1b20; text-decoration-color: #1c1b20; background-color: #4c4a4f}
+.r513 {color: #1c1b1e; text-decoration-color: #1c1b1e; background-color: #4c4a4f}
+.r514 {color: #201f25; text-decoration-color: #201f25; background-color: #4b494e}
+.r515 {color: #222026; text-decoration-color: #222026; background-color: #4b494e}
+.r516 {color: #211f25; text-decoration-color: #211f25; background-color: #4b494e}
+.r517 {color: #1f1e23; text-decoration-color: #1f1e23; background-color: #4c494e}
+.r518 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #4c4a4f}
+.r519 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #4c4a4f}
+.r520 {color: #1c1b20; text-decoration-color: #1c1b20; background-color: #47454a}
+.r521 {color: #28272b; text-decoration-color: #28272b; background-color: #1a191d}
+.r522 {color: #201f23; text-decoration-color: #201f23; background-color: #1b1a1e}
+.r523 {color: #262428; text-decoration-color: #262428; background-color: #1b1a1e}
+.r524 {color: #222125; text-decoration-color: #222125; background-color: #19181c}
+.r525 {color: #222125; text-decoration-color: #222125; background-color: #1a191d}
+.r526 {color: #222125; text-decoration-color: #222125; background-color: #1b1b1f}
+.r527 {color: #222125; text-decoration-color: #222125; background-color: #19191d}
+.r528 {color: #211f23; text-decoration-color: #211f23; background-color: #242327}
+.r529 {color: #413f43; text-decoration-color: #413f43; background-color: #555357}
+.r530 {color: #39373b; text-decoration-color: #39373b; background-color: #4e4c50}
+.r531 {color: #353438; text-decoration-color: #353438; background-color: #424145}
+.r532 {color: #353438; text-decoration-color: #353438; background-color: #1a191d}
+.r533 {color: #353438; text-decoration-color: #353438; background-color: #1c1b1f}
+.r534 {color: #3d3b3f; text-decoration-color: #3d3b3f; background-color: #4d4b4f}
+.r535 {color: #38363a; text-decoration-color: #38363a; background-color: #403e42}
+.r536 {color: #373539; text-decoration-color: #373539; background-color: #464549}
+.r537 {color: #1a191d; text-decoration-color: #1a191d; background-color: #19181c}
+.r538 {color: #1a191d; text-decoration-color: #1a191d; background-color: #1a191d}
+.r539 {color: #3e3d41; text-decoration-color: #3e3d41; background-color: #464448}
+.r540 {color: #363438; text-decoration-color: #363438; background-color: #4e4c50}
+.r541 {color: #3e3c40; text-decoration-color: #3e3c40; background-color: #4f4c50}
+.r542 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1a191d}
+.r543 {color: #37363a; text-decoration-color: #37363a; background-color: #343337}
+.r544 {color: #3a393d; text-decoration-color: #3a393d; background-color: #373539}
+.r545 {color: #403e42; text-decoration-color: #403e42; background-color: #504e52}
+.r546 {color: #444246; text-decoration-color: #444246; background-color: #514f53}
+.r547 {color: #3d3b3f; text-decoration-color: #3d3b3f; background-color: #504e52}
+.r548 {color: #363438; text-decoration-color: #363438; background-color: #48464a}
+.r549 {color: #343337; text-decoration-color: #343337; background-color: #413f43}
+.r550 {color: #343337; text-decoration-color: #343337; background-color: #1a191d}
+.r551 {color: #343337; text-decoration-color: #343337; background-color: #1c1b1f}
+.r552 {color: #403e42; text-decoration-color: #403e42; background-color: #49474b}
+.r553 {color: #3c3a3e; text-decoration-color: #3c3a3e; background-color: #4c4a4e}
+.r554 {color: #343337; text-decoration-color: #343337; background-color: #3b393d}
+.r555 {color: #363438; text-decoration-color: #363438; background-color: #454448}
+.r556 {color: #1c1a1e; text-decoration-color: #1c1a1e; background-color: #1a191d}
+.r557 {color: #3b393d; text-decoration-color: #3b393d; background-color: #3e3c40}
+.r558 {color: #454347; text-decoration-color: #454347; background-color: #545155}
+.r559 {color: #2f2d31; text-decoration-color: #2f2d31; background-color: #444246}
+.r560 {color: #3e3c40; text-decoration-color: #3e3c40; background-color: #4e4c50}
+.r561 {color: #3e3c40; text-decoration-color: #3e3c40; background-color: #1b1a1e}
+.r562 {color: #3e3c40; text-decoration-color: #3e3c40; background-color: #1c1b1f}
+.r563 {color: #39373b; text-decoration-color: #39373b; background-color: #3a393d}
+.r564 {color: #434145; text-decoration-color: #434145; background-color: #414044}
+.r565 {color: #323034; text-decoration-color: #323034; background-color: #302e32}
+.r566 {color: #1b1a1e; text-decoration-color: #1b1a1e; background-color: #1d1c20}
+.r567 {color: #212024; text-decoration-color: #212024; background-color: #1c1b1f}
+.r568 {color: #1f1e22; text-decoration-color: #1f1e22; background-color: #1b1a1e}
+.r569 {color: #252428; text-decoration-color: #252428; background-color: #1b1a1e}
+.r570 {color: #211f23; text-decoration-color: #211f23; background-color: #1b1a1e}
+.r571 {color: #201e22; text-decoration-color: #201e22; background-color: #1b1a1e}
+.r572 {color: #201e22; text-decoration-color: #201e22; background-color: #1c1b1f}
+.r573 {color: #211f23; text-decoration-color: #211f23; background-color: #1c1b1f}
+.r574 {color: #1c1b1f; text-decoration-color: #1c1b1f; background-color: #1e1d21}
+.r575 {color: #19181c; text-decoration-color: #19181c; background-color: #1a191d}
+.r576 {color: #3c3b3f; text-decoration-color: #3c3b3f; background-color: #2a292d}
+.r577 {color: #646165; text-decoration-color: #646165; background-color: #474549}
+.r578 {color: #565357; text-decoration-color: #565357; background-color: #37363a}
+.r579 {color: #58565a; text-decoration-color: #58565a; background-color: #444347}
+.r580 {color: #58565a; text-decoration-color: #58565a; background-color: #565357}
+.r581 {color: #525054; text-decoration-color: #525054; background-color: #464448}
+.r582 {color: #535155; text-decoration-color: #535155; background-color: #434145}
+.r583 {color: #58565a; text-decoration-color: #58565a; background-color: #3e3c40}
+.r584 {color: #575559; text-decoration-color: #575559; background-color: #3b393d}
+.r585 {color: #575559; text-decoration-color: #575559; background-color: #1e1d21}
+.r586 {color: #575559; text-decoration-color: #575559; background-color: #1c1b1f}
+.r587 {color: #1c1b1f; text-decoration-color: #1c1b1f;background-color: #263238;}
+.r588 {color: #1b1a1e; text-decoration-color: #1b1a1e;background-color: #263238;}
+.r589 {color: #18171b; text-decoration-color: #18171b;background-color: #263238;}
+.r590 {color: #1a191d; text-decoration-color: #1a191d;background-color: #263238;}
+.r591 {color: #1d1c20; text-decoration-color: #1d1c20;background-color: #263238;}
+.r592 {color: #19181c; text-decoration-color: #19181c;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing block notebook.ipynb</span><span class="r1">              </span></div>
+<div><span class="r1">      ╭───────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[17]:</span><span class="r1"> │ </span><span class="r4">_</span><span class="r5">,</span><span class="r4"> ax </span><span class="r5">=</span><span class="r4"> plt</span><span class="r5">.</span><span class="r4">subplots</span><span class="r5">(</span><span class="r4">facecolor</span><span class="r5">=</span><span class="r6">"#1C1B1F"</span><span class="r5">)</span><span class="r1">                             │</span></div>
+<div><span class="r1">      │ </span><span class="r5">(</span><span class="r1">                                                                     │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    sns</span><span class="r5">.</span><span class="r4">load_dataset</span><span class="r5">(</span><span class="r6">"fmri"</span><span class="r5">).</span><span class="r4">pipe</span><span class="r5">(</span><span class="r1">                                    │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r5">(</span><span class="r4">sns</span><span class="r5">.</span><span class="r4">lineplot</span><span class="r5">,</span><span class="r4"> </span><span class="r6">"data"</span><span class="r5">),</span><span class="r1">                                       │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        x</span><span class="r5">=</span><span class="r6">"timepoint"</span><span class="r5">,</span><span class="r1">                                                │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        y</span><span class="r5">=</span><span class="r6">"signal"</span><span class="r5">,</span><span class="r1">                                                   │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        hue</span><span class="r5">=</span><span class="r6">"region"</span><span class="r5">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        alpha</span><span class="r5">=</span><span class="r7">1</span><span class="r5">,</span><span class="r1">                                                      │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        ax</span><span class="r5">=</span><span class="r4">ax</span><span class="r5">,</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    </span><span class="r5">)</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r5">)</span><span class="r1">                                                                    </span><span class="r1"> │</span></div>
+<div><span class="r1">      ╰───────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[17]:</span><span class="r1">  </span><span class="r1">&lt;AxesSubplot:xlabel='timepoint', ylabel='signal'&gt;                       </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r8"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/dark_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r9">                               </span><span class="r10">▀</span><span class="r11">▀▀▀</span><span class="r12">                                     </span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r13">▀▀▀▀</span><span class="r12">   </span><span class="r11">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r12"> </span><span class="r14">▀</span><span class="r15">▀</span><span class="r16">▀</span><span class="r17">▀</span><span class="r18">▀</span><span class="r11">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r19">▀</span><span class="r20">▀</span><span class="r21">▀</span><span class="r22">▀</span><span class="r23">▀</span><span class="r24">▀</span><span class="r25">▀</span><span class="r26">▀</span><span class="r11">▀▀▀</span><span class="r27">▀</span><span class="r12"> </span></div>
+<div><span class="r1">       </span><span class="r9">      </span><span class="r28"> </span><span class="r29"> </span><span class="r30">▀</span><span class="r31">▀</span><span class="r32">▀</span><span class="r33">▀</span><span class="r34">  </span><span class="r35">▀</span><span class="r36">▀</span><span class="r37">▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r38">▀</span><span class="r39">▀</span><span class="r40">▀</span><span class="r41">▀▀</span><span class="r42">▀</span><span class="r43">▀</span><span class="r44">▀</span><span class="r45">▀</span><span class="r37">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r46">▀</span><span class="r47">▀</span><span class="r48">▀▀</span><span class="r49">▀</span><span class="r50">▀</span><span class="r51">▀</span><span class="r52">▀</span><span class="r53">▀</span><span class="r54">▀</span><span class="r55">▀</span><span class="r56">▀</span><span class="r57">▀</span><span class="r58">▀</span><span class="r59">▀</span><span class="r60">▀</span><span class="r61"> </span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r18">▀  ▀                </span><span class="r62">▀</span><span class="r63">▀</span><span class="r64">▀</span><span class="r65">▀</span><span class="r66">▀</span><span class="r67">▀</span><span class="r68">▀</span><span class="r69">▀</span><span class="r70">▀</span><span class="r71">▀</span><span class="r72">                 </span><span class="r73">▀</span><span class="r74">▀</span><span class="r75">▀</span><span class="r76">▀</span><span class="r77">▀</span><span class="r78">▀</span><span class="r79">▀</span><span class="r80">▀</span><span class="r81">▀</span><span class="r82">▀</span><span class="r83">▀</span><span class="r84">▀</span><span class="r85">▀</span><span class="r86">▀</span><span class="r87">▀</span><span class="r18">▀ </span></div>
+<div><span class="r1">       </span><span class="r9">       </span><span class="r13">▀</span><span class="r88">▀</span><span class="r89">▀</span><span class="r90">▀</span><span class="r91">▀</span><span class="r11">▀</span><span class="r12"> </span><span class="r13">▀</span><span class="r92">▀</span><span class="r93">▀▀▀▀▀▀▀▀▀▀▀</span><span class="r94">▀</span><span class="r95">▀</span><span class="r96">▀</span><span class="r97">▀</span><span class="r98">▀</span><span class="r99">▀</span><span class="r100">▀</span><span class="r101">▀</span><span class="r102">▀</span><span class="r103">▀</span><span class="r104">▀</span><span class="r105">▀</span><span class="r93">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r106">▀</span><span class="r107">▀</span><span class="r108">▀</span><span class="r109">▀</span><span class="r110">▀</span><span class="r111">▀</span><span class="r112">▀</span><span class="r113">▀</span><span class="r114">▀</span><span class="r115">▀</span><span class="r116">▀</span><span class="r117">▀</span><span class="r114">▀</span><span class="r118">▀</span><span class="r119">▀</span><span class="r120">▀</span><span class="r12"> </span></div>
+<div><span class="r1">       </span><span class="r9">      </span><span class="r18">▀</span><span class="r121">▀</span><span class="r122">▀</span><span class="r123">▀</span><span class="r124">▀</span><span class="r125">▀</span><span class="r18">▀ </span><span class="r126">▀</span><span class="r127">▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r44">▀</span><span class="r128">▀</span><span class="r129">▀</span><span class="r130">▀</span><span class="r131">▀</span><span class="r132">▀</span><span class="r133">▀</span><span class="r134">▀</span><span class="r135">▀</span><span class="r136">▀</span><span class="r137">▀</span><span class="r138">▀</span><span class="r139">▀</span><span class="r127">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r140">▀</span><span class="r141">▀</span><span class="r142">▀</span><span class="r143">▀</span><span class="r142">▀</span><span class="r144">▀</span><span class="r145">▀</span><span class="r146">▀</span><span class="r147">▀</span><span class="r148">▀</span><span class="r149">▀</span><span class="r150">▀</span><span class="r151">▀</span><span class="r152">▀</span><span class="r153">▀</span><span class="r154">▀</span><span class="r155"> </span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r28">    </span><span class="r9">              </span><span class="r62">▀</span><span class="r156">▀</span><span class="r157">▀</span><span class="r158">▀</span><span class="r159">▀</span><span class="r160">▀</span><span class="r161">▀</span><span class="r162">▀</span><span class="r163">▀</span><span class="r164">▀</span><span class="r165">▀</span><span class="r166">▀</span><span class="r167">▀</span><span class="r168">▀</span><span class="r169">                                </span></div>
+<div><span class="r1">       </span><span class="r9">      </span><span class="r11">▀</span><span class="r170">▀</span><span class="r171">▀</span><span class="r172">▀</span><span class="r173">▀</span><span class="r174">▀</span><span class="r18">▀ </span><span class="r92">▀</span><span class="r175">▀</span><span class="r176">▀▀▀▀▀▀▀▀▀</span><span class="r177">▀</span><span class="r178">▀</span><span class="r179">▀</span><span class="r180">▀</span><span class="r181">▀</span><span class="r182">▀</span><span class="r183">▀</span><span class="r184">▀</span><span class="r185">▀</span><span class="r186">▀</span><span class="r187">▀</span><span class="r188">▀</span><span class="r189">▀</span><span class="r190">▀</span><span class="r191">▀</span><span class="r192">▀</span><span class="r176">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r193">▀</span><span class="r194">▀</span><span class="r12"> </span></div>
+<div><span class="r1">       </span><span class="r11">▀</span><span class="r195">▀</span><span class="r196">▀</span><span class="r13">▀</span><span class="r12">   </span><span class="r197">▀</span><span class="r198">▀</span><span class="r199">▀</span><span class="r200">▀</span><span class="r201">▀</span><span class="r18">▀            </span><span class="r202">▀</span><span class="r203">▀</span><span class="r204">▀</span><span class="r205">▀</span><span class="r206">▀</span><span class="r207">▀</span><span class="r208">▀</span><span class="r209">▀</span><span class="r210">▀</span><span class="r211">▀</span><span class="r212">▀</span><span class="r213">▀</span><span class="r214">▀</span><span class="r215">▀</span><span class="r216">▀</span><span class="r217">▀</span><span class="r11">▀</span><span class="r12">                              </span></div>
+<div><span class="r1">       </span><span class="r218">▀</span><span class="r219">▀</span><span class="r220">▀</span><span class="r221">▀</span><span class="r222"> </span><span class="r223">   </span><span class="r224">▀▀</span><span class="r19">▀</span><span class="r224">▀</span><span class="r12">   </span><span class="r11">▀</span><span class="r27">▀▀▀▀▀▀▀▀</span><span class="r225">▀</span><span class="r226">▀</span><span class="r227">▀</span><span class="r228">▀</span><span class="r229">▀</span><span class="r230">▀</span><span class="r231">▀</span><span class="r232">▀</span><span class="r233">▀</span><span class="r234">▀</span><span class="r235">▀</span><span class="r236">▀</span><span class="r237">▀</span><span class="r238">▀</span><span class="r239">▀</span><span class="r240">▀</span><span class="r241">▀</span><span class="r71">▀</span><span class="r11">▀</span><span class="r27">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r12">  </span></div>
+<div><span class="r1">       </span><span class="r242"> </span><span class="r243">▀</span><span class="r244">▀</span><span class="r245">▀</span><span class="r246">▀</span><span class="r247"> </span><span class="r11">▀</span><span class="r248">▀</span><span class="r249">▀</span><span class="r250">▀</span><span class="r251">▀</span><span class="r252">▀</span><span class="r18">▀ </span><span class="r94"> </span><span class="r253">▀</span><span class="r254">▀▀▀▀▀▀▀</span><span class="r255">▀</span><span class="r256">▀</span><span class="r257">▀</span><span class="r258">▀</span><span class="r259">▀</span><span class="r260">▀</span><span class="r261">▀</span><span class="r262">▀</span><span class="r263">▀</span><span class="r264">▀</span><span class="r265">▀</span><span class="r266">▀</span><span class="r267">▀</span><span class="r268">▀</span><span class="r269">▀</span><span class="r270">▀</span><span class="r271">▀</span><span class="r272">▀</span><span class="r273">▀</span><span class="r274">▀</span><span class="r254">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r275">▀</span><span class="r276"> </span></div>
+<div><span class="r1">       </span><span class="r18">▀</span><span class="r277">▀</span><span class="r278">▀</span><span class="r279">▀    </span><span class="r280">▀</span><span class="r281">▀</span><span class="r282">▀▀</span><span class="r283">   </span><span class="r18">▀▀▀▀▀▀▀▀</span><span class="r284"> </span><span class="r285">▀</span><span class="r286">▀</span><span class="r287">▀</span><span class="r288">▀</span><span class="r289">▀</span><span class="r18">▀▀▀▀▀</span><span class="r290">▀</span><span class="r291">▀</span><span class="r292">▀</span><span class="r293">▀</span><span class="r294">▀</span><span class="r295">▀</span><span class="r296">▀</span><span class="r297">▀</span><span class="r298">▀</span><span class="r299">▀</span><span class="r18">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r300">▀ </span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r301">▀</span><span class="r302">▀</span><span class="r303">▀</span><span class="r304">▀</span><span class="r11">▀</span><span class="r12">  </span><span class="r13">▀</span><span class="r305">▀</span><span class="r306">▀</span><span class="r307">▀</span><span class="r306">▀▀</span><span class="r307">▀</span><span class="r308"> </span><span class="r309">▀</span><span class="r310">▀</span><span class="r311">▀</span><span class="r312">▀</span><span class="r313">▀</span><span class="r314">▀▀▀▀▀▀▀</span><span class="r313">▀</span><span class="r315">▀</span><span class="r316">▀</span><span class="r317">▀</span><span class="r318">▀</span><span class="r319">▀</span><span class="r320">▀</span><span class="r321">▀</span><span class="r322">▀</span><span class="r10">▀</span><span class="r314">▀▀▀▀▀▀▀▀▀▀▀</span><span class="r305">▀</span><span class="r12">  </span><span class="r306">▀▀</span><span class="r307">▀▀▀</span><span class="r306">▀</span><span class="r12">  </span><span class="r13">▀▀▀</span><span class="r12">  </span></div>
+<div><span class="r1">       </span><span class="r9">      </span><span class="r18">▀</span><span class="r323">▀</span><span class="r324">▀</span><span class="r325">▀</span><span class="r326">▀</span><span class="r327">▀</span><span class="r11">▀</span><span class="r12"> </span><span class="r276">▀</span><span class="r328">▀</span><span class="r329">▀</span><span class="r330">▀</span><span class="r331">▀</span><span class="r332">▀</span><span class="r333">▀</span><span class="r334">▀</span><span class="r335">▀</span><span class="r336">▀</span><span class="r337">▀</span><span class="r338">▀</span><span class="r339">▀</span><span class="r340">▀▀▀▀▀▀▀▀▀</span><span class="r341">▀</span><span class="r342">▀</span><span class="r343">▀</span><span class="r344">▀</span><span class="r345">▀</span><span class="r346">▀</span><span class="r347">▀</span><span class="r348">▀</span><span class="r349">▀</span><span class="r350">▀</span><span class="r340">▀▀▀▀</span><span class="r351">▀▀</span><span class="r352">▀</span><span class="r353">▀</span><span class="r354">▀</span><span class="r355">▀</span><span class="r356">▀</span><span class="r357">▀</span><span class="r358">▀</span><span class="r359">▀</span><span class="r360">▀</span><span class="r361">▀</span><span class="r362">▀</span><span class="r363">▀</span><span class="r364">▀</span><span class="r365">▀</span><span class="r366">▀</span><span class="r367">▀</span><span class="r368">▀</span><span class="r369">▀</span><span class="r370">▀ </span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r371">▀</span><span class="r247">▀</span><span class="r372">▀</span><span class="r247">▀    </span><span class="r373">▀</span><span class="r374">▀</span><span class="r375">▀</span><span class="r376">▀</span><span class="r377">▀</span><span class="r378">▀</span><span class="r379">▀</span><span class="r380">▀</span><span class="r381">▀</span><span class="r382">            </span><span class="r383">▀</span><span class="r384">▀</span><span class="r385">▀</span><span class="r386">▀</span><span class="r387">▀</span><span class="r388">▀</span><span class="r389">▀</span><span class="r390">▀</span><span class="r391">▀</span><span class="r392">▀</span><span class="r393">▀</span><span class="r394">▀</span><span class="r395">▀</span><span class="r396">▀</span><span class="r397">▀</span><span class="r398">▀</span><span class="r399">▀</span><span class="r400">▀</span><span class="r401">▀</span><span class="r402">▀</span><span class="r403">▀</span><span class="r404">▀</span><span class="r405">▀</span><span class="r406">▀</span><span class="r407">▀</span><span class="r408">▀</span><span class="r409">▀</span><span class="r410">▀</span><span class="r411">▀</span><span class="r412">▀</span><span class="r413">▀</span><span class="r414">▀</span><span class="r415">▀</span><span class="r382">  </span></div>
+<div><span class="r1">       </span><span class="r9">       </span><span class="r416">▀</span><span class="r417">▀</span><span class="r418">▀</span><span class="r419">▀</span><span class="r420">▀</span><span class="r224">▀</span><span class="r12"> </span><span class="r120">▀</span><span class="r421">▀</span><span class="r422">▀</span><span class="r423">▀</span><span class="r424">▀</span><span class="r425">▀</span><span class="r426">▀</span><span class="r427">▀</span><span class="r428">▀</span><span class="r429">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r430">▀</span><span class="r431">▀</span><span class="r432">▀</span><span class="r433">▀</span><span class="r434">▀</span><span class="r435">▀</span><span class="r436">▀</span><span class="r437">▀</span><span class="r438">▀</span><span class="r439">▀</span><span class="r440">▀</span><span class="r441">▀</span><span class="r442">▀</span><span class="r443">▀</span><span class="r444">▀</span><span class="r445">▀</span><span class="r446">▀</span><span class="r447">▀</span><span class="r448">▀</span><span class="r449">▀</span><span class="r450">▀</span><span class="r451">▀</span><span class="r452">▀</span><span class="r453">▀</span><span class="r454">▀</span><span class="r455">▀</span><span class="r456">▀</span><span class="r457">▀</span><span class="r458">▀</span><span class="r459">▀</span><span class="r460">▀</span><span class="r461">▀</span><span class="r18"> </span></div>
+<div><span class="r1">       </span><span class="r9">       </span><span class="r462">▀</span><span class="r463">▀</span><span class="r464">▀</span><span class="r465">▀</span><span class="r466">▀</span><span class="r467">  </span><span class="r197">▀</span><span class="r126">▀▀▀▀</span><span class="r223">▀▀</span><span class="r126">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r468">▀</span><span class="r469">▀</span><span class="r470">▀</span><span class="r471">▀</span><span class="r472">▀</span><span class="r473">▀</span><span class="r474">▀</span><span class="r475">▀</span><span class="r476">▀</span><span class="r477">▀</span><span class="r478">▀</span><span class="r479">▀</span><span class="r480">▀</span><span class="r481">▀</span><span class="r482">▀</span><span class="r483">▀</span><span class="r484">▀</span><span class="r485">▀</span><span class="r486">▀</span><span class="r487">▀</span><span class="r488">▀</span><span class="r489">▀</span><span class="r197">▀▀▀▀▀▀</span><span class="r223">▀</span><span class="r126">▀</span><span class="r223">▀ </span></div>
+<div><span class="r1">       </span><span class="r9">       </span><span class="r11">▀</span><span class="r19">▀</span><span class="r11">▀</span><span class="r490">▀</span><span class="r224">▀</span><span class="r12">                              </span><span class="r383">▀▀</span><span class="r491">▀</span><span class="r492">▀</span><span class="r493">▀</span><span class="r494">▀</span><span class="r495">▀</span><span class="r496">▀</span><span class="r497">▀</span><span class="r498">▀</span><span class="r499">▀</span><span class="r500">▀</span><span class="r501">▀</span><span class="r502">▀</span><span class="r503">▀</span><span class="r169">▀              </span></div>
+<div><span class="r1">       </span><span class="r9">       </span><span class="r504">▀</span><span class="r505">▀</span><span class="r506">▀</span><span class="r507">▀</span><span class="r508">▀</span><span class="r18">▀</span><span class="r224">▀</span><span class="r509">▀</span><span class="r510">▀</span><span class="r511">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r512">▀</span><span class="r513">▀</span><span class="r514">▀</span><span class="r515">▀</span><span class="r516">▀</span><span class="r517">▀</span><span class="r518">▀</span><span class="r519">▀</span><span class="r518">▀</span><span class="r511">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r520">▀</span><span class="r170">▀</span></div>
+<div><span class="r1">       </span><span class="r9">        </span><span class="r521">▀</span><span class="r522">▀</span><span class="r280">▀</span><span class="r523">▀</span><span class="r18">▀ </span><span class="r223">▀</span><span class="r282">▀</span><span class="r524">▀▀</span><span class="r525">▀</span><span class="r526">▀</span><span class="r282">▀▀▀</span><span class="r527">▀▀</span><span class="r525">▀</span><span class="r283">▀</span><span class="r282">▀▀▀</span><span class="r524">▀</span><span class="r525">▀</span><span class="r524">▀</span><span class="r282">▀▀▀▀▀</span><span class="r525">▀</span><span class="r524">▀</span><span class="r282">▀▀▀▀</span><span class="r524">▀▀</span><span class="r525">▀▀</span><span class="r526">▀</span><span class="r282">▀▀</span><span class="r524">▀</span><span class="r527">▀</span><span class="r525">▀▀</span><span class="r283">▀</span><span class="r282">▀▀</span><span class="r524">▀▀</span><span class="r525">▀</span><span class="r524">▀</span><span class="r282">▀▀▀</span><span class="r525">▀▀▀</span><span class="r524">▀</span><span class="r282">▀</span><span class="r281">▀</span><span class="r197">▀</span></div>
+<div><span class="r1">       </span><span class="r9">              </span><span class="r28"> </span><span class="r528">▀</span><span class="r529">▀</span><span class="r530">▀</span><span class="r531">▀</span><span class="r532"> </span><span class="r533">  </span><span class="r245"> </span><span class="r534">▀</span><span class="r535">▀</span><span class="r536">▀</span><span class="r537">▀</span><span class="r247">  </span><span class="r538"> </span><span class="r539">▀</span><span class="r540">▀</span><span class="r541">▀</span><span class="r18">▀  </span><span class="r542"> </span><span class="r543">▀</span><span class="r544">▀</span><span class="r545">▀</span><span class="r94">▀</span><span class="r18"> ▀</span><span class="r323">▀</span><span class="r546">▀</span><span class="r547">▀</span><span class="r548">▀</span><span class="r549">▀</span><span class="r550"> </span><span class="r551"> </span><span class="r126">▀</span><span class="r552">▀</span><span class="r553">▀</span><span class="r554">▀</span><span class="r555">▀</span><span class="r537">▀</span><span class="r247"> </span><span class="r556">▀</span><span class="r557">▀</span><span class="r558">▀</span><span class="r559">▀</span><span class="r560">▀</span><span class="r561"> </span><span class="r562"> </span><span class="r542">▀</span><span class="r563">▀</span><span class="r564">▀</span><span class="r565">▀</span><span class="r545">▀</span><span class="r566">▀</span><span class="r18">  </span></div>
+<div><span class="r1">       </span><span class="r9">                </span><span class="r282">▀</span><span class="r281">▀</span><span class="r126">▀   </span><span class="r197">▀</span><span class="r523">▀</span><span class="r281">▀</span><span class="r522">▀</span><span class="r121">    </span><span class="r281">▀▀▀</span><span class="r567">    </span><span class="r223">▀</span><span class="r126">▀</span><span class="r281">▀</span><span class="r567">    </span><span class="r568">▀</span><span class="r281">▀</span><span class="r522">▀</span><span class="r126">▀   </span><span class="r522">▀</span><span class="r569">▀</span><span class="r570">▀</span><span class="r571">▀</span><span class="r572">   </span><span class="r223">▀</span><span class="r282">▀</span><span class="r522">▀</span><span class="r570">▀</span><span class="r573">   </span><span class="r223">▀</span><span class="r126">▀▀</span><span class="r281">▀</span><span class="r567">   </span></div>
+<div><span class="r1">       </span><span class="r9">                                      </span><span class="r574">▀▀</span><span class="r11">▀</span><span class="r19">▀</span><span class="r224">▀▀</span><span class="r12"> </span><span class="r11">▀</span><span class="r574">▀</span><span class="r12">                         </span></div>
+<div><span class="r1">       </span><span class="r9">                                     </span><span class="r575">▀</span><span class="r576">▀</span><span class="r577">▀</span><span class="r578">▀</span><span class="r579">▀</span><span class="r580">▀</span><span class="r581">▀</span><span class="r582">▀</span><span class="r583">▀</span><span class="r584">▀</span><span class="r585"> </span><span class="r586">                        </span></div>
+<div><span class="r1">       </span><span class="r587">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r588">▀</span><span class="r589">▀</span><span class="r590">▀</span><span class="r589">▀</span><span class="r591">▀</span><span class="r592">▀▀▀▀</span><span class="r587">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>

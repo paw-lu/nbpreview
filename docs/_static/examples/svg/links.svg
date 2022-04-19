@@ -1,0 +1,1214 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1236.1999999999998" height="2408" viewBox="0 0 1236.1999999999998 2408">
+    <style>
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Regular"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+            font-style: normal;
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Fira Code";
+            src: local("FiraCode-Bold"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+            font-style: bold;
+            font-weight: 700;
+        }
+        span {
+            display: inline-block;
+            white-space: pre;
+            vertical-align: top;
+            font-size: 18px;
+            font-family:'Fira Code','Cascadia Code',Monaco,Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .blink {
+           animation: blinker 1s infinite;
+        }
+        @keyframes blinker {
+            from { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            to { opacity: 1.0; }
+        }
+        #wrapper {
+            padding: 140px;
+            padding-top: 100px;
+        }
+        #terminal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #263238;
+            border-radius: 14px;
+            outline: 1px solid #484848;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        #terminal-header {
+            position: relative;
+            width: 100%;
+            background-color: #192227;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border-radius: 14px 14px 0 0;
+            color: #e9e9f4;
+            font-size: 18px;
+            box-shadow: inset 0px -1px 0px 0px #4e4e4e,
+                        inset 0px -4px 8px 0px #1a1a1a;
+        }
+        #terminal-title-tab {
+            display: inline-block;
+            margin-top: 14px;
+            margin-left: 124px;
+            font-family: sans-serif;
+            padding: 14px 28px;
+            border-radius: 6px 6px 0 0;
+            background-color: #263238;
+            box-shadow: inset 0px 1px 0px 0px #4e4e4e,
+                        0px -4px 4px 0px #1e1e1e,
+                        inset 1px 0px 0px 0px #4e4e4e,
+                        inset -1px 0px 0px 0px #4e4e4e;
+        }
+        #terminal-traffic-lights {
+            position: absolute;
+            top: 24px;
+            left: 20px;
+        }
+        #terminal-body {
+            line-height: 22px;
+            padding: 14px;
+        }
+        .r1 {color: #e9e9f4; text-decoration-color: #e9e9f4;background-color: #263238;}
+.r2 {color: #c3e88d; text-decoration-color: #c3e88d;background-color: #263238;}
+.r3 {color: #9e9e9e; text-decoration-color: #9e9e9e;background-color: #263238;}
+.r4 {color: #eeffff; text-decoration-color: #eeffff; background-color: #263238}
+.r5 {color: #89ddff; text-decoration-color: #89ddff; background-color: #263238}
+.r6 {color: #82aaff; text-decoration-color: #82aaff;background-color: #263238;}
+.r7 {font-weight: bold;color: #e9e9f4; text-decoration-color: #e9e9f4;;background-color: #263238;}
+.r8 {color: #c3e88d; text-decoration-color: #c3e88d; background-color: #263238}
+.r9 {color: #f78c6c; text-decoration-color: #f78c6c; background-color: #263238}
+.r10 {color: #ffffff; text-decoration-color: #ffffff;background-color: #263238;}
+.r11 {color: #727272; text-decoration-color: #727272; background-color: #737373}
+.r12 {color: #727272; text-decoration-color: #727272; background-color: #777777}
+.r13 {color: #727272; text-decoration-color: #727272; background-color: #747474}
+.r14 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #ffffff}
+.r15 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fefefe}
+.r16 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #fefefe}
+.r17 {color: #f6f2fb; text-decoration-color: #f6f2fb; background-color: #b180f5}
+.r18 {color: #fbfbfc; text-decoration-color: #fbfbfc; background-color: #f2eafd}
+.r19 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #fdfdfd}
+.r20 {color: #fefefe; text-decoration-color: #fefefe; background-color: #dddddd}
+.r21 {color: #fefefe; text-decoration-color: #fefefe; background-color: #dadada}
+.r22 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #dfdfdf}
+.r23 {color: #fefefe; text-decoration-color: #fefefe; background-color: #d9d9d9}
+.r24 {color: #fefefe; text-decoration-color: #fefefe; background-color: #e5e5e5}
+.r25 {background-color: #ffffff;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r26 {color: #fefdff; text-decoration-color: #fefdff; background-color: #f9f6fe}
+.r27 {color: #8d44f2; text-decoration-color: #8d44f2; background-color: #7b28f0}
+.r28 {color: #e7d8fc; text-decoration-color: #e7d8fc; background-color: #dec9fc}
+.r29 {color: #e7d8fc; text-decoration-color: #e7d8fc; background-color: #ffffff}
+.r30 {color: #ffffff; text-decoration-color: #ffffff; background-color: #faf7ff}
+.r31 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f2eafd}
+.r32 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f2eafe}
+.r33 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f4edfe}
+.r34 {color: #dfe0df; text-decoration-color: #dfe0df; background-color: #ffffff}
+.r35 {color: #dddddd; text-decoration-color: #dddddd; background-color: #ffffff}
+.r36 {color: #e7e7e7; text-decoration-color: #e7e7e7; background-color: #ffffff}
+.r37 {color: #e8e8e8; text-decoration-color: #e8e8e8; background-color: #ffffff}
+.r38 {color: #e5e5e5; text-decoration-color: #e5e5e5; background-color: #ffffff}
+.r39 {color: #eaeaea; text-decoration-color: #eaeaea; background-color: #ffffff}
+.r40 {color: #737373; text-decoration-color: #737373; background-color: #757575}
+.r41 {color: #707070; text-decoration-color: #707070;background-color: #263238;}
+.r42 {background-color: #fbfbfb;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r43 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #fcfcfc}
+.r44 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #fafafa}
+.r45 {color: #fdfdfc; text-decoration-color: #fdfdfc; background-color: #fbfbfa}
+.r46 {color: #f0e9fb; text-decoration-color: #f0e9fb; background-color: #e8ddf9}
+.r47 {color: #6f14ef; text-decoration-color: #6f14ef; background-color: #6605ee}
+.r48 {color: #d0b4f8; text-decoration-color: #d0b4f8; background-color: #c6a5f6}
+.r49 {color: #fdfdfc; text-decoration-color: #fdfdfc; background-color: #fcfcfa}
+.r50 {color: #c39ef7; text-decoration-color: #c39ef7; background-color: #dcc7f8}
+.r51 {color: #6209ee; text-decoration-color: #6209ee; background-color: #a774f6}
+.r52 {color: #6809ef; text-decoration-color: #6809ef; background-color: #aa74f6}
+.r53 {color: #6509ef; text-decoration-color: #6509ef; background-color: #a974f6}
+.r54 {color: #7c2af0; text-decoration-color: #7c2af0; background-color: #b586f6}
+.r55 {color: #f9f6fc; text-decoration-color: #f9f6fc; background-color: #f9f7fb}
+.r56 {color: #f1f1f0; text-decoration-color: #f1f1f0; background-color: #f1f2f1}
+.r57 {color: #cecece; text-decoration-color: #cecece; background-color: #d4d4d4}
+.r58 {color: #cfcfcf; text-decoration-color: #cfcfcf; background-color: #dfdfdf}
+.r59 {color: #d8d8d8; text-decoration-color: #d8d8d8; background-color: #dfdfdf}
+.r60 {color: #d9d9d9; text-decoration-color: #d9d9d9; background-color: #dedede}
+.r61 {color: #d9d9d9; text-decoration-color: #d9d9d9; background-color: #d9d9d9}
+.r62 {color: #d9d9d9; text-decoration-color: #d9d9d9; background-color: #e4e4e4}
+.r63 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #fbfbfb}
+.r64 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #f8f8f8}
+.r65 {color: #e7d7fd; text-decoration-color: #e7d7fd; background-color: #dec8fb}
+.r66 {color: #6200ee; text-decoration-color: #6200ee; background-color: #5c00ed}
+.r67 {color: #be95f8; text-decoration-color: #be95f8; background-color: #b485f7}
+.r68 {color: #be95f8; text-decoration-color: #be95f8; background-color: #ffffff}
+.r69 {color: #ffffff; text-decoration-color: #ffffff; background-color: #b3e3e6}
+.r70 {color: #ffffff; text-decoration-color: #ffffff; background-color: #3ab4bd}
+.r71 {color: #ffffff; text-decoration-color: #ffffff; background-color: #3ab7bf}
+.r72 {color: #ffffff; text-decoration-color: #ffffff; background-color: #3ab6bd}
+.r73 {color: #ffffff; text-decoration-color: #ffffff; background-color: #56c1c8}
+.r74 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f9fdfe}
+.r75 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f4f3f3}
+.r76 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e1e1e1}
+.r77 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e5e5e5}
+.r78 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e6e6e6}
+.r79 {color: #ffffff; text-decoration-color: #ffffff; background-color: #eaeaea}
+.r80 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e3e3e3}
+.r81 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e0e0e0}
+.r82 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f9f9f9}
+.r83 {color: #ffffff; text-decoration-color: #ffffff; background-color: #ffffff}
+.r84 {color: #747474; text-decoration-color: #747474;background-color: #263238;}
+.r85 {color: #737373; text-decoration-color: #737373;background-color: #263238;}
+.r86 {color: #777777; text-decoration-color: #777777;background-color: #263238;}
+.r87 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f8f8f8}
+.r88 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fbfbfb}
+.r89 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fafbf8}
+.r90 {color: #d7befb; text-decoration-color: #d7befb; background-color: #caacf5}
+.r91 {color: #d7befb; text-decoration-color: #d7befb; background-color: #5a00ed}
+.r92 {color: #ac78f6; text-decoration-color: #ac78f6; background-color: #9d61f2}
+.r93 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fbfbf8}
+.r94 {color: #b0e2e6; text-decoration-color: #b0e2e6; background-color: #f9fbfc}
+.r95 {color: #33b1ba; text-decoration-color: #33b1ba; background-color: #fbfeff}
+.r96 {color: #33b5bd; text-decoration-color: #33b5bd; background-color: #fbfeff}
+.r97 {color: #33b3bb; text-decoration-color: #33b3bb; background-color: #fbfeff}
+.r98 {color: #4fbfc6; text-decoration-color: #4fbfc6; background-color: #fafdff}
+.r99 {color: #faffff; text-decoration-color: #faffff; background-color: #f8f8f8}
+.r100 {color: #edecec; text-decoration-color: #edecec; background-color: #f9f9f9}
+.r101 {color: #cacaca; text-decoration-color: #cacaca; background-color: #fbfbfb}
+.r102 {color: #dadada; text-decoration-color: #dadada; background-color: #fafafa}
+.r103 {color: #d8d8d8; text-decoration-color: #d8d8d8; background-color: #fafafa}
+.r104 {color: #d5d5d5; text-decoration-color: #d5d5d5; background-color: #fafafa}
+.r105 {color: #dddddd; text-decoration-color: #dddddd; background-color: #f9f9f9}
+.r106 {color: #d6d6d6; text-decoration-color: #d6d6d6; background-color: #f9f9f9}
+.r107 {color: #d6d6d6; text-decoration-color: #d6d6d6; background-color: #fafafa}
+.r108 {color: #d8d8d8; text-decoration-color: #d8d8d8; background-color: #f8f8f8}
+.r109 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #f8f8f8}
+.r110 {color: #c5a0f8; text-decoration-color: #c5a0f8; background-color: #bf96f8}
+.r111 {color: #c5a0f8; text-decoration-color: #c5a0f8; background-color: #5800ed}
+.r112 {color: #9857f4; text-decoration-color: #9857f4; background-color: #904bf3}
+.r113 {color: #9857f4; text-decoration-color: #9857f4; background-color: #ffffff}
+.r114 {color: #ffe7d7; text-decoration-color: #ffe7d7; background-color: #ffd0b3}
+.r115 {color: #ffbe94; text-decoration-color: #ffbe94; background-color: #ff8130}
+.r116 {color: #ffc098; text-decoration-color: #ffc098; background-color: #ff8638}
+.r117 {color: #ffbf96; text-decoration-color: #ffbf96; background-color: #ff8434}
+.r118 {color: #ffc9a6; text-decoration-color: #ffc9a6; background-color: #ff9753}
+.r119 {color: #fffdfc; text-decoration-color: #fffdfc; background-color: #fffdfb}
+.r120 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #e7e8e8}
+.r121 {color: #efefef; text-decoration-color: #efefef; background-color: #c7c7c7}
+.r122 {color: #f2f2f2; text-decoration-color: #f2f2f2; background-color: #d5d5d5}
+.r123 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #c8c8c8}
+.r124 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #d1d1d1}
+.r125 {color: #f1f1f1; text-decoration-color: #f1f1f1; background-color: #cdcdcd}
+.r126 {color: #f4f4f4; text-decoration-color: #f4f4f4; background-color: #d9d9d9}
+.r127 {color: #f5f5f5; text-decoration-color: #f5f5f5; background-color: #cccccc}
+.r128 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fdfdfd}
+.r129 {color: #727272; text-decoration-color: #727272;background-color: #263238;}
+.r130 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fdfdfb}
+.r131 {color: #b78af7; text-decoration-color: #b78af7; background-color: #ab76f4}
+.r132 {color: #b78af7; text-decoration-color: #b78af7; background-color: #5900ed}
+.r133 {color: #863af2; text-decoration-color: #863af2; background-color: #8030f0}
+.r134 {color: #ffffff; text-decoration-color: #ffffff; background-color: #faf9fb}
+.r135 {color: #fffbf8; text-decoration-color: #fffbf8; background-color: #fbfcfc}
+.r136 {color: #fff2ea; text-decoration-color: #fff2ea; background-color: #fbfdfe}
+.r137 {color: #fff3eb; text-decoration-color: #fff3eb; background-color: #fbfdfe}
+.r138 {color: #fff5ee; text-decoration-color: #fff5ee; background-color: #fbfdfe}
+.r139 {color: #fefefe; text-decoration-color: #fefefe; background-color: #fbfbfb}
+.r140 {color: #fafafa; text-decoration-color: #fafafa; background-color: #fcfcfc}
+.r141 {color: #f1f1f1; text-decoration-color: #f1f1f1; background-color: #fcfcfc}
+.r142 {color: #e8e8e8; text-decoration-color: #e8e8e8; background-color: #fdfdfd}
+.r143 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #fcfcfc}
+.r144 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #fcfcfc}
+.r145 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #ffffff}
+.r146 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #ffffff}
+.r147 {color: #fcfdfb; text-decoration-color: #fcfdfb; background-color: #ffffff}
+.r148 {color: #a36af3; text-decoration-color: #a36af3; background-color: #9f62f5}
+.r149 {color: #5a00ed; text-decoration-color: #5a00ed; background-color: #5b00ed}
+.r150 {color: #7823f0; text-decoration-color: #7823f0; background-color: #7218f0}
+.r151 {color: #f5f1fa; text-decoration-color: #f5f1fa; background-color: #f5eefe}
+.r152 {color: #757575; text-decoration-color: #757575;background-color: #263238;}
+.r153 {color: #747474; text-decoration-color: #747474; background-color: #737373}
+.r154 {color: #9552f3; text-decoration-color: #9552f3; background-color: #8d45f3}
+.r155 {color: #5c00ed; text-decoration-color: #5c00ed; background-color: #5d00ed}
+.r156 {color: #6e12ef; text-decoration-color: #6e12ef; background-color: #6809ef}
+.r157 {color: #efe6fd; text-decoration-color: #efe6fd; background-color: #e8d9fd}
+.r158 {color: #efe6fd; text-decoration-color: #efe6fd; background-color: #ffffff}
+.r159 {background-color: #757575;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r160 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #fefefe}
+.r161 {color: #f9f9f8; text-decoration-color: #f9f9f8; background-color: #fefefe}
+.r162 {color: #f9f9f8; text-decoration-color: #f9f9f8; background-color: #fcfafe}
+.r163 {color: #863bf0; text-decoration-color: #863bf0; background-color: #802ff1}
+.r164 {color: #5e00ee; text-decoration-color: #5e00ee; background-color: #5f00ee}
+.r165 {color: #6401ee; text-decoration-color: #6401ee; background-color: #6200ee}
+.r166 {color: #dbc9f6; text-decoration-color: #dbc9f6; background-color: #d8c0fa}
+.r167 {color: #fafbf8; text-decoration-color: #fafbf8; background-color: #fefffe}
+.r168 {color: #717171; text-decoration-color: #717171; background-color: #727272}
+.r169 {color: #767676; text-decoration-color: #767676; background-color: #777777}
+.r170 {color: #faf6fe; text-decoration-color: #faf6fe; background-color: #f6f0fe}
+.r171 {color: #7823f0; text-decoration-color: #7823f0; background-color: #741cf0}
+.r172 {color: #7823f0; text-decoration-color: #7823f0; background-color: #6000ee}
+.r173 {color: #5f00ee; text-decoration-color: #5f00ee; background-color: #5e00ed}
+.r174 {color: #ceaefa; text-decoration-color: #ceaefa; background-color: #c6a1f9}
+.r175 {color: #ceaefa; text-decoration-color: #ceaefa; background-color: #ffffff}
+.r176 {color: #767676; text-decoration-color: #767676; background-color: #747474}
+.r177 {color: #717171; text-decoration-color: #717171; background-color: #747474}
+.r178 {color: #fcfdfc; text-decoration-color: #fcfdfc; background-color: #fbfcfa}
+.r179 {color: #ece3fb; text-decoration-color: #ece3fb; background-color: #e5d8f8}
+.r180 {color: #6e12ef; text-decoration-color: #6e12ef; background-color: #6809ee}
+.r181 {color: #6100ee; text-decoration-color: #6100ee; background-color: #6200ee}
+.r182 {color: #6100ee; text-decoration-color: #6100ee; background-color: #5d00ed}
+.r183 {color: #b78bf6; text-decoration-color: #b78bf6; background-color: #ac79f4}
+.r184 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #fffcfc}
+.r185 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #fffefe}
+.r186 {color: #e3d1fc; text-decoration-color: #e3d1fc; background-color: #d8bffb}
+.r187 {color: #6504ee; text-decoration-color: #6504ee; background-color: #6100ee}
+.r188 {color: #6200ee; text-decoration-color: #6200ee; background-color: #6300ee}
+.r189 {color: #6200ee; text-decoration-color: #6200ee; background-color: #5d00ed}
+.r190 {color: #a369f5; text-decoration-color: #a369f5; background-color: #9654f3}
+.r191 {color: #a369f5; text-decoration-color: #a369f5; background-color: #ffffff}
+.r192 {color: #ffffff; text-decoration-color: #ffffff; background-color: #9cdbdf}
+.r193 {color: #ceedef; text-decoration-color: #ceedef; background-color: #0fa6af}
+.r194 {color: #7fced4; text-decoration-color: #7fced4; background-color: #009ca6}
+.r195 {color: #d7f0f2; text-decoration-color: #d7f0f2; background-color: #2db2bb}
+.r196 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f2fafb}
+.r197 {color: #cfb1fa; text-decoration-color: #cfb1fa; background-color: #bd96f4}
+.r198 {color: #5f00ee; text-decoration-color: #5f00ee; background-color: #5e00ee}
+.r199 {color: #5f00ee; text-decoration-color: #5f00ee; background-color: #6300ee}
+.r200 {color: #5e00ed; text-decoration-color: #5e00ed; background-color: #6000ee}
+.r201 {color: #8c43f2; text-decoration-color: #8c43f2; background-color: #7f2ef0}
+.r202 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f7f6f8}
+.r203 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f9f9f8}
+.r204 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fcfafa}
+.r205 {color: #ffffff; text-decoration-color: #ffffff; background-color: #bce3e6}
+.r206 {color: #8dd6da; text-decoration-color: #8dd6da; background-color: #06a3ac}
+.r207 {color: #00a0aa; text-decoration-color: #00a0aa; background-color: #00a1ab}
+.r208 {color: #00a0ab; text-decoration-color: #00a0ab; background-color: #00a2ac}
+.r209 {color: #009ea9; text-decoration-color: #009ea9; background-color: #00a0aa}
+.r210 {color: #95d8dc; text-decoration-color: #95d8dc; background-color: #2eb2ba}
+.r211 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f2f9fb}
+.r212 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fae5d8}
+.r213 {color: #fffcfb; text-decoration-color: #fffcfb; background-color: #fe9d5e}
+.r214 {color: #ffefe4; text-decoration-color: #ffefe4; background-color: #ff883c}
+.r215 {color: #ffe9db; text-decoration-color: #ffe9db; background-color: #ff8639}
+.r216 {color: #ffe6d7; text-decoration-color: #ffe6d7; background-color: #ff8435}
+.r217 {color: #fff8f3; text-decoration-color: #fff8f3; background-color: #ff9450}
+.r218 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fad9c4}
+.r219 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f8fcfd}
+.r220 {color: #b484f7; text-decoration-color: #b484f7; background-color: #a268f5}
+.r221 {color: #b484f7; text-decoration-color: #b484f7; background-color: #5d00ed}
+.r222 {color: #b484f7; text-decoration-color: #b484f7; background-color: #6300ee}
+.r223 {color: #6000ee; text-decoration-color: #6000ee; background-color: #6100ee}
+.r224 {color: #7720f0; text-decoration-color: #7720f0; background-color: #6d10ef}
+.r225 {color: #f7f2fe; text-decoration-color: #f7f2fe; background-color: #efe5fd}
+.r226 {color: #f7f2fe; text-decoration-color: #f7f2fe; background-color: #ffffff}
+.r227 {color: #fafdfd; text-decoration-color: #fafdfd; background-color: #a6dfe2}
+.r228 {color: #39b7bf; text-decoration-color: #39b7bf; background-color: #009faa}
+.r229 {color: #009fa9; text-decoration-color: #009fa9; background-color: #00a2ac}
+.r230 {color: #01a2ad; text-decoration-color: #01a2ad; background-color: #00a2af}
+.r231 {color: #bde1e0; text-decoration-color: #bde1e0; background-color: #60a191}
+.r232 {color: #ff9f60; text-decoration-color: #ff9f60; background-color: #ff8331}
+.r233 {color: #ff7e2b; text-decoration-color: #ff7e2b; background-color: #ff8435}
+.r234 {color: #ff8333; text-decoration-color: #ff8333; background-color: #ff8435}
+.r235 {color: #ff8334; text-decoration-color: #ff8334; background-color: #ff8435}
+.r236 {color: #ff802f; text-decoration-color: #ff802f; background-color: #ff8435}
+.r237 {color: #ff8b40; text-decoration-color: #ff8b40; background-color: #ff802e}
+.r238 {color: #ffe8d9; text-decoration-color: #ffe8d9; background-color: #ff9c5d}
+.r239 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fff9f5}
+.r240 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fcfcfb}
+.r241 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f7f4fb}
+.r242 {color: #9049f3; text-decoration-color: #9049f3; background-color: #7a26f0}
+.r243 {color: #5e00ed; text-decoration-color: #5e00ed; background-color: #6300ee}
+.r244 {color: #6504ee; text-decoration-color: #6504ee; background-color: #5f00ee}
+.r245 {color: #e3d1fc; text-decoration-color: #e3d1fc; background-color: #ceb0f7}
+.r246 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fcfbfb}
+.r247 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fffdfd}
+.r248 {color: #f3fbfb; text-decoration-color: #f3fbfb; background-color: #78cdd3}
+.r249 {color: #2bb1ba; text-decoration-color: #2bb1ba; background-color: #009fa9}
+.r250 {color: #00a0aa; text-decoration-color: #00a0aa; background-color: #00a2ac}
+.r251 {color: #00a2ae; text-decoration-color: #00a2ae; background-color: #00a2ac}
+.r252 {color: #139ea0; text-decoration-color: #139ea0; background-color: #00a3b1}
+.r253 {color: #e78740; text-decoration-color: #e78740; background-color: #909168}
+.r254 {color: #ff8433; text-decoration-color: #ff8433; background-color: #ff8330}
+.r255 {color: #ff8433; text-decoration-color: #ff8433; background-color: #ff8435}
+.r256 {color: #ff7f2d; text-decoration-color: #ff7f2d; background-color: #ff8334}
+.r257 {color: #ffbb90; text-decoration-color: #ffbb90; background-color: #ff8334}
+.r258 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fed6bc}
+.r259 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fbffff}
+.r260 {color: #fcfcfb; text-decoration-color: #fcfcfb; background-color: #ffffff}
+.r261 {color: #dfcef8; text-decoration-color: #dfcef8; background-color: #a76ff5}
+.r262 {color: #6606ee; text-decoration-color: #6606ee; background-color: #5d00ed}
+.r263 {color: #5e00ed; text-decoration-color: #5e00ed; background-color: #6200ee}
+.r264 {color: #a166f2; text-decoration-color: #a166f2; background-color: #6103ee}
+.r265 {color: #fcfcfb; text-decoration-color: #fcfcfb; background-color: #ccacf9}
+.r266 {color: #fffdfd; text-decoration-color: #fffdfd; background-color: #e0f4f5}
+.r267 {color: #fdfcfc; text-decoration-color: #fdfcfc; background-color: #59c2c8}
+.r268 {color: #8bd2d6; text-decoration-color: #8bd2d6; background-color: #00a0aa}
+.r269 {color: #03a1ab; text-decoration-color: #03a1ab; background-color: #00a1ab}
+.r270 {color: #03a1ab; text-decoration-color: #03a1ab; background-color: #00a2ac}
+.r271 {color: #00a3af; text-decoration-color: #00a3af; background-color: #00a2ac}
+.r272 {color: #2a9d98; text-decoration-color: #2a9d98; background-color: #00a3b0}
+.r273 {color: #f58538; text-decoration-color: #f58538; background-color: #979065}
+.r274 {color: #ff8434; text-decoration-color: #ff8434; background-color: #ff8330}
+.r275 {color: #ff8434; text-decoration-color: #ff8434; background-color: #ff8435}
+.r276 {color: #ff8232; text-decoration-color: #ff8232; background-color: #ff8435}
+.r277 {color: #fe8a3f; text-decoration-color: #fe8a3f; background-color: #ff8231}
+.r278 {color: #fbdbc6; text-decoration-color: #fbdbc6; background-color: #ff883c}
+.r279 {color: #fbffff; text-decoration-color: #fbffff; background-color: #ffbb90}
+.r280 {color: #fbfeff; text-decoration-color: #fbfeff; background-color: #ffe5d5}
+.r281 {color: #fbfcfd; text-decoration-color: #fbfcfd; background-color: #fffcfa}
+.r282 {color: #ebdefd; text-decoration-color: #ebdefd; background-color: #aa6efe}
+.r283 {color: #6b0eef; text-decoration-color: #6b0eef; background-color: #6100f6}
+.r284 {color: #6100ee; text-decoration-color: #6100ee; background-color: #6701f6}
+.r285 {color: #6300ee; text-decoration-color: #6300ee; background-color: #6701f6}
+.r286 {color: #5d00ed; text-decoration-color: #5d00ed; background-color: #6601f7}
+.r287 {color: #914bf3; text-decoration-color: #914bf3; background-color: #6f0ff7}
+.r288 {color: #ffffff; text-decoration-color: #ffffff; background-color: #ecdaff}
+.r289 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e7fcfd}
+.r290 {color: #ffffff; text-decoration-color: #ffffff; background-color: #a2e2e7}
+.r291 {color: #fafdfd; text-decoration-color: #fafdfd; background-color: #3bbdc4}
+.r292 {color: #9ddbdf; text-decoration-color: #9ddbdf; background-color: #00a6b0}
+.r293 {color: #1babb4; text-decoration-color: #1babb4; background-color: #00a7b1}
+.r294 {color: #009ea9; text-decoration-color: #009ea9; background-color: #01a8b3}
+.r295 {color: #00a2ac; text-decoration-color: #00a2ac; background-color: #01a8b2}
+.r296 {color: #00a3ae; text-decoration-color: #00a3ae; background-color: #01a8b2}
+.r297 {color: #189fa2; text-decoration-color: #189fa2; background-color: #00a9b6}
+.r298 {color: #db8845; text-decoration-color: #db8845; background-color: #2fa39e}
+.r299 {color: #ff8330; text-decoration-color: #ff8330; background-color: #c89054}
+.r300 {color: #ff8435; text-decoration-color: #ff8435; background-color: #fd8a3b}
+.r301 {color: #ff8435; text-decoration-color: #ff8435; background-color: #ff8a3a}
+.r302 {color: #ff8435; text-decoration-color: #ff8435; background-color: #ff8938}
+.r303 {color: #ff8333; text-decoration-color: #ff8333; background-color: #ff8938}
+.r304 {color: #ff7f2d; text-decoration-color: #ff7f2d; background-color: #ff8938}
+.r305 {color: #ff8536; text-decoration-color: #ff8536; background-color: #ff8937}
+.r306 {color: #ff9958; text-decoration-color: #ff9958; background-color: #ff8633}
+.r307 {color: #ffc9a7; text-decoration-color: #ffc9a7; background-color: #ff8530}
+.r308 {color: #fff9f5; text-decoration-color: #fff9f5; background-color: #ff9d59}
+.r309 {color: #ffffff; text-decoration-color: #ffffff; background-color: #ffd4b3}
+.r310 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fff8ef}
+.r311 {color: #c8c8c8; text-decoration-color: #c8c8c8;background-color: #263238;}
+.r312 {color: #cacaca; text-decoration-color: #cacaca;background-color: #263238;}
+.r313 {color: #c8c8c6; text-decoration-color: #c8c8c6;background-color: #263238;}
+.r314 {color: #b3a4c5; text-decoration-color: #b3a4c5;background-color: #263238;}
+.r315 {color: #6c32bd; text-decoration-color: #6c32bd;background-color: #263238;}
+.r316 {color: #682dbd; text-decoration-color: #682dbd;background-color: #263238;}
+.r317 {color: #6a2dbd; text-decoration-color: #6a2dbd;background-color: #263238;}
+.r318 {color: #6529bd; text-decoration-color: #6529bd;background-color: #263238;}
+.r319 {color: #9270c1; text-decoration-color: #9270c1;background-color: #263238;}
+.r320 {color: #c8c6c6; text-decoration-color: #c8c6c6;background-color: #263238;}
+.r321 {color: #bac3c3; text-decoration-color: #bac3c3;background-color: #263238;}
+.r322 {color: #a0babc; text-decoration-color: #a0babc;background-color: #263238;}
+.r323 {color: #89b1b3; text-decoration-color: #89b1b3;background-color: #263238;}
+.r324 {color: #519da0; text-decoration-color: #519da0;background-color: #263238;}
+.r325 {color: #228b92; text-decoration-color: #228b92;background-color: #263238;}
+.r326 {color: #2d8e96; text-decoration-color: #2d8e96;background-color: #263238;}
+.r327 {color: #2d9096; text-decoration-color: #2d9096;background-color: #263238;}
+.r328 {color: #24909b; text-decoration-color: #24909b;background-color: #263238;}
+.r329 {color: #388e90; text-decoration-color: #388e90;background-color: #263238;}
+.r330 {color: #84856c; text-decoration-color: #84856c;background-color: #263238;}
+.r331 {color: #a4825e; text-decoration-color: #a4825e;background-color: #263238;}
+.r332 {color: #c17e51; text-decoration-color: #c17e51;background-color: #263238;}
+.r333 {color: #c87c4d; text-decoration-color: #c87c4d;background-color: #263238;}
+.r334 {color: #c87944; text-decoration-color: #c87944;background-color: #263238;}
+.r335 {color: #c87742; text-decoration-color: #c87742;background-color: #263238;}
+.r336 {color: #c88e6a; text-decoration-color: #c88e6a;background-color: #263238;}
+.r337 {color: #c8aa97; text-decoration-color: #c8aa97;background-color: #263238;}
+.r338 {color: #c6b4a8; text-decoration-color: #c6b4a8;background-color: #263238;}
+.r339 {color: #c6bdb8; text-decoration-color: #c6bdb8;background-color: #263238;}
+.r340 {color: #c6c6c6; text-decoration-color: #c6c6c6;background-color: #263238;}
+.r341 {color: #b4b4b4; text-decoration-color: #b4b4b4;background-color: #263238;}
+.r342 {color: #767676; text-decoration-color: #767676;background-color: #263238;}
+.r343 {color: #797979; text-decoration-color: #797979;background-color: #263238;}
+.r344 {color: #787878; text-decoration-color: #787878;background-color: #263238;}
+.r345 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f1f1f1}
+.r346 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f6f6f6}
+.r347 {color: #ffffff; text-decoration-color: #ffffff; background-color: #efefef}
+.r348 {color: #ffffff; text-decoration-color: #ffffff; background-color: #eeeeee}
+.r349 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #f5f5f5}
+.r350 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #f3f3f3}
+.r351 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #fefefe}
+.r352 {color: #fafafa; text-decoration-color: #fafafa; background-color: #fdfdfd}
+.r353 {color: #fafafa; text-decoration-color: #fafafa; background-color: #fafafa}
+.r354 {color: #fafafa; text-decoration-color: #fafafa; background-color: #f9f9f9}
+.r355 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #fafafa}
+.r356 {color: #fafafa; text-decoration-color: #fafafa; background-color: #fbfbfb}
+.r357 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #f8f8f7}
+.r358 {color: #fefefe; text-decoration-color: #fefefe; background-color: #f7f7f7}
+.r359 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #989897}
+.r360 {color: #f7f7f7; text-decoration-color: #f7f7f7; background-color: #999999}
+.r361 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #989898}
+.r362 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #919191}
+.r363 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #dadada}
+.r364 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #ffffff}
+.r365 {color: #c7c7c7; text-decoration-color: #c7c7c7; background-color: #fdfdfd}
+.r366 {color: #c3c3c3; text-decoration-color: #c3c3c3; background-color: #f9f9f9}
+.r367 {color: #b0b0b0; text-decoration-color: #b0b0b0; background-color: #fbfbfb}
+.r368 {color: #e2e2e2; text-decoration-color: #e2e2e2; background-color: #f7f7f7}
+.r369 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #f4f4f4}
+.r370 {color: #fafafa; text-decoration-color: #fafafa; background-color: #ffffff}
+.r371 {color: #fafafa; text-decoration-color: #fafafa; background-color: #fefefe}
+.r372 {color: #f7f7f7; text-decoration-color: #f7f7f7; background-color: #fbfbfb}
+.r373 {color: #f6f6f6; text-decoration-color: #f6f6f6; background-color: #fafafa}
+.r374 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #fdfdfd}
+.r375 {color: #eeeef2; text-decoration-color: #eeeef2; background-color: #e4e5f0}
+.r376 {color: #cbcbdb; text-decoration-color: #cbcbdb; background-color: #b0b1d1}
+.r377 {color: #cbcbdb; text-decoration-color: #cbcbdb; background-color: #ffffff}
+.r378 {color: #fefefe; text-decoration-color: #fefefe; background-color: #fdfdfd}
+.r379 {color: #eeeef0; text-decoration-color: #eeeef0; background-color: #6d6f9c}
+.r380 {color: #f5f5f6; text-decoration-color: #f5f5f6; background-color: #b6b6ce}
+.r381 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #cbcbca}
+.r382 {color: #f7f7f7; text-decoration-color: #f7f7f7; background-color: #afafaf}
+.r383 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #b6b6b6}
+.r384 {color: #ffffff; text-decoration-color: #ffffff; background-color: #c0c0c0}
+.r385 {color: #fefefe; text-decoration-color: #fefefe; background-color: #aeaeae}
+.r386 {color: #ffffff; text-decoration-color: #ffffff; background-color: #bbbbbb}
+.r387 {color: #ffffff; text-decoration-color: #ffffff; background-color: #c2c2c2}
+.r388 {background-color: #f8f8f8;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r389 {background-color: #f4f4f4;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r390 {background-color: #fefefe;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r391 {background-color: #fafafa;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r392 {background-color: #fdfdfd;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r393 {background-color: #fcfcfc;color: #e9e9f4; text-decoration-color: #e9e9f4;}
+.r394 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #fefefe}
+.r395 {color: #ffffff; text-decoration-color: #ffffff; background-color: #ededf2}
+.r396 {color: #e1e1ec; text-decoration-color: #e1e1ec; background-color: #9d9ec8}
+.r397 {color: #d4d4e3; text-decoration-color: #d4d4e3; background-color: #52549e}
+.r398 {color: #cdcde1; text-decoration-color: #cdcde1; background-color: #6365a6}
+.r399 {color: #a7a8cd; text-decoration-color: #a7a8cd; background-color: #acadd4}
+.r400 {color: #a7a8cd; text-decoration-color: #a7a8cd; background-color: #ffffff}
+.r401 {color: #fefeff; text-decoration-color: #fefeff; background-color: #fdfdfe}
+.r402 {color: #afafcd; text-decoration-color: #afafcd; background-color: #8081bb}
+.r403 {color: #d8d9e6; text-decoration-color: #d8d9e6; background-color: #bdbedc}
+.r404 {color: #e4e4e3; text-decoration-color: #e4e4e3; background-color: #bbbbb9}
+.r405 {color: #d1d1d1; text-decoration-color: #d1d1d1; background-color: #b8b8b8}
+.r406 {color: #e3e3e3; text-decoration-color: #e3e3e3; background-color: #b2b2b2}
+.r407 {color: #e1e1e1; text-decoration-color: #e1e1e1; background-color: #b7b7b7}
+.r408 {color: #e2e2e2; text-decoration-color: #e2e2e2; background-color: #acacac}
+.r409 {color: #e6e6e6; text-decoration-color: #e6e6e6; background-color: #c6c6c6}
+.r410 {color: #eaeaea; text-decoration-color: #eaeaea; background-color: #bfbfbf}
+.r411 {color: #f5f5f5; text-decoration-color: #f5f5f5; background-color: #b1b1b1}
+.r412 {color: #f5f5f5; text-decoration-color: #f5f5f5; background-color: #b8b8b8}
+.r413 {color: #f5f5f5; text-decoration-color: #f5f5f5; background-color: #b4b4b4}
+.r414 {color: #f6f6f6; text-decoration-color: #f6f6f6; background-color: #a9a9a9}
+.r415 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #ececec}
+.r416 {color: #fafafb; text-decoration-color: #fafafb; background-color: #edeef5}
+.r417 {color: #8485b5; text-decoration-color: #8485b5; background-color: #5a5ca6}
+.r418 {color: #6162a8; text-decoration-color: #6162a8; background-color: #5658aa}
+.r419 {color: #4d4fa0; text-decoration-color: #4d4fa0; background-color: #5c5fb0}
+.r420 {color: #4e50a5; text-decoration-color: #4e50a5; background-color: #5759ae}
+.r421 {color: #b5b6e2; text-decoration-color: #b5b6e2; background-color: #b5b6e4}
+.r422 {color: #b5b6e2; text-decoration-color: #b5b6e2; background-color: #ffffff}
+.r423 {color: #b5b6e2; text-decoration-color: #b5b6e2; background-color: #fefeff}
+.r424 {color: #babce5; text-decoration-color: #babce5; background-color: #9b9ddf}
+.r425 {color: #dddef2; text-decoration-color: #dddef2; background-color: #cbccee}
+.r426 {color: #e5e5e3; text-decoration-color: #e5e5e3; background-color: #dadad7}
+.r427 {color: #e0e0e0; text-decoration-color: #e0e0e0; background-color: #c4c4c4}
+.r428 {color: #dedede; text-decoration-color: #dedede; background-color: #c2c2c2}
+.r429 {color: #dbdbdb; text-decoration-color: #dbdbdb; background-color: #bcbcbc}
+.r430 {color: #e4e4e4; text-decoration-color: #e4e4e4; background-color: #c7c7c7}
+.r431 {color: #dbdbdb; text-decoration-color: #dbdbdb; background-color: #bbbbbb}
+.r432 {color: #e3e3e3; text-decoration-color: #e3e3e3; background-color: #cecece}
+.r433 {color: #fefefe; text-decoration-color: #fefefe; background-color: #ffffff}
+.r434 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d0d0d0}
+.r435 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #f9f9f9}
+.r436 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #f4f4f4}
+.r437 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #fbfbfb}
+.r438 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #fafafa}
+.r439 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #fdfdfd}
+.r440 {color: #e1e1ee; text-decoration-color: #e1e1ee; background-color: #d6d6e9}
+.r441 {color: #595ba7; text-decoration-color: #595ba7; background-color: #676ac4}
+.r442 {color: #6467bf; text-decoration-color: #6467bf; background-color: #6b6ece}
+.r443 {color: #6d70d0; text-decoration-color: #6d70d0; background-color: #696ccf}
+.r444 {color: #6568ca; text-decoration-color: #6568ca; background-color: #696ccf}
+.r445 {color: #b3b5e4; text-decoration-color: #b3b5e4; background-color: #bfc0e7}
+.r446 {color: #b3b5e4; text-decoration-color: #b3b5e4; background-color: #ffffff}
+.r447 {color: #b3b5e4; text-decoration-color: #b3b5e4; background-color: #fefeff}
+.r448 {color: #c9caee; text-decoration-color: #c9caee; background-color: #c9caec}
+.r449 {color: #c9caee; text-decoration-color: #c9caee; background-color: #e4e4f6}
+.r450 {color: #d1d1d0; text-decoration-color: #d1d1d0; background-color: #d7d7d6}
+.r451 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #cdcdcd}
+.r452 {color: #d7d7d7; text-decoration-color: #d7d7d7; background-color: #d0d0d0}
+.r453 {color: #d1d1d1; text-decoration-color: #d1d1d1; background-color: #cdcdcd}
+.r454 {color: #c7c7c7; text-decoration-color: #c7c7c7; background-color: #cdcdcd}
+.r455 {color: #d2d2d2; text-decoration-color: #d2d2d2; background-color: #d4d4d4}
+.r456 {color: #e3e3e3; text-decoration-color: #e3e3e3; background-color: #dfdfdf}
+.r457 {color: #cecece; text-decoration-color: #cecece; background-color: #cbcbcb}
+.r458 {color: #cfcfcf; text-decoration-color: #cfcfcf; background-color: #d2d2d2}
+.r459 {color: #d4d4d4; text-decoration-color: #d4d4d4; background-color: #e3e3e3}
+.r460 {color: #c6c6c6; text-decoration-color: #c6c6c6; background-color: #cdcdcd}
+.r461 {color: #c9c9c9; text-decoration-color: #c9c9c9; background-color: #c4c4c4}
+.r462 {color: #bbbbbb; text-decoration-color: #bbbbbb; background-color: #cdcdcd}
+.r463 {color: #ebebeb; text-decoration-color: #ebebeb; background-color: #efefef}
+.r464 {color: #ebebeb; text-decoration-color: #ebebeb; background-color: #ffffff}
+.r465 {color: #979797; text-decoration-color: #979797; background-color: #a2a2a2}
+.r466 {color: #e8e8e8; text-decoration-color: #e8e8e8; background-color: #e4e4e4}
+.r467 {color: #d6d6d6; text-decoration-color: #d6d6d6; background-color: #dddddd}
+.r468 {color: #dadada; text-decoration-color: #dadada; background-color: #d2d2d2}
+.r469 {color: #cacaca; text-decoration-color: #cacaca; background-color: #cccccc}
+.r470 {color: #c9c9c9; text-decoration-color: #c9c9c9; background-color: #cccccc}
+.r471 {color: #e9e9e9; text-decoration-color: #e9e9e9; background-color: #ebebeb}
+.r472 {color: #e9e9e9; text-decoration-color: #e9e9e9; background-color: #f2f2f2}
+.r473 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #f9f9f9}
+.r474 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #f9f9f9}
+.r475 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #fafafa}
+.r476 {color: #fdfdfc; text-decoration-color: #fdfdfc; background-color: #fdfdfd}
+.r477 {color: #c5c5e1; text-decoration-color: #c5c5e1; background-color: #a7a8d4}
+.r478 {color: #6467ca; text-decoration-color: #6467ca; background-color: #6467cb}
+.r479 {color: #7b7ed5; text-decoration-color: #7b7ed5; background-color: #8e90dc}
+.r480 {color: #8689d7; text-decoration-color: #8689d7; background-color: #a1a2e5}
+.r481 {color: #7477d2; text-decoration-color: #7477d2; background-color: #9295d5}
+.r482 {color: #cccdec; text-decoration-color: #cccdec; background-color: #c6c9d6}
+.r483 {color: #cccdec; text-decoration-color: #cccdec; background-color: #ffffff}
+.r484 {color: #fdfefd; text-decoration-color: #fdfefd; background-color: #fefefe}
+.r485 {color: #95a475; text-decoration-color: #95a475; background-color: #bec7a9}
+.r486 {color: #c7cfb7; text-decoration-color: #c7cfb7; background-color: #dfe4d5}
+.r487 {color: #ccccce; text-decoration-color: #ccccce; background-color: #edeced}
+.r488 {color: #c1c1c1; text-decoration-color: #c1c1c1; background-color: #e6e6e6}
+.r489 {color: #bbbbbb; text-decoration-color: #bbbbbb; background-color: #dddddd}
+.r490 {color: #c3c3c3; text-decoration-color: #c3c3c3; background-color: #e3e3e3}
+.r491 {color: #c1c1c1; text-decoration-color: #c1c1c1; background-color: #dddddd}
+.r492 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #f6f6f6}
+.r493 {color: #fefefe; text-decoration-color: #fefefe; background-color: #fcfcfc}
+.r494 {color: #9c9c9c; text-decoration-color: #9c9c9c; background-color: #bbbbbb}
+.r495 {color: #e7e7e7; text-decoration-color: #e7e7e7; background-color: #efefef}
+.r496 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #f8f8f8}
+.r497 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #f4f4f4}
+.r498 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #ffffff}
+.r499 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #fefefe}
+.r500 {color: #f9f9f9; text-decoration-color: #f9f9f9; background-color: #fbfbfb}
+.r501 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fbfbfc}
+.r502 {color: #fefefd; text-decoration-color: #fefefd; background-color: #c5c6da}
+.r503 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fffffe}
+.r504 {color: #f2f2f4; text-decoration-color: #f2f2f4; background-color: #9596c2}
+.r505 {color: #ffffff; text-decoration-color: #ffffff; background-color: #dcdcea}
+.r506 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d8d8e7}
+.r507 {color: #fdfdfc; text-decoration-color: #fdfdfc; background-color: #dcdde8}
+.r508 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f9f9fb}
+.r509 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #fefefd}
+.r510 {color: #fefefe; text-decoration-color: #fefefe; background-color: #fefefe}
+.r511 {color: #ffffff; text-decoration-color: #ffffff; background-color: #a3a3c8}
+.r512 {color: #8587c6; text-decoration-color: #8587c6; background-color: #6f71c1}
+.r513 {color: #8a8cde; text-decoration-color: #8a8cde; background-color: #979bcd}
+.r514 {color: #9197bc; text-decoration-color: #9197bc; background-color: #839373}
+.r515 {color: #8a92a5; text-decoration-color: #8a92a5; background-color: #738941}
+.r516 {color: #9399c3; text-decoration-color: #9399c3; background-color: #718455}
+.r517 {color: #bbc4aa; text-decoration-color: #bbc4aa; background-color: #c4ceaa}
+.r518 {color: #bbc4aa; text-decoration-color: #bbc4aa; background-color: #ffffff}
+.r519 {color: #fefefd; text-decoration-color: #fefefd; background-color: #ffffff}
+.r520 {color: #abbb80; text-decoration-color: #abbb80; background-color: #d9e3bc}
+.r521 {color: #d3dbbd; text-decoration-color: #d3dbbd; background-color: #edf2df}
+.r522 {color: #c5c4c7; text-decoration-color: #c5c4c7; background-color: #e3e3e5}
+.r523 {color: #b5b5b5; text-decoration-color: #b5b5b5; background-color: #d9d9d9}
+.r524 {color: #b7b7b7; text-decoration-color: #b7b7b7; background-color: #e3e3e3}
+.r525 {color: #b6b6b6; text-decoration-color: #b6b6b6; background-color: #e1e1e1}
+.r526 {color: #bababa; text-decoration-color: #bababa; background-color: #e5e5e5}
+.r527 {color: #b3b3b3; text-decoration-color: #b3b3b3; background-color: #e1e1e1}
+.r528 {color: #afafaf; text-decoration-color: #afafaf; background-color: #e3e3e3}
+.r529 {color: #c1c1c1; text-decoration-color: #c1c1c1; background-color: #f7f7f7}
+.r530 {color: #c1c1c1; text-decoration-color: #c1c1c1; background-color: #ffffff}
+.r531 {color: #f6f6f6; text-decoration-color: #f6f6f6; background-color: #ffffff}
+.r532 {color: #9f9f9f; text-decoration-color: #9f9f9f; background-color: #c0c0c0}
+.r533 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #efefef}
+.r534 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #ffffff}
+.r535 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #f8f8f8}
+.r536 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #f4f4f4}
+.r537 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #fefefe}
+.r538 {color: #eeeeee; text-decoration-color: #eeeeee; background-color: #fbfbfb}
+.r539 {color: #f6f6fa; text-decoration-color: #f6f6fa; background-color: #cfd0e3}
+.r540 {color: #6668a9; text-decoration-color: #6668a9; background-color: #5c5eae}
+.r541 {color: #babbd5; text-decoration-color: #babbd5; background-color: #5456a2}
+.r542 {color: #d8d9e7; text-decoration-color: #d8d9e7; background-color: #6869ab}
+.r543 {color: #f1f1f6; text-decoration-color: #f1f1f6; background-color: #7c7db5}
+.r544 {color: #6162a9; text-decoration-color: #6162a9; background-color: #6062b8}
+.r545 {color: #7375b0; text-decoration-color: #7375b0; background-color: #5557a8}
+.r546 {color: #686aab; text-decoration-color: #686aab; background-color: #595caf}
+.r547 {color: #dfdfea; text-decoration-color: #dfdfea; background-color: #595ba2}
+.r548 {color: #7f81b7; text-decoration-color: #7f81b7; background-color: #5c5eac}
+.r549 {color: #cdcee2; text-decoration-color: #cdcee2; background-color: #8c8ec0}
+.r550 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #9a9bc4}
+.r551 {color: #ffffff; text-decoration-color: #ffffff; background-color: #f8f8fa}
+.r552 {color: #d8d8e6; text-decoration-color: #d8d8e6; background-color: #8687bb}
+.r553 {color: #f3f3f7; text-decoration-color: #f3f3f7; background-color: #cccde2}
+.r554 {color: #f3f3f7; text-decoration-color: #f3f3f7; background-color: #ffffff}
+.r555 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #f5f5f7}
+.r556 {color: #ffffff; text-decoration-color: #ffffff; background-color: #fafafb}
+.r557 {color: #fcfcfb; text-decoration-color: #fcfcfb; background-color: #f8f8f9}
+.r558 {color: #fbfbfb; text-decoration-color: #fbfbfb; background-color: #d4d4e6}
+.r559 {color: #ffffff; text-decoration-color: #ffffff; background-color: #a7a8ca}
+.r560 {color: #c7c8df; text-decoration-color: #c7c8df; background-color: #8d8ec3}
+.r561 {color: #4a4c9f; text-decoration-color: #4a4c9f; background-color: #5f61c3}
+.r562 {color: #7377bf; text-decoration-color: #7377bf; background-color: #8288bd}
+.r563 {color: #738653; text-decoration-color: #738653; background-color: #92a858}
+.r564 {color: #849a4d; text-decoration-color: #849a4d; background-color: #acc26e}
+.r565 {color: #8aa04f; text-decoration-color: #8aa04f; background-color: #abc16b}
+.r566 {color: #859c4c; text-decoration-color: #859c4c; background-color: #aabf6d}
+.r567 {color: #d5deba; text-decoration-color: #d5deba; background-color: #e3eacc}
+.r568 {color: #d5deba; text-decoration-color: #d5deba; background-color: #ffffff}
+.r569 {color: #fefffd; text-decoration-color: #fefffd; background-color: #fffffe}
+.r570 {color: #cbde95; text-decoration-color: #cbde95; background-color: #e6edcc}
+.r571 {color: #e4eec8; text-decoration-color: #e4eec8; background-color: #f1f4e4}
+.r572 {color: #cccbce; text-decoration-color: #cccbce; background-color: #eaeaeb}
+.r573 {color: #b9b9b9; text-decoration-color: #b9b9b9; background-color: #d7d7d7}
+.r574 {color: #bfbfbf; text-decoration-color: #bfbfbf; background-color: #dadada}
+.r575 {color: #afafaf; text-decoration-color: #afafaf; background-color: #e0e0e0}
+.r576 {color: #b7b7b7; text-decoration-color: #b7b7b7; background-color: #dedede}
+.r577 {color: #c1c1c1; text-decoration-color: #c1c1c1; background-color: #d6d6d6}
+.r578 {color: #fafafa; text-decoration-color: #fafafa; background-color: #d9d9d9}
+.r579 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d5d5d5}
+.r580 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d8d8d8}
+.r581 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d3d3d3}
+.r582 {color: #ffffff; text-decoration-color: #ffffff; background-color: #d1d1d1}
+.r583 {color: #ffffff; text-decoration-color: #ffffff; background-color: #cacaca}
+.r584 {color: #ffffff; text-decoration-color: #ffffff; background-color: #dcdcdc}
+.r585 {color: #9f9f9f; text-decoration-color: #9f9f9f; background-color: #a0a0a0}
+.r586 {color: #ededed; text-decoration-color: #ededed; background-color: #e5e5e5}
+.r587 {color: #ededed; text-decoration-color: #ededed; background-color: #ffffff}
+.r588 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #f5f5f7}
+.r589 {color: #f6f6f5; text-decoration-color: #f6f6f5; background-color: #e9e9ed}
+.r590 {color: #f6f6f5; text-decoration-color: #f6f6f5; background-color: #ffffff}
+.r591 {color: #fefefe; text-decoration-color: #fefefe; background-color: #f7f7fa}
+.r592 {color: #fffffe; text-decoration-color: #fffffe; background-color: #b1b2cd}
+.r593 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e4e4ee}
+.r594 {color: #f4f4f7; text-decoration-color: #f4f4f7; background-color: #6e70ac}
+.r595 {color: #7b7cb7; text-decoration-color: #7b7cb7; background-color: #5d5fb3}
+.r596 {color: #6567c8; text-decoration-color: #6567c8; background-color: #8284db}
+.r597 {color: #6062b8; text-decoration-color: #6062b8; background-color: #7d7fd9}
+.r598 {color: #585aae; text-decoration-color: #585aae; background-color: #7c7ed5}
+.r599 {color: #5355a6; text-decoration-color: #5355a6; background-color: #6a6cc9}
+.r600 {color: #6b6ecd; text-decoration-color: #6b6ecd; background-color: #8b8dda}
+.r601 {color: #6c6fc6; text-decoration-color: #6c6fc6; background-color: #8688d8}
+.r602 {color: #787bd2; text-decoration-color: #787bd2; background-color: #979ad6}
+.r603 {color: #5a5caf; text-decoration-color: #5a5caf; background-color: #787ad5}
+.r604 {color: #676ac6; text-decoration-color: #676ac6; background-color: #8385da}
+.r605 {color: #5d5fb4; text-decoration-color: #5d5fb4; background-color: #7577d1}
+.r606 {color: #585aaa; text-decoration-color: #585aaa; background-color: #7376ce}
+.r607 {color: #6d6eab; text-decoration-color: #6d6eab; background-color: #5759af}
+.r608 {color: #5c5eb0; text-decoration-color: #5c5eb0; background-color: #686bc7}
+.r609 {color: #8d8ec3; text-decoration-color: #8d8ec3; background-color: #5e61b8}
+.r610 {color: #9192c0; text-decoration-color: #9192c0; background-color: #5456ab}
+.r611 {color: #d1d1e2; text-decoration-color: #d1d1e2; background-color: #5456a1}
+.r612 {color: #999ac3; text-decoration-color: #999ac3; background-color: #5759aa}
+.r613 {color: #c1c2db; text-decoration-color: #c1c2db; background-color: #6e70b3}
+.r614 {color: #ebecf3; text-decoration-color: #ebecf3; background-color: #6b6cae}
+.r615 {color: #ffffff; text-decoration-color: #ffffff; background-color: #c1c2db}
+.r616 {color: #c9c9e0; text-decoration-color: #c9c9e0; background-color: #9798c7}
+.r617 {color: #d2d2e4; text-decoration-color: #d2d2e4; background-color: #8688be}
+.r618 {color: #edeef5; text-decoration-color: #edeef5; background-color: #8788bd}
+.r619 {color: #f7f7fa; text-decoration-color: #f7f7fa; background-color: #7778b3}
+.r620 {color: #a9aad1; text-decoration-color: #a9aad1; background-color: #7173bd}
+.r621 {color: #5456a3; text-decoration-color: #5456a3; background-color: #6366c4}
+.r622 {color: #6a6cbc; text-decoration-color: #6a6cbc; background-color: #7d7fd0}
+.r623 {color: #797cda; text-decoration-color: #797cda; background-color: #9c9ee0}
+.r624 {color: #959db3; text-decoration-color: #959db3; background-color: #9aa78e}
+.r625 {color: #c4d589; text-decoration-color: #c4d589; background-color: #d0df9c}
+.r626 {color: #cedc9b; text-decoration-color: #cedc9b; background-color: #d1dfa0}
+.r627 {color: #ccdb97; text-decoration-color: #ccdb97; background-color: #ccda99}
+.r628 {color: #e4eacc; text-decoration-color: #e4eacc; background-color: #dee0c3}
+.r629 {color: #e4eacc; text-decoration-color: #e4eacc; background-color: #ffffff}
+.r630 {color: #fffffe; text-decoration-color: #fffffe; background-color: #fefefd}
+.r631 {color: #e3ebc6; text-decoration-color: #e3ebc6; background-color: #b6a17c}
+.r632 {color: #f0f5e2; text-decoration-color: #f0f5e2; background-color: #d9cebc}
+.r633 {color: #d8d8d9; text-decoration-color: #d8d8d9; background-color: #c4c5c6}
+.r634 {color: #c5c5c5; text-decoration-color: #c5c5c5; background-color: #b9b9b9}
+.r635 {color: #c6c6c6; text-decoration-color: #c6c6c6; background-color: #c8c8c8}
+.r636 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #c5c5c5}
+.r637 {color: #d6d6d6; text-decoration-color: #d6d6d6; background-color: #bebebe}
+.r638 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #c6c6c6}
+.r639 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #cacaca}
+.r640 {color: #dbdbdb; text-decoration-color: #dbdbdb; background-color: #c2c2c2}
+.r641 {color: #bfbfbf; text-decoration-color: #bfbfbf; background-color: #ffffff}
+.r642 {color: #bbbbbb; text-decoration-color: #bbbbbb; background-color: #ffffff}
+.r643 {color: #c0c0c0; text-decoration-color: #c0c0c0; background-color: #ffffff}
+.r644 {color: #c5c5c5; text-decoration-color: #c5c5c5; background-color: #ffffff}
+.r645 {color: #f1f1f1; text-decoration-color: #f1f1f1; background-color: #fbfbfb}
+.r646 {color: #8d8d8d; text-decoration-color: #8d8d8d; background-color: #e9e9e9}
+.r647 {color: #e9e9e9; text-decoration-color: #e9e9e9; background-color: #fcfcfc}
+.r648 {color: #fafafa; text-decoration-color: #fafafa; background-color: #e4e4e4}
+.r649 {color: #f7f7f7; text-decoration-color: #f7f7f7; background-color: #c1c1c1}
+.r650 {color: #f2f2f2; text-decoration-color: #f2f2f2; background-color: #b0b0b0}
+.r651 {color: #f2f2f1; text-decoration-color: #f2f2f1; background-color: #b0b0af}
+.r652 {color: #ebebf3; text-decoration-color: #ebebf3; background-color: #dddde5}
+.r653 {color: #9899c4; text-decoration-color: #9899c4; background-color: #7d7fc6}
+.r654 {color: #f2f2f6; text-decoration-color: #f2f2f6; background-color: #797ab4}
+.r655 {color: #efeff4; text-decoration-color: #efeff4; background-color: #7a7bb4}
+.r656 {color: #f3f3f9; text-decoration-color: #f3f3f9; background-color: #a9aacb}
+.r657 {color: #6466ac; text-decoration-color: #6466ac; background-color: #686ac6}
+.r658 {color: #7e80b7; text-decoration-color: #7e80b7; background-color: #6467bc}
+.r659 {color: #585ab2; text-decoration-color: #585ab2; background-color: #8b8de1}
+.r660 {color: #7a7dd2; text-decoration-color: #7a7dd2; background-color: #8e96ad}
+.r661 {color: #8d96a7; text-decoration-color: #8d96a7; background-color: #90a658}
+.r662 {color: #9097b6; text-decoration-color: #9097b6; background-color: #83994e}
+.r663 {color: #9197c3; text-decoration-color: #9197c3; background-color: #80945a}
+.r664 {color: #9092dc; text-decoration-color: #9092dc; background-color: #81916e}
+.r665 {color: #879487; text-decoration-color: #879487; background-color: #98ad5e}
+.r666 {color: #8e98a0; text-decoration-color: #8e98a0; background-color: #8da257}
+.r667 {color: #859571; text-decoration-color: #859571; background-color: #94ab57}
+.r668 {color: #979ad3; text-decoration-color: #979ad3; background-color: #819362}
+.r669 {color: #9097b3; text-decoration-color: #9097b3; background-color: #889c5e}
+.r670 {color: #8f93cc; text-decoration-color: #8f93cc; background-color: #869671}
+.r671 {color: #9699da; text-decoration-color: #9699da; background-color: #81916d}
+.r672 {color: #7c7eda; text-decoration-color: #7c7eda; background-color: #9298bb}
+.r673 {color: #8688db; text-decoration-color: #8688db; background-color: #8e97a2}
+.r674 {color: #7d7fd6; text-decoration-color: #7d7fd6; background-color: #9299bc}
+.r675 {color: #8082d8; text-decoration-color: #8082d8; background-color: #9399be}
+.r676 {color: #696bc4; text-decoration-color: #696bc4; background-color: #9496e0}
+.r677 {color: #6d70cc; text-decoration-color: #6d70cc; background-color: #9193d9}
+.r678 {color: #6466c2; text-decoration-color: #6466c2; background-color: #878ad9}
+.r679 {color: #6366bf; text-decoration-color: #6366bf; background-color: #8f91df}
+.r680 {color: #5e5fac; text-decoration-color: #5e5fac; background-color: #7375cb}
+.r681 {color: #6063b6; text-decoration-color: #6063b6; background-color: #787ad0}
+.r682 {color: #5e61b7; text-decoration-color: #5e61b7; background-color: #7476d3}
+.r683 {color: #6265ba; text-decoration-color: #6265ba; background-color: #8789d7}
+.r684 {color: #6063bc; text-decoration-color: #6063bc; background-color: #8d8ee0}
+.r685 {color: #6b6ec8; text-decoration-color: #6b6ec8; background-color: #8a8dd0}
+.r686 {color: #7577d9; text-decoration-color: #7577d9; background-color: #9497d2}
+.r687 {color: #888fb8; text-decoration-color: #888fb8; background-color: #8a997f}
+.r688 {color: #7c8c6a; text-decoration-color: #7c8c6a; background-color: #8fa74f}
+.r689 {color: #a6b87a; text-decoration-color: #a6b87a; background-color: #bcc785}
+.r690 {color: #c8ce90; text-decoration-color: #c8ce90; background-color: #94783d}
+.r691 {color: #b9b87b; text-decoration-color: #b9b87b; background-color: #89692d}
+.r692 {color: #bcbc7f; text-decoration-color: #bcbc7f; background-color: #8b6b2f}
+.r693 {color: #b1ac6e; text-decoration-color: #b1ac6e; background-color: #866526}
+.r694 {color: #c7ba9e; text-decoration-color: #c7ba9e; background-color: #c3b498}
+.r695 {color: #c7ba9e; text-decoration-color: #c7ba9e; background-color: #ffffff}
+.r696 {color: #fffefe; text-decoration-color: #fffefe; background-color: #fefefd}
+.r697 {color: #cbbc9c; text-decoration-color: #cbbc9c; background-color: #d1ba71}
+.r698 {color: #e5decf; text-decoration-color: #e5decf; background-color: #e6dbb5}
+.r699 {color: #dfe0e1; text-decoration-color: #dfe0e1; background-color: #babbbe}
+.r700 {color: #d1d1d1; text-decoration-color: #d1d1d1; background-color: #aeaeae}
+.r701 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #b9b9b9}
+.r702 {color: #dbdbdb; text-decoration-color: #dbdbdb; background-color: #b7b7b7}
+.r703 {color: #d7d7d7; text-decoration-color: #d7d7d7; background-color: #cbcbcb}
+.r704 {color: #dddddd; text-decoration-color: #dddddd; background-color: #b2b2b2}
+.r705 {color: #d9d9d9; text-decoration-color: #d9d9d9; background-color: #bcbcbc}
+.r706 {color: #dbdbdb; text-decoration-color: #dbdbdb; background-color: #c3c3c3}
+.r707 {color: #c7c7c7; text-decoration-color: #c7c7c7; background-color: #b4b4b4}
+.r708 {color: #fafafa; text-decoration-color: #fafafa; background-color: #b2b2b2}
+.r709 {color: #ffffff; text-decoration-color: #ffffff; background-color: #b0b0b0}
+.r710 {color: #fcfcfc; text-decoration-color: #fcfcfc; background-color: #b1b1b1}
+.r711 {color: #fefefe; text-decoration-color: #fefefe; background-color: #b0b0b0}
+.r712 {color: #f7f7f7; text-decoration-color: #f7f7f7; background-color: #ffffff}
+.r713 {color: #f6f6fb; text-decoration-color: #f6f6fb; background-color: #f6f8f0}
+.r714 {color: #8587d3; text-decoration-color: #8587d3; background-color: #94a095}
+.r715 {color: #6d6fc8; text-decoration-color: #6d6fc8; background-color: #8d95b0}
+.r716 {color: #6e70c7; text-decoration-color: #6e70c7; background-color: #8d95b1}
+.r717 {color: #5b5daf; text-decoration-color: #5b5daf; background-color: #8689d1}
+.r718 {color: #898cd5; text-decoration-color: #898cd5; background-color: #8d9e76}
+.r719 {color: #898dc8; text-decoration-color: #898dc8; background-color: #8d9f70}
+.r720 {color: #869480; text-decoration-color: #869480; background-color: #9db45d}
+.r721 {color: #92a75f; text-decoration-color: #92a75f; background-color: #c6d78e}
+.r722 {color: #c6d88c; text-decoration-color: #c6d88c; background-color: #ccd598}
+.r723 {color: #bccf81; text-decoration-color: #bccf81; background-color: #d1dea1}
+.r724 {color: #a7bd6a; text-decoration-color: #a7bd6a; background-color: #d1e19f}
+.r725 {color: #a2b864; text-decoration-color: #a2b864; background-color: #d1e09f}
+.r726 {color: #c8d993; text-decoration-color: #c8d993; background-color: #ccd699}
+.r727 {color: #c3d58b; text-decoration-color: #c3d58b; background-color: #ceda9c}
+.r728 {color: #c7d891; text-decoration-color: #c7d891; background-color: #cbd497}
+.r729 {color: #a9be6c; text-decoration-color: #a9be6c; background-color: #d2e2a2}
+.r730 {color: #b9cc80; text-decoration-color: #b9cc80; background-color: #d0de9f}
+.r731 {color: #a9bd6e; text-decoration-color: #a9bd6e; background-color: #d1df9f}
+.r732 {color: #97ad5a; text-decoration-color: #97ad5a; background-color: #ccdb98}
+.r733 {color: #7f944c; text-decoration-color: #7f944c; background-color: #b8cb7e}
+.r734 {color: #95aa60; text-decoration-color: #95aa60; background-color: #c8d894}
+.r735 {color: #8b9f5f; text-decoration-color: #8b9f5f; background-color: #bed086}
+.r736 {color: #829653; text-decoration-color: #829653; background-color: #b0c477}
+.r737 {color: #86947e; text-decoration-color: #86947e; background-color: #9eb461}
+.r738 {color: #8b9a7f; text-decoration-color: #8b9a7f; background-color: #b2c47a}
+.r739 {color: #8b9790; text-decoration-color: #8b9790; background-color: #a0b468}
+.r740 {color: #88958c; text-decoration-color: #88958c; background-color: #92a856}
+.r741 {color: #9196c7; text-decoration-color: #9196c7; background-color: #8a9d65}
+.r742 {color: #9198bb; text-decoration-color: #9198bb; background-color: #98aa71}
+.r743 {color: #9095c5; text-decoration-color: #9095c5; background-color: #90a171}
+.r744 {color: #8c95a5; text-decoration-color: #8c95a5; background-color: #8da065}
+.r745 {color: #87938e; text-decoration-color: #87938e; background-color: #8ca24f}
+.r746 {color: #8c9a82; text-decoration-color: #8c9a82; background-color: #aabd71}
+.r747 {color: #859667; text-decoration-color: #859667; background-color: #b8ca80}
+.r748 {color: #a5b779; text-decoration-color: #a5b779; background-color: #c8d796}
+.r749 {color: #cbdc96; text-decoration-color: #cbdc96; background-color: #d2dfa2}
+.r750 {color: #bdbd80; text-decoration-color: #bdbd80; background-color: #a5965b}
+.r751 {color: #8a6a2e; text-decoration-color: #8a6a2e; background-color: #8e6d2f}
+.r752 {color: #8b6c30; text-decoration-color: #8b6c30; background-color: #8f7134}
+.r753 {color: #8a6b30; text-decoration-color: #8a6b30; background-color: #937434}
+.r754 {color: #876728; text-decoration-color: #876728; background-color: #a58239}
+.r755 {color: #c8b99c; text-decoration-color: #c8b99c; background-color: #ead7ac}
+.r756 {color: #c8b99c; text-decoration-color: #c8b99c; background-color: #ffffff}
+.r757 {color: #fffffe; text-decoration-color: #fffffe; background-color: #fffefd}
+.r758 {color: #ebdbb0; text-decoration-color: #ebdbb0; background-color: #efcd7f}
+.r759 {color: #f6eeda; text-decoration-color: #f6eeda; background-color: #f6e4bc}
+.r760 {color: #e2e3e4; text-decoration-color: #e2e3e4; background-color: #cbccd0}
+.r761 {color: #d9d9d9; text-decoration-color: #d9d9d9; background-color: #b1b1b1}
+.r762 {color: #e5e5e5; text-decoration-color: #e5e5e5; background-color: #afafaf}
+.r763 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #d9d9d9}
+.r764 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #ffffff}
+.r765 {color: #f1f1f1; text-decoration-color: #f1f1f1; background-color: #ffffff}
+.r766 {color: #f3f3f3; text-decoration-color: #f3f3f3; background-color: #ffffff}
+.r767 {color: #efefef; text-decoration-color: #efefef; background-color: #ffffff}
+.r768 {color: #fcfdf7; text-decoration-color: #fcfdf7; background-color: #faf9f5}
+.r769 {color: #bccc8c; text-decoration-color: #bccc8c; background-color: #c9cf97}
+.r770 {color: #97ac61; text-decoration-color: #97ac61; background-color: #cfde9c}
+.r771 {color: #92a75c; text-decoration-color: #92a75c; background-color: #ccdc99}
+.r772 {color: #91a175; text-decoration-color: #91a175; background-color: #c3d58d}
+.r773 {color: #c2d38e; text-decoration-color: #c2d38e; background-color: #bec083}
+.r774 {color: #c0d389; text-decoration-color: #c0d389; background-color: #c1c286}
+.r775 {color: #d2e2a0; text-decoration-color: #d2e2a0; background-color: #aca266}
+.r776 {color: #c5ca8e; text-decoration-color: #c5ca8e; background-color: #90753a}
+.r777 {color: #957b40; text-decoration-color: #957b40; background-color: #89692d}
+.r778 {color: #a59559; text-decoration-color: #a59559; background-color: #86662b}
+.r779 {color: #b4ae72; text-decoration-color: #b4ae72; background-color: #86662b}
+.r780 {color: #b4af73; text-decoration-color: #b4af73; background-color: #86662b}
+.r781 {color: #977f44; text-decoration-color: #977f44; background-color: #8c6c2f}
+.r782 {color: #9c864b; text-decoration-color: #9c864b; background-color: #8c6c2f}
+.r783 {color: #967d43; text-decoration-color: #967d43; background-color: #917132}
+.r784 {color: #b1a96e; text-decoration-color: #b1a96e; background-color: #87662c}
+.r785 {color: #a7985d; text-decoration-color: #a7985d; background-color: #8d6d2f}
+.r786 {color: #b2ab6f; text-decoration-color: #b2ab6f; background-color: #8b6b2f}
+.r787 {color: #c7cd90; text-decoration-color: #c7cd90; background-color: #8c6f35}
+.r788 {color: #d1dda0; text-decoration-color: #d1dda0; background-color: #957e44}
+.r789 {color: #c3c78b; text-decoration-color: #c3c78b; background-color: #907338}
+.r790 {color: #cbd396; text-decoration-color: #cbd396; background-color: #947c41}
+.r791 {color: #d2e0a1; text-decoration-color: #d2e0a1; background-color: #9c8a50}
+.r792 {color: #d2e1a1; text-decoration-color: #d2e1a1; background-color: #a99e63}
+.r793 {color: #d1dd9f; text-decoration-color: #d1dd9f; background-color: #a08f54}
+.r794 {color: #cfde9d; text-decoration-color: #cfde9d; background-color: #aba167}
+.r795 {color: #cede9c; text-decoration-color: #cede9c; background-color: #b4b175}
+.r796 {color: #c3d48c; text-decoration-color: #c3d48c; background-color: #c0c286}
+.r797 {color: #c9d995; text-decoration-color: #c9d995; background-color: #b2ac71}
+.r798 {color: #c0d18a; text-decoration-color: #c0d18a; background-color: #bebf82}
+.r799 {color: #c0d18b; text-decoration-color: #c0d18b; background-color: #c4c98c}
+.r800 {color: #cbdb98; text-decoration-color: #cbdb98; background-color: #bfc185}
+.r801 {color: #d0de9e; text-decoration-color: #d0de9e; background-color: #aea66a}
+.r802 {color: #d3e1a3; text-decoration-color: #d3e1a3; background-color: #9e8d53}
+.r803 {color: #bfc185; text-decoration-color: #bfc185; background-color: #977c3f}
+.r804 {color: #957f45; text-decoration-color: #957f45; background-color: #9d7933}
+.r805 {color: #9f7f3f; text-decoration-color: #9f7f3f; background-color: #ccab63}
+.r806 {color: #ddb861; text-decoration-color: #ddb861; background-color: #debd8b}
+.r807 {color: #dbb558; text-decoration-color: #dbb558; background-color: #debd87}
+.r808 {color: #e2bb5d; text-decoration-color: #e2bb5d; background-color: #dfbf8c}
+.r809 {color: #e8c168; text-decoration-color: #e8c168; background-color: #cfa97d}
+.r810 {color: #f1e4c5; text-decoration-color: #f1e4c5; background-color: #d2b9af}
+.r811 {color: #f1e4c5; text-decoration-color: #f1e4c5; background-color: #ffffff}
+.r812 {color: #f4e6c8; text-decoration-color: #f4e6c8; background-color: #f2e2bd}
+.r813 {color: #faf3e6; text-decoration-color: #faf3e6; background-color: #faf1df}
+.r814 {color: #dcdcde; text-decoration-color: #dcdcde; background-color: #cecfd0}
+.r815 {color: #d8d8d8; text-decoration-color: #d8d8d8; background-color: #b9b9b9}
+.r816 {color: #dadada; text-decoration-color: #dadada; background-color: #d3d3d3}
+.r817 {color: #dfdfdf; text-decoration-color: #dfdfdf; background-color: #c3c3c3}
+.r818 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #c3c3c3}
+.r819 {color: #dddddd; text-decoration-color: #dddddd; background-color: #b8b8b8}
+.r820 {color: #e0e0e0; text-decoration-color: #e0e0e0; background-color: #c0c0c0}
+.r821 {color: #e1e1e1; text-decoration-color: #e1e1e1; background-color: #bababa}
+.r822 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #c0c0c0}
+.r823 {color: #f8f5f0; text-decoration-color: #f8f5f0; background-color: #fcf9f5}
+.r824 {color: #9e844a; text-decoration-color: #9e844a; background-color: #d2b177}
+.r825 {color: #9d8b4f; text-decoration-color: #9d8b4f; background-color: #bd9b52}
+.r826 {color: #a39459; text-decoration-color: #a39459; background-color: #b89752}
+.r827 {color: #aea66b; text-decoration-color: #aea66b; background-color: #ab8c47}
+.r828 {color: #8f7336; text-decoration-color: #8f7336; background-color: #c5a362}
+.r829 {color: #8b6c30; text-decoration-color: #8b6c30; background-color: #c5a460}
+.r830 {color: #8a6a2c; text-decoration-color: #8a6a2c; background-color: #cfad6a}
+.r831 {color: #a5853f; text-decoration-color: #a5853f; background-color: #ca9f6e}
+.r832 {color: #ceac5d; text-decoration-color: #ceac5d; background-color: #b0735f}
+.r833 {color: #c2a154; text-decoration-color: #c2a154; background-color: #bd8668}
+.r834 {color: #bf9e4f; text-decoration-color: #bf9e4f; background-color: #c79570}
+.r835 {color: #c1a155; text-decoration-color: #c1a155; background-color: #c28d6e}
+.r836 {color: #d5b466; text-decoration-color: #d5b466; background-color: #b37864}
+.r837 {color: #d3b161; text-decoration-color: #d3b161; background-color: #b67963}
+.r838 {color: #dab768; text-decoration-color: #dab768; background-color: #b37462}
+.r839 {color: #ccaa58; text-decoration-color: #ccaa58; background-color: #c3906f}
+.r840 {color: #d4b263; text-decoration-color: #d4b263; background-color: #b57563}
+.r841 {color: #cfad5d; text-decoration-color: #cfad5d; background-color: #b97d66}
+.r842 {color: #be9c4d; text-decoration-color: #be9c4d; background-color: #cd9f75}
+.r843 {color: #b18f44; text-decoration-color: #b18f44; background-color: #d4aa79}
+.r844 {color: #c8a65b; text-decoration-color: #c8a65b; background-color: #c39070}
+.r845 {color: #c3a153; text-decoration-color: #c3a153; background-color: #c3906f}
+.r846 {color: #b39146; text-decoration-color: #b39146; background-color: #c99870}
+.r847 {color: #a27f39; text-decoration-color: #a27f39; background-color: #d6ad74}
+.r848 {color: #b39149; text-decoration-color: #b39149; background-color: #cfa476}
+.r849 {color: #ab8942; text-decoration-color: #ab8942; background-color: #d1a776}
+.r850 {color: #a3813b; text-decoration-color: #a3813b; background-color: #d4ac74}
+.r851 {color: #9e7d3a; text-decoration-color: #9e7d3a; background-color: #dab474}
+.r852 {color: #a78640; text-decoration-color: #a78640; background-color: #d6ae76}
+.r853 {color: #9c7e3e; text-decoration-color: #9c7e3e; background-color: #d0ac6f}
+.r854 {color: #a08443; text-decoration-color: #a08443; background-color: #cfaa70}
+.r855 {color: #9d7d3b; text-decoration-color: #9d7d3b; background-color: #d6b279}
+.r856 {color: #a1803c; text-decoration-color: #a1803c; background-color: #d5af77}
+.r857 {color: #aa8840; text-decoration-color: #aa8840; background-color: #d6b07b}
+.r858 {color: #c8a65b; text-decoration-color: #c8a65b; background-color: #bf8d6d}
+.r859 {color: #eaca7d; text-decoration-color: #eaca7d; background-color: #a45f57}
+.r860 {color: #cca375; text-decoration-color: #cca375; background-color: #a3504e}
+.r861 {color: #904643; text-decoration-color: #904643; background-color: #ac4749}
+.r862 {color: #944a46; text-decoration-color: #944a46; background-color: #ac4849}
+.r863 {color: #944d48; text-decoration-color: #944d48; background-color: #ac494a}
+.r864 {color: #92413f; text-decoration-color: #92413f; background-color: #ab4143}
+.r865 {color: #cba2a2; text-decoration-color: #cba2a2; background-color: #d4a4a5}
+.r866 {color: #cba2a2; text-decoration-color: #cba2a2; background-color: #ffffff}
+.r867 {color: #fefdfd; text-decoration-color: #fefdfd; background-color: #fefefe}
+.r868 {color: #b88f8d; text-decoration-color: #b88f8d; background-color: #bf9997}
+.r869 {color: #dcc7c7; text-decoration-color: #dcc7c7; background-color: #e0cdcc}
+.r870 {color: #dadcdc; text-decoration-color: #dadcdc; background-color: #eff0f0}
+.r871 {color: #cdcdcd; text-decoration-color: #cdcdcd; background-color: #d2d2d2}
+.r872 {color: #cdcdcd; text-decoration-color: #cdcdcd; background-color: #d7d7d7}
+.r873 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #c7c7c7}
+.r874 {color: #cdcdcd; text-decoration-color: #cdcdcd; background-color: #d1d1d1}
+.r875 {color: #cbcbcb; text-decoration-color: #cbcbcb; background-color: #dbdbdb}
+.r876 {color: #c2c2c2; text-decoration-color: #c2c2c2; background-color: #cdcdcd}
+.r877 {color: #c7c7c7; text-decoration-color: #c7c7c7; background-color: #d4d4d4}
+.r878 {color: #d3d3d3; text-decoration-color: #d3d3d3; background-color: #dfdfdf}
+.r879 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #dbdbdb}
+.r880 {color: #c5c5c5; text-decoration-color: #c5c5c5; background-color: #cfcfcf}
+.r881 {color: #cccccc; text-decoration-color: #cccccc; background-color: #dddddd}
+.r882 {color: #d5d5d5; text-decoration-color: #d5d5d5; background-color: #e0e0e0}
+.r883 {color: #bbbbbb; text-decoration-color: #bbbbbb; background-color: #cfcfcf}
+.r884 {color: #bdbdbd; text-decoration-color: #bdbdbd; background-color: #d1d1d1}
+.r885 {color: #c2c2c2; text-decoration-color: #c2c2c2; background-color: #cfcfcf}
+.r886 {color: #e2e2e2; text-decoration-color: #e2e2e2; background-color: #e6e6e6}
+.r887 {color: #e2e2e2; text-decoration-color: #e2e2e2; background-color: #ffffff}
+.r888 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e0e1e1}
+.r889 {color: #faf3f3; text-decoration-color: #faf3f3; background-color: #eae3e3}
+.r890 {color: #b36562; text-decoration-color: #b36562; background-color: #b46162}
+.r891 {color: #b56b5b; text-decoration-color: #b56b5b; background-color: #ab4e50}
+.r892 {color: #b56d5d; text-decoration-color: #b56d5d; background-color: #ac5153}
+.r893 {color: #c28569; text-decoration-color: #c28569; background-color: #aa4f53}
+.r894 {color: #af5b55; text-decoration-color: #af5b55; background-color: #ac5153}
+.r895 {color: #ae5f57; text-decoration-color: #ae5f57; background-color: #ad5153}
+.r896 {color: #ab5854; text-decoration-color: #ab5854; background-color: #ad5254}
+.r897 {color: #a44649; text-decoration-color: #a44649; background-color: #ae5455}
+.r898 {color: #a94346; text-decoration-color: #a94346; background-color: #ad5354}
+.r899 {color: #a84347; text-decoration-color: #a84347; background-color: #ae5455}
+.r900 {color: #a74347; text-decoration-color: #a74347; background-color: #ad5455}
+.r901 {color: #a84346; text-decoration-color: #a84346; background-color: #ad5455}
+.r902 {color: #a94346; text-decoration-color: #a94346; background-color: #ac5354}
+.r903 {color: #a94346; text-decoration-color: #a94346; background-color: #ad5455}
+.r904 {color: #aa4447; text-decoration-color: #aa4447; background-color: #ad5455}
+.r905 {color: #a74246; text-decoration-color: #a74246; background-color: #ae5455}
+.r906 {color: #aa4447; text-decoration-color: #aa4447; background-color: #ad5354}
+.r907 {color: #aa4346; text-decoration-color: #aa4346; background-color: #ae5455}
+.r908 {color: #a74447; text-decoration-color: #a74447; background-color: #ae5455}
+.r909 {color: #a74648; text-decoration-color: #a74648; background-color: #ae5354}
+.r910 {color: #a94548; text-decoration-color: #a94548; background-color: #ac5253}
+.r911 {color: #a84346; text-decoration-color: #a84346; background-color: #ad5454}
+.r912 {color: #a6484a; text-decoration-color: #a6484a; background-color: #ae5455}
+.r913 {color: #a8494b; text-decoration-color: #a8494b; background-color: #ad5354}
+.r914 {color: #a5484a; text-decoration-color: #a5484a; background-color: #ae5355}
+.r915 {color: #a6494b; text-decoration-color: #a6494b; background-color: #ae5354}
+.r916 {color: #a95150; text-decoration-color: #a95150; background-color: #ad5254}
+.r917 {color: #a84c4d; text-decoration-color: #a84c4d; background-color: #ac5253}
+.r918 {color: #ab5753; text-decoration-color: #ab5753; background-color: #ad5253}
+.r919 {color: #aa5451; text-decoration-color: #aa5451; background-color: #ad5254}
+.r920 {color: #a84e4e; text-decoration-color: #a84e4e; background-color: #ae5354}
+.r921 {color: #a84f4e; text-decoration-color: #a84f4e; background-color: #ad5254}
+.r922 {color: #a4494a; text-decoration-color: #a4494a; background-color: #ae5354}
+.r923 {color: #a74748; text-decoration-color: #a74748; background-color: #ae5455}
+.r924 {color: #ac4447; text-decoration-color: #ac4447; background-color: #ad5455}
+.r925 {color: #ad4648; text-decoration-color: #ad4648; background-color: #ad5354}
+.r926 {color: #ad4748; text-decoration-color: #ad4748; background-color: #ac5354}
+.r927 {color: #ad4748; text-decoration-color: #ad4748; background-color: #ad5455}
+.r928 {color: #aa3f41; text-decoration-color: #aa3f41; background-color: #aa4c4e}
+.r929 {color: #d3a3a4; text-decoration-color: #d3a3a4; background-color: #d2a8a9}
+.r930 {color: #d3a3a4; text-decoration-color: #d3a3a4; background-color: #ffffff}
+.r931 {color: #fefdfd; text-decoration-color: #fefdfd; background-color: #fffefe}
+.r932 {color: #c77f80; text-decoration-color: #c77f80; background-color: #e6c8c8}
+.r933 {color: #e3bebe; text-decoration-color: #e3bebe; background-color: #f3e5e5}
+.r934 {color: #bfc2c2; text-decoration-color: #bfc2c2; background-color: #f1f2f2}
+.r935 {color: #aeaeae; text-decoration-color: #aeaeae; background-color: #eeeeee}
+.r936 {color: #bbbbbb; text-decoration-color: #bbbbbb; background-color: #e9e9e9}
+.r937 {color: #b3b3b3; text-decoration-color: #b3b3b3; background-color: #e7e7e7}
+.r938 {color: #b8b8b8; text-decoration-color: #b8b8b8; background-color: #e4e4e4}
+.r939 {color: #b1b1b1; text-decoration-color: #b1b1b1; background-color: #e4e4e4}
+.r940 {color: #cccccc; text-decoration-color: #cccccc; background-color: #ededed}
+.r941 {color: #bfbfbf; text-decoration-color: #bfbfbf; background-color: #e7e7e7}
+.r942 {color: #b7b7b7; text-decoration-color: #b7b7b7; background-color: #e9e9e9}
+.r943 {color: #cccccc; text-decoration-color: #cccccc; background-color: #f2f2f2}
+.r944 {color: #b0b0b0; text-decoration-color: #b0b0b0; background-color: #ededed}
+.r945 {color: #b1b1b1; text-decoration-color: #b1b1b1; background-color: #e6e6e6}
+.r946 {color: #dadada; text-decoration-color: #dadada; background-color: #f8f8f8}
+.r947 {color: #c2c2c2; text-decoration-color: #c2c2c2; background-color: #f1f1f1}
+.r948 {color: #b6b6b6; text-decoration-color: #b6b6b6; background-color: #e4e4e4}
+.r949 {color: #acacac; text-decoration-color: #acacac; background-color: #e5e5e5}
+.r950 {color: #efefef; text-decoration-color: #efefef; background-color: #fafafa}
+.r951 {color: #dcdcdc; text-decoration-color: #dcdcdc; background-color: #ffffff}
+.r952 {color: #eae9e9; text-decoration-color: #eae9e9; background-color: #fefefe}
+.r953 {color: #eae5e5; text-decoration-color: #eae5e5; background-color: #bfc0c0}
+.r954 {color: #efeaea; text-decoration-color: #efeaea; background-color: #afb0b0}
+.r955 {color: #efeaea; text-decoration-color: #efeaea; background-color: #b4b5b5}
+.r956 {color: #eee9e9; text-decoration-color: #eee9e9; background-color: #f2f3f3}
+.r957 {color: #e9e3e3; text-decoration-color: #e9e3e3; background-color: #ffffff}
+.r958 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #ffffff}
+.r959 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #f2f3f3}
+.r960 {color: #eee9e9; text-decoration-color: #eee9e9; background-color: #b2b3b3}
+.r961 {color: #e6e1e1; text-decoration-color: #e6e1e1; background-color: #b0b1b1}
+.r962 {color: #efeaea; text-decoration-color: #efeaea; background-color: #c3c4c4}
+.r963 {color: #f0ebeb; text-decoration-color: #f0ebeb; background-color: #ffffff}
+.r964 {color: #e8e2e2; text-decoration-color: #e8e2e2; background-color: #ffffff}
+.r965 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #fbfcfc}
+.r966 {color: #efeaea; text-decoration-color: #efeaea; background-color: #bcbdbd}
+.r967 {color: #f1ecec; text-decoration-color: #f1ecec; background-color: #b9baba}
+.r968 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #f9fafa}
+.r969 {color: #e8e3e3; text-decoration-color: #e8e3e3; background-color: #ffffff}
+.r970 {color: #f0eaea; text-decoration-color: #f0eaea; background-color: #ffffff}
+.r971 {color: #f0eaea; text-decoration-color: #f0eaea; background-color: #c8c9c9}
+.r972 {color: #e8e2e2; text-decoration-color: #e8e2e2; background-color: #b0b1b1}
+.r973 {color: #ede7e7; text-decoration-color: #ede7e7; background-color: #a8a9a9}
+.r974 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #ebecec}
+.r975 {color: #eae4e4; text-decoration-color: #eae4e4; background-color: #ffffff}
+.r976 {color: #eee8e8; text-decoration-color: #eee8e8; background-color: #ffffff}
+.r977 {color: #f0eaea; text-decoration-color: #f0eaea; background-color: #d7d8d8}
+.r978 {color: #eae4e4; text-decoration-color: #eae4e4; background-color: #b1b2b2}
+.r979 {color: #ebe5e5; text-decoration-color: #ebe5e5; background-color: #a8a9a9}
+.r980 {color: #f1ebeb; text-decoration-color: #f1ebeb; background-color: #d2d3d3}
+.r981 {color: #ede8e8; text-decoration-color: #ede8e8; background-color: #ffffff}
+.r982 {color: #eae5e5; text-decoration-color: #eae5e5; background-color: #ffffff}
+.r983 {color: #f0ebeb; text-decoration-color: #f0ebeb; background-color: #e7e8e8}
+.r984 {color: #ebe5e5; text-decoration-color: #ebe5e5; background-color: #b5b6b6}
+.r985 {color: #efecec; text-decoration-color: #efecec; background-color: #c3c4c4}
+.r986 {color: #fefefe; text-decoration-color: #fefefe; background-color: #cacaca}
+.r987 {color: #e9e9e9; text-decoration-color: #e9e9e9; background-color: #ffffff}
+.r988 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #c1c1c1}
+.r989 {color: #ebebeb; text-decoration-color: #ebebeb; background-color: #939393}
+.r990 {color: #ebebeb; text-decoration-color: #ebebeb; background-color: #979797}
+.r991 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #c5c5c5}
+.r992 {color: #fdfdfd; text-decoration-color: #fdfdfd; background-color: #b0b0b0}
+.r993 {color: #ffffff; text-decoration-color: #ffffff; background-color: #a1a1a1}
+.r994 {color: #ffffff; text-decoration-color: #ffffff; background-color: #9c9c9c}
+.r995 {color: #ffffff; text-decoration-color: #ffffff; background-color: #acacac}
+.r996 {color: #f0f0f0; text-decoration-color: #f0f0f0; background-color: #a7a7a7}
+.r997 {color: #ededed; text-decoration-color: #ededed; background-color: #ababab}
+.r998 {color: #e7e7e7; text-decoration-color: #e7e7e7; background-color: #969696}
+.r999 {color: #f8f8f8; text-decoration-color: #f8f8f8; background-color: #9c9c9c}
+.r1000 {color: #ffffff; text-decoration-color: #ffffff; background-color: #e9e9e9}
+.r1001 {color: #f5f5f5; text-decoration-color: #f5f5f5; background-color: #ffffff}
+.r1002 {color: #e6e6e6; text-decoration-color: #e6e6e6;background-color: #263238;}
+.r1003 {color: #d2d2d2; text-decoration-color: #d2d2d2;background-color: #263238;}
+.r1004 {color: #d5d5d5; text-decoration-color: #d5d5d5;background-color: #263238;}
+.r1005 {color: #e5e5e5; text-decoration-color: #e5e5e5;background-color: #263238;}
+.r1006 {color: #c7c7c7; text-decoration-color: #c7c7c7;background-color: #263238;}
+.r1007 {color: #d3d3d3; text-decoration-color: #d3d3d3;background-color: #263238;}
+.r1008 {color: #d1d1d1; text-decoration-color: #d1d1d1;background-color: #263238;}
+.r1009 {color: #eaeaea; text-decoration-color: #eaeaea;background-color: #263238;}
+.r1010 {color: #e2e2e2; text-decoration-color: #e2e2e2;background-color: #263238;}
+.r1011 {color: #d8d8d8; text-decoration-color: #d8d8d8;background-color: #263238;}
+.r1012 {color: #dddddd; text-decoration-color: #dddddd;background-color: #263238;}
+.r1013 {color: #dedede; text-decoration-color: #dedede;background-color: #263238;}
+.r1014 {color: #d6d6d6; text-decoration-color: #d6d6d6;background-color: #263238;}
+.r1015 {color: #f1f1f1; text-decoration-color: #f1f1f1;background-color: #263238;}
+    </style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+            <div id="wrapper">
+                <div id="terminal">
+                    <div id="terminal-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="terminal-traffic-lights" width="90" height="21" viewBox="0 0 90 21">
+                            <circle cx="14" cy="8" r="8" fill="#f07178"></circle>
+                            <circle cx="38" cy="8" r="8" fill="#ffcb6b"></circle>
+                            <circle cx="62" cy="8" r="8" fill="#c3e88d"></circle>
+                        </svg>
+                        <div id="terminal-title-tab">Rich</div>
+                    </div>
+                    <div id="terminal-body">
+                        <div><span class="r2">% </span><span class="r1">nbpreview --theme material --image-drawing block notebook.ipynb</span><span class="r1">              </span></div>
+<div><span class="r1">      ╭───────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[20]:</span><span class="r1"> │ </span><span class="r4">df</span><span class="r5">.</span><span class="r4">head</span><span class="r5">()</span><span class="r1">                                                            </span><span class="r1"> │</span></div>
+<div><span class="r1">      ╰───────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[20]:</span><span class="r1">  </span><span class="r6"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/links_table.html">🌐 Click to view HTML</a></span><span class="r1">                                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[20]:</span><span class="r1">   </span><span class="r7"> </span><span class="r1">   </span><span class="r7">sepalLength</span><span class="r1">   </span><span class="r7">sepalWidth</span><span class="r1">   </span><span class="r7">petalLength</span><span class="r1">   </span><span class="r7">petalWidth</span><span class="r1">   </span><span class="r7">species</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">       ───────────────────────────────────────────────────────────────────</span><span class="r1">     </span></div>
+<div><span class="r1">        </span><span class="r7">0</span><span class="r1">   </span><span class="r1">        5.1</span><span class="r1">   </span><span class="r1">       3.5</span><span class="r1">   </span><span class="r1">        1.4</span><span class="r1">   </span><span class="r1">       0.2</span><span class="r1">   </span><span class="r1"> setosa</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">        </span><span class="r7">1</span><span class="r1">   </span><span class="r1">        4.9</span><span class="r1">   </span><span class="r1">       3.0</span><span class="r1">   </span><span class="r1">        1.4</span><span class="r1">   </span><span class="r1">       0.2</span><span class="r1">   </span><span class="r1"> setosa</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">        </span><span class="r7">2</span><span class="r1">   </span><span class="r1">        4.7</span><span class="r1">   </span><span class="r1">       3.2</span><span class="r1">   </span><span class="r1">        1.3</span><span class="r1">   </span><span class="r1">       0.2</span><span class="r1">   </span><span class="r1"> setosa</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">        </span><span class="r7">3</span><span class="r1">   </span><span class="r1">        4.6</span><span class="r1">   </span><span class="r1">       3.1</span><span class="r1">   </span><span class="r1">        1.5</span><span class="r1">   </span><span class="r1">       0.2</span><span class="r1">   </span><span class="r1"> setosa</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">        </span><span class="r7">4</span><span class="r1">   </span><span class="r1">        5.0</span><span class="r1">   </span><span class="r1">       3.6</span><span class="r1">   </span><span class="r1">        1.4</span><span class="r1">   </span><span class="r1">       0.2</span><span class="r1">   </span><span class="r1"> setosa</span><span class="r1"> </span><span class="r1">     </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">      ╭───────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3">[21]:</span><span class="r1"> │ </span><span class="r4">df</span><span class="r5">.</span><span class="r4">pipe</span><span class="r5">(</span><span class="r1">                                                              │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    </span><span class="r5">(</span><span class="r4">sns</span><span class="r5">.</span><span class="r4">kdeplot</span><span class="r5">,</span><span class="r4"> </span><span class="r8">"data"</span><span class="r5">),</span><span class="r1">                                            │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    x</span><span class="r5">=</span><span class="r8">"petalLength"</span><span class="r5">,</span><span class="r1">                                                  │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    hue</span><span class="r5">=</span><span class="r8">"species"</span><span class="r5">,</span><span class="r1">                                                    │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    fill</span><span class="r5">=True,</span><span class="r1">                                                        │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    alpha</span><span class="r5">=</span><span class="r9">1</span><span class="r5">,</span><span class="r1">                                                          │</span></div>
+<div><span class="r1">      │ </span><span class="r5">)</span><span class="r1">                                                                    </span><span class="r1"> │</span></div>
+<div><span class="r1">      ╰───────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r3">[21]:</span><span class="r1">  </span><span class="r1">&lt;AxesSubplot:xlabel='petalLength', ylabel='Density'&gt;                    </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r6"><a href="https://raw.githubusercontent.com/paw-lu/nbpreview/main/docs/_static/images/links_plot.png">🖼 Click to view Image</a></span><span class="r1">                                                   </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">              </span><span class="r10">▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄</span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r11">▀</span><span class="r12">▀</span><span class="r13"> </span><span class="r1">  </span><span class="r14">▀</span><span class="r15">▀</span><span class="r16">▀▀▀▀▀▀</span><span class="r17">▀</span><span class="r18">▀</span><span class="r16">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r19">▀</span><span class="r20">▀</span><span class="r21">▀</span><span class="r20">▀</span><span class="r22">▀</span><span class="r23">▀</span><span class="r24">▀</span><span class="r16">▀▀▀▀▀</span><span class="r15">▀</span><span class="r14">▀</span><span class="r1"> </span></div>
+<div><span class="r1">                   </span><span class="r25">       </span><span class="r26">▀</span><span class="r27">▀</span><span class="r28">▀</span><span class="r29">                               </span><span class="r30">▀</span><span class="r31">▀</span><span class="r32">▀▀</span><span class="r33">▀</span><span class="r34">▀</span><span class="r35">▀</span><span class="r36">▀</span><span class="r37">▀</span><span class="r38">▀</span><span class="r39">▀       </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r40">▀</span><span class="r1"> </span><span class="r41">▀</span><span class="r1">  </span><span class="r42"> </span><span class="r43">▀</span><span class="r44">▀▀▀▀</span><span class="r45">▀</span><span class="r46">▀</span><span class="r47">▀</span><span class="r48">▀</span><span class="r49">▀</span><span class="r44">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r49">▀</span><span class="r50">▀</span><span class="r51">▀</span><span class="r52">▀</span><span class="r53">▀</span><span class="r54">▀</span><span class="r55">▀</span><span class="r56">▀</span><span class="r57">▀</span><span class="r58">▀</span><span class="r59">▀</span><span class="r60">▀</span><span class="r61"> </span><span class="r62"> </span><span class="r63">▀</span><span class="r44">▀▀</span><span class="r43">▀</span><span class="r64">▀</span><span class="r1"> </span></div>
+<div><span class="r1">                   </span><span class="r25">       </span><span class="r65">▀</span><span class="r66">▀</span><span class="r67">▀</span><span class="r68">                               </span><span class="r69">▀</span><span class="r70">▀</span><span class="r71">▀</span><span class="r72">▀</span><span class="r73">▀</span><span class="r74">▀</span><span class="r75">▀</span><span class="r76">▀</span><span class="r77">▀</span><span class="r78">▀▀</span><span class="r79">▀</span><span class="r80">▀</span><span class="r81">▀</span><span class="r78">▀</span><span class="r82">▀</span><span class="r83">  </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r84">▄</span><span class="r85">▄</span><span class="r86">▄</span><span class="r1">  </span><span class="r87">▀</span><span class="r88">▀</span><span class="r87">▀▀▀▀</span><span class="r89">▀</span><span class="r90">▀</span><span class="r91"> </span><span class="r92">▀</span><span class="r93">▀</span><span class="r87">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r94">▀</span><span class="r95">▀</span><span class="r96">▀</span><span class="r97">▀</span><span class="r98">▀</span><span class="r99">▀</span><span class="r100">▀</span><span class="r101">▀</span><span class="r102">▀</span><span class="r103">▀</span><span class="r104">▀</span><span class="r105">▀</span><span class="r106">▀</span><span class="r107">▀</span><span class="r108">▀</span><span class="r109">▀</span><span class="r88">▀</span><span class="r87">▀</span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r85">▀</span><span class="r1">    </span><span class="r25">       </span><span class="r110">▀</span><span class="r111"> </span><span class="r112">▀</span><span class="r113">                               </span><span class="r114">▀</span><span class="r115">▀</span><span class="r116">▀</span><span class="r117">▀</span><span class="r118">▀</span><span class="r119">▀</span><span class="r120">▀</span><span class="r121">▀</span><span class="r122">▀</span><span class="r123">▀</span><span class="r124">▀</span><span class="r125">▀</span><span class="r126">▀</span><span class="r127">▀</span><span class="r128">▀</span><span class="r83">   </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r129">▄</span><span class="r1"> </span><span class="r85">▄</span><span class="r1">  </span><span class="r88">▀</span><span class="r128">▀</span><span class="r88">▀▀▀▀</span><span class="r130">▀</span><span class="r131">▀</span><span class="r132"> </span><span class="r133">▀</span><span class="r134">▀</span><span class="r88">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r135">▀</span><span class="r136">▀</span><span class="r137">▀</span><span class="r136">▀</span><span class="r138">▀</span><span class="r88">▀</span><span class="r139">▀</span><span class="r140">▀</span><span class="r141">▀</span><span class="r142">▀</span><span class="r143">▀</span><span class="r140">▀</span><span class="r144">▀▀</span><span class="r88">▀▀</span><span class="r128">▀</span><span class="r88">▀</span><span class="r1"> </span></div>
+<div><span class="r1">         </span><span class="r84">▄</span><span class="r1">    </span><span class="r84">▀</span><span class="r129">▀</span><span class="r86">▀</span><span class="r1">  </span><span class="r145">▀</span><span class="r146">▀</span><span class="r145">▀▀▀▀</span><span class="r147">▀</span><span class="r148">▀</span><span class="r149">▀</span><span class="r150">▀</span><span class="r151">▀</span><span class="r145">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r146">▀</span><span class="r145">▀</span><span class="r1"> </span></div>
+<div><span class="r1">        </span><span class="r152">▀</span><span class="r153">▀</span><span class="r1">         </span><span class="r25">       </span><span class="r154">▀</span><span class="r155">▀</span><span class="r156">▀</span><span class="r157">▀</span><span class="r158">                                                </span><span class="r1"> </span></div>
+<div><span class="r1">         </span><span class="r159"> </span><span class="r1">    </span><span class="r152">▀</span><span class="r85">▀</span><span class="r152">▀</span><span class="r1">  </span><span class="r14">▀</span><span class="r145">▀</span><span class="r160">▀▀▀</span><span class="r161">▀</span><span class="r162">▀</span><span class="r163">▀</span><span class="r164">▀</span><span class="r165">▀</span><span class="r166">▀</span><span class="r167">▀</span><span class="r160">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r145">▀</span><span class="r14">▀</span><span class="r1"> </span></div>
+<div><span class="r1">        </span><span class="r168">▀</span><span class="r169">▀</span><span class="r1">         </span><span class="r25">      </span><span class="r170">▀</span><span class="r171">▀</span><span class="r172"> </span><span class="r173">▀</span><span class="r174">▀</span><span class="r175">                                                </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r176">▀</span><span class="r84">▄</span><span class="r177">▀</span><span class="r1">  </span><span class="r42"> </span><span class="r43">▀</span><span class="r44">▀▀▀</span><span class="r178">▀</span><span class="r179">▀</span><span class="r180">▀</span><span class="r181">▀</span><span class="r182"> </span><span class="r183">▀</span><span class="r49">▀</span><span class="r44">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r184">▀</span><span class="r185">▀</span><span class="r184">▀</span><span class="r44">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r43">▀</span><span class="r63"> </span><span class="r1"> </span></div>
+<div><span class="r1">                   </span><span class="r25">      </span><span class="r186">▀</span><span class="r187">▀</span><span class="r188">▀</span><span class="r189"> </span><span class="r190">▀</span><span class="r191">                  </span><span class="r192">▀</span><span class="r193">▀</span><span class="r194">▀</span><span class="r195">▀</span><span class="r196">▀</span><span class="r83">                         </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r152">▄</span><span class="r84">▄</span><span class="r85">▄</span><span class="r1">  </span><span class="r87">▀</span><span class="r88">▀</span><span class="r87">▀▀▀</span><span class="r93">▀</span><span class="r197">▀</span><span class="r198">▀</span><span class="r199"> </span><span class="r200">▀</span><span class="r201">▀</span><span class="r202">▀</span><span class="r203">▀</span><span class="r87">▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r204">▀</span><span class="r205">▀</span><span class="r206">▀</span><span class="r207">▀</span><span class="r208">▀ </span><span class="r209">▀</span><span class="r210">▀</span><span class="r211">▀</span><span class="r212">▀</span><span class="r213">▀</span><span class="r214">▀</span><span class="r215">▀</span><span class="r216">▀</span><span class="r217">▀</span><span class="r218">▀</span><span class="r219">▀</span><span class="r87">▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r88">▀</span><span class="r87">▀</span><span class="r1"> </span></div>
+<div><span class="r1">                   </span><span class="r25">      </span><span class="r220">▀</span><span class="r221"> </span><span class="r222"> </span><span class="r223">▀</span><span class="r224">▀</span><span class="r225">▀</span><span class="r226">              </span><span class="r227">▀</span><span class="r228">▀</span><span class="r229">▀    </span><span class="r230">▀</span><span class="r231">▀</span><span class="r232">▀</span><span class="r233">▀</span><span class="r234">▀</span><span class="r235">▀▀</span><span class="r236">▀</span><span class="r237">▀</span><span class="r238">▀</span><span class="r239">▀</span><span class="r83">               </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r85">▄</span><span class="r1">    </span><span class="r88">▀</span><span class="r128">▀</span><span class="r88">▀▀</span><span class="r240">▀</span><span class="r241">▀</span><span class="r242">▀</span><span class="r200">▀</span><span class="r243"> </span><span class="r188">▀</span><span class="r244">▀</span><span class="r245">▀</span><span class="r130">▀</span><span class="r88">▀▀▀▀▀▀▀▀▀▀</span><span class="r246">▀</span><span class="r247">▀</span><span class="r248">▀</span><span class="r249">▀</span><span class="r250">▀     </span><span class="r251">▀</span><span class="r252">▀</span><span class="r253">▀</span><span class="r254">▀</span><span class="r255">     </span><span class="r256">▀</span><span class="r257">▀</span><span class="r258">▀</span><span class="r259">▀</span><span class="r88">▀▀▀▀▀▀▀▀▀▀▀</span><span class="r128">▀</span><span class="r88">▀</span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r84">▀</span><span class="r1">    </span><span class="r145">▀</span><span class="r146">▀</span><span class="r145">▀▀</span><span class="r260">▀</span><span class="r261">▀</span><span class="r262">▀</span><span class="r188">▀  </span><span class="r263">▀</span><span class="r264">▀</span><span class="r265">▀</span><span class="r145">▀▀▀▀▀▀▀▀▀</span><span class="r266">▀</span><span class="r267">▀</span><span class="r268">▀</span><span class="r269">▀</span><span class="r270">        </span><span class="r271">▀</span><span class="r272">▀</span><span class="r273">▀</span><span class="r274">▀</span><span class="r275">     </span><span class="r276">▀</span><span class="r277">▀</span><span class="r278">▀</span><span class="r279">▀</span><span class="r280">▀</span><span class="r281">▀</span><span class="r145">▀▀▀▀▀▀▀▀</span><span class="r146">▀</span><span class="r145">▀</span><span class="r1"> </span></div>
+<div><span class="r1">                   </span><span class="r25">    </span><span class="r282">▀</span><span class="r283">▀</span><span class="r284">▀</span><span class="r285">▀▀▀▀</span><span class="r286">▀</span><span class="r287">▀</span><span class="r288">▀</span><span class="r83">    </span><span class="r289">▀</span><span class="r290">▀</span><span class="r291">▀</span><span class="r292">▀</span><span class="r293">▀</span><span class="r294">▀</span><span class="r295">▀▀▀▀▀▀▀▀▀▀▀</span><span class="r296">▀</span><span class="r297">▀</span><span class="r298">▀</span><span class="r299">▀</span><span class="r300">▀</span><span class="r301">▀</span><span class="r302">▀▀▀▀</span><span class="r303">▀</span><span class="r304">▀</span><span class="r305">▀</span><span class="r306">▀</span><span class="r307">▀</span><span class="r308">▀</span><span class="r309">▀</span><span class="r310">▀</span><span class="r83">      </span><span class="r1"> </span></div>
+<div><span class="r1">              </span><span class="r152">▀</span><span class="r86">▀</span><span class="r85">▀</span><span class="r1">  </span><span class="r311">▀</span><span class="r312">▀</span><span class="r313">▀</span><span class="r314">▀</span><span class="r315">▀</span><span class="r316">▀▀▀▀▀▀</span><span class="r317">▀</span><span class="r318">▀</span><span class="r319">▀</span><span class="r320">▀</span><span class="r321">▀</span><span class="r322">▀</span><span class="r323">▀</span><span class="r324">▀</span><span class="r325">▀▀</span><span class="r326">▀</span><span class="r327">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r328">▀</span><span class="r329">▀</span><span class="r330">▀</span><span class="r331">▀</span><span class="r332">▀</span><span class="r333">▀▀▀▀▀▀▀▀</span><span class="r334">▀</span><span class="r335">▀</span><span class="r336">▀</span><span class="r337">▀</span><span class="r338">▀</span><span class="r339">▀</span><span class="r340">▀</span><span class="r312">▀</span><span class="r341">▀</span><span class="r1"> </span></div>
+<div><span class="r1">                        </span><span class="r342">▄</span><span class="r1">      </span><span class="r343">▄</span><span class="r1">       </span><span class="r84">▄</span><span class="r1">              </span><span class="r152">▄</span><span class="r1">       </span><span class="r84">▄</span><span class="r1">      </span><span class="r342">▄</span><span class="r1">       </span><span class="r84">▄</span><span class="r1"> </span></div>
+<div><span class="r1">                               </span><span class="r344">▀</span><span class="r1">       </span><span class="r85">▀</span><span class="r1">      </span><span class="r152">▀</span><span class="r84">▀</span><span class="r1">      </span><span class="r84">▀</span><span class="r1">       </span><span class="r152">▀</span><span class="r1">              </span><span class="r85">▀</span><span class="r1"> </span></div>
+<div><span class="r1">       </span><span class="r1">                                                                        </span></div>
+<div><span class="r1">                                           </span><span class="r84">▄</span><span class="r85">▄</span><span class="r342">▄</span><span class="r152">▄</span><span class="r84">▄</span><span class="r41">▄</span><span class="r152">▄</span><span class="r85">▄</span><span class="r152">▄▄</span><span class="r84">▄</span><span class="r1">                         </span></div>
+<div><span class="r1">                                           </span><span class="r152">▀</span><span class="r84">▀</span><span class="r129">▀</span><span class="r84">▀</span><span class="r129">▀</span><span class="r84">▀</span><span class="r86">▀</span><span class="r129">▀</span><span class="r85">▀</span><span class="r84">▀</span><span class="r1">                          </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">      ╭───────────────────────────────────────────────────────────────────────╮</span></div>
+<div><span class="r3"> [6]:</span><span class="r1"> │ </span><span class="r4">VegaLite</span><span class="r5">(</span><span class="r1">                                                             │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    </span><span class="r5">{</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"$schema"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"https://vega.github.io/schema/vega-lite/v5.json"</span><span class="r5">,</span><span class="r1"> │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"width"</span><span class="r5">:</span><span class="r4"> </span><span class="r9">300</span><span class="r5">,</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"height"</span><span class="r5">:</span><span class="r4"> </span><span class="r9">200</span><span class="r5">,</span><span class="r1">                                                │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"data"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r1">                                                     │</span></div>
+<div><span class="r1">      │ </span><span class="r4">            </span><span class="r8">"url"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"https://raw.githubusercontent.com/vega/vega-data…</span><span class="r1"> │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r5">},</span><span class="r1">                                                            │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"mark"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"area"</span><span class="r5">,</span><span class="r1">                                               │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r8">"encoding"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r1">                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r4">            </span><span class="r8">"x"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r8">"timeUnit"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"yearmonth"</span><span class="r5">,</span><span class="r4"> </span><span class="r8">"field"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"date"</span><span class="r5">,</span><span class="r4"> </span><span class="r8">"axis"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">…</span><span class="r1"> │</span></div>
+<div><span class="r1">      │ </span><span class="r4">            </span><span class="r8">"y"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r8">"aggregate"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"sum"</span><span class="r5">,</span><span class="r4"> </span><span class="r8">"field"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"count"</span><span class="r5">},</span><span class="r1">              │</span></div>
+<div><span class="r1">      │ </span><span class="r4">            </span><span class="r8">"color"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r8">"field"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"series"</span><span class="r5">,</span><span class="r4"> </span><span class="r8">"scale"</span><span class="r5">:</span><span class="r4"> </span><span class="r5">{</span><span class="r8">"scheme"</span><span class="r5">:</span><span class="r4"> </span><span class="r8">"catego…</span><span class="r1"> │</span></div>
+<div><span class="r1">      │ </span><span class="r4">        </span><span class="r5">},</span><span class="r1">                                                            │</span></div>
+<div><span class="r1">      │ </span><span class="r4">    </span><span class="r5">}</span><span class="r1">                                                                 │</span></div>
+<div><span class="r1">      │ </span><span class="r5">)</span><span class="r1">                                                                    </span><span class="r1"> │</span></div>
+<div><span class="r1">      ╰───────────────────────────────────────────────────────────────────────╯</span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r6"><a href="https://nbpreview.readthedocs.io/en/latest/_static/generated_html/links_vega.html">📊 Click to view Vega chart</a></span><span class="r1">                                             </span></div>
+<div><span class="r1">                                                                               </span></div>
+<div><span class="r1">     </span><span class="r1">  </span><span class="r25">  </span><span class="r15">▀</span><span class="r345">▀</span><span class="r346">▀</span><span class="r347">▀</span><span class="r348">▀</span><span class="r349">▀</span><span class="r350">▀</span><span class="r351">▀▀</span><span class="r352">▀</span><span class="r353"> </span><span class="r351">▀▀▀</span><span class="r354">▀</span><span class="r351">▀▀▀</span><span class="r354">▀</span><span class="r351">▀▀▀</span><span class="r354">▀</span><span class="r351">▀▀▀</span><span class="r355"> </span><span class="r352">▀</span><span class="r351">▀▀</span><span class="r355"> </span><span class="r352">▀</span><span class="r351">▀▀</span><span class="r355"> </span><span class="r140">▀</span><span class="r351">▀▀</span><span class="r356">▀</span><span class="r140">▀</span><span class="r351">▀▀</span><span class="r140">▀</span><span class="r356">▀</span><span class="r351">▀▀</span><span class="r140">▀</span><span class="r357">▀</span><span class="r145"> </span><span class="r358">▀</span><span class="r359">▀</span><span class="r360">▀</span><span class="r361">▀</span><span class="r362">▀</span><span class="r363">▀</span><span class="r146">               </span></div>
+<div><span class="r1">       </span><span class="r25">  </span><span class="r364">▀</span><span class="r365">▀</span><span class="r366">▀</span><span class="r367">▀▀</span><span class="r368">▀</span><span class="r369">▀</span><span class="r145">▀</span><span class="r370">▀</span><span class="r371">▀</span><span class="r372">▀</span><span class="r370">▀▀▀</span><span class="r373">▀</span><span class="r370">▀▀▀</span><span class="r373">▀</span><span class="r370">▀▀▀</span><span class="r373">▀</span><span class="r370">▀▀▀</span><span class="r372">▀</span><span class="r371">▀</span><span class="r370">▀▀</span><span class="r372">▀</span><span class="r371">▀</span><span class="r370">▀▀</span><span class="r372">▀</span><span class="r374">▀</span><span class="r370">▀▀</span><span class="r144">▀</span><span class="r374">▀</span><span class="r370">▀▀</span><span class="r374">▀</span><span class="r144">▀</span><span class="r370">▀</span><span class="r145">▀</span><span class="r375">▀</span><span class="r376">▀</span><span class="r377"> </span><span class="r378">▀</span><span class="r379">▀</span><span class="r380">▀</span><span class="r381">▀</span><span class="r382">▀</span><span class="r383">▀</span><span class="r384">▀</span><span class="r385">▀</span><span class="r386">▀</span><span class="r387">▀</span><span class="r83">           </span></div>
+<div><span class="r1">       </span><span class="r25">       </span><span class="r388"> </span><span class="r389"> </span><span class="r25">  </span><span class="r390"> </span><span class="r42"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r42"> </span><span class="r390"> </span><span class="r25">  </span><span class="r42"> </span><span class="r390"> </span><span class="r25">  </span><span class="r42"> </span><span class="r392"> </span><span class="r25">  </span><span class="r393"> </span><span class="r392"> </span><span class="r25">  </span><span class="r394">▀</span><span class="r395">▀</span><span class="r396">▀</span><span class="r397">▀</span><span class="r398">▀</span><span class="r399">▀</span><span class="r400"> </span><span class="r401">▀</span><span class="r402">▀</span><span class="r403">▀</span><span class="r404">▀</span><span class="r405">▀</span><span class="r406">▀</span><span class="r407">▀</span><span class="r408">▀</span><span class="r409">▀</span><span class="r410">▀</span><span class="r411">▀</span><span class="r412">▀</span><span class="r413">▀</span><span class="r414">▀</span><span class="r415">▀</span><span class="r146">      </span></div>
+<div><span class="r1">       </span><span class="r25">       </span><span class="r388"> </span><span class="r389"> </span><span class="r25">  </span><span class="r390"> </span><span class="r42"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r391"> </span><span class="r25">   </span><span class="r42"> </span><span class="r390"> </span><span class="r25">  </span><span class="r42"> </span><span class="r390"> </span><span class="r25">  </span><span class="r42"> </span><span class="r392"> </span><span class="r25">  </span><span class="r393"> </span><span class="r392"> </span><span class="r25">  </span><span class="r416">▀</span><span class="r417">▀</span><span class="r418">▀</span><span class="r419">▀</span><span class="r420">▀</span><span class="r421">▀</span><span class="r422"> </span><span class="r423"> </span><span class="r424">▀</span><span class="r425">▀</span><span class="r426">▀</span><span class="r427">▀</span><span class="r428">▀</span><span class="r429">▀</span><span class="r430">▀</span><span class="r428">▀</span><span class="r431">▀</span><span class="r432">▀</span><span class="r364">▀</span><span class="r145">▀</span><span class="r370">▀</span><span class="r433">▀      </span></div>
+<div><span class="r1">       </span><span class="r88">▀</span><span class="r434">▀</span><span class="r346">▀</span><span class="r83">    </span><span class="r435">▀</span><span class="r436"> </span><span class="r14">  </span><span class="r160"> </span><span class="r437"> </span><span class="r14">   </span><span class="r438"> </span><span class="r14">   </span><span class="r438"> </span><span class="r14">   </span><span class="r438"> </span><span class="r14">   </span><span class="r437"> </span><span class="r160"> </span><span class="r14">  </span><span class="r437"> </span><span class="r160"> </span><span class="r14">  </span><span class="r437"> </span><span class="r439"> </span><span class="r14">  </span><span class="r144"> </span><span class="r439"> </span><span class="r14">  </span><span class="r440">▀</span><span class="r441">▀</span><span class="r442">▀</span><span class="r443">▀</span><span class="r444">▀</span><span class="r445">▀</span><span class="r446"> </span><span class="r447"> </span><span class="r448">▀</span><span class="r449"> </span><span class="r450">▀</span><span class="r451">▀</span><span class="r452">▀</span><span class="r453">▀</span><span class="r454">▀</span><span class="r455">▀</span><span class="r456">▀</span><span class="r457">▀</span><span class="r458">▀</span><span class="r459">▀</span><span class="r460">▀</span><span class="r461">▀</span><span class="r462">▀</span><span class="r463">▀</span><span class="r464">    </span></div>
+<div><span class="r1">       </span><span class="r364">▀</span><span class="r465">▀</span><span class="r466">▀</span><span class="r467">▀</span><span class="r468">▀</span><span class="r469">▀</span><span class="r470">▀</span><span class="r471">▀</span><span class="r472"> </span><span class="r19">▀▀</span><span class="r143">▀</span><span class="r473"> </span><span class="r19">▀▀▀</span><span class="r109"> </span><span class="r19">▀▀▀</span><span class="r435">▀</span><span class="r19">▀▀▀</span><span class="r109"> </span><span class="r19">▀▀▀</span><span class="r474"> </span><span class="r143">▀</span><span class="r19">▀▀</span><span class="r474"> </span><span class="r143">▀</span><span class="r19">▀▀</span><span class="r474"> </span><span class="r356">▀</span><span class="r19">▀▀</span><span class="r475">▀</span><span class="r356">▀</span><span class="r19">▀</span><span class="r476">▀</span><span class="r477">▀</span><span class="r478">▀</span><span class="r479">▀</span><span class="r480">▀</span><span class="r481">▀</span><span class="r482">▀</span><span class="r483"> </span><span class="r484">▀</span><span class="r485">▀</span><span class="r486">▀</span><span class="r487">▀</span><span class="r488">▀</span><span class="r489">▀</span><span class="r490">▀</span><span class="r491">▀</span><span class="r492">▀</span><span class="r88">▀</span><span class="r82">▀</span><span class="r83">          </span></div>
+<div><span class="r1">       </span><span class="r493">▀</span><span class="r494">▀</span><span class="r495">▀</span><span class="r36">    </span><span class="r496">▀</span><span class="r497"> </span><span class="r498">  </span><span class="r499"> </span><span class="r500"> </span><span class="r498">  </span><span class="r501">▀</span><span class="r502">▀</span><span class="r503">▀</span><span class="r83">  </span><span class="r504">▀</span><span class="r505">▀</span><span class="r506">▀</span><span class="r83"> </span><span class="r507">▀</span><span class="r508">▀</span><span class="r83">  </span><span class="r509">▀</span><span class="r433">▀  </span><span class="r139"> </span><span class="r510"> </span><span class="r433">  </span><span class="r139"> </span><span class="r378"> </span><span class="r433">  </span><span class="r493"> </span><span class="r394">▀</span><span class="r508">▀</span><span class="r511">▀</span><span class="r512">▀</span><span class="r513">▀</span><span class="r514">▀</span><span class="r515">▀</span><span class="r516">▀</span><span class="r517">▀</span><span class="r518"> </span><span class="r519">▀</span><span class="r520">▀</span><span class="r521">▀</span><span class="r522">▀</span><span class="r523">▀</span><span class="r524">▀</span><span class="r525">▀</span><span class="r526">▀</span><span class="r527">▀</span><span class="r528">▀</span><span class="r529">▀</span><span class="r530">          </span></div>
+<div><span class="r1">       </span><span class="r531">▀</span><span class="r532">▀</span><span class="r533">▀</span><span class="r534">    </span><span class="r535"> </span><span class="r536"> </span><span class="r534">  </span><span class="r537"> </span><span class="r538"> </span><span class="r534">  </span><span class="r539">▀</span><span class="r540">▀</span><span class="r541">▀</span><span class="r542">▀</span><span class="r543">▀</span><span class="r544">▀</span><span class="r545">▀</span><span class="r546">▀</span><span class="r547">▀</span><span class="r548">▀</span><span class="r549">▀</span><span class="r550">▀</span><span class="r551">▀</span><span class="r552">▀</span><span class="r553">▀</span><span class="r554">  </span><span class="r555">▀</span><span class="r556">▀</span><span class="r83">  </span><span class="r557">▀</span><span class="r43">▀</span><span class="r146">  </span><span class="r558">▀</span><span class="r559">▀</span><span class="r560">▀</span><span class="r561">▀</span><span class="r562">▀</span><span class="r563">▀</span><span class="r564">▀</span><span class="r565">▀</span><span class="r566">▀</span><span class="r567">▀</span><span class="r568"> </span><span class="r569">▀</span><span class="r570">▀</span><span class="r571">▀</span><span class="r572">▀</span><span class="r573">▀</span><span class="r574">▀</span><span class="r491">▀</span><span class="r575">▀</span><span class="r576">▀</span><span class="r577">▀</span><span class="r578">▀</span><span class="r579">▀</span><span class="r580">▀</span><span class="r581">▀</span><span class="r582">▀</span><span class="r583">▀</span><span class="r584">▀</span><span class="r15">▀</span><span class="r83">   </span></div>
+<div><span class="r1">       </span><span class="r146">▀</span><span class="r585">▀</span><span class="r586">▀</span><span class="r587">    </span><span class="r588">▀</span><span class="r589">▀</span><span class="r590">  </span><span class="r591">▀</span><span class="r592">▀</span><span class="r593">▀</span><span class="r594">▀</span><span class="r595">▀</span><span class="r596">▀</span><span class="r597">▀</span><span class="r598">▀</span><span class="r599">▀</span><span class="r600">▀</span><span class="r601">▀</span><span class="r602">▀</span><span class="r603">▀</span><span class="r604">▀</span><span class="r605">▀</span><span class="r606">▀</span><span class="r607">▀</span><span class="r608">▀</span><span class="r609">▀</span><span class="r610">▀</span><span class="r611">▀</span><span class="r612">▀</span><span class="r613">▀</span><span class="r614">▀</span><span class="r615">▀</span><span class="r616">▀</span><span class="r617">▀</span><span class="r618">▀</span><span class="r619">▀</span><span class="r620">▀</span><span class="r621">▀</span><span class="r622">▀</span><span class="r623">▀</span><span class="r624">▀</span><span class="r625">▀</span><span class="r626">▀▀</span><span class="r627">▀</span><span class="r628">▀</span><span class="r629"> </span><span class="r630">▀</span><span class="r631">▀</span><span class="r632">▀</span><span class="r633">▀</span><span class="r634">▀</span><span class="r635">▀</span><span class="r636">▀</span><span class="r637">▀</span><span class="r638">▀</span><span class="r639"> </span><span class="r640">▀</span><span class="r457">▀</span><span class="r641">▀</span><span class="r642">▀</span><span class="r643">▀</span><span class="r641">▀</span><span class="r644">▀</span><span class="r433">▀   </span></div>
+<div><span class="r1">       </span><span class="r645">▀</span><span class="r646">▀</span><span class="r647">▀</span><span class="r648">▀</span><span class="r649">▀</span><span class="r650">▀</span><span class="r651">▀</span><span class="r652">▀</span><span class="r653">▀</span><span class="r654">▀</span><span class="r655">▀</span><span class="r656">▀</span><span class="r657">▀</span><span class="r658">▀</span><span class="r659">▀</span><span class="r660">▀</span><span class="r661">▀</span><span class="r662">▀</span><span class="r663">▀</span><span class="r664">▀</span><span class="r665">▀</span><span class="r666">▀</span><span class="r667">▀</span><span class="r668">▀</span><span class="r669">▀</span><span class="r670">▀</span><span class="r671">▀</span><span class="r672">▀</span><span class="r673">▀</span><span class="r674">▀</span><span class="r675">▀</span><span class="r676">▀</span><span class="r677">▀</span><span class="r678">▀</span><span class="r679">▀</span><span class="r680">▀</span><span class="r681">▀</span><span class="r682">▀</span><span class="r683">▀</span><span class="r684">▀</span><span class="r685">▀</span><span class="r686">▀</span><span class="r687">▀</span><span class="r688">▀</span><span class="r689">▀</span><span class="r690">▀</span><span class="r691">▀</span><span class="r692">▀</span><span class="r693">▀</span><span class="r694">▀</span><span class="r695"> </span><span class="r696">▀</span><span class="r697">▀</span><span class="r698">▀</span><span class="r699">▀</span><span class="r700">▀</span><span class="r701">▀</span><span class="r702">▀</span><span class="r703">▀</span><span class="r704">▀</span><span class="r705">▀</span><span class="r706">▀</span><span class="r707">▀</span><span class="r708">▀</span><span class="r709">▀</span><span class="r710">▀</span><span class="r711">▀</span><span class="r81">▀</span><span class="r83">    </span></div>
+<div><span class="r1">       </span><span class="r25">   </span><span class="r146">▀</span><span class="r712">▀</span><span class="r498">▀▀</span><span class="r713">▀</span><span class="r714">▀</span><span class="r715">▀</span><span class="r716">▀</span><span class="r717">▀</span><span class="r718">▀</span><span class="r719">▀</span><span class="r720">▀</span><span class="r721">▀</span><span class="r722">▀</span><span class="r723">▀</span><span class="r724">▀</span><span class="r725">▀</span><span class="r726">▀</span><span class="r727">▀</span><span class="r728">▀</span><span class="r729">▀</span><span class="r730">▀</span><span class="r731">▀</span><span class="r732">▀</span><span class="r733">▀</span><span class="r734">▀</span><span class="r735">▀</span><span class="r736">▀</span><span class="r737">▀</span><span class="r738">▀</span><span class="r739">▀</span><span class="r740">▀</span><span class="r741">▀</span><span class="r742">▀</span><span class="r743">▀</span><span class="r744">▀</span><span class="r745">▀</span><span class="r746">▀</span><span class="r747">▀</span><span class="r748">▀</span><span class="r749">▀</span><span class="r750">▀</span><span class="r751">▀</span><span class="r752">▀</span><span class="r753">▀</span><span class="r754">▀</span><span class="r755">▀</span><span class="r756"> </span><span class="r757">▀</span><span class="r758">▀</span><span class="r759">▀</span><span class="r760">▀</span><span class="r761">▀</span><span class="r762">▀</span><span class="r763">▀</span><span class="r39">▀</span><span class="r764">▀</span><span class="r765">▀</span><span class="r766">▀</span><span class="r767">▀</span><span class="r765">▀</span><span class="r587">▀</span><span class="r765">▀</span><span class="r764">▀</span><span class="r370">▀    </span></div>
+<div><span class="r1">       </span><span class="r25">       </span><span class="r768">▀</span><span class="r769">▀</span><span class="r770">▀</span><span class="r771">▀</span><span class="r772">▀</span><span class="r773">▀</span><span class="r774">▀</span><span class="r775">▀</span><span class="r776">▀</span><span class="r777">▀</span><span class="r778">▀</span><span class="r779">▀</span><span class="r780">▀</span><span class="r781">▀</span><span class="r782">▀</span><span class="r783">▀</span><span class="r784">▀</span><span class="r785">▀</span><span class="r786">▀</span><span class="r787">▀</span><span class="r788">▀</span><span class="r789">▀</span><span class="r790">▀</span><span class="r791">▀</span><span class="r792">▀</span><span class="r793">▀</span><span class="r794">▀</span><span class="r795">▀</span><span class="r796">▀</span><span class="r797">▀</span><span class="r798">▀</span><span class="r799">▀</span><span class="r800">▀</span><span class="r801">▀</span><span class="r802">▀</span><span class="r803">▀</span><span class="r804">▀</span><span class="r805">▀</span><span class="r806">▀</span><span class="r807">▀</span><span class="r808">▀</span><span class="r809">▀</span><span class="r810">▀</span><span class="r811"> </span><span class="r503">▀</span><span class="r812">▀</span><span class="r813">▀</span><span class="r814">▀</span><span class="r815">▀</span><span class="r816">▀</span><span class="r817">▀</span><span class="r818">▀</span><span class="r819">▀</span><span class="r820">▀</span><span class="r821">▀</span><span class="r822">▀</span><span class="r140">▀</span><span class="r370">        </span></div>
+<div><span class="r1">       </span><span class="r25">       </span><span class="r823">▀</span><span class="r824">▀</span><span class="r825">▀</span><span class="r826">▀</span><span class="r827">▀</span><span class="r828">▀</span><span class="r829">▀</span><span class="r830">▀</span><span class="r831">▀</span><span class="r832">▀</span><span class="r833">▀</span><span class="r834">▀</span><span class="r835">▀</span><span class="r836">▀</span><span class="r837">▀</span><span class="r838">▀</span><span class="r839">▀</span><span class="r840">▀</span><span class="r841">▀</span><span class="r842">▀</span><span class="r843">▀</span><span class="r844">▀</span><span class="r845">▀</span><span class="r846">▀</span><span class="r847">▀</span><span class="r848">▀</span><span class="r849">▀</span><span class="r850">▀</span><span class="r851">▀</span><span class="r852">▀</span><span class="r853">▀</span><span class="r854">▀</span><span class="r855">▀</span><span class="r856">▀</span><span class="r857">▀</span><span class="r858">▀</span><span class="r859">▀</span><span class="r860">▀</span><span class="r861">▀</span><span class="r862">▀</span><span class="r863">▀</span><span class="r864">▀</span><span class="r865">▀</span><span class="r866"> </span><span class="r867">▀</span><span class="r868">▀</span><span class="r869">▀</span><span class="r870">▀</span><span class="r871">▀</span><span class="r872">▀</span><span class="r873">▀</span><span class="r874">▀</span><span class="r875">▀</span><span class="r876">▀</span><span class="r877">▀</span><span class="r878">▀</span><span class="r879">▀</span><span class="r880">▀</span><span class="r881">▀</span><span class="r882">▀</span><span class="r883">▀</span><span class="r884">▀</span><span class="r885">▀</span><span class="r886">▀</span><span class="r887"> </span></div>
+<div><span class="r1">       </span><span class="r25">      </span><span class="r888">▀</span><span class="r889">▀</span><span class="r890">▀</span><span class="r891">▀</span><span class="r892">▀</span><span class="r893">▀</span><span class="r894">▀</span><span class="r895">▀</span><span class="r896">▀</span><span class="r897">▀</span><span class="r898">▀</span><span class="r899">▀</span><span class="r900">▀</span><span class="r901">▀</span><span class="r902">▀</span><span class="r903">▀</span><span class="r904">▀</span><span class="r905">▀</span><span class="r906">▀</span><span class="r907">▀</span><span class="r908">▀</span><span class="r909">▀</span><span class="r910">▀</span><span class="r911">▀</span><span class="r900">▀</span><span class="r912">▀</span><span class="r913">▀</span><span class="r914">▀</span><span class="r915">▀</span><span class="r916">▀</span><span class="r917">▀</span><span class="r918">▀</span><span class="r919">▀</span><span class="r920">▀</span><span class="r921">▀</span><span class="r922">▀</span><span class="r923">▀</span><span class="r924">▀</span><span class="r925">▀</span><span class="r926">▀</span><span class="r927">▀▀</span><span class="r928">▀</span><span class="r929">▀</span><span class="r930"> </span><span class="r931">▀</span><span class="r932">▀</span><span class="r933">▀</span><span class="r934">▀</span><span class="r935">▀</span><span class="r936">▀</span><span class="r937">▀</span><span class="r938">▀</span><span class="r939">▀</span><span class="r940">▀</span><span class="r941">▀</span><span class="r942">▀</span><span class="r943">▀</span><span class="r944">▀</span><span class="r945">▀</span><span class="r939">▀</span><span class="r946">▀</span><span class="r947">▀</span><span class="r948">▀</span><span class="r949">▀</span><span class="r950">▀</span></div>
+<div><span class="r1">       </span><span class="r25">      </span><span class="r951">▀</span><span class="r952">▀</span><span class="r953">▀</span><span class="r954">▀</span><span class="r955">▀</span><span class="r956">▀</span><span class="r957">▀</span><span class="r958">▀</span><span class="r959">▀</span><span class="r960">▀</span><span class="r961">▀</span><span class="r962">▀</span><span class="r958">▀</span><span class="r963">▀</span><span class="r964">▀</span><span class="r958">▀</span><span class="r965">▀</span><span class="r966">▀</span><span class="r961">▀</span><span class="r967">▀</span><span class="r968">▀</span><span class="r958">▀</span><span class="r969">▀</span><span class="r970">▀</span><span class="r958">▀</span><span class="r971">▀</span><span class="r972">▀</span><span class="r973">▀</span><span class="r974">▀</span><span class="r958">▀</span><span class="r975">▀</span><span class="r976">▀</span><span class="r958">▀</span><span class="r977">▀</span><span class="r978">▀</span><span class="r979">▀</span><span class="r980">▀</span><span class="r958">▀</span><span class="r981">▀</span><span class="r982">▀</span><span class="r958">▀</span><span class="r983">▀</span><span class="r984">▀</span><span class="r985">▀</span><span class="r986">▀</span><span class="r433">                     </span></div>
+<div><span class="r1">       </span><span class="r25">       </span><span class="r433">▀</span><span class="r987">▀</span><span class="r37">▀</span><span class="r987">▀</span><span class="r145">▀  </span><span class="r14">▀</span><span class="r36">▀</span><span class="r37">▀</span><span class="r464">▀    </span><span class="r988">▀</span><span class="r989">▀</span><span class="r990">▀</span><span class="r991">▀</span><span class="r992">▀</span><span class="r993">▀</span><span class="r994">▀</span><span class="r384">▀</span><span class="r995">▀</span><span class="r996">▀</span><span class="r997">▀</span><span class="r998">▀</span><span class="r999">▀</span><span class="r1000">▀</span><span class="r83">   </span><span class="r764">▀</span><span class="r37">▀</span><span class="r36">▀</span><span class="r766">▀    </span><span class="r1001">▀</span><span class="r37">▀</span><span class="r765">▀</span><span class="r764">▀                     </span></div>
+<div><span class="r1">       </span><span class="r10">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span><span class="r1002">▀</span><span class="r1003">▀</span><span class="r1004">▀</span><span class="r1005">▀</span><span class="r1006">▀</span><span class="r1007">▀</span><span class="r1008">▀</span><span class="r1009">▀</span><span class="r1010">▀</span><span class="r1011">▀</span><span class="r1012">▀</span><span class="r1013">▀</span><span class="r1014">▀</span><span class="r1015">▀</span><span class="r10">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span></div>
+<div><span class="r1"></span><span class="r1">                                                                               </span></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </foreignObject>
+</svg>
