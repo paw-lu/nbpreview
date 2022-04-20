@@ -36,6 +36,35 @@ a detailed breakdown of its [features],
 [command-line usage][usage],
 and [instructions on how to configure][configure] the tool.
 
+## Requirements
+
+- Python 3.8+
+
+## Installation
+
+<!-- installation-start -->
+
+nbpreview can be installed through [pipx] or [pip] from [PyPI](https://pypi.org/).
+
+[pipx] provides an easy way to install Python applications in isolated environments.
+[See the documentation for how to install pipx.](https://pypa.github.io/pipx/installation/#install-pipx)
+
+```console
+% pipx install nbpreview
+```
+
+If [pipx] is not installed,
+nbpreview may also be installed via [pip]:
+
+```console
+% python -m pip install nbpreview
+```
+
+[pipx]: https://pypa.github.io/pipx/
+[pip]: https://pip.pypa.io/
+
+<!-- installation-end -->
+
 ## Features
 
 ### [Syntax highlight code cells](https://nbpreview.readthedocs.io/en/latest/features.html#syntax-highlighting)
@@ -79,35 +108,6 @@ and [instructions on how to configure][configure] the tool.
 ![Traceback render](https://github.com/paw-lu/nbpreview/raw/main/docs/_static/examples/svg/traceback.svg)
 
 ### [Use Nerd Font icons](https://nbpreview.readthedocs.io/en/latest/features.html#nerd-fonts)
-
-## Requirements
-
-- Python 3.8+
-
-## Installation
-
-<!-- installation-start -->
-
-nbpreview can be installed through [pipx] or [pip] from [PyPI](https://pypi.org/).
-
-[pipx] provides an easy way to install Python applications in isolated environments.
-[See the documentation for how to install pipx.](https://pypa.github.io/pipx/installation/#install-pipx)
-
-```console
-% pipx install nbpreview
-```
-
-If [pipx] is not installed,
-nbpreview may also be installed via [pip]:
-
-```console
-% python -m pip install nbpreview
-```
-
-[pipx]: https://pypa.github.io/pipx/
-[pip]: https://pip.pypa.io/
-
-<!-- installation-end -->
 
 ## Try it out
 
