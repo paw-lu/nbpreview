@@ -115,7 +115,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_img,validators"
+module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_image,validators"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
