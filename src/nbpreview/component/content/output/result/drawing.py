@@ -18,7 +18,7 @@ from rich import ansi, measure, style, text
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
-from term_img import image as term_image
+from term_image import image as term_image
 
 from nbpreview.data import Data
 from nbpreview.option_values import ImageDrawingEnum

@@ -41,7 +41,7 @@ yarl = "^1.6.3"
 markdown-it-py = ">=1.1,<3.0"
 mdit-py-plugins = "^0.3.0"
 click-help-colors = "^0.9.1"
-term-image = ">=0.1.1,<0.3.0"
+term-image = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -115,7 +115,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_img,validators"
+module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_image,validators"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
