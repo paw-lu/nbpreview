@@ -1761,7 +1761,7 @@ widechars = ["wcwidth"]
 
 [[package]]
 name = "term-image"
-version = "0.3.0"
+version = "0.3.1"
 description = "Display images in the terminal"
 category = "main"
 optional = false
@@ -3062,8 +3062,8 @@ tabulate = [
     {file = "tabulate-0.8.9.tar.gz", hash = "sha256:eb1d13f25760052e8931f2ef80aaf6045a6cceb47514db8beab24cded16f13a7"},
 ]
 term-image = [
-    {file = "term-image-0.3.0.tar.gz", hash = "sha256:8895e47d71d21c8102a6069510be7e844a1cf809f543db6209b8648c790216ca"},
-    {file = "term_image-0.3.0-py3-none-any.whl", hash = "sha256:4732441a2a1c9af5224079fa63393af64534bb4ebad7231704b75441ddfc190e"},
+    {file = "term-image-0.3.1.tar.gz", hash = "sha256:9481bdc93e90cf1d5ea922e5d7f21510783b0e3757d24dd6298ef39c2b35cf1a"},
+    {file = "term_image-0.3.1-py3-none-any.whl", hash = "sha256:7f7786d8198dfc20ce3d49ff404ea5b7af6abecf06a385ac0fcc3ae87b7bbee1"},
 ]
 tokenize-rt = [
     {file = "tokenize_rt-4.2.1-py2.py3-none-any.whl", hash = "sha256:08a27fa032a81cf45e8858d0ac706004fcd523e8463415ddf1442be38e204ea8"},
