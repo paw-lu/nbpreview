@@ -1336,7 +1336,7 @@ python-versions = "*"
 
 [[package]]
 name = "pyupgrade"
-version = "2.32.0"
+version = "2.32.1"
 description = "A tool to automatically upgrade syntax for newer versions."
 category = "dev"
 optional = false
@@ -1976,7 +1976,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "ca44cf53c034080742398e932c7b3aea2a61b17a0533bfaac4c4606e5ca36e2b"
+content-hash = "5bd556191dea59830a37222e1a3bc577aa9f1e73e576db6eb71c57e2231445e0"
 
 [metadata.files]
 alabaster = [
@@ -2819,8 +2819,8 @@ pytz = [
     {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
 ]
 pyupgrade = [
-    {file = "pyupgrade-2.32.0-py2.py3-none-any.whl", hash = "sha256:f45d4afb6ccdf7b0cea757958d0a11306324052668d9ff99d2bcb06bda46c00d"},
-    {file = "pyupgrade-2.32.0.tar.gz", hash = "sha256:6878116d364b72f0c0011dd62dfe96425041a5f753da298b6eacde0f9fd9c004"},
+    {file = "pyupgrade-2.32.1-py2.py3-none-any.whl", hash = "sha256:d874f34870abadd7536c89678f9811076d5df93c13620f90a125355a2d31fa91"},
+    {file = "pyupgrade-2.32.1.tar.gz", hash = "sha256:11e2c3e4e2e53a61b2d8852ed154ea5683887b6ac42561622ca8d89c94fd951a"},
 ]
 pywin32 = [
     {file = "pywin32-303-cp310-cp310-win32.whl", hash = "sha256:6fed4af057039f309263fd3285d7b8042d41507343cd5fa781d98fcc5b90e8bb"},
