@@ -52,7 +52,7 @@ typeguard = "^2.13.3"
 xdoctest = { extras = ["colors"], version = "^1.0.0" }
 sphinx = "^4.5.0"
 sphinx-autobuild = ">=2021.3.14"
-pre-commit = "^2.18.1"
+pre-commit = "^2.19.0"
 flake8 = "^4.0.1"
 black = { extras = ["jupyter"], version = ">=21.12b0" }
 flake8-bandit = "^3.0.0"
