@@ -142,7 +142,9 @@ def write_notebook(
             str: The path of the notebook file.
         """
         notebook_node = make_notebook(cell)
-        notebook_path = temp_file(nbformat.writes(notebook_node))
+        notebook_path = temp_file(
+            nbformat.writes(notebook_node)  # type: ignore[no-untyped-call]
+        )
         return notebook_path
 
     return _write_notebook
@@ -987,7 +989,7 @@ def test_stdin_cwd_path(
         "source": "![Test image](image.png)",
     }
     notebook_nodes = make_notebook(markdown_cell)
-    notebook_stdin = nbformat.writes(notebook_nodes)
+    notebook_stdin = nbformat.writes(notebook_nodes)  # type: ignore[no-untyped-call]
     current_working_directory = pathlib.Path.cwd()
     result = runner.invoke(
         __main__.typer_click_object,

@@ -70,8 +70,10 @@ def create_notebook(
     }
     if override is not None:
         _override_notebook(notebook_dict, override=override)
-    notebook_node = nbformat.from_dict(notebook_dict)
-    nbformat.validate(notebook_node)
+    notebook_node: NotebookNode = nbformat.from_dict(  # type: ignore[no-untyped-call]
+        notebook_dict
+    )
+    nbformat.validate(notebook_node)  # type: ignore[no-untyped-call]
     return notebook_node
 
 

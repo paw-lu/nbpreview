@@ -247,7 +247,9 @@ def test_julia_syntax() -> None:
         "nbformat": 4,
         "nbformat_minor": 5,
     }
-    julia_notebook_node = nbformat.from_dict(julia_notebook)
+    julia_notebook_node = nbformat.from_dict(  # type: ignore[no-untyped-call]
+        julia_notebook
+    )
     output_file = io.StringIO()
     con = console.Console(
         file=output_file,
@@ -5772,7 +5774,7 @@ def test_render_svg_link(
 
 def test_unknown_language() -> None:
     """It sets the language to Python when it cannot be parsed."""
-    notebook_node = nbformat.from_dict(
+    notebook_node = nbformat.from_dict(  # type: ignore[no-untyped-call]
         {
             "cells": [],
             "metadata": {},

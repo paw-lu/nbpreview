@@ -105,7 +105,10 @@ def make_notebook(
             NotebookNode: The NotebookNode containing the inputted cell.
         """
         notebook = make_notebook_dict(cell)
-        return nbformat.from_dict(notebook)
+        notebook_node: NotebookNode = nbformat.from_dict(
+            notebook
+        )  # type: ignore[no-untyped-call]
+        return notebook_node
 
     return _make_notebook
 

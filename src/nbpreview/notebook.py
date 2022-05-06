@@ -264,7 +264,9 @@ class Notebook:
 
     def __post_init__(self, relative_dir: Optional[Path]) -> None:
         """Constructor."""
-        self.cells = self.notebook_node.get("cells", nbformat.from_dict([]))
+        self.cells = self.notebook_node.get(
+            "cells", nbformat.from_dict([])  # type: ignore[no-untyped-call]
+        )
         self.relative_dir = (
             pathlib.Path().resolve() if relative_dir is None else relative_dir
         )
@@ -344,8 +346,10 @@ class Notebook:
                 notebook.
         """
         try:
-            notebook_node = nbformat.read(file, as_version=4)
-            nbformat.validate(notebook_node)
+            notebook_node = nbformat.read(  # type: ignore[no-untyped-call]
+                file, as_version=4
+            )
+            nbformat.validate(notebook_node)  # type: ignore[no-untyped-call]
         except (
             AttributeError,
             validator.NotebookValidationError,
