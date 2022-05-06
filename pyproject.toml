@@ -119,10 +119,6 @@ module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygme
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "nbpreview"
-disallow_untyped_calls = false
-
-[[tool.mypy.overrides]]
 module = "mdit_py_plugins.*"
 no_implicit_reexport = false
 
