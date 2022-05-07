@@ -37,15 +37,18 @@ ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
 class Drawing(abc.ABC):
     """A representation of an image output."""
 
-    def __init__(self, image: bytes, fallback_text: str) -> None:
+    def __init__(
+        self, image: Optional[bytes] = None, fallback_text: str = "Image"
+    ) -> None:
         """Constructor."""
         self.image = image
         self.fallback_text = fallback_text
 
     def __repr__(self) -> str:
         """String representation of class."""
+        image_repr = _get_image_repr(self.image)
         return (
-            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f"{self.__class__.__qualname__}(image={image_repr},"
             f" fallback_text={self.fallback_text})"
         )
 
@@ -66,16 +69,36 @@ def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
     """Extract an image in bytes from data."""
     encoded_image = data[image_type]
     decoded_image: Union[bytes, None]
-    try:
-        decoded_image = base64.b64decode(encoded_image)
-    except binascii.Error:
+    if isinstance(encoded_image, str):
+        try:
+            decoded_image = base64.b64decode(encoded_image)
+        except binascii.Error:
+            decoded_image = None
+    else:
         decoded_image = None
     return decoded_image
 
 
 def _get_fallback_text(data: Data) -> str:
     """Get a fallback text from data."""
-    return data.get("text/plain", "Image")
+    text_plain_text = data.get("text/plain")
+    fallback_text = text_plain_text if isinstance(text_plain_text, str) else "Image"
+    return fallback_text
+
+
+def _get_decoded_image(data: Data, image_type: str) -> Union[bytes, None]:
+    """From the data, extract the image and decode it."""
+    encoded_image = data[image_type]
+    decoded_image = (
+        base64.b64decode(encoded_image) if isinstance(encoded_image, str) else None
+    )
+    return decoded_image
+
+
+def _get_image_repr(image: Union[bytes, None]) -> str:
+    """Make a representation of an image attribute."""
+    image_repr = f"{image.decode():.10}" if isinstance(image, bytes) else "None"
+    return image_repr
 
 
 def choose_drawing(
@@ -273,9 +296,8 @@ class BlockDrawing(Drawing):
     @classmethod
     def from_data(cls, data: Data, image_type: str) -> "BlockDrawing":
         """Create a drawing from notebook data."""
-        encoded_image = data[image_type]
-        fallback_text = data.get("text/plain", "Image")
-        decoded_image = base64.b64decode(encoded_image)
+        fallback_text = _get_fallback_text(data)
+        decoded_image = _get_decoded_image(data, image_type=image_type)
         return cls(decoded_image, fallback_text=fallback_text)
 
     def __rich_measure__(
@@ -364,10 +386,10 @@ class CharacterDrawing(Drawing):
 
     def __init__(
         self,
-        image: bytes,
-        fallback_text: str,
+        image: Union[bytes, None],
         color: bool,
         negative_space: bool,
+        fallback_text: str = "Image",
         characters: Optional[str] = None,
     ) -> None:
         """Constructor."""
@@ -378,8 +400,9 @@ class CharacterDrawing(Drawing):
 
     def __repr__(self) -> str:
         """String representation of CharacterDrawing."""
+        image_repr = f"{self.image.decode():.10}" if self.image is not None else "None"
         return (
-            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f"{self.__class__.__qualname__}(image={image_repr},"
             f" fallback_text={self.fallback_text},"
             f" color={self.color},"
             f" negative_space={self.negative_space},"
@@ -396,9 +419,8 @@ class CharacterDrawing(Drawing):
         characters: Optional[str] = None,
     ) -> "CharacterDrawing":
         """Create a drawing from notebook data."""
-        encoded_image = data[image_type]
-        fallback_text = data.get("text/plain", "Image")
-        decoded_image = base64.b64decode(encoded_image)
+        fallback_text = _get_fallback_text(data)
+        decoded_image = _get_decoded_image(data, image_type=image_type)
         return cls(
             decoded_image,
             fallback_text=fallback_text,
@@ -481,7 +503,7 @@ class BrailleDrawing(Drawing):
 
     def __init__(
         self,
-        image: bytes,
+        image: Union[bytes, None],
         fallback_text: str,
         color: bool,
     ) -> None:
@@ -491,8 +513,9 @@ class BrailleDrawing(Drawing):
 
     def __repr__(self) -> str:
         """String representation of BrailleDrawing."""
+        image_repr = _get_image_repr(self.image)
         return (
-            f"{self.__class__.__qualname__}(image={self.image.decode():.10},"
+            f"{self.__class__.__qualname__}(image={image_repr},"
             f" fallback_text={self.fallback_text},"
             f" color={self.color})"
         )
@@ -505,9 +528,8 @@ class BrailleDrawing(Drawing):
         color: bool,
     ) -> "BrailleDrawing":
         """Create a braille drawing from notebook data."""
-        encoded_image = data[image_type]
-        fallback_text = data.get("text/plain", "Image")
-        decoded_image = base64.b64decode(encoded_image)
+        fallback_text = _get_fallback_text(data)
+        decoded_image = _get_decoded_image(data, image_type=image_type)
         return cls(
             decoded_image,
             fallback_text=fallback_text,

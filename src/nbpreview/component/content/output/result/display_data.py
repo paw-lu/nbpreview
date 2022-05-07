@@ -46,8 +46,18 @@ class PlainDisplay(DisplayData):
     @classmethod
     def from_data(cls, data: Data) -> "PlainDisplay":
         """Create a plain display data from notebook data."""
-        content = data[cls.data_type]
+        content = _get_content(data, data_type=cls.data_type)
         return cls(content)
+
+
+def _get_content(data: Data, data_type: str) -> str:
+    """Extract the content form the data."""
+    content = (
+        data_type_content
+        if isinstance((data_type_content := data[data_type]), str)
+        else ""
+    )
+    return content
 
 
 @dataclasses.dataclass
@@ -86,7 +96,7 @@ class HTMLDisplay(DisplayData):
         characters: Optional[str] = None,
     ) -> "HTMLDisplay":
         """Create an HTML display data from notebook data."""
-        content = data[cls.data_type]
+        content = _get_content(data, data_type=cls.data_type)
         return cls(
             content,
             theme=theme,
@@ -318,7 +328,11 @@ class DataFrameDisplay(DisplayData):
     @classmethod
     def from_data(cls, data: Data, unicode: bool, styled: bool) -> "DataFrameDisplay":
         """Create DataFrame display data from notebook data."""
-        content = data[cls.data_type]
+        content = (
+            data_content
+            if isinstance((data_content := data[cls.data_type]), str)
+            else ""
+        )
         return cls(content, unicode=unicode, styled=styled)
 
     def __rich__(self) -> HTMLDataFrameRender:
@@ -367,7 +381,7 @@ class MarkdownDisplay(DisplayData):
         characters: Optional[str] = None,
     ) -> "MarkdownDisplay":
         """Create Markdown display data from notebook data."""
-        content = data[cls.data_type]
+        content = _get_content(data, data_type=cls.data_type)
         return cls(
             content,
             theme=theme,
@@ -412,7 +426,7 @@ class LaTeXDisplay(DisplayData):
     @classmethod
     def from_data(cls, data: Data) -> "LaTeXDisplay":
         """Create LaTeX display data from notebook data."""
-        content = data[cls.data_type]
+        content = _get_content(data, data_type=cls.data_type)
         return cls(content)
 
     def __rich__(self) -> str:
@@ -471,7 +485,7 @@ class PDFDisplay(DisplayData):
         unicode: bool,
     ) -> "PDFDisplay":
         """Create PDF display data from notebook data."""
-        content = data[cls.data_type]
+        content = _get_content(data, data_type=cls.data_type)
         return cls(content, nerd_font=nerd_font, unicode=unicode)
 
 
@@ -479,8 +493,10 @@ def _has_custom_repr(data: Data) -> bool:
     """Rough logic to check if data has a custom representation."""
     repr_pattern = r"\<([^\s<>]|[^\S\n\v\f\r\u2028\u2029])+\>"
     has_custom_repr = (
-        plain_text := data.get("text/plain")
-    ) is not None and re.fullmatch(repr_pattern, plain_text, flags=re.UNICODE) is None
+        (plain_text := data.get("text/plain")) is not None
+        and isinstance(plain_text, str)
+        and re.fullmatch(repr_pattern, plain_text, flags=re.UNICODE) is None
+    )
     return has_custom_repr
 
 
@@ -512,8 +528,14 @@ def _choose_basic_renderer(
     display_data: DisplayData
     if (html_data := data.get("text/html")) is not None:
         if (
-            dataframe_display_type := DataFrameDisplay.dataframe_display_type(html_data)
-        ) is not None:
+            isinstance(html_data, str)
+            and (
+                dataframe_display_type := DataFrameDisplay.dataframe_display_type(
+                    html_data
+                )
+            )
+            is not None
+        ):
             styled = dataframe_display_type == DataFrameDisplayType.STYLED
             display_data = DataFrameDisplay.from_data(
                 data, unicode=unicode, styled=styled
