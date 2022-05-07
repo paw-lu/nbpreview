@@ -1,6 +1,6 @@
 """Render execution results from Jupyter Notebooks."""
 from pathlib import Path
-from typing import Dict, Iterator, Union
+from typing import Iterator, Union
 
 from nbformat import NotebookNode
 
@@ -29,7 +29,7 @@ def render_result(
     relative_dir: Path,
 ) -> Iterator[Result]:
     """Render executed result outputs."""
-    data: Dict[str, Union[str, NotebookNode]] = output.get("data", {})
+    data = output.get("data", {})
     link_result = link.render_link(
         data,
         unicode=unicode,
