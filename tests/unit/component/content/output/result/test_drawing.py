@@ -1,6 +1,7 @@
 """Test for nbpreview.component.content.output.result.drawing."""
 import base64
 
+import nbformat
 import PIL.Image
 import pytest
 from PIL.Image import Image
@@ -27,7 +28,7 @@ def test_drawing_repr() -> None:
 def test_get_invalid_image() -> None:
     """It returns non when an invalid image is passed to it."""
     image_type = "image"
-    data = {image_type: "sef"}
+    data: Data = {image_type: "sef"}
     output = drawing._get_image(data=data, image_type=image_type)
     expected_output = None
     assert output is expected_output
@@ -200,7 +201,7 @@ def test_braille_drawing_repr(image: Image) -> None:
 def image_data() -> Data:
     """Fixture that returns image data."""
     encoded_image = base64.b64encode(b"a").decode()
-    data = {"image": encoded_image, "text/plain": "fallback_text"}
+    data: Data = {"image": encoded_image, "text/plain": "fallback_text"}
     return data
 
 
@@ -255,3 +256,12 @@ def test_raises_value_error_on_bad_image_drawing() -> None:
             negative_space=True,
             image_drawing="bad_image_drawing",  # type: ignore[arg-type]
         )
+
+
+def test_get_image_not_str() -> None:
+    """It returns None when data is not a string."""
+    image_type = "image"
+    data: Data = {image_type: nbformat.NotebookNode()}  # type: ignore[no-untyped-call]
+    output = drawing._get_image(data, image_type=image_type)
+    expected_output = None
+    assert output is expected_output
