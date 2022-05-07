@@ -9,7 +9,9 @@ from nbpreview.component import row
 
 def test_render_unknown_output_type() -> None:
     """It does not render an unknown output type."""
-    notebook_outputs = [nbformat.from_dict({"output_type": "unknown"})]
+    notebook_outputs = [
+        nbformat.from_dict({"output_type": "unknown"})  # type: ignore[no-untyped-call]
+    ]
     rendered_output_row = row.render_output_row(
         notebook_outputs,
         plain=True,

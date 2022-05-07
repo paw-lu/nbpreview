@@ -1,11 +1,10 @@
 """Hyperlinks to results."""
-
-
 import base64
+import binascii
 import dataclasses
 import json
 import tempfile
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 import httpx
 import jinja2
@@ -247,7 +246,11 @@ class HTMLLink(FileLink):
         hide_hyperlink_hints: bool,
     ) -> "HTMLLink":
         """Construct an HTML link from notebook data."""
-        content = data.get("text/html", "")
+        content = (
+            text_html_data
+            if isinstance((text_html_data := data.get("text/html")), str)
+            else ""
+        )
         html_link = cls(
             content,
             nerd_font=nerd_font,
@@ -371,7 +374,7 @@ class ImageLink(FileLink):
     @classmethod
     def from_data(
         cls,
-        data: Dict[str, str],
+        data: Data,
         image_type: str,
         unicode: bool,
         hyperlinks: bool,
@@ -380,14 +383,21 @@ class ImageLink(FileLink):
         hide_hyperlink_hints: bool,
     ) -> "ImageLink":
         """Construct an image link from notebook data."""
-        content: Union[str, bytes]
+        content: Union[str, bytes, None]
         encoded_content = data[image_type]
         if image_type == "image/svg+xml":
             file_extension = "svg"
-            content = encoded_content
-        else:
+            content = encoded_content if isinstance(encoded_content, str) else None
+        elif isinstance(encoded_content, str):
             *_, file_extension = image_type.split("/")
-            content = base64.b64decode(encoded_content)
+            try:
+                content = base64.b64decode(encoded_content)
+            except binascii.Error:
+                content = None
+        else:
+            file_extension = "txt"
+            content = None
+
         image_link = cls(
             content,
             file_extension=file_extension,
