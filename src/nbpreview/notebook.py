@@ -267,7 +267,7 @@ class Notebook:
         self.cells = self.notebook_node.get(
             "cells", nbformat.from_dict([])  # type: ignore[no-untyped-call]
         )
-        self.relative_dir = (
+        self.resolved_relative_dir = (
             pathlib.Path().resolve() if relative_dir is None else relative_dir
         )
         try:
@@ -425,7 +425,7 @@ class Notebook:
             image_drawing=image_drawing,
             color=color,
             negative_space=self.negative_space,
-            relative_dir=self.relative_dir,
+            relative_dir=self.resolved_relative_dir,
             line_numbers=self.line_numbers,
             code_wrap=self.code_wrap,
         )

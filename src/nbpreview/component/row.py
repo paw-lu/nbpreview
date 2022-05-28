@@ -31,8 +31,8 @@ class Row:
 
     def __post_init__(self, execution: Optional[Execution]) -> None:
         """Initialize the execution indicator."""
-        self.execution: Union[Execution, str]
-        self.execution = execution_indicator.choose_execution(execution)
+        self.execution_indicator: Union[Execution, str]
+        self.execution_indicator = execution_indicator.choose_execution(execution)
 
     def to_table_row(self) -> TableRow:
         """Convert to row for table usage."""
@@ -40,7 +40,7 @@ class Row:
         if self.plain:
             table_row = (self.content,)
         else:
-            table_row = (self.execution, self.content)
+            table_row = (self.execution_indicator, self.content)
         return table_row
 
 
