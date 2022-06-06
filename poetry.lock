@@ -1881,7 +1881,7 @@ python-versions = "*"
 
 [[package]]
 name = "validators"
-version = "0.19.0"
+version = "0.20.0"
 description = "Python Data Validation for Humans™."
 category = "main"
 optional = false
@@ -1974,7 +1974,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "66b96c3caac2a39c4ab128bd654822fd1d6e095731674e27b680f3de4ca470c0"
+content-hash = "c416a5aad9b7c33628d1c3617b2f5bcd90240dcc57e5c4624ed07863078fe90e"
 
 [metadata.files]
 alabaster = [
@@ -3148,7 +3148,7 @@ urwid = [
     {file = "urwid-2.1.2.tar.gz", hash = "sha256:588bee9c1cb208d0906a9f73c613d2bd32c3ed3702012f51efe318a3f2127eae"},
 ]
 validators = [
-    {file = "validators-0.19.0.tar.gz", hash = "sha256:dec45f4381f042f1e705cfa74949505b77f1e27e8b05409096fee8152c839cbe"},
+    {file = "validators-0.20.0.tar.gz", hash = "sha256:24148ce4e64100a2d5e267233e23e7afeb55316b47d30faae7eb6e7292bc226a"},
 ]
 virtualenv = [
     {file = "virtualenv-20.14.0-py2.py3-none-any.whl", hash = "sha256:1e8588f35e8b42c6ec6841a13c5e88239de1e6e4e4cedfd3916b306dc826ec66"},
