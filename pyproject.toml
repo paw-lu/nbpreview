@@ -122,10 +122,6 @@ ignore_missing_imports = true
 module = "mdit_py_plugins.*"
 no_implicit_reexport = false
 
-# Might change, see https://github.com/python/mypy/issues/10198
-[tool.mypy-jinja2]
-no_implicit_reexport = false
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
