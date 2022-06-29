@@ -46,7 +46,7 @@ term-image = "^0.3.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 coverage = { extras = ["toml"], version = "^6.4" }
-safety = "^1.10.3"
+safety = "^2.0.0"
 mypy = "^0.961"
 typeguard = "^2.13.3"
 xdoctest = { extras = ["colors"], version = "^1.0.0" }
