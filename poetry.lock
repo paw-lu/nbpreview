@@ -1776,7 +1776,7 @@ widechars = ["wcwidth"]
 
 [[package]]
 name = "term-image"
-version = "0.3.1"
+version = "0.4.0"
 description = "Display images in the terminal"
 category = "main"
 optional = false
@@ -1991,7 +1991,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.0"
-content-hash = "af7a933faac387ae5bdd95d06c0f3db9a81d6c55846cc1a97742755ace0bdca3"
+content-hash = "704ee2197b452cd1bfa39730ae4aaf911604069029ef41712e470ec4118c5533"
 
 [metadata.files]
 alabaster = [
@@ -3083,8 +3083,8 @@ tabulate = [
     {file = "tabulate-0.8.9.tar.gz", hash = "sha256:eb1d13f25760052e8931f2ef80aaf6045a6cceb47514db8beab24cded16f13a7"},
 ]
 term-image = [
-    {file = "term-image-0.3.1.tar.gz", hash = "sha256:9481bdc93e90cf1d5ea922e5d7f21510783b0e3757d24dd6298ef39c2b35cf1a"},
-    {file = "term_image-0.3.1-py3-none-any.whl", hash = "sha256:7f7786d8198dfc20ce3d49ff404ea5b7af6abecf06a385ac0fcc3ae87b7bbee1"},
+    {file = "term-image-0.4.0.tar.gz", hash = "sha256:37f0b0d3e33561bd068dfe7b85869900f0d3ba701c57032b3d111a69d36fe265"},
+    {file = "term_image-0.4.0-py3-none-any.whl", hash = "sha256:95ccf6c6cd3fa9447beae963f35d4c0e35bc43b2dab0fe8e58237f8b8b7797c3"},
 ]
 tokenize-rt = [
     {file = "tokenize_rt-4.2.1-py2.py3-none-any.whl", hash = "sha256:08a27fa032a81cf45e8858d0ac706004fcd523e8463415ddf1442be38e204ea8"},
