@@ -71,7 +71,7 @@ def _group_tokens(
                 yield itertools.chain(
                     (token,),
                     itertools.takewhile(
-                        lambda token_: token_.type != close_tag, iterator
+                        lambda token_: token_.type != close_tag, iterator  # noqa: B023
                     ),
                 )
 
