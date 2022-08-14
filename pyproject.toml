@@ -24,7 +24,7 @@ Issues = "https://github.com/paw-lu/nbpreview/issues"
 [tool.poetry.dependencies]
 python = "^3.8.0"
 rich = ">=12.4.1"
-typer = ">=0.4.1"
+typer = ">=0.4.1,<0.6.0"
 nbformat = { extras = ["fast"], version = ">=5.2.0" }
 Pygments = ">=2.10.0"
 ipython = ">=7.27,<9.0"
