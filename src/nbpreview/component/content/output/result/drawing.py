@@ -263,7 +263,7 @@ def _render_block_drawing(
     rendered_unicode_drawing: Tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-        block_image = term_image.TermImage(pil_image)
+        block_image = term_image.AutoImage(pil_image)
         block_image.set_size(maxsize=(max_width, max_height))
         string_image = str(block_image)
         pil_image.close()
