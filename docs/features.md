@@ -320,7 +320,7 @@ file: _static/examples/html/markdown.html
 ## Images
 
 Thanks to [Picharsso]
-and {class}`term-image <term_img.image.TermImage>`,
+and {class}`term-image <term_img.image.BlockImage>`,
 nbpreview renders images.
 
 ### Drawing types
