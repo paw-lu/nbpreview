@@ -1,11 +1,13 @@
 """Notebook display data and execute result."""
+
 import collections
 import dataclasses
 import enum
 import json
 import re
+from collections.abc import Iterator
 from pathlib import Path
-from typing import ClassVar, Dict, Iterator, List, Optional, Union
+from typing import ClassVar, TypeAlias
 
 import html2text
 from lxml import html
@@ -32,7 +34,7 @@ class DisplayData:
     content: str
     data_type: ClassVar[str]
 
-    def __rich__(self) -> Union[ConsoleRenderable, str]:
+    def __rich__(self) -> ConsoleRenderable | str:
         """Render the display."""
         return self.content
 
@@ -75,7 +77,7 @@ class HTMLDisplay(DisplayData):
     files: bool
     hide_hyperlink_hints: bool
     relative_dir: Path
-    characters: Optional[str] = None
+    characters: str | None = None
     data_type: ClassVar[str] = "text/html"
 
     @classmethod
@@ -93,7 +95,7 @@ class HTMLDisplay(DisplayData):
         files: bool,
         hide_hyperlink_hints: bool,
         relative_dir: Path,
-        characters: Optional[str] = None,
+        characters: str | None = None,
     ) -> "HTMLDisplay":
         """Create an HTML display data from notebook data."""
         content = _get_content(data, data_type=cls.data_type)
@@ -133,7 +135,7 @@ class HTMLDisplay(DisplayData):
         return rendered_html
 
 
-def _render_table_element(column: HtmlElement, column_width: int) -> List[Text]:
+def _render_table_element(column: HtmlElement, column_width: int) -> list[Text]:
     """Render a DataFrame table element.
 
     Args:
@@ -162,9 +164,9 @@ class HTMLDataFrameRender:
     def __post_init__(self) -> None:
         """Constructor."""
         self.table = table.create_table(unicode=self.unicode)
-        self.column_widths: Union[List[int], None] = None
+        self.column_widths: list[int] | None = None
 
-    def _update_column_widths(self, row: List[Text]) -> None:
+    def _update_column_widths(self, row: list[Text]) -> None:
         """Update the column widths with the current row."""
         row_widths = [text.cell_len for text in row]
         if self.column_widths is None:
@@ -173,15 +175,14 @@ class HTMLDataFrameRender:
             self.column_widths = [
                 max(current_column_width, row_column_width)
                 for current_column_width, row_column_width in zip(
-                    self.column_widths, row_widths
+                    self.column_widths, row_widths, strict=False
                 )
             ]
 
-    def add_headers(self, column_rows: List[HtmlElement]) -> None:
+    def add_headers(self, column_rows: list[HtmlElement]) -> None:
         """Add headers to table."""
         n_column_rows = len(column_rows)
         for i, column_row in enumerate(column_rows):
-
             table_row = []
             for column in column_row.xpath("th|td"):
                 attributes = column.attrib
@@ -198,13 +199,12 @@ class HTMLDataFrameRender:
             self._update_column_widths(table_row)
             self.table.add_row(*table_row, end_section=end_section)
 
-    def add_data(self, data_rows: List[HtmlElement]) -> None:
+    def add_data(self, data_rows: list[HtmlElement]) -> None:
         """Add data rows to table."""
-        previous_row_spans: Dict[int, int] = {}
+        previous_row_spans: dict[int, int] = {}
         for row in data_rows:
-
             table_row = []
-            current_row_spans: Dict[int, int] = collections.defaultdict(int)
+            current_row_spans: dict[int, int] = collections.defaultdict(int)
             for i, column in enumerate(row.xpath("th|td")):
                 attributes = column.attrib
                 column_width = int(attributes.get("colspan", 1))
@@ -212,14 +212,14 @@ class HTMLDataFrameRender:
                 table_element = _render_table_element(column, column_width=column_width)
                 table_row.extend(table_element)
 
-                if 1 < row_span:
+                if row_span > 1:
                     current_row_spans[i] += row_span
 
             for column, row_span in previous_row_spans.copy().items():
                 table_row.insert(column, text.Text(""))
                 remaining_span = row_span - 1
 
-                if 1 < remaining_span:
+                if remaining_span > 1:
                     previous_row_spans[column] = remaining_span
                 else:
                     previous_row_spans.pop(column, None)
@@ -242,7 +242,7 @@ class HTMLDataFrameRender:
         """Render the DataFrame table."""
         if self.column_widths is not None:
             for table_column, column_width in zip(
-                self.table.columns, self.column_widths
+                self.table.columns, self.column_widths, strict=False
             ):
                 table_column.min_width = min(column_width, self.min_width)
         yield self.table
@@ -299,7 +299,7 @@ class DataFrameDisplay(DisplayData):
     data_type: ClassVar[str] = "text/html"
 
     @staticmethod
-    def dataframe_display_type(content: str) -> Union[DataFrameDisplayType, None]:
+    def dataframe_display_type(content: str) -> DataFrameDisplayType | None:
         """Determine the type of DataFrame output."""
         html_element = html.fromstring(content)
 
@@ -360,7 +360,7 @@ class MarkdownDisplay(DisplayData):
     files: bool
     hide_hyperlink_hints: bool
     relative_dir: Path
-    characters: Optional[str] = None
+    characters: str | None = None
     data_type: ClassVar[str] = "text/markdown"
 
     @classmethod
@@ -378,7 +378,7 @@ class MarkdownDisplay(DisplayData):
         files: bool,
         hide_hyperlink_hints: bool,
         relative_dir: Path,
-        characters: Optional[str] = None,
+        characters: str | None = None,
     ) -> "MarkdownDisplay":
         """Create Markdown display data from notebook data."""
         content = _get_content(data, data_type=cls.data_type)
@@ -467,7 +467,7 @@ class PDFDisplay(DisplayData):
     unicode: bool
     data_type: ClassVar[str] = "application/pdf"
 
-    def __rich__(self) -> Union[str, Emoji]:
+    def __rich__(self) -> str | Emoji:
         """Render the PDF display data."""
         rendered_pdf = link.select_icon(
             "",
@@ -500,6 +500,17 @@ def _has_custom_repr(data: Data) -> bool:
     return has_custom_repr
 
 
+Renderer: TypeAlias = (
+    DataFrameDisplay
+    | HTMLDisplay
+    | MarkdownDisplay
+    | LaTeXDisplay
+    | JSONDisplay
+    | PDFDisplay
+    | PlainDisplay
+)
+
+
 def _choose_basic_renderer(
     data: Data,
     unicode: bool,
@@ -513,17 +524,8 @@ def _choose_basic_renderer(
     files: bool,
     hide_hyperlink_hints: bool,
     relative_dir: Path,
-    characters: Optional[str] = None,
-) -> Union[
-    DataFrameDisplay,
-    HTMLDisplay,
-    MarkdownDisplay,
-    LaTeXDisplay,
-    JSONDisplay,
-    PDFDisplay,
-    PlainDisplay,
-    None,
-]:
+    characters: str | None = None,
+) -> Renderer | None:
     """Render straightforward text data."""
     display_data: DisplayData
     if (html_data := data.get("text/html")) is not None:
@@ -575,20 +577,19 @@ def _choose_basic_renderer(
             relative_dir=relative_dir,
         )
         return display_data
-    elif unicode and "text/latex" in data:
+    if unicode and "text/latex" in data:
         display_data = LaTeXDisplay.from_data(data)
         return display_data
-    elif "application/json" in data:
+    if "application/json" in data:
         display_data = JSONDisplay.from_data(data, theme=theme)
         return display_data
-    elif (unicode or nerd_font) and "application/pdf" in data:
+    if (unicode or nerd_font) and "application/pdf" in data:
         display_data = PDFDisplay.from_data(data, nerd_font=nerd_font, unicode=unicode)
         return display_data
-    elif "text/plain" in data:
+    if "text/plain" in data:
         display_data = PlainDisplay.from_data(data)
         return display_data
-    else:
-        return None
+    return None
 
 
 def render_display_data(
@@ -604,10 +605,10 @@ def render_display_data(
     files: bool,
     hide_hyperlink_hints: bool,
     relative_dir: Path,
-    characters: Optional[str] = None,
-) -> Union[DisplayData, None, Drawing]:
+    characters: str | None = None,
+) -> DisplayData | None | Drawing:
     """Render the notebook display data."""
-    display_data: Union[DisplayData, None, Drawing]
+    display_data: DisplayData | None | Drawing
     if images:
         image_types = (
             "image/bmp",

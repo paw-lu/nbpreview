@@ -1,10 +1,12 @@
 """Command line interface parameters."""
+
 import os
 import pathlib
 import sys
 import textwrap
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, List, Literal, Optional, Type, Union
+from typing import Any, Literal, TypeAlias
 
 import typer
 from click import Context, Parameter
@@ -14,8 +16,10 @@ from rich import box, console, panel, syntax
 from nbpreview import __version__, option_values
 from nbpreview.option_values import ColorSystemEnum, ThemeEnum
 
+ColorSystem: TypeAlias = Literal["auto", "standard", "256", "truecolor", "windows"]
 
-def version_callback(value: Optional[bool] = None) -> None:
+
+def version_callback(value: bool | None = None) -> None:
     """Return the package version.
 
     Args:
@@ -46,7 +50,7 @@ def _translate_theme(theme_value: str) -> str:
     return pygments_theme
 
 
-def _list_themes_callback(value: Optional[bool] = None) -> None:
+def _list_themes_callback(value: bool | None = None) -> None:
     """Render a preview of all available themes."""
     example_code = textwrap.dedent(
         '''\
@@ -101,7 +105,7 @@ def _list_themes_callback(value: Optional[bool] = None) -> None:
         raise typer.Exit()
 
 
-def _stdin_path_callback(ctx: Context, file_value: List[Path]) -> List[Path]:
+def _stdin_path_callback(ctx: Context, file_value: list[Path]) -> list[Path]:
     """Return '-', which signifies stdin, if no files are provided."""
     cleaned_file = file_value if file_value else [pathlib.Path("-")]
     return cleaned_file
@@ -114,7 +118,7 @@ def _envvar_to_bool(envvar: str) -> bool:
     return envvar_bool
 
 
-def _detect_no_color() -> Union[bool, None]:
+def _detect_no_color() -> bool | None:
     """Detect if color should be used."""
     no_color_variables = (
         _envvar_to_bool("NO_COLOR"),
@@ -125,19 +129,17 @@ def _detect_no_color() -> Union[bool, None]:
     return force_no_color
 
 
-def _color_option_callback(color_value: Union[bool, None]) -> Union[bool, None]:
+def _color_option_callback(color_value: bool | None) -> bool | None:
     """Detect if any no color environmental variables are set."""
     color = False if color_value is None and _detect_no_color() else color_value
     return color
 
 
 def _color_system_callback(
-    color_system_value: Union[ColorSystemEnum, None]
-) -> Union[Literal["auto", "standard", "256", "truecolor", "windows"], None]:
+    color_system_value: ColorSystemEnum | None,
+) -> ColorSystem | None:
     """Translate the color system values to ones rich understands."""
-    color_system: Union[
-        Literal["auto", "standard", "256", "truecolor", "windows"], None
-    ]
+    color_system: ColorSystem | None
     if color_system_value is None:
         color_system = "auto"
 
@@ -145,40 +147,39 @@ def _color_system_callback(
         color_system = None
 
     else:
-        color_system = color_system_value.value
+        color_system = color_system_value.value  # type: ignore[assignment]
+
     return color_system
 
 
 def stdin_path_argument(
-    metavar: Optional[str] = None,
+    metavar: str | None = None,
     expose_value: bool = True,
     is_eager: bool = False,
-    envvar: Optional[Union[str, List[str]]] = None,
-    shell_complete: Optional[
-        Callable[
-            [Context, Parameter, str],
-            Union[List[CompletionItem], List[str]],
-        ]
-    ] = None,
-    autocompletion: Optional[Callable[..., Any]] = None,
-    show_default: Union[bool, str] = True,
+    envvar: str | list[str] | None = None,
+    shell_complete: Callable[
+        [Context, Parameter, str], list[CompletionItem] | list[str]
+    ]
+    | None = None,
+    autocompletion: Callable[..., Any] | None = None,
+    show_default: bool | str = True,
     show_choices: bool = True,
     show_envvar: bool = True,
-    help: Optional[str] = None,
+    help: str | None = None,
     hidden: bool = False,
     case_sensitive: bool = True,
-    min: Optional[Union[int, float]] = None,
-    max: Optional[Union[int, float]] = None,
+    min: float | None = None,
+    max: float | None = None,
     clamp: bool = False,
-    formats: Optional[List[str]] = None,
-    mode: Optional[str] = None,
-    encoding: Optional[str] = None,
-    errors: Optional[str] = "strict",
-    lazy: Optional[bool] = None,
+    formats: list[str] | None = None,
+    mode: str | None = None,
+    encoding: str | None = None,
+    errors: str | None = "strict",
+    lazy: bool | None = None,
     atomic: bool = False,
     writable: bool = False,
     resolve_path: bool = False,
-    path_type: Union[None, Type[str], Type[bytes]] = None,
+    path_type: None | type[str] | type[bytes] = None,
 ) -> Any:
     """A required file argument that also reads from stdin.
 
@@ -387,6 +388,6 @@ paging_option = typer.Option(
     None,
     "--paging / --no-paging",
     "-g / -f",
-    help="Whether to display the output in a pager." " By default autodetects.",
+    help="Whether to display the output in a pager. By default autodetects.",
     envvar="NBPREVIEW_PAGING",
 )

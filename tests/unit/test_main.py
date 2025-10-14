@@ -11,21 +11,9 @@ import platform
 import shlex
 import tempfile
 import textwrap
+from collections.abc import Callable, Generator, Iterable, Iterator, Mapping
 from pathlib import Path
-from typing import (
-    IO,
-    Any,
-    Callable,
-    Dict,
-    Generator,
-    Iterable,
-    Iterator,
-    List,
-    Mapping,
-    Optional,
-    Protocol,
-    Union,
-)
+from typing import IO, Any, Protocol
 from unittest.mock import Mock
 
 import nbformat
@@ -47,10 +35,10 @@ class RunCli(Protocol):
 
     def __call__(
         self,
-        cell: Optional[Dict[str, Any]] = None,
-        args: Optional[Union[str, Iterable[str]]] = None,
-        input: Optional[Union[bytes, str, IO[Any]]] = None,
-        env: Optional[Mapping[str, str]] = None,
+        cell: dict[str, Any] | None = None,
+        args: str | Iterable[str] | None = None,
+        input: bytes | str | IO[Any] | None = None,
+        env: Mapping[str, str] | None = None,
         catch_exceptions: bool = True,
         color: bool = False,
         **extra: Any,
@@ -90,14 +78,15 @@ def runner() -> CliRunner:
 
 
 @pytest.fixture
-def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
+def temp_file() -> Generator[Callable[[str | None], str], None, None]:
     """Fixture that returns function to create temporary file.
 
     This is used in place of NamedTemporaryFile as a contex manager
     because of the inability to read from an open file created on
     Windows.
 
-    Yields:
+    Yields
+    ------
         Generator[Callable[[Optional[str]], str]: Function to create
             tempfile that is delted at teardown.
     """
@@ -105,7 +94,7 @@ def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
     file_name = file.name
     tempfile_path = pathlib.Path(file_name)
 
-    def _named_temp_file(text: Optional[str] = None) -> str:
+    def _named_temp_file(text: str | None = None) -> str:
         """Create a temporary file.
 
         Args:
@@ -126,12 +115,12 @@ def temp_file() -> Generator[Callable[[Optional[str]], str], None, None]:
 
 @pytest.fixture
 def write_notebook(
-    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
-    temp_file: Callable[[Optional[str]], str],
-) -> Callable[[Union[Dict[str, Any], None]], str]:
+    make_notebook: Callable[[dict[str, Any] | None], NotebookNode],
+    temp_file: Callable[[str | None], str],
+) -> Callable[[dict[str, Any] | None], str]:
     """Fixture for generating notebook files."""
 
-    def _write_notebook(cell: Union[Dict[str, Any], None]) -> str:
+    def _write_notebook(cell: dict[str, Any] | None) -> str:
         """Writes a notebook file.
 
         Args:
@@ -153,15 +142,15 @@ def write_notebook(
 @pytest.fixture
 def run_cli(
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
 ) -> RunCli:
     """Fixture for running the cli against a notebook file."""
 
     def _run_cli(
-        cell: Optional[Dict[str, Any]] = None,
-        args: Optional[Union[str, Iterable[str]]] = None,
-        input: Optional[Union[bytes, str, IO[Any]]] = None,
-        env: Optional[Mapping[str, str]] = None,
+        cell: dict[str, Any] | None = None,
+        args: str | Iterable[str] | None = None,
+        input: bytes | str | IO[Any] | None = None,
+        env: Mapping[str, str] | None = None,
         catch_exceptions: bool = True,
         color: bool = False,
         **extra: Any,
@@ -214,15 +203,13 @@ def run_cli(
 @pytest.fixture
 def mock_stdin_tty(mocker: MockerFixture) -> Iterator[Mock]:
     """Fixture yielding mock stdin acting like a TTY."""
-    stdin_mock = mocker.patch("nbpreview.__main__.stdin.isatty", return_value=True)
-    yield stdin_mock
+    return mocker.patch("nbpreview.__main__.stdin.isatty", return_value=True)  # type: ignore[no-any-return]
 
 
 @pytest.fixture
 def mock_stdout_tty(mocker: MockerFixture) -> Iterator[Mock]:
     """Fixture yielding mock stdout acting like a TTY."""
-    stdout_mock = mocker.patch("nbpreview.__main__.stdout.isatty", return_value=True)
-    yield stdout_mock
+    return mocker.patch("nbpreview.__main__.stdout.isatty", return_value=True)  # type: ignore[no-any-return]
 
 
 @pytest.fixture
@@ -238,12 +225,12 @@ def cli_arg(
     """Return function that applies arguments to cli."""
 
     def _cli_arg(
-        *args: Union[str, None],
+        *args: str | None,
         truecolor: bool = True,
-        paging: Union[bool, None] = False,
+        paging: bool | None = False,
         material_theme: bool = True,
         images: bool = True,
-        **kwargs: Union[str, None],
+        **kwargs: str | None,
     ) -> str:
         """Apply given arguments to cli.
 
@@ -301,12 +288,12 @@ def test_cli(
     """Return fixture that tests expected argument output."""
 
     def _test_cli(
-        *args: Union[str, None],
+        *args: str | None,
         truecolor: bool = True,
-        paging: Union[bool, None] = False,
+        paging: bool | None = False,
         material_theme: bool = True,
         images: bool = True,
-        **kwargs: Union[str, None],
+        **kwargs: str | None,
     ) -> None:
         """Tests expected argument output.
 
@@ -368,7 +355,7 @@ def test_version(runner: CliRunner, option: str) -> None:
 
 
 def test_exit_invalid_file_status(
-    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
+    runner: CliRunner, temp_file: Callable[[str | None], str]
 ) -> None:
     """It exits with a status code of 2 when fed an invalid file."""
     invalid_path = temp_file(None)
@@ -378,7 +365,7 @@ def test_exit_invalid_file_status(
 
 def test_exit_invalid_file_output(
     runner: CliRunner,
-    temp_file: Callable[[Optional[str]], str],
+    temp_file: Callable[[str | None], str],
 ) -> None:
     """It outputs a message when fed an invalid file."""
     invalid_path = temp_file(None)
@@ -474,10 +461,10 @@ def test_render_markdown(run_cli: RunCli) -> None:
     (("--plain", None), ("-p", None), (None, {"NBPREVIEW_PLAIN": "TRUE"})),
 )
 def test_force_plain(
-    arg: Optional[str],
-    env: Optional[Mapping[str, str]],
+    arg: str | None,
+    env: Mapping[str, str] | None,
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
 ) -> None:
     """It renders in plain format when flag or env is specified."""
     code_cell = {
@@ -503,8 +490,8 @@ def test_force_plain(
 
 def test_raise_no_source(
     runner: CliRunner,
-    temp_file: Callable[[Optional[str]], str],
-    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+    temp_file: Callable[[str | None], str],
+    make_notebook_dict: Callable[[dict[str, Any] | None], dict[str, Any]],
 ) -> None:
     """It returns an error message if there is no source."""
     no_source_cell = {
@@ -526,8 +513,8 @@ def test_raise_no_source(
 
 def test_raise_no_output(
     runner: CliRunner,
-    temp_file: Callable[[Optional[str]], str],
-    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]],
+    temp_file: Callable[[str | None], str],
+    make_notebook_dict: Callable[[dict[str, Any] | None], dict[str, Any]],
 ) -> None:
     """It returns an error message if no output in a code cell."""
     no_source_cell = {"cell_type": "code", "source": ["x = 1\n"]}
@@ -551,11 +538,10 @@ def mock_pygment_styles(mocker: MockerFixture) -> Iterator[Mock]:
     Control the styles outputted here so that test does not break every
     time pygments adds or removes a style
     """
-    mock = mocker.patch(
+    return mocker.patch(  # type: ignore[no-any-return]
         "nbpreview.option_values.styles.get_all_styles",
         return_value=(style for style in ("material", "monokai", "zenburn")),
     )
-    yield mock
 
 
 @pytest.fixture
@@ -570,8 +556,7 @@ def mock_terminal(mocker: MockerFixture) -> Iterator[Mock]:
         legacy_windows=False,
         force_jupyter=False,
     )
-    mock = mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)
-    yield mock
+    return mocker.patch("nbpreview.__main__.console.Console", new=terminal_console)  # type: ignore[no-any-return]
 
 
 def test_default_color_system_auto(
@@ -618,7 +603,7 @@ def test_list_themes_no_terminal(
     )
     output = result.output
     expected_output = (
-        "material\nmonokai\nzenburn\nlight / ansi_li" "ght\ndark / ansi_dark\n"
+        "material\nmonokai\nzenburn\nlight / ansi_light\ndark / ansi_dark\n"
     )
     assert output == expected_output
 
@@ -638,13 +623,13 @@ def test_render_notebook_file(test_cli: Callable[..., None]) -> None:
     ),
 )
 def test_change_theme_notebook_file(
-    option_name: Union[str, None],
-    theme: Union[str, None],
-    env: Union[str, None],
+    option_name: str | None,
+    theme: str | None,
+    env: str | None,
     test_cli: Callable[..., None],
 ) -> None:
     """It changes the theme of the notebook."""
-    args: List[Union[str, None]]
+    args: list[str | None]
     args = (
         [option_name, theme]
         if theme is not None and option_name is not None
@@ -657,7 +642,7 @@ def test_change_theme_notebook_file(
     "option_name, env", (("--hide-output", None), ("-h", None), (None, "1"))
 )
 def test_hide_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It hides the output of a notebook file."""
     test_cli(option_name, nbpreview_hide_output=env)
@@ -667,7 +652,7 @@ def test_hide_output_notebook_file(
     "option_name, env", (("--plain", None), ("-p", None), (None, "1"))
 )
 def test_plain_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook in a plain format."""
     test_cli(option_name, nbpreview_plain=env)
@@ -684,7 +669,7 @@ def test_plain_output_notebook_file(
     ),
 )
 def test_unicode_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook with and without unicode characters."""
     test_cli(option_name, nbpreview_unicode=env)
@@ -695,7 +680,7 @@ def test_unicode_output_notebook_file(
     (("--nerd-font", None), ("-n", None), (None, "1")),
 )
 def test_nerd_font_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook with nerd font characters."""
     test_cli(option_name, nbpreview_nerd_font=env)
@@ -706,7 +691,7 @@ def test_nerd_font_output_notebook_file(
     (("--no-files", None), ("-l", None), (None, "1")),
 )
 def test_files_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It does not write temporary files if options are specified."""
     test_cli(option_name, nbpreview_no_files=env)
@@ -717,7 +702,7 @@ def test_files_output_notebook_file(
     (("--positive-space", None), ("-s", None), (None, "1")),
 )
 def test_positive_space_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It draws images in positive space if options are specified."""
     test_cli(option_name, "--image-drawing=character", nbpreview_positive_space=env)
@@ -735,7 +720,7 @@ def test_positive_space_output_notebook_file(
     ),
 )
 def test_hyperlinks_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It includes or excludes hyperlinks depending on options."""
     test_cli(option_name, nbpreview_hyperlinks=env)
@@ -750,7 +735,7 @@ def test_hyperlinks_output_notebook_file(
     ),
 )
 def test_hyperlink_hints_output_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It does not render hints to click the hyperlinks."""
     test_cli(option_name, nbpreview_hide_hyperlink_hints=env)
@@ -769,7 +754,7 @@ def test_hyperlink_hints_output_notebook_file(
     ],
 )
 def test_image_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It does not draw images when specified."""
     test_cli(option_name, nbpreview_images=env, images=False)
@@ -790,9 +775,9 @@ def test_no_color_no_image(test_cli: Callable[..., None]) -> None:
     ),
 )
 def test_image_drawing_notebook_file(
-    option_name: Union[str, None],
-    drawing_type: Union[str, None],
-    env: Union[str, None],
+    option_name: str | None,
+    drawing_type: str | None,
+    env: str | None,
     test_cli: Callable[..., None],
 ) -> None:
     """It draws images only when option is set."""
@@ -832,9 +817,9 @@ def test_render_narrow_notebook(
     ),
 )
 def test_color_notebook_file(
-    option_name: Union[str, None],
-    env_name: Union[str, None],
-    env_value: Union[str, None],
+    option_name: str | None,
+    env_name: str | None,
+    env_value: str | None,
     test_cli: Callable[..., None],
 ) -> None:
     """It does not use color when specified."""
@@ -854,9 +839,9 @@ def test_color_notebook_file(
     ),
 )
 def test_color_system_notebook_file(
-    option_name: Union[str, None],
-    color_system: Union[str, None],
-    env_value: Union[str, None],
+    option_name: str | None,
+    color_system: str | None,
+    env_value: str | None,
     test_cli: Callable[..., None],
 ) -> None:
     """It uses different color systems depending on option value."""
@@ -873,7 +858,7 @@ def test_color_system_notebook_file(
     (("--line-numbers", None), ("-m", None), (None, "1")),
 )
 def test_line_numbers_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook file with line numbers."""
     test_cli(option_name, nbpreview_line_numbers=env)
@@ -884,7 +869,7 @@ def test_line_numbers_notebook_file(
     (("--code-wrap", None), ("-q", None), (None, "1")),
 )
 def test_code_wrap_notebook_file(
-    option_name: Union[str, None], env: Union[str, None], test_cli: Callable[..., None]
+    option_name: str | None, env: str | None, test_cli: Callable[..., None]
 ) -> None:
     """It renders a notebook file with line numbers."""
     test_cli(option_name, nbpreview_code_wrap=env)
@@ -892,7 +877,7 @@ def test_code_wrap_notebook_file(
 
 @pytest.mark.parametrize("paging", [True, None])
 def test_paging_notebook_stdout_file(
-    paging: Union[bool, None], test_cli: Callable[..., None]
+    paging: bool | None, test_cli: Callable[..., None]
 ) -> None:
     """It simply prints the text when not in a terminal."""
     test_cli("--color", paging=paging)
@@ -901,8 +886,7 @@ def test_paging_notebook_stdout_file(
 @pytest.fixture
 def echo_via_pager_mock(mocker: MockerFixture) -> Iterator[Mock]:
     """Return a mock for click.echo_via_pager."""
-    echo_via_pager_mock = mocker.patch("nbpreview.__main__.click.echo_via_pager")
-    yield echo_via_pager_mock
+    return mocker.patch("nbpreview.__main__.click.echo_via_pager")  # type: ignore[no-any-return]
 
 
 @pytest.mark.parametrize(
@@ -946,8 +930,8 @@ def test_color_passed_to_pager(
     cli_arg: Callable[..., str],
     echo_via_pager_mock: Mock,
     mock_terminal: Mock,
-    option_name: Union[str, None],
-    color: Union[bool, None],
+    option_name: str | None,
+    color: bool | None,
 ) -> None:
     """It passes the color arg value to the pager."""
     cli_arg(option_name, paging=True)
@@ -957,7 +941,7 @@ def test_color_passed_to_pager(
 
 @pytest.mark.parametrize("file_argument", [None, "-"])
 def test_render_stdin(
-    file_argument: Union[None, str],
+    file_argument: None | str,
     runner: CliRunner,
     notebook_path: Path,
     mock_tempfile_file: Mock,
@@ -977,7 +961,7 @@ def test_render_stdin(
 
 def test_stdin_cwd_path(
     runner: CliRunner,
-    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    make_notebook: Callable[[dict[str, Any] | None], NotebookNode],
     remove_link_ids: Callable[[str], str],
     mock_terminal: Mock,
 ) -> None:
@@ -1011,7 +995,7 @@ def test_stdin_cwd_path(
 
 def test_multiple_files(
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
     notebook_path: Path,
     mock_terminal: Mock,
 ) -> None:
@@ -1126,7 +1110,7 @@ def test_multiple_files_long_path() -> None:
 
 def test_file_and_stdin(
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
     notebook_path: Path,
     mock_terminal: Mock,
 ) -> None:
@@ -1231,7 +1215,7 @@ def test_file_and_stdin(
 
 def test_multiple_files_plain(
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
     mock_terminal: Mock,
 ) -> None:
     """It does not draw a border around files when in plain mode."""
@@ -1318,7 +1302,7 @@ def test_multiple_files_plain(
 
 
 def test_multiple_files_all_fail(
-    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
+    runner: CliRunner, temp_file: Callable[[str | None], str]
 ) -> None:
     """It exists with a status code of 2 when fed invalid files."""
     invalid_path = temp_file(None)
@@ -1327,7 +1311,7 @@ def test_multiple_files_all_fail(
 
 
 def test_multiple_files_all_fail_message(
-    runner: CliRunner, temp_file: Callable[[Optional[str]], str]
+    runner: CliRunner, temp_file: Callable[[str | None], str]
 ) -> None:
     """It exists with a status code of 2 when fed invalid files."""
     invalid_path = temp_file(None)
@@ -1344,7 +1328,7 @@ def test_multiple_files_all_fail_message(
 
 def test_multiple_files_some_fail(
     runner: CliRunner,
-    write_notebook: Callable[[Union[Dict[str, Any], None]], str],
+    write_notebook: Callable[[dict[str, Any] | None], str],
     notebook_path: Path,
     mock_terminal: Mock,
 ) -> None:

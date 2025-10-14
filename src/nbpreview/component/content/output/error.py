@@ -2,7 +2,7 @@
 
 
 import abc
-from typing import Iterator, List
+from collections.abc import Iterator
 
 from nbformat.notebooknode import NotebookNode
 from rich import ansi, measure
@@ -14,9 +14,9 @@ from rich.text import Text
 class Error(abc.ABC):
     """An error output."""
 
-    content: List[str]
+    content: list[str]
 
-    def __init__(self, content: List[str]) -> None:
+    def __init__(self, content: list[str]) -> None:
         """Constructor."""
         self.content = content
 
@@ -55,7 +55,7 @@ def render_error(output: NotebookNode) -> Iterator[Error]:
 class Traceback(Error):
     """A traceback output."""
 
-    def __init__(self, content: List[str]) -> None:
+    def __init__(self, content: list[str]) -> None:
         """Constructor."""
         super().__init__(content=content)
         decoder = ansi.AnsiDecoder()

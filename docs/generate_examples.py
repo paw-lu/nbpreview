@@ -6,8 +6,9 @@ import os
 import pathlib
 import re
 import typing
+from collections.abc import Iterator, Sequence
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Literal, Optional, Sequence, Tuple
+from typing import Any, Literal
 
 import jinja2
 import nbformat
@@ -23,7 +24,7 @@ from rich.text import Text
 from nbpreview import notebook
 
 
-def _override_notebook(notebook_dict: Dict[str, Any], override: Dict[str, Any]) -> None:
+def _override_notebook(notebook_dict: dict[str, Any], override: dict[str, Any]) -> None:
     """Override notebook cells with given override in place."""
     for key, value in override.items():
         if isinstance(value, dict):
@@ -33,7 +34,7 @@ def _override_notebook(notebook_dict: Dict[str, Any], override: Dict[str, Any]) 
 
 
 def create_notebook(
-    cells: List[Dict[str, Any]], override: Optional[Dict[str, Any]] = None
+    cells: list[dict[str, Any]], override: dict[str, Any] | None = None
 ) -> NotebookNode:
     """Create valid notebook dictionary around cells."""
     # "source" is stored as a list, but processed as one string
@@ -73,12 +74,12 @@ def create_notebook(
     notebook_node: NotebookNode = nbformat.from_dict(  # type: ignore[no-untyped-call]
         notebook_dict
     )
-    nbformat.validate(notebook_node)  # type: ignore[no-untyped-call]
+    nbformat.validate(notebook_node)
     return notebook_node
 
 
 def load_notebook_cells(
-    file_path: Path, override: Optional[Dict[str, Any]] = None
+    file_path: Path, override: dict[str, Any] | None = None
 ) -> NotebookNode:
     """Create a notebook from a file of cells."""
     notebook_cells = json.load(file_path.open())
@@ -86,7 +87,7 @@ def load_notebook_cells(
     return notebook_node
 
 
-def hex_to_rgb(hex: str, hsl: bool = False) -> Tuple[int, int, int]:
+def hex_to_rgb(hex: str, hsl: bool = False) -> tuple[int, int, int]:
     """Converts a HEX code into RGB or HSL.
 
     Taken from https://stackoverflow.com/a/62083599/7853533
@@ -113,7 +114,7 @@ def hex_to_rgb(hex: str, hsl: bool = False) -> Tuple[int, int, int]:
                 int(int(hex[i : i + 2], 16) / div) if div else int(hex[i : i + 2], 16)
                 for i in (1, 3, 5)
             )
-        rgb = typing.cast(Tuple[int, int, int], rgb)
+        rgb = typing.cast("tuple[int, int, int]", rgb)
         return rgb
     raise ValueError(f"{hex} is not a valid HEX code.")
 
@@ -215,12 +216,12 @@ class Example:
     """An example rendering of a notebook."""
 
     cells_filename: str
-    notebook_kwargs: Dict[str, Any]
+    notebook_kwargs: dict[str, Any]
     example_filename: str
     args: Sequence[str]
     light_theme: bool = False
-    override: Optional[Dict[str, Any]] = None
-    substitute_links: Optional[Dict[str, str]] = None
+    override: dict[str, Any] | None = None
+    substitute_links: dict[str, str] | None = None
 
     def __post_init__(self) -> None:
         """Post-initialization."""
@@ -249,7 +250,7 @@ def make_example_command(args: Sequence[str]) -> Text:
 
 def substitute_example_links(
     example_path: Path,
-    substitute_links: Dict[str, str],
+    substitute_links: dict[str, str],
 ) -> None:
     """Substitute links in example."""
     example_text = example_path.read_text()
@@ -259,7 +260,7 @@ def substitute_example_links(
         element = html.fromstring(example_text)
         xpath = "//a"
     elif file_type == "svg":
-        element = etree.fromstring(example_text)  # noqa: S320
+        element = etree.fromstring(example_text)
         xpath = "//svg:foreignObject//xhtml:a"
     else:
         raise ValueError("example_path bust be a HTML or SVG file.")
@@ -298,7 +299,7 @@ def save_example(
     file_type: Literal["html", "svg"],
     file_name: str,
     light_theme: bool = False,
-    substitute_links: Optional[Dict[str, str]] = None,
+    substitute_links: dict[str, str] | None = None,
 ) -> None:
     """Record the example and save to file."""
     example_path = (

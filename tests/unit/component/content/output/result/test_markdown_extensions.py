@@ -1,4 +1,5 @@
 """Test for nbpreview.component.content.output.result.markdown_extensions."""
+
 import pytest
 from markdown_it import token
 from pytest_mock import MockerFixture
@@ -15,11 +16,12 @@ def test_group_tokens_not_iterator() -> None:
             close_tag="close",
         )
     ]
+    grouped_tokens = markdown_extensions._group_tokens(
+        [1, 2, 3],  # type: ignore[arg-type]
+        token_groups=token_groups,
+    )
+
     with pytest.raises(markdown_extensions.NotIteratorError):
-        grouped_tokens = markdown_extensions._group_tokens(
-            [1, 2, 3],  # type: ignore[arg-type]
-            token_groups=token_groups,
-        )
         next(grouped_tokens)
 
 

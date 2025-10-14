@@ -6,17 +6,9 @@ import os
 import pathlib
 import re
 import textwrap
+from collections.abc import Callable, Generator
 from pathlib import Path
-from typing import (
-    Any,
-    Callable,
-    ContextManager,
-    Dict,
-    Generator,
-    Optional,
-    Protocol,
-    Union,
-)
+from typing import Any, ContextManager, Protocol
 from unittest.mock import Mock
 
 import httpx
@@ -37,21 +29,21 @@ class RichOutput(Protocol):
 
     def __call__(
         self,
-        cell: Union[Dict[str, Any], None],
+        cell: dict[str, Any] | None,
         plain: bool = False,
         theme: str = "material",
         no_wrap: bool = False,
-        unicode: Optional[bool] = None,
+        unicode: bool | None = None,
         hide_output: bool = False,
         nerd_font: bool = False,
         files: bool = True,
         negative_space: bool = True,
         hyperlinks: bool = True,
         hide_hyperlink_hints: bool = False,
-        images: Optional[bool] = None,
-        image_drawing: Optional[ImageDrawing] = None,
-        color: Optional[bool] = None,
-        relative_dir: Optional[Path] = None,
+        images: bool | None = None,
+        image_drawing: ImageDrawing | None = None,
+        color: bool | None = None,
+        relative_dir: Path | None = None,
         line_numbers: bool = False,
         code_wrap: bool = False,
     ) -> str:  # pragma: no cover
@@ -99,16 +91,16 @@ def parse_link_filepath() -> Callable[[str], Path]:
         if link_filepath_match is not None:
             link_filepath = link_filepath_match.group(1)
             return pathlib.Path(link_filepath)
-        else:  # pragma: no cover
-            raise LinkFilePathNotFoundError()
+        # pragma: no cover
+        raise LinkFilePathNotFoundError
 
     return _parse_link_filepath
 
 
 @pytest.fixture
 def rich_notebook_output(
-    rich_console: Callable[[Any, Union[bool, None]], str],
-    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    rich_console: Callable[[Any, bool | None], str],
+    make_notebook: Callable[[dict[str, Any] | None], NotebookNode],
 ) -> RichOutput:
     """Fixture returning a function that returns the rendered output.
 
@@ -123,21 +115,21 @@ def rich_notebook_output(
     """
 
     def _rich_notebook_output(
-        cell: Union[Dict[str, Any], None],
-        plain: Optional[bool] = None,
+        cell: dict[str, Any] | None,
+        plain: bool | None = None,
         theme: str = "material",
-        no_wrap: Optional[bool] = None,
-        unicode: Optional[bool] = None,
+        no_wrap: bool | None = None,
+        unicode: bool | None = None,
         hide_output: bool = False,
         nerd_font: bool = False,
         files: bool = True,
         negative_space: bool = True,
         hyperlinks: bool = True,
         hide_hyperlink_hints: bool = False,
-        images: Optional[bool] = None,
-        image_drawing: Optional[Union[ImageDrawing, None]] = None,
-        color: Optional[bool] = None,
-        relative_dir: Optional[Path] = None,
+        images: bool | None = None,
+        image_drawing: ImageDrawing | None = None,
+        color: bool | None = None,
+        relative_dir: Path | None = None,
         line_numbers: bool = False,
         code_wrap: bool = False,
     ) -> str:
@@ -168,7 +160,7 @@ def rich_notebook_output(
 
 
 def test_automatic_plain(
-    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode]
+    make_notebook: Callable[[dict[str, Any] | None], NotebookNode]
 ) -> None:
     """It automatically renders in plain format when not a terminal."""
     code_cell = {
@@ -4823,7 +4815,7 @@ def test_render_invalid_block_image(
 def test_render_height_constrained_block_image(
     mock_tempfile_file: Generator[Mock, None, None],
     remove_link_ids: Callable[[str], str],
-    make_notebook: Callable[[Optional[Dict[str, Any]]], NotebookNode],
+    make_notebook: Callable[[dict[str, Any] | None], NotebookNode],
     disable_capture: ContextManager[_PluggyPlugin],
     expected_output: str,
 ) -> None:
@@ -5989,7 +5981,7 @@ def test_code_wrap(rich_notebook_output: RichOutput) -> None:
 
 
 def test_html_encoded_image_link_text(
-    rich_console: Callable[[Any, Union[bool, None]], str],
+    rich_console: Callable[[Any, bool | None], str],
     expected_output: str,
     remove_link_ids: Callable[[str], str],
     mock_tempfile_file: Generator[Mock, None, None],

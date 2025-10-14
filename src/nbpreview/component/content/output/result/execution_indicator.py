@@ -1,6 +1,5 @@
 """Jupyter execution indicators."""
 import dataclasses
-from typing import Union
 
 from rich import padding, text
 from rich.padding import Padding
@@ -11,13 +10,13 @@ from rich.text import Text
 class Execution:
     """The execution count indicator."""
 
-    execution_count: Union[int, None]
+    execution_count: int | None
     top_pad: bool
-    execution_indicator: Union[Text, Padding] = dataclasses.field(init=False)
+    execution_indicator: Text | Padding = dataclasses.field(init=False)
 
     def __post_init__(self) -> None:
         """Initialize execution indicator."""
-        execution_indicator: Union[Text, Padding]
+        execution_indicator: Text | Padding
         if self.execution_count is None:
             execution_text = " "
         else:
@@ -29,11 +28,11 @@ class Execution:
 
         self.execution_indicator = execution_indicator
 
-    def __rich__(self) -> Union[Padding, Text]:
+    def __rich__(self) -> Padding | Text:
         """Render the execution indicator."""
         return self.execution_indicator
 
 
-def choose_execution(execution: Union[None, Execution]) -> Union[str, Execution]:
+def choose_execution(execution: None | Execution) -> str | Execution:
     """Select the execution indicator."""
     return execution if execution is not None else ""

@@ -8,9 +8,9 @@ import os
 import pathlib
 import re
 import textwrap
+from collections.abc import Iterable, Iterator
 from io import BytesIO
 from pathlib import Path
-from typing import Iterable, Iterator, Optional, Union
 from urllib import parse
 
 import httpx
@@ -166,7 +166,7 @@ class CustomListItem(markdown.ListItem):
             yield new_line
 
 
-def _get_url_content(url: str) -> Union[BytesIO, None]:
+def _get_url_content(url: str) -> BytesIO | None:
     """Return content from URL."""
     try:
         response = httpx.get(url)
@@ -209,8 +209,7 @@ def _remove_prefix(self: str, prefix: str, /) -> str:
     """
     if self.startswith(prefix):
         return self[len(prefix) :]
-    else:
-        return self[:]
+    return self[:]
 
 
 @dataclasses.dataclass
@@ -225,9 +224,9 @@ class MarkdownImageReference:
 
     def __post_init__(self) -> None:
         """Post constructor."""
-        self.content: Union[None, Path, BytesIO] = None
-        self.image_type: Union[str, None] = None
-        self.path: Union[Path, None] = None
+        self.content: None | Path | BytesIO = None
+        self.image_type: str | None = None
+        self.path: Path | None = None
         self.is_url: bool = False
         if not validators.url(self.destination):
             # destination comes in a url quoted format, which will turn
@@ -274,7 +273,7 @@ class MarkdownImageReference:
             self.content = _get_url_content(self.destination)
 
     @property
-    def extension(self) -> Union[str, None]:
+    def extension(self) -> str | None:
         """Return the extension of the image."""
         extension = (
             self.path.suffix.lstrip(".")
@@ -294,7 +293,7 @@ class CustomImageItem(markdown.ImageItem):
     images: bool = True
     image_drawing: ImageDrawing = "block"
     color: bool = True
-    characters: Optional[str] = None
+    characters: str | None = None
     files: bool = True
     hide_hyperlink_hints: bool = False
     negative_space: bool = True
@@ -302,7 +301,7 @@ class CustomImageItem(markdown.ImageItem):
 
     def __init__(self, destination: str, hyperlinks: bool) -> None:
         """Constructor."""
-        self.image_data: Union[None, bytes]
+        self.image_data: None | bytes
         self.markdown_image_reference = MarkdownImageReference(
             destination, relative_dir=self.relative_dir
         )
@@ -397,10 +396,10 @@ class MarkdownOverwrite(markdown.Markdown):
         self,
         markup: str,
         code_theme: str = "monokai",
-        justify: Optional[JustifyMethod] = None,
-        style: Union[str, Style] = "none",
+        justify: JustifyMethod | None = None,
+        style: str | Style = "none",
         hyperlinks: bool = True,
-        inline_code_lexer: Optional[str] = None,
+        inline_code_lexer: str | None = None,
         inline_code_theme: str = "dark",
         nerd_font: bool = False,
         unicode: bool = True,
@@ -408,10 +407,10 @@ class MarkdownOverwrite(markdown.Markdown):
         image_drawing: ImageDrawing = "block",
         color: bool = True,
         negative_space: bool = True,
-        characters: Optional[str] = None,
+        characters: str | None = None,
         files: bool = True,
         hide_hyperlink_hints: bool = False,
-        relative_dir: Optional[Path] = None,
+        relative_dir: Path | None = None,
     ) -> None:
         """Constructor."""
         relative_dir = relative_dir if relative_dir is not None else pathlib.Path()
@@ -457,7 +456,7 @@ class CustomMarkdown:
     image_drawing: ImageDrawing = "block"
     color: bool = True
     negative_space: bool = True
-    characters: Optional[str] = None
+    characters: str | None = None
     files: bool = True
     hide_hyperlink_hints: bool = False
 
@@ -516,8 +515,8 @@ def _splice_tables(
     files: bool,
     hide_hyperlink_hints: bool,
     relative_dir: Path,
-    characters: Optional[str] = None,
-) -> Iterator[Union[MarkdownOverwrite, RenderableType, Text]]:
+    characters: str | None = None,
+) -> Iterator[MarkdownOverwrite | RenderableType | Text]:
     """Mix in tables with traditional markdown parser."""
     markup_lines = markup.splitlines()
     last_end_point = 0

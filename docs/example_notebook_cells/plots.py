@@ -1,5 +1,5 @@
 """Create plots for babies model."""
-from typing import Optional, Sequence, Tuple
+from collections.abc import Sequence
 
 import arviz as az
 import matplotlib.pyplot as plt
@@ -13,8 +13,8 @@ def plot_length_dist(
     babies_idata: InferenceData,
     babies_data: DataFrame,
     month: int,
-    ax: Optional[Axes] = None,
-    color: Optional[str] = None,
+    ax: Axes | None = None,
+    color: str | None = None,
 ) -> Subplot:
     """Plot the length given an age in months."""
     if ax is None:
@@ -36,7 +36,7 @@ def make_length_comparison_plot(
     babies_idata: InferenceData,
     babies_data: DataFrame,
     months: Sequence[int],
-    ax: Optional[Axes] = None,
+    ax: Axes | None = None,
 ) -> Subplot:
     """Given a sequence of months, compare their distribution."""
     if ax is None:
@@ -56,7 +56,7 @@ def plot_length_hdi(
     babies_idata: InferenceData,
     hdi_prob: float = 0.95,
     color: str = "C0",
-    ax: Optional[Axes] = None,
+    ax: Axes | None = None,
     alpha: float = 1.0,
 ) -> Subplot:
     """Plot HDI intervals for baby length fit."""
@@ -77,7 +77,7 @@ def make_length_hdi_plot(
     babies_data: DataFrame,
     babies_idata: InferenceData,
     hdi_probs: Sequence[float],
-    ax: Optional[Axes] = None,
+    ax: Axes | None = None,
     alpha: float = 1.0,
 ) -> Subplot:
     """Plot HDI of baby length over age."""
@@ -105,7 +105,7 @@ def plot_dist_and_hdi(
     months: Sequence[int],
     hdi_probs: Sequence[float],
     alpha: float = 1.0,
-) -> Tuple[Subplot, Subplot]:
+) -> tuple[Subplot, Subplot]:
     """Plot selected distributions of babie's height along with HDI of trend."""
     fig, (left_ax, right_ax) = plt.subplots(
         figsize=(25, 5),

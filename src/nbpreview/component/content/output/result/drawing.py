@@ -7,8 +7,9 @@ import enum
 import functools
 import io
 import typing
+from collections.abc import Iterator
 from dataclasses import InitVar
-from typing import Iterator, Literal, Optional, Tuple, Union
+from typing import Literal, Union
 
 import picharsso
 import PIL.Image
@@ -27,8 +28,8 @@ from nbpreview.option_values import ImageDrawingEnum
 class Size(typing.NamedTuple):
     """The size of a rendered image."""
 
-    x: Union[float, None]
-    y: Union[float, None]
+    x: float | None
+    y: float | None
 
 
 ImageDrawing = Union[ImageDrawingEnum, Literal["block", "character", "braille"]]
@@ -38,7 +39,7 @@ class Drawing(abc.ABC):
     """A representation of an image output."""
 
     def __init__(
-        self, image: Optional[bytes] = None, fallback_text: str = "Image"
+        self, image: bytes | None = None, fallback_text: str = "Image"
     ) -> None:
         """Constructor."""
         self.image = image
@@ -65,10 +66,10 @@ class Drawing(abc.ABC):
         """Define the dimensions of the rendered drawing."""
 
 
-def _get_image(data: Data, image_type: str) -> Union[bytes, None]:
+def _get_image(data: Data, image_type: str) -> bytes | None:
     """Extract an image in bytes from data."""
     encoded_image = data[image_type]
-    decoded_image: Union[bytes, None]
+    decoded_image: bytes | None
     if isinstance(encoded_image, str):
         try:
             decoded_image = base64.b64decode(encoded_image)
@@ -86,7 +87,7 @@ def _get_fallback_text(data: Data) -> str:
     return fallback_text
 
 
-def _get_decoded_image(data: Data, image_type: str) -> Union[bytes, None]:
+def _get_decoded_image(data: Data, image_type: str) -> bytes | None:
     """From the data, extract the image and decode it."""
     encoded_image = data[image_type]
     decoded_image = (
@@ -95,21 +96,21 @@ def _get_decoded_image(data: Data, image_type: str) -> Union[bytes, None]:
     return decoded_image
 
 
-def _get_image_repr(image: Union[bytes, None]) -> str:
+def _get_image_repr(image: bytes | None) -> str:
     """Make a representation of an image attribute."""
     image_repr = f"{image.decode():.10}" if isinstance(image, bytes) else "None"
     return image_repr
 
 
 def choose_drawing(
-    image: Union[bytes, None],
+    image: bytes | None,
     fallback_text: str,
     image_type: str,
     image_drawing: ImageDrawing,
     color: bool,
     negative_space: bool,
-    characters: Optional[str] = None,
-) -> Union[Drawing, None]:
+    characters: str | None = None,
+) -> Drawing | None:
     """Choose which drawing to render an image with."""
     rendered_image: Drawing
     if image is not None and image_type != "image/svg+xml":
@@ -117,14 +118,14 @@ def choose_drawing(
             rendered_image = BlockDrawing(image=image, fallback_text=fallback_text)
             return rendered_image
 
-        elif image_drawing == "braille":
+        if image_drawing == "braille":
             rendered_image = BrailleDrawing(
                 image=image,
                 fallback_text=fallback_text,
                 color=color,
             )
             return rendered_image
-        elif image_drawing == "character":
+        if image_drawing == "character":
             rendered_image = CharacterDrawing(
                 image=image,
                 fallback_text=fallback_text,
@@ -133,11 +134,10 @@ def choose_drawing(
                 characters=characters,
             )
             return rendered_image
-        else:
-            raise ValueError(
-                f"{image_drawing} is an invalid image_drawing,"
-                " expected 'block', 'character', or 'braille'"
-            )
+        raise ValueError(
+            f"{image_drawing} is an invalid image_drawing,"
+            " expected 'block', 'character', or 'braille'"
+        )
     return None
 
 
@@ -147,8 +147,8 @@ def render_drawing(
     image_type: str,
     color: bool,
     negative_space: bool,
-    characters: Optional[str] = None,
-) -> Union[Drawing, None]:
+    characters: str | None = None,
+) -> Drawing | None:
     """Render a drawing of an image."""
     image = _get_image(data, image_type=image_type)
     fallback_text = _get_fallback_text(data)
@@ -177,8 +177,8 @@ class Bottleneck(enum.Enum):
 def _detect_image_bottleneck(
     image_width: int,
     image_height: int,
-    max_width: Union[int, None],
-    max_height: Union[int, None],
+    max_width: int | None,
+    max_height: int | None,
     scaling_factor: float = 2.125,
 ) -> Bottleneck:
     """Detect which dimension the image is bottlenecked on."""
@@ -209,8 +209,8 @@ class DrawingDimension:
     """The dimensions of a drawing."""
 
     image: InitVar[Image]
-    max_width: Optional[int] = None
-    max_height: Optional[int] = None
+    max_width: int | None = None
+    max_height: int | None = None
     scaling_factor: float = 2.125
 
     def __post_init__(self, image: Image) -> None:
@@ -258,9 +258,9 @@ def render_fallback_text(fallback_text: str) -> Text:
 @functools.lru_cache(maxsize=2**12)
 def _render_block_drawing(
     image: bytes, max_width: int, max_height: int, fallback_text: str
-) -> Tuple[Text, ...]:
+) -> tuple[Text, ...]:
     """Render a representation on an image with unicode characters."""
-    rendered_unicode_drawing: Tuple[Text, ...]
+    rendered_unicode_drawing: tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
         block_image = term_image.TermImage(pil_image)
@@ -319,8 +319,8 @@ class CharacterDimensions:
     """Dimensions for a character drawing."""
 
     bottleneck: Bottleneck
-    max_width: Union[int, None]
-    max_height: Union[int, None]
+    max_width: int | None
+    max_height: int | None
 
     def __post_init__(self) -> None:
         """Constructor."""
@@ -345,11 +345,11 @@ def _render_character_drawing(
     max_width: int,
     max_height: int,
     fallback_text: str,
-    characters: Optional[str] = None,
+    characters: str | None = None,
     negative_space: bool = True,
-) -> Tuple[Text, ...]:
+) -> tuple[Text, ...]:
     """Render a representation of an image with text characters."""
-    rendered_character_drawing: Tuple[Text, ...]
+    rendered_character_drawing: tuple[Text, ...]
     characters = characters if characters is not None else gradient.DEFAULT_CHARSET
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
@@ -386,11 +386,11 @@ class CharacterDrawing(Drawing):
 
     def __init__(
         self,
-        image: Union[bytes, None],
+        image: bytes | None,
         color: bool,
         negative_space: bool,
         fallback_text: str = "Image",
-        characters: Optional[str] = None,
+        characters: str | None = None,
     ) -> None:
         """Constructor."""
         super().__init__(image=image, fallback_text=fallback_text)
@@ -416,7 +416,7 @@ class CharacterDrawing(Drawing):
         image_type: str,
         color: bool,
         negative_space: bool,
-        characters: Optional[str] = None,
+        characters: str | None = None,
     ) -> "CharacterDrawing":
         """Create a drawing from notebook data."""
         fallback_text = _get_fallback_text(data)
@@ -468,9 +468,9 @@ def _render_braille_drawing(
     max_width: int,
     max_height: int,
     fallback_text: str,
-) -> Tuple[Text, ...]:
+) -> tuple[Text, ...]:
     """Render a representation of an image with braille characters."""
-    rendered_character_drawing: Tuple[Text, ...]
+    rendered_character_drawing: tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
         dimensions = DrawingDimension(
@@ -503,7 +503,7 @@ class BrailleDrawing(Drawing):
 
     def __init__(
         self,
-        image: Union[bytes, None],
+        image: bytes | None,
         fallback_text: str,
         color: bool,
     ) -> None:
