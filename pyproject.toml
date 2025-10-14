@@ -68,6 +68,7 @@ pre-commit = ">=4.3.0"
 pre-commit-hooks = ">=6.0.0"
 pytest = ">=8.4.2"
 pytest-mock = ">=3.15.1"
+pytest-snapshot = "^0.9.0"
 pyupgrade = ">=3.21.0"
 safety = ">=3.6.2"
 sphinx = ">=8.2.3"
@@ -81,9 +82,6 @@ sphinxext-opengraph = ">=0.13.0"
 tomli = ">=2.3.0"
 typeguard = ">=4.4.4"
 xdoctest = { extras = ["colors"], version = ">=1.3.0" }
-
-# dependencies-end
-pytest-snapshot = "^0.9.0"
 
 [tool.poetry.scripts]
 nbp = "nbpreview.__main__:app"
