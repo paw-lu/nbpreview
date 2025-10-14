@@ -1,0 +1,5 @@
+  hey                                                                           
+                                                                                
+  ![Test image](data:unknown;base64,abc123)                                     
+                                                                                
+  there [1mhello[0m                                                                   
