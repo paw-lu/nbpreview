@@ -1,4 +1,5 @@
 """Package-wide test fixtures."""
+
 import contextlib
 import io
 import itertools
@@ -19,8 +20,16 @@ from _pytest.fixtures import FixtureRequest
 from jinja2 import select_autoescape
 from nbformat.notebooknode import NotebookNode
 from pytest_mock import MockerFixture
+from pytest_snapshot.plugin import Snapshot
 from rich import ansi, console, padding, text
 from rich.text import Text
+
+
+@pytest.fixture
+def snapshot_with_dir(snapshot: Snapshot) -> Snapshot:
+    """Fixture to initialize snapshot that saves to directory."""
+    snapshot.snapshot_dir = "tests/unit/expected_outputs"
+    return snapshot
 
 
 @pytest.fixture
@@ -44,6 +53,29 @@ def remove_link_ids() -> Callable[[str], str]:
         return subsituted_render
 
     return _remove_link_ids
+
+
+@pytest.fixture
+def normalize_paths() -> Callable[[str], str]:
+    """Create function to normalize tempfile paths in output."""
+
+    def _normalize_paths(render: str) -> str:
+        """Replace dynamic tempfile paths with placeholders."""
+        # Replace tempfile paths in box titles (e.g., ┏━ /path/to/tmpXXXX ━┓)
+        re_box_path = re.compile(r"┏━ /.*?/tmp[^ ]*? ")
+        render = re_box_path.sub("┏━ TEMPFILE ", render)
+
+        # Replace tempfile filenames (just the tmpXXXX part)
+        re_tmpfile = re.compile(r"tmp[a-z0-9_]{8,}")
+        render = re_tmpfile.sub("tmpTEMPFILE", render)
+
+        # Replace full temp paths
+        re_plain_path = re.compile(r"/.*?/T/tmpTEMPFILE")
+        render = re_plain_path.sub("TEMPFILE", render)
+
+        return render
+
+    return _normalize_paths
 
 
 @pytest.fixture
@@ -91,7 +123,7 @@ def make_notebook_dict() -> Callable[[dict[str, Any] | None], dict[str, Any]]:
 
 @pytest.fixture
 def make_notebook(
-    make_notebook_dict: Callable[[dict[str, Any] | None], dict[str, Any]]
+    make_notebook_dict: Callable[[dict[str, Any] | None], dict[str, Any]],
 ) -> Callable[[dict[str, Any] | None], NotebookNode]:
     """Fixture that returns a function that creates a base notebook."""
 

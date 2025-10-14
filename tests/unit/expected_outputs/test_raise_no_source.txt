@@ -1,0 +1,3 @@
+Usage: main [OPTIONS] [FILE]...
+Try 'main --help' for help.
+╭─ Error ───────────

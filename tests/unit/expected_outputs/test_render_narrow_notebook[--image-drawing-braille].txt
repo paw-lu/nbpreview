@@ -1,14 +1,11 @@
-   [1;38;5;231;48;5;57m…[0m
-   [1;38;5;231;48;5;57m…[0m
-   [2;38;5;57m─[0m
+   ┏
+   ┗
     
   ╭╮
 [38;5;247m…[0m ╰╯
     
     
-   [1;38;5;37m…[0m
-   [1;38;5;37m…[0m
-   [2;38;5;37m─[0m
+   [1;4m…[0m
     
    …
    …
@@ -30,10 +27,10 @@
    …
    …
    …
-   ]8;id=0;https://github.com/paw-lu/nbpreview\[94m…[0m]8;;\
-   ]8;id=0;https://github.com/paw-lu/nbpreview\[94m…[0m]8;;\
-   ]8;id=0;https://github.com/paw-lu/nbpreview\[94m…[0m]8;;\
-   ]8;id=0;https://github.com/paw-lu/nbpreview\[94m…[0m]8;;\
+   ]8;id=0;https://github.com/paw-lu/nbpreview\[4;34m…[0m]8;;\
+   ]8;id=0;https://github.com/paw-lu/nbpreview\[4;34m…[0m]8;;\
+   ]8;id=0;https://github.com/paw-lu/nbpreview\[4;34m…[0m]8;;\
+   ]8;id=0;https://github.com/paw-lu/nbpreview\[4;34m…[0m]8;;\
    …
    …
    …
@@ -44,11 +41,11 @@
   ╭╮
 [38;5;247m…[0m ╰╯
     
-[38;5;247m…[0m  ]8;id=0;file://{{ tempfile_path }}0.html\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}0.html\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}0.html\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}0.html\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}0.html\[94m…[0m]8;;\
+[38;5;247m…[0m  ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m…[0m]8;;\
     
 [38;5;247m…[0m   
    ─
@@ -70,11 +67,11 @@
    …
    …
     
-   ]8;id=0;file://{{ tempfile_path }}1.png\[94m🖼[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}1.png\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}1.png\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}1.png\[94m…[0m]8;;\
-   ]8;id=0;file://{{ tempfile_path }}1.png\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\[94m🖼[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\[94m…[0m]8;;\
+   ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\[94m…[0m]8;;\
     
    [38;2;187;134;252m…[0m
    [38;2;187;134;252m…[0m

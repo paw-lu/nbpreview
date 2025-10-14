@@ -1,0 +1,8 @@
+Usage: main [OPTIONS] [FILE]...
+Try 'main --help' for help.
+╭─ Error ──────────────────────────────────────────────────────────────────────╮
+│ Invalid value for 'FILE...':                                                 │
+│ TEMPFILE,                │
+│ TEMPFILE are not a valid │
+│ Jupyter Notebook paths.                                                      │
+╰──────────────────────────────────────────────────────────────────────────────╯
