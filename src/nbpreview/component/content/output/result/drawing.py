@@ -1,4 +1,5 @@
 """Drawings of image outputs."""
+
 import abc
 import base64
 import binascii
@@ -13,13 +14,13 @@ from typing import Literal, Union
 
 import picharsso
 import PIL.Image
+import term_image.image as term_image
 from picharsso.draw import gradient
 from PIL.Image import Image
 from rich import ansi, measure, style, text
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.text import Text
-from term_image import image as term_image
 
 from nbpreview.data import Data
 from nbpreview.option_values import ImageDrawingEnum
@@ -263,8 +264,8 @@ def _render_block_drawing(
     rendered_unicode_drawing: tuple[Text, ...]
     try:
         pil_image = PIL.Image.open(io.BytesIO(image))
-        block_image = term_image.TermImage(pil_image)
-        block_image.set_size(maxsize=(max_width, max_height))
+        block_image = term_image.BlockImage(pil_image)
+        block_image.set_size(frame_size=(max_width, max_height))
         string_image = str(block_image)
         pil_image.close()
 
