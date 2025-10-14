@@ -72,7 +72,7 @@ def patch_env(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.fixture
-def runner() -> CliRunner:
+def runner(monkeypatch: pytest.MonkeyPatch) -> CliRunner:
     """Fixture for invoking command-line interfaces."""
     return testing.CliRunner()
 
@@ -101,7 +101,8 @@ def temp_file() -> Generator[Callable[[str | None], str], None, None]:
             text (Optional[str], optional): The text to fill the file
                 with. Defaults to None, which creates a blank file.
 
-        Returns:
+        Returns
+        -------
             str: The path of the temporary file.
         """
         if text is not None:
@@ -127,7 +128,8 @@ def write_notebook(
             cell (Union[Dict[str, Any], None]): The cell of the notebook
                 to render
 
-        Returns:
+        Returns
+        -------
             str: The path of the notebook file.
         """
         notebook_node = make_notebook(cell)
@@ -171,7 +173,8 @@ def run_cli(
             color (bool): Whether the output should contain color codes.
             **extra (Any): Extra arguments to pass.
 
-        Returns:
+        Returns
+        -------
             Result: The result from running the CLI command against the
                 notebook.
         """
@@ -226,7 +229,7 @@ def cli_arg(
 
     def _cli_arg(
         *args: str | None,
-        truecolor: bool = True,
+        truecolor: bool = False,
         paging: bool | None = False,
         material_theme: bool = True,
         images: bool = True,
@@ -248,7 +251,8 @@ def cli_arg(
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
-        Returns:
+        Returns
+        -------
             str: The output of the invoked command.
         """
         cleaned_args = [arg for arg in args if arg is not None]
@@ -270,7 +274,7 @@ def cli_arg(
         result = runner.invoke(
             __main__.typer_click_object,
             args=cli_args,
-            color=True,
+            color=False,
             env=upper_kwargs,
         )
         output = remove_link_ids(result.output)
@@ -289,7 +293,7 @@ def test_cli(
 
     def _test_cli(
         *args: str | None,
-        truecolor: bool = True,
+        truecolor: bool = False,
         paging: bool | None = False,
         material_theme: bool = True,
         images: bool = True,
@@ -335,7 +339,7 @@ def test_cli_snapshot(
 
     def _test_cli_snapshot(
         *args: str | None,
-        truecolor: bool = True,
+        truecolor: bool = False,
         paging: bool | None = False,
         material_theme: bool = True,
         images: bool = True,
@@ -366,9 +370,7 @@ def test_cli_snapshot(
             **kwargs,
         )
         test_name = request.node.name
-        snapshot_with_dir.assert_match(
-            remove_link_ids(output), f"{test_name}.txt"
-        )
+        snapshot_with_dir.assert_match(remove_link_ids(output), f"{test_name}.txt")
 
     return _test_cli_snapshot
 
@@ -438,9 +440,7 @@ def test_render_notebook(run_cli: RunCli, snapshot_with_dir: Snapshot) -> None:
     snapshot_with_dir.assert_match(result.output, "test_render_notebook.txt")
 
 
-def test_render_notebook_option(
-    run_cli: RunCli, snapshot_with_dir: Snapshot
-) -> None:
+def test_render_notebook_option(run_cli: RunCli, snapshot_with_dir: Snapshot) -> None:
     """It respects cli options."""
     code_cell = {
         "cell_type": "code",
@@ -554,7 +554,7 @@ def mock_terminal(mocker: MockerFixture) -> Iterator[Mock]:
         color_system="truecolor",
         force_terminal=True,
         width=100,
-        no_color=False,
+        no_color=True,
         legacy_windows=False,
         force_jupyter=False,
     )
@@ -569,7 +569,7 @@ def test_default_color_system_auto(
     """Its default value is 'auto'."""
     mock = mocker.patch("nbpreview.__main__.console.Console")
     runner.invoke(
-        __main__.typer_click_object, args=[os.fsdecode(notebook_path)], color=True
+        __main__.typer_click_object, args=[os.fsdecode(notebook_path)], color=False
     )
     # console.Console is called multiple times, first time should be
     # console representing terminal
@@ -587,7 +587,7 @@ def test_list_themes(
     result = runner.invoke(
         __main__.typer_click_object,
         args=["--list-themes"],
-        color=True,
+        color=False,
     )
     output = result.output
     snapshot_with_dir.assert_match(output, "test_list_themes.txt")
@@ -598,11 +598,7 @@ def test_list_themes_no_terminal(
     option_name: str, runner: CliRunner, mock_pygment_styles: Mock
 ) -> None:
     """It lists all themes with no preview when not a terminal."""
-    result = runner.invoke(
-        __main__.typer_click_object,
-        args=[option_name],
-        color=True,
-    )
+    result = runner.invoke(__main__.typer_click_object, args=[option_name], env={})
     output = result.output
     expected_output = (
         "material\nmonokai\nzenburn\nlight / ansi_light\ndark / ansi_dark\n"
@@ -1018,6 +1014,7 @@ def test_multiple_files(
     }
     # Use temp_file instead of write_notebook to get consistent path for snapshot
     import nbformat
+
     notebook_node_dict = {
         "cells": [code_cell],
         "metadata": {},
@@ -1039,7 +1036,8 @@ def test_multiple_files(
     output = result.output
     # Replace dynamic path with a placeholder
     import re
-    output = re.sub(r'┏━ /.*?/tmp[^ ]+ ', '┏━ TEMPFILE ', output)
+
+    output = re.sub(r"┏━ /.*?/tmp[^ ]+ ", "┏━ TEMPFILE ", output)
     snapshot_with_dir.assert_match(output, "test_multiple_files.txt")
 
 
@@ -1177,7 +1175,7 @@ def test_help(runner: CliRunner, snapshot_with_dir: Snapshot) -> None:
 )
 def test_color_help(runner: CliRunner, snapshot_with_dir: Snapshot) -> None:
     """It colors the help message when prompted."""
-    result = runner.invoke(__main__.typer_click_object, args=["--help"], color=True)
+    result = runner.invoke(__main__.typer_click_object, args=["--help"], color=False)
     output = result.output
     # Only compare the first 300 characters to avoid version-specific differences
     snapshot_with_dir.assert_match(output[:300], "test_color_help.txt")
