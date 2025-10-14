@@ -6,8 +6,9 @@ import os
 import pathlib
 import re
 import tempfile
+from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import Any, Callable, ContextManager, Dict, Iterator, Optional, Union
+from typing import Any, ContextManager
 from unittest.mock import Mock
 
 import jinja2
@@ -46,10 +47,10 @@ def remove_link_ids() -> Callable[[str], str]:
 
 
 @pytest.fixture
-def make_notebook_dict() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]:
+def make_notebook_dict() -> Callable[[dict[str, Any] | None], dict[str, Any]]:
     """Fixture that returns function that constructs notebook dict."""
 
-    def _make_notebook_dict(cell: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _make_notebook_dict(cell: dict[str, Any] | None = None) -> dict[str, Any]:
         """Create valid notebook dictionary around single cell."""
         notebook = {
             "cells": [
@@ -90,11 +91,11 @@ def make_notebook_dict() -> Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]
 
 @pytest.fixture
 def make_notebook(
-    make_notebook_dict: Callable[[Optional[Dict[str, Any]]], Dict[str, Any]]
-) -> Callable[[Optional[Dict[str, Any]]], NotebookNode]:
+    make_notebook_dict: Callable[[dict[str, Any] | None], dict[str, Any]]
+) -> Callable[[dict[str, Any] | None], NotebookNode]:
     """Fixture that returns a function that creates a base notebook."""
 
-    def _make_notebook(cell: Optional[Dict[str, Any]] = None) -> NotebookNode:
+    def _make_notebook(cell: dict[str, Any] | None = None) -> NotebookNode:
         """Create a NotebookNode.
 
         Args:
@@ -132,10 +133,10 @@ def disable_capture(pytestconfig: Config) -> ContextManager[_PluggyPlugin]:
 
 
 @pytest.fixture
-def rich_console() -> Callable[[Any, Union[bool, None]], str]:
+def rich_console() -> Callable[[Any, bool | None], str]:
     """Fixture that returns Rich console."""
 
-    def _rich_console(renderable: Any, no_wrap: Optional[bool] = None) -> str:
+    def _rich_console(renderable: Any, no_wrap: bool | None = None) -> str:
         """Render an object using rich."""
         con = console.Console(
             file=io.StringIO(),

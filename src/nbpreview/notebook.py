@@ -1,10 +1,12 @@
 """Render the notebook."""
+
 import dataclasses
 import pathlib
 import typing
+from collections.abc import Iterator
 from dataclasses import InitVar
 from pathlib import Path
-from typing import IO, Any, AnyStr, Iterator, List, Optional, Tuple, Type, Union
+from typing import IO, Any, AnyStr
 
 import jsonschema
 import nbformat
@@ -29,14 +31,14 @@ else:
     class _KeepOpenFile:
         """Fake click's KeepOpenFile for type checking purposes."""
 
-        def __getitem__(self, *args: Any) -> Type[KeepOpenFile]:
+        def __getitem__(self, *args: Any) -> type[KeepOpenFile]:
             """Make the fake class subscriptable."""
             return KeepOpenFile
 
     KeepOpenFileType = _KeepOpenFile()
 
 
-def pick_option(option: Optional[bool], detector: bool) -> bool:
+def pick_option(option: bool | None, detector: bool) -> bool:
     """Select a render option.
 
     Args:
@@ -58,7 +60,7 @@ def pick_option(option: Optional[bool], detector: bool) -> bool:
     return pick
 
 
-def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
+def _get_output_pad(plain: bool) -> tuple[int, int, int, int]:
     """Return the padding for outputs.
 
     Args:
@@ -70,17 +72,16 @@ def _get_output_pad(plain: bool) -> Tuple[int, int, int, int]:
     """
     if plain:
         return (0, 0, 0, 0)
-    else:
-        return (0, 0, 0, 1)
+    return (0, 0, 0, 1)
 
 
 def _pick_image_drawing(
-    option: Union[ImageDrawing, None],
+    option: ImageDrawing | None,
     unicode: bool,
     color: bool,
     legacy_windows: bool,
     ascii_only: bool,
-    color_system: Union[str, None],
+    color_system: str | None,
 ) -> ImageDrawing:
     """Pick an image render option.
 
@@ -123,7 +124,7 @@ def _pick_image_drawing(
 
 
 def _render_notebook(
-    cells: List[NotebookNode],
+    cells: list[NotebookNode],
     plain: bool,
     unicode: bool,
     hyperlinks: bool,
@@ -138,7 +139,7 @@ def _render_notebook(
     color: bool,
     negative_space: bool,
     relative_dir: Path,
-    characters: Optional[str] = None,
+    characters: str | None = None,
     line_numbers: bool = False,
     code_wrap: bool = False,
 ) -> Table:
@@ -247,26 +248,28 @@ class Notebook:
 
     notebook_node: NotebookNode
     theme: str = "ansi_dark"
-    plain: Optional[bool] = None
-    unicode: Optional[bool] = None
+    plain: bool | None = None
+    unicode: bool | None = None
     hide_output: bool = False
     nerd_font: bool = False
     files: bool = True
     negative_space: bool = True
-    hyperlinks: Optional[bool] = None
+    hyperlinks: bool | None = None
     hide_hyperlink_hints: bool = False
-    images: Optional[bool] = None
-    image_drawing: Optional[ImageDrawing] = None
-    color: Optional[bool] = None
-    relative_dir: InitVar[Optional[Path]] = None
+    images: bool | None = None
+    image_drawing: ImageDrawing | None = None
+    color: bool | None = None
+    relative_dir: InitVar[Path | None] = None
     line_numbers: bool = False
     code_wrap: bool = False
 
-    def __post_init__(self, relative_dir: Optional[Path]) -> None:
+    def __post_init__(self, relative_dir: Path | None) -> None:
         """Constructor."""
-        self.cells = self.notebook_node.get(
-            "cells", nbformat.from_dict([])  # type: ignore[no-untyped-call]
+        cells = self.notebook_node.get(
+            "cells",
+            nbformat.from_dict([]),  # type: ignore[no-untyped-call]
         )
+        self.cells: list[NotebookNode] = typing.cast("list[NotebookNode]", cells)
         self.resolved_relative_dir = (
             pathlib.Path().resolve() if relative_dir is None else relative_dir
         )
@@ -278,19 +281,19 @@ class Notebook:
     @classmethod
     def from_file(
         cls,
-        file: Union[Path, IO[AnyStr], KeepOpenFileType[AnyStr]],
+        file: Path | IO[AnyStr] | KeepOpenFileType[AnyStr],
         theme: str = "ansi_dark",
-        plain: Optional[bool] = None,
-        unicode: Optional[bool] = None,
+        plain: bool | None = None,
+        unicode: bool | None = None,
         hide_output: bool = False,
         nerd_font: bool = False,
         files: bool = True,
         negative_space: bool = True,
-        hyperlinks: Optional[bool] = None,
+        hyperlinks: bool | None = None,
         hide_hyperlink_hints: bool = False,
-        images: Optional[bool] = None,
-        image_drawing: Optional[ImageDrawing] = None,
-        color: Optional[bool] = None,
+        images: bool | None = None,
+        image_drawing: ImageDrawing | None = None,
+        color: bool | None = None,
         line_numbers: bool = False,
         code_wrap: bool = False,
     ) -> "Notebook":
@@ -349,7 +352,8 @@ class Notebook:
             notebook_node = nbformat.read(  # type: ignore[no-untyped-call]
                 file, as_version=4
             )
-            nbformat.validate(notebook_node)  # type: ignore[no-untyped-call]
+            nbformat.validate(notebook_node)
+
         except (
             AttributeError,
             validator.NotebookValidationError,
@@ -359,7 +363,7 @@ class Notebook:
             raise errors.InvalidNotebookError from exception
         relative_dir = (
             pathlib.Path.cwd()
-            if (file_name := file.name) == "<stdin>"
+            if not hasattr(file, "name") or (file_name := file.name) == "<stdin>"
             else pathlib.Path(file_name).parent
         ).resolve()
         return cls(

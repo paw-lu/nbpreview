@@ -1,7 +1,7 @@
 """Supplement markdown renderer."""
 import dataclasses
 import itertools
-from typing import Iterable, Iterator, Optional
+from collections.abc import Iterable, Iterator
 
 import markdown_it
 from markdown_it.token import Token
@@ -45,7 +45,7 @@ class TokenGroup:
     """A pair of token tags that contain a Markdown group."""
 
     open_tag: str
-    close_tag: Optional[str] = None
+    close_tag: str | None = None
 
     def __post_init__(self) -> None:
         """Constructor."""

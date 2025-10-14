@@ -2,7 +2,8 @@
 
 
 import dataclasses
-from typing import ClassVar, Iterator, Union
+from collections.abc import Iterator
+from typing import ClassVar
 
 from nbformat import NotebookNode
 from rich import padding, style, text
@@ -17,7 +18,7 @@ class Stream:
     content: str
     name: ClassVar[str]
 
-    def __rich__(self) -> Union[ConsoleRenderable, str]:
+    def __rich__(self) -> ConsoleRenderable | str:
         """Render the stream."""
         return self.content
 
@@ -25,7 +26,7 @@ class Stream:
     def from_output(cls, output: NotebookNode) -> "Stream":
         """Create stream from notebook output."""
         stream_text = output.get("text", "")
-        text = stream_text[:-1] if stream_text.endswith("\n") else stream_text
+        text = stream_text.removesuffix("\n")
         return cls(text)
 
 

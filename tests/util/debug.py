@@ -1,7 +1,7 @@
 """Utilities for debugging failing tests."""
 import difflib
 import pathlib
-from typing import Iterator, Union
+from collections.abc import Iterator
 
 
 def diff(
@@ -13,6 +13,6 @@ def diff(
     )
 
 
-def write(content: str, filename: str, encoding: Union[str, None] = "utf8") -> None:
+def write(content: str, filename: str, encoding: str | None = "utf8") -> None:
     """Write content to file."""
     pathlib.Path(filename).with_suffix(".txt").write_text(content, encoding=encoding)

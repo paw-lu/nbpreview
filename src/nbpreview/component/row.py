@@ -1,9 +1,10 @@
 """Jupyter notebook rows."""
 import dataclasses
 import itertools
+from collections.abc import Iterator
 from dataclasses import InitVar
 from pathlib import Path
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import Union
 
 from nbformat import NotebookNode
 from rich import padding
@@ -18,7 +19,7 @@ from nbpreview.component.content.output.result.drawing import ImageDrawing
 from nbpreview.component.content.output.result.execution_indicator import Execution
 
 Content = Union[Cell, Padding]
-TableRow = Union[Tuple[Union[Execution, str], Content], Tuple[Content]]
+TableRow = Union[tuple[Execution | str, Content], tuple[Content]]
 
 
 @dataclasses.dataclass
@@ -27,11 +28,11 @@ class Row:
 
     content: Content
     plain: bool
-    execution: InitVar[Optional[Execution]] = None
+    execution: InitVar[Execution | None] = None
 
-    def __post_init__(self, execution: Optional[Execution]) -> None:
+    def __post_init__(self, execution: Execution | None) -> None:
         """Initialize the execution indicator."""
-        self.execution_indicator: Union[Execution, str]
+        self.execution_indicator: Execution | str
         self.execution_indicator = execution_indicator.choose_execution(execution)
 
     def to_table_row(self) -> TableRow:
@@ -53,7 +54,7 @@ class OutputRow(Row):
         content: Output,
         plain: bool,
         pad: PaddingDimensions,
-        execution: Optional[Execution] = None,
+        execution: Execution | None = None,
     ) -> None:
         """Constructor."""
         padded_content = padding.Padding(content, pad=pad)
@@ -63,7 +64,7 @@ class OutputRow(Row):
 def render_input_row(
     cell: NotebookNode,
     plain: bool,
-    pad: Tuple[int, int, int, int],
+    pad: tuple[int, int, int, int],
     language: str,
     theme: str,
     nerd_font: bool,
@@ -76,11 +77,11 @@ def render_input_row(
     files: bool,
     hide_hyperlink_hints: bool,
     relative_dir: Path,
-    characters: Optional[str] = None,
-    unicode_border: Optional[bool] = None,
+    characters: str | None = None,
+    unicode_border: bool | None = None,
     line_numbers: bool = False,
     code_wrap: bool = False,
-) -> Union[Row, None]:
+) -> Row | None:
     """Render a Jupyter Notebook cell.
 
     Args:
@@ -130,8 +131,8 @@ def render_input_row(
     source = cell.source
     default_lexer_name = "ipython" if language == "python" else language
     safe_box = None if unicode_border is None else not unicode_border
-    rendered_cell: Optional[Cell] = None
-    execution: Union[Execution, None] = None
+    rendered_cell: Cell | None = None
+    execution: Execution | None = None
     top_pad = not plain
     if cell_type == "markdown":
         rendered_cell = input.MarkdownCell(
@@ -174,7 +175,7 @@ def render_input_row(
 
 
 def render_output_row(
-    outputs: List[NotebookNode],
+    outputs: list[NotebookNode],
     plain: bool,
     unicode: bool,
     hyperlinks: bool,
@@ -191,7 +192,7 @@ def render_output_row(
 ) -> Iterator[OutputRow]:
     """Render the output row of a notebook."""
     for output in outputs:
-        rendered_outputs: List[Iterator[Output]] = []
+        rendered_outputs: list[Iterator[Output]] = []
         output_type = output.output_type
         execution_count = output.get("execution_count", False)
         execution = (

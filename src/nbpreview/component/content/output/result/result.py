@@ -1,6 +1,7 @@
 """Render execution results from Jupyter Notebooks."""
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, Union
+from typing import Union
 
 from nbformat import NotebookNode
 
@@ -16,7 +17,7 @@ Result = Union[FileLink, DisplayData, Drawing]
 def render_result(
     output: NotebookNode,
     unicode: bool,
-    execution: Union[Execution, None],
+    execution: Execution | None,
     hyperlinks: bool,
     nerd_font: bool,
     files: bool,

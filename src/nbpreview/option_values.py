@@ -1,7 +1,9 @@
 """Enums representing option values."""
+
 import enum
 import itertools
-from typing import Any, Iterable, List, Literal
+from collections.abc import Iterable
+from typing import Any
 
 from pygments import styles
 
@@ -20,8 +22,6 @@ def get_all_available_themes(list_duplicate_alias: bool = False) -> Iterable[str
 class _ThemeEnum(str, enum.Enum):
     """Enum version of available pygment themes."""
 
-    ...
-
 
 ThemeEnum = _ThemeEnum(  # type: ignore[call-overload]
     "ThemeEnum",
@@ -32,11 +32,11 @@ ThemeEnum = _ThemeEnum(  # type: ignore[call-overload]
 class LowerNameEnum(enum.Enum):
     """Enum base class that sets value to lowercase version of name."""
 
-    def _generate_next_value_(  # type: ignore[override,misc]
-        name: str,  # noqa: B902,N805
+    def _generate_next_value_(  # type: ignore[override, misc]
+        name: str,  # noqa: B902, N805
         start: int,
         count: int,
-        last_values: List[Any],
+        last_values: list[Any],
     ) -> str:
         """Set member's values as their lowercase name."""
         return name.lower()
@@ -46,13 +46,13 @@ class LowerNameEnum(enum.Enum):
 class ColorSystemEnum(str, LowerNameEnum):
     """The color systems supported by terminals."""
 
-    STANDARD: Literal["standard"] = enum.auto()  # type: ignore[assignment]
-    EIGHT_BIT: Literal["256"] = "256"
-    TRUECOLOR: Literal["truecolor"] = enum.auto()  # type: ignore[assignment]
-    WINDOWS: Literal["windows"] = enum.auto()  # type: ignore[assignment]
-    NONE: Literal["none"] = enum.auto()  # type: ignore[assignment]
+    STANDARD = enum.auto()
+    EIGHT_BIT = "256"
+    TRUECOLOR = enum.auto()
+    WINDOWS = enum.auto()
+    NONE = enum.auto()
     # Add AUTO because callbacks must return values associated with types
-    AUTO: Literal["auto"] = enum.auto()  # type: ignore[assignment]
+    AUTO = enum.auto()
 
 
 @enum.unique

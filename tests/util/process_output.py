@@ -2,13 +2,13 @@
 import pathlib
 import re
 import subprocess
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, Tuple
 
 
 def split_string(
     string: str, sub_length: int = 40, copy: bool = False
-) -> Tuple[str, ...]:
+) -> tuple[str, ...]:
     """Split a string into subsections less than or equal to new length.
 
     Args:
@@ -36,7 +36,7 @@ def copy_string(string: str) -> None:
 
     Uses pbcopy, so for now only works with macOS.
     """
-    subprocess.run("/usr/bin/pbcopy", text=True, input=string)  # noqa: S603
+    subprocess.run("/usr/bin/pbcopy", text=True, input=string, check=False)  # noqa: S603
 
 
 def write_output(string: str, test_name: str, replace_links: bool = True) -> None:

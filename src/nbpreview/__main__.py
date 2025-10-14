@@ -1,10 +1,12 @@
 """Command-line interface."""
+
 import os
 import pathlib
 import typing
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from sys import stdin, stdout
-from typing import IO, AnyStr, Iterator, List, Optional, Sequence, Union
+from typing import IO, AnyStr
 
 import click
 import nbformat
@@ -13,7 +15,7 @@ from rich import box, console, panel, style, text, traceback
 from rich.console import Capture, Console, RenderableType
 from rich.text import Text
 
-from nbpreview import _color_typer, errors, notebook, parameters
+from nbpreview import errors, notebook, parameters
 from nbpreview.notebook import Notebook
 from nbpreview.option_values import ColorSystemEnum, ImageDrawingEnum, ThemeEnum
 
@@ -24,13 +26,12 @@ if typing.TYPE_CHECKING:  # pragma: no cover
 else:
     from typing import no_type_check as typeguard_ignore
 
-# app = typer.Typer()
-app = _color_typer.ColorTyper()
+app = typer.Typer()
 traceback.install(theme="ansi_dark")
 
 
 def _detect_paging(
-    paging: Union[bool, None], rendered_notebook: str, console: Console
+    paging: bool | None, rendered_notebook: str, console: Console
 ) -> bool:
     """Determine if pager should be used."""
     detected_paging = paging or (
@@ -51,8 +52,8 @@ def _detect_paging(
 def _render_notebook(
     capture: Capture,
     console: Console,
-    paging: Union[bool, None],
-    color: Union[bool, None],
+    paging: bool | None,
+    color: bool | None,
 ) -> None:
     """Render the notebook to the console."""
     rendered_notebook = capture.get()
@@ -66,10 +67,7 @@ def _render_notebook(
 
 
 def _make_invalid_notebook_message(
-    file: Union[
-        Sequence[Union[Path, IO[AnyStr]]],
-        Union[Path, IO[AnyStr]],
-    ]
+    file: Sequence[Path | IO[AnyStr]] | Path | IO[AnyStr],
 ) -> str:
     """Create message signifying which paths are invalid."""
     files = file if isinstance(file, Sequence) else [file]
@@ -86,7 +84,7 @@ def _make_invalid_notebook_message(
         plural = "s"
 
     invalid_notebook_message = (
-        f"{', '.join(file_names)} {verb}" f" not a valid Jupyter Notebook path{plural}."
+        f"{', '.join(file_names)} {verb} not a valid Jupyter Notebook path{plural}."
     )
     return invalid_notebook_message
 
@@ -144,26 +142,26 @@ def _title_output(
 
 @app.command()
 def main(
-    file: List[Path] = parameters.file_argument,
+    file: list[Path] = parameters.file_argument,
     theme: ThemeEnum = parameters.theme_option,
-    list_themes: Optional[bool] = parameters.list_themes_option,
-    plain: Optional[bool] = parameters.plain_option,
-    unicode: Optional[bool] = parameters.unicode_option,
+    list_themes: bool | None = parameters.list_themes_option,
+    plain: bool | None = parameters.plain_option,
+    unicode: bool | None = parameters.unicode_option,
     hide_output: bool = parameters.hide_output_option,
     nerd_font: bool = parameters.nerd_font_option,
     no_files: bool = parameters.no_files_option,
     positive_space: bool = parameters.positive_space_option,
     hyperlinks: bool = parameters.hyperlinks_option,
     hide_hyperlink_hints: bool = parameters.hide_hyperlink_hints_option,
-    images: Optional[bool] = parameters.no_images_option,
-    image_drawing: Optional[ImageDrawingEnum] = parameters.image_drawing_option,
-    color: Optional[bool] = parameters.color_option,
-    color_system: Optional[ColorSystemEnum] = parameters.color_system_option,
-    width: Optional[int] = parameters.width_option,
-    version: Optional[bool] = parameters.version_option,
+    images: bool | None = parameters.no_images_option,
+    image_drawing: ImageDrawingEnum | None = parameters.image_drawing_option,
+    color: bool | None = parameters.color_option,
+    color_system: ColorSystemEnum | None = parameters.color_system_option,
+    width: int | None = parameters.width_option,
+    version: bool | None = parameters.version_option,
     line_numbers: bool = parameters.line_numbers_option,
     code_wrap: bool = parameters.code_wrap_option,
-    paging: Optional[bool] = parameters.paging_option,
+    paging: bool | None = parameters.paging_option,
 ) -> None:
     """Render a Jupyter Notebook in the terminal."""
     no_color = not color if color is not None else color
@@ -177,13 +175,13 @@ def main(
         color_system=color_system,  # type: ignore[arg-type]
     )
 
-    has_multiple_files = 1 < len(file)
+    has_multiple_files = len(file) > 1
     successful_render = False
     plain_title = notebook.pick_option(plain, detector=not output_console.is_terminal)
     with output_console.capture() as captured_output:
         for notebook_file in file:
             with click.open_file(os.fsdecode(notebook_file)) as opened_notebook_file:
-                rendered_file: Union[Notebook, Text]
+                rendered_file: Notebook | Text
                 try:
                     rendered_file = notebook.Notebook.from_file(
                         opened_notebook_file,

@@ -2,7 +2,6 @@
 import dataclasses
 import functools
 from pathlib import Path
-from typing import Optional, Union
 
 import pygments
 from rich import console, padding, panel, syntax
@@ -15,14 +14,13 @@ from nbpreview.component.content.output.result.drawing import ImageDrawing
 
 
 def box_cell(
-    rendered_source: RenderableType, plain: bool, safe_box: Optional[bool] = None
+    rendered_source: RenderableType, plain: bool, safe_box: bool | None = None
 ) -> RenderableType:
     """Wrap the content in a box."""
     if plain:
         return rendered_source
-    else:
-        boxed_cell = panel.Panel(rendered_source, safe_box=safe_box)
-        return boxed_cell
+    boxed_cell = panel.Panel(rendered_source, safe_box=safe_box)
+    return boxed_cell
 
 
 @dataclasses.dataclass
@@ -31,7 +29,7 @@ class Cell:
 
     source: str
     plain: bool
-    safe_box: Optional[bool] = None
+    safe_box: bool | None = None
 
     def __rich__(self) -> RenderableType:
         """Render the cell."""
@@ -57,7 +55,7 @@ class MarkdownCell(Cell):
         files: bool,
         hide_hyperlink_hints: bool,
         relative_dir: Path,
-        characters: Optional[str] = None,
+        characters: str | None = None,
     ) -> None:
         """Constructor."""
         super().__init__(source, plain=True)
@@ -108,7 +106,7 @@ class CodeCell(Cell):
         plain: bool,
         theme: str,
         default_lexer_name: str,
-        safe_box: Optional[bool] = None,
+        safe_box: bool | None = None,
         line_numbers: bool = False,
         code_wrap: bool = False,
     ) -> None:
@@ -121,7 +119,7 @@ class CodeCell(Cell):
 
     def __rich__(self) -> RenderableType:
         """Render the code cell."""
-        rendered_code_cell: Union[Syntax, Group]
+        rendered_code_cell: Syntax | Group
         code_cell_renderer = functools.partial(
             syntax.Syntax,
             lexer=self.default_lexer_name,

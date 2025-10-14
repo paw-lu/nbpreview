@@ -4,7 +4,6 @@ import binascii
 import dataclasses
 import json
 import tempfile
-from typing import Optional, Union
 
 import httpx
 import jinja2
@@ -34,7 +33,7 @@ def select_icon(
     return icon
 
 
-def _write_file(content: Union[str, bytes], extension: str) -> str:
+def _write_file(content: str | bytes, extension: str) -> str:
     """Write content to a temporary file.
 
     Args:
@@ -55,7 +54,7 @@ def _write_file(content: Union[str, bytes], extension: str) -> str:
 
 
 def _create_hyperlink_message(
-    subject: str, hide_hyperlink_hints: bool, icon: Union[str, Emoji]
+    subject: str, hide_hyperlink_hints: bool, icon: str | Emoji
 ) -> str:
     """Create the text on the hyperlink."""
     if hide_hyperlink_hints:
@@ -73,7 +72,7 @@ def _create_hyperlink_message(
 class Link:
     """A hyperlink."""
 
-    path: Union[str, None]
+    path: str | None
     nerd_font: bool
     unicode: bool
     subject: str
@@ -119,7 +118,7 @@ class FileLink(Link):
 
     def __init__(
         self,
-        content: Union[str, bytes, None],
+        content: str | bytes | None,
         file_extension: str,
         files: bool,
         hyperlinks: bool,
@@ -131,7 +130,7 @@ class FileLink(Link):
         nerd_font_icon: str = "",
     ) -> None:
         """Constructor."""
-        path: Union[str, None]
+        path: str | None
         if files is True and content is not None:
             path = f"file://{_write_file(content, extension=file_extension)}"
         else:
@@ -155,11 +154,11 @@ def render_link(
     data: Data,
     unicode: bool,
     hyperlinks: bool,
-    execution: Union[Execution, None],
+    execution: Execution | None,
     nerd_font: bool,
     files: bool,
     hide_hyperlink_hints: bool,
-) -> Union[FileLink, None]:
+) -> FileLink | None:
     """Render an output link."""
     link_result: FileLink
     if (
@@ -214,7 +213,7 @@ class HTMLLink(FileLink):
 
     def __init__(
         self,
-        content: Union[str, bytes, None],
+        content: str | bytes | None,
         nerd_font: bool,
         unicode: bool,
         files: bool,
@@ -268,7 +267,7 @@ class VegaLink(FileLink):
 
     def __init__(
         self,
-        content: Union[str, bytes, None],
+        content: str | bytes | None,
         nerd_font: bool,
         unicode: bool,
         files: bool,
@@ -298,10 +297,10 @@ class VegaLink(FileLink):
         files: bool,
         hyperlinks: bool,
         hide_hyperlink_hints: bool,
-        execution: Union[Execution, None],
+        execution: Execution | None,
     ) -> "VegaLink":
         """Create a Vega link from notebook data."""
-        vega_html: Optional[str]
+        vega_html: str | None
         vega_data = data.get(
             "application/vnd.vega.v5+json",
             data.get("application/vnd.vegalite.v4+json", ""),
@@ -348,7 +347,7 @@ class ImageLink(FileLink):
 
     def __init__(
         self,
-        content: Union[str, bytes, None],
+        content: str | bytes | None,
         file_extension: str,
         unicode: bool,
         hyperlinks: bool,
@@ -383,7 +382,7 @@ class ImageLink(FileLink):
         hide_hyperlink_hints: bool,
     ) -> "ImageLink":
         """Construct an image link from notebook data."""
-        content: Union[str, bytes, None]
+        content: str | bytes | None
         encoded_content = data[image_type]
         if image_type == "image/svg+xml":
             file_extension = "svg"
