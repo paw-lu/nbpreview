@@ -38,7 +38,7 @@ and [instructions on how to configure][configure] the tool.
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.11+
 
 ## Installation
 
