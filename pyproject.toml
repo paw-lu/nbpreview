@@ -117,7 +117,7 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_image,validators,tomli"
+module = "click_help_colors,jsonschema,lxml.*,nbformat.*,PIL.*,picharsso.*,pygments,pylatexenc,pytest_mock,term_image.*,validators,tomli,pytest_snapshot.plugin"
 
 [[tool.mypy.overrides]]
 module = "mdit_py_plugins.*"
