@@ -9,7 +9,7 @@ extensions = [
     "sphinx_click",
     "sphinx_copybutton",
     "sphinx_design",
-    "sphinx-favicon",
+    "sphinx_favicon",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
