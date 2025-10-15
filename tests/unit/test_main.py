@@ -85,8 +85,7 @@ def temp_file() -> Generator[Callable[[str | None], str], None, None]:
     because of the inability to read from an open file created on
     Windows.
 
-    Yields
-    ------
+    Yields:
         Generator[Callable[[Optional[str]], str]: Function to create
             tempfile that is delted at teardown.
     """
@@ -101,8 +100,7 @@ def temp_file() -> Generator[Callable[[str | None], str], None, None]:
             text (Optional[str], optional): The text to fill the file
                 with. Defaults to None, which creates a blank file.
 
-        Returns
-        -------
+        Returns:
             str: The path of the temporary file.
         """
         if text is not None:
@@ -128,8 +126,7 @@ def write_notebook(
             cell (Union[Dict[str, Any], None]): The cell of the notebook
                 to render
 
-        Returns
-        -------
+        Returns:
             str: The path of the notebook file.
         """
         notebook_node = make_notebook(cell)
@@ -173,8 +170,7 @@ def run_cli(
             color (bool): Whether the output should contain color codes.
             **extra (Any): Extra arguments to pass.
 
-        Returns
-        -------
+        Returns:
             Result: The result from running the CLI command against the
                 notebook.
         """
@@ -251,8 +247,7 @@ def cli_arg(
             **kwargs (Union[str, None]): Environmental variables to set.
                 Will be uppercased.
 
-        Returns
-        -------
+        Returns:
             str: The output of the invoked command.
         """
         cleaned_args = [arg for arg in args if arg is not None]
