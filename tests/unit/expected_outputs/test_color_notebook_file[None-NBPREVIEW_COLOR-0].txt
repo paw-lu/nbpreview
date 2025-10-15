@@ -1,18 +1,18 @@
       ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-      ┃                              [1mLorem ipsum[0m                               ┃
+      ┃                              Lorem ipsum                               ┃
       ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
                                                                                 
      ╭─────────────────────────────────────────────────────────────────────────╮
-[1]: │ [3mimport[0m matplotlib.pyplot as plt                                         │
-     │ [3mimport[0m seaborn as sns                                                   │
+[1]: │ import matplotlib.pyplot as plt                                         │
+     │ import seaborn as sns                                                   │
      ╰─────────────────────────────────────────────────────────────────────────╯
                                                                                 
                                                                                 
-                                     [1;4mCondimentum[0m                                
+                                     Condimentum                                
                                                                                 
-      Lorem ipsum dolor sit amet, [3mconsectetur[0m adipiscing elit, sed do eiusmod   
-      tempor incididunt ut labore et dolore magna aliqua. Sunt ]8;id=0;https://github.com/paw-lu/nbpreview\[4min culpa qui [0m]8;;\    
-      ]8;id=0;https://github.com/paw-lu/nbpreview\[4mofficia[0m]8;;\ deserunt mollit anim id est laborum.                              
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod   
+      tempor incididunt ut labore et dolore magna aliqua. Sunt in culpa qui     
+      officia deserunt mollit anim id est laborum.                              
                                                                                 
      ╭─────────────────────────────────────────────────────────────────────────╮
 [2]: │ fmri = sns.load_dataset("fmri")                                         │
@@ -20,15 +20,15 @@
      │ fmri.head()                                                             │
      ╰─────────────────────────────────────────────────────────────────────────╯
                                                                                 
-[2]:  ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\🌐 Click to view HTML]8;;\                                                     
+[2]:  🌐 Click to view HTML                                                     
                                                                                 
-[2]:   [1m [0m   [1msubject[0m   [1mtimepoint[0m   [1mevent[0m   [1m  region[0m   [1m   signal[0m                   
+[2]:       subject   timepoint   event     region      signal                   
       ────────────────────────────────────────────────────────                  
-       [1m0[0m       s13          18    stim   parietal   -0.017552                   
-       [1m1[0m        s5          14    stim   parietal   -0.080883                   
-       [1m2[0m       s12          18    stim   parietal   -0.081033                   
-       [1m3[0m       s11          18    stim   parietal   -0.046134                   
-       [1m4[0m       s10          18    stim   parietal   -0.037970                   
+       0       s13          18    stim   parietal   -0.017552                   
+       1        s5          14    stim   parietal   -0.080883                   
+       2       s12          18    stim   parietal   -0.081033                   
+       3       s11          18    stim   parietal   -0.046134                   
+       4       s10          18    stim   parietal   -0.037970                   
                                                                                 
      ╭─────────────────────────────────────────────────────────────────────────╮
 [3]: │ _, (ax_line, ax_box) = plt.subplots(ncols=2, facecolor="#1C1B1F", figs… │
@@ -66,7 +66,7 @@
                                                                                 
 [3]:  [Text(0.5, 0, ''), Text(0, 0.5, ''), [], []]                              
                                                                                 
-      ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file1.png\🖼 Click to view Image]8;;\                                                     
+      🖼 Click to view Image                                                     
                                                                                 
       GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
       GGGGGGGGGG:::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG

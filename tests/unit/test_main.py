@@ -74,7 +74,9 @@ def patch_env(monkeypatch: MonkeyPatch) -> None:
 @pytest.fixture
 def runner(monkeypatch: pytest.MonkeyPatch) -> CliRunner:
     """Fixture for invoking command-line interfaces."""
-    return testing.CliRunner()
+    return testing.CliRunner(
+        env={"NBPREVIEW_NO_COLOR": "true", "NO_COLOR": "true", "TERM": "dumb"}
+    )
 
 
 @pytest.fixture
@@ -253,7 +255,7 @@ def cli_arg(
         cleaned_args = [arg for arg in args if arg is not None]
         upper_kwargs = {
             name.upper(): value for name, value in kwargs.items() if value is not None
-        }
+        } | runner.env
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
         if images:
             cli_args.append("--images")
@@ -593,7 +595,9 @@ def test_list_themes_no_terminal(
     option_name: str, runner: CliRunner, mock_pygment_styles: Mock
 ) -> None:
     """It lists all themes with no preview when not a terminal."""
-    result = runner.invoke(__main__.typer_click_object, args=[option_name], env={})
+    result = runner.invoke(
+        __main__.typer_click_object, args=[option_name], env={"TTY_COMPATIBLE": "0"}
+    )
     output = result.output
     expected_output = (
         "material\nmonokai\nzenburn\nlight / ansi_light\ndark / ansi_dark\n"
