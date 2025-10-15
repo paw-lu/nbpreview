@@ -96,12 +96,10 @@ def hex_to_rgb(hex: str, hsl: bool = False) -> tuple[int, int, int]:
         hex (str): Takes both short as well as long HEX codes.
         hsl (bool): Converts the given HEX code into HSL value if True.
 
-    Returns
-    -------
+    Returns:
         Tuple[int, int, int]: Tuple of RGB values.
 
-    Raises
-    ------
+    Raises:
         ValueError: If given value is not a valid HEX code.
     """
     if re.compile(r"#[a-fA-F0-9]{3}(?:[a-fA-F0-9]{3})?$").match(hex):
