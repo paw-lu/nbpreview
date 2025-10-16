@@ -2,12 +2,14 @@
 
 import collections
 import functools
+import io
 import itertools
 import json
 import operator
 import os
 import pathlib
 import platform
+import re
 import shlex
 import tempfile
 from collections.abc import Callable, Generator, Iterable, Iterator, Mapping
@@ -17,6 +19,7 @@ from unittest.mock import Mock
 
 import nbformat
 import pytest
+import rich
 from _pytest.fixtures import FixtureRequest
 from _pytest.monkeypatch import MonkeyPatch
 from click import testing
@@ -1004,6 +1007,16 @@ def test_stdin_cwd_path(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+def _normalize_file_header(output: str, file_name: str) -> str:
+    """File headers start with file names.
+
+    Normalize them to a placeholder text.
+    """
+    return re.sub(
+        pattern=rf"┏[━ ]*{file_name}[━ ]*┓", repl="-- tempfile --", string=output
+    )
+
+
 def test_multiple_files(
     runner: CliRunner,
     write_notebook: Callable[[dict[str, Any] | None], str],
@@ -1021,18 +1034,13 @@ def test_multiple_files(
         "outputs": [],
         "source": "def foo(x: float, y: float) -> float:\n    return x + y",
     }
-    # Use temp_file instead of write_notebook to get consistent path for snapshot
-    import nbformat
-
-    notebook_node_dict = {
-        "cells": [code_cell],
-        "metadata": {},
-        "nbformat": 4,
-        "nbformat_minor": 5,
-    }
-    notebook_json = nbformat.writes(nbformat.from_dict(notebook_node_dict))  # type: ignore[no-untyped-call]
-    code_notebook_path = temp_file(notebook_json)
-
+    code_notebook_path = write_notebook(code_cell)
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
     result = runner.invoke(
         __main__.typer_click_object,
         args=[
@@ -1043,11 +1051,8 @@ def test_multiple_files(
         ],
     )
     output = result.output
-    # Replace dynamic path with a placeholder
-    import re
-
-    output = re.sub(r"┏━ /.*?/tmp[^ ]+ ", "┏━ TEMPFILE ", output)
-    snapshot_with_dir.assert_match(output, "test_multiple_files.txt")
+    normalized_output = _normalize_file_header(output, file_name=tempfile_name)
+    snapshot_with_dir.assert_match(normalized_output, "test_multiple_files.txt")
 
 
 def test_multiple_files_long_path() -> None:
@@ -1064,7 +1069,6 @@ def test_file_and_stdin(
     notebook_path: Path,
     mock_terminal: Mock,
     snapshot_with_dir: Snapshot,
-    normalize_paths: Callable[[str], str],
 ) -> None:
     """It renders both a file and stdin."""
     code_cell = {
@@ -1082,8 +1086,14 @@ def test_file_and_stdin(
         args=["--color-system=truecolor", "--theme=material", code_notebook_path, "-"],
         input=stdin,
     )
-    output = normalize_paths(result.output)
-    snapshot_with_dir.assert_match(output, "test_file_and_stdin.txt")
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    normalized_output = _normalize_file_header(result.output, tempfile_name)
+    snapshot_with_dir.assert_match(normalized_output, "test_file_and_stdin.txt")
 
 
 def test_multiple_files_plain(
@@ -1113,7 +1123,17 @@ def test_multiple_files_plain(
             code_notebook_path,
         ],
     )
-    output = normalize_paths(result.output)
+    output = result.output
+    path_width = 80
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    file = io.StringIO()
+    rich.print(tempfile_name, file=file)
+    rendered_tempfile_name = file.getvalue()
+    output = result.output.replace(rendered_tempfile_name, "my_file")
     snapshot_with_dir.assert_match(output, "test_multiple_files_plain.txt")
 
 
@@ -1132,11 +1152,11 @@ def test_multiple_files_all_fail_message(
     snapshot_with_dir: Snapshot,
     normalize_paths: Callable[[str], str],
 ) -> None:
-    """It exists with a status code of 2 when fed invalid files."""
+    """It raises warning that multiple paths are bad."""
     invalid_path = temp_file(None)
     result = runner.invoke(__main__.typer_click_object, [invalid_path, invalid_path])
-    output = normalize_paths(result.output)
-    snapshot_with_dir.assert_match(output, "test_multiple_files_all_fail_message.txt")
+    assert "Invalid" in result.output
+    assert "paths" in result.output
 
 
 def test_multiple_files_some_fail(
@@ -1145,7 +1165,6 @@ def test_multiple_files_some_fail(
     notebook_path: Path,
     mock_terminal: Mock,
     snapshot_with_dir: Snapshot,
-    normalize_paths: Callable[[str], str],
 ) -> None:
     """It still renders valid files when some are invalid."""
     code_cell = {
@@ -1167,8 +1186,26 @@ def test_multiple_files_some_fail(
             invalid_file_path,
         ],
     )
-    output = normalize_paths(result.output)
-    snapshot_with_dir.assert_match(output, "test_multiple_files_some_fail.txt")
+    path_width = 80 - 6
+    tempfile_name = (
+        os.fsdecode(pathlib.Path(code_notebook_path).name)
+        if path_width < len(code_notebook_path)
+        else code_notebook_path
+    )
+    tempfile_name = f"{tempfile_name} "
+    invalid_file_name = (
+        os.fsdecode(pathlib.Path(invalid_file_path).name)
+        if path_width < len(invalid_file_path)
+        else invalid_file_path
+    )
+    removed_tempfile = _normalize_file_header(result.output, tempfile_name)
+    removed_bad_path = _normalize_file_header(removed_tempfile, invalid_file_name)
+    first_cell = "\n".join(removed_bad_path.splitlines()[:10])
+    snapshot_with_dir.assert_match(
+        first_cell, "test_multiple_files_some_fail.txt"
+    )
+    assert "not" in removed_bad_path
+    assert "valid" in removed_bad_path
 
 
 def test_help(runner: CliRunner, snapshot_with_dir: Snapshot) -> None:

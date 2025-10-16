@@ -1,6 +1,6 @@
                                                     
                                                     
-]8;id=0;file://mock/path/to/file0.html\[94m🌐 Click to view HTML[0m]8;;\                               
+]8;id=0; file://mock/path/to/file.txt\[94m🌐 Click to view HTML[0m]8;;\                               
                                                     
  [1m     [0m   [1m      [0m   [1mlorep[0m        [1m           hey[0m   [1mbye[0m 
  [1m     [0m   [1m      [0m   [1mipsum[0m   [1mhi[0m   [1mvery_long_word[0m   [1m hi[0m 
