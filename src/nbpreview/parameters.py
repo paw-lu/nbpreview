@@ -114,7 +114,11 @@ def _stdin_path_callback(ctx: Context, file_value: list[Path]) -> list[Path]:
 def _envvar_to_bool(envvar: str) -> bool:
     """Convert environmental variable values to bool."""
     envvar_value = os.environ.get(envvar, False)
-    envvar_bool = bool(envvar_value) and (envvar != "0") and (envvar.lower() != "false")
+    envvar_bool = (
+        bool(envvar_value)
+        and (envvar_value != "0")
+        and (isinstance(envvar_value, str) and envvar_value.lower() != "false")
+    )
     return envvar_bool
 
 

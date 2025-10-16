@@ -253,9 +253,9 @@ def cli_arg(
             str: The output of the invoked command.
         """
         cleaned_args = [arg for arg in args if arg is not None]
-        upper_kwargs = {
+        upper_kwargs = runner.env | {
             name.upper(): value for name, value in kwargs.items() if value is not None
-        } | runner.env
+        }
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
         if images:
             cli_args.append("--images")
@@ -918,7 +918,7 @@ def test_automatic_paging_notebook(
         "outputs": [],
         "source": "[i for i in range(20)]\n" * code_lines,
     }
-    run_cli(code_cell, option_name)
+    run_cli(code_cell, option_name, env={"TERM": "xterm"})
     assert echo_via_pager_mock.called is is_expected_called
 
 
@@ -933,7 +933,13 @@ def test_color_passed_to_pager(
     color: bool | None,
 ) -> None:
     """It passes the color arg value to the pager."""
-    cli_arg(option_name, paging=True)
+    cli_arg(
+        option_name,
+        paging=True,
+        term="xterm",
+        no_color="false",
+        nbpreview_no_color="false",
+    )
     color_arg = echo_via_pager_mock.call_args[1]["color"]
     assert color_arg == color
 
@@ -980,16 +986,15 @@ def test_stdin_cwd_path(
         __main__.typer_click_object,
         args=["--color-system=truecolor", "--no-images", "--theme=material"],
         input=notebook_stdin,
+        env={"TERM": "xterm", "NBPREVIEW_NO_COLOR": "false"},
     )
     output = result.output
     expected_output = (
-        "  \x1b]8;id=835649;"
-        f"file://{current_working_directory.resolve() / 'image.png'}\x1b\\\x1b"
-        "[94m🖼 Click to view Test image\x1b[0m\x1b]8;;\x1b"
-        "\\                                       "
-        "             \n                          "
-        "                                        "
-        "              \n"
+        f"  \x1b]8;id=230279;file://{current_working_directory.resolve() / 'image.png'}"
+        "\x1b\\🖼 Click to view Test image\x1b]8;;\x1b\\"
+        "                                                    \n"
+        "                                                            "
+        "                    \n"
     )
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
