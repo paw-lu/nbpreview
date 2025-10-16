@@ -2,7 +2,7 @@
 [38;5;247m[2]:[0m │                                            │
      ╰────────────────────────────────────────────╯
                                                    
-[38;5;247m[2]:[0m  ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m🌐 Click to view HTML[0m]8;;\                        
+[38;5;247m[2]:[0m  ]8;id=0;file://mock/path/to/file0.html\[94m🌐 Click to view HTML[0m]8;;\                        
                                                    
 [38;5;247m[2]:[0m   [1mTumour (Positive)    [0m   38   2     18   22  
        [1mNon-Tumour (Negative)[0m   19   439   6    452 

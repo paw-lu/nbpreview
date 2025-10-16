@@ -4,6 +4,6 @@
                                                                                 
 [38;5;247m[1]:[0m  <AxesSubplot:>                                                            
                                                                                 
-      ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.png\[94m🖼 Click to view Image[0m]8;;\                                                     
+      ]8;id=0;file://mock/path/to/file0.png\[94m🖼 Click to view Image[0m]8;;\                                                     
                                                                                 
       [38;2;187;134;252m<Figure size 432x288 with 1 Axes>                                         [0m

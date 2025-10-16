@@ -2,7 +2,7 @@
 [38;5;247m[2]:[0m │                    │
      ╰────────────────────╯
                            
-[38;5;247m[2]:[0m  ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m🌐 Click to view HTML[0m]8;;\
+[38;5;247m[2]:[0m  ]8;id=0;file://mock/path/to/file0.html\[94m🌐 Click to view HTML[0m]8;;\
                            
 [38;5;247m[2]:[0m   [1m [0m   [1m   [0m   [1ma[0m   [1mb[0m   [1mc[0m 
        [1m [0m   [1mhey[0m   [1m [0m   [1m [0m   [1m [0m 
