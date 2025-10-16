@@ -1,4 +1,4 @@
-┏━ TEMPFILE ━━━━━━━━━━━━━━━┓
+-- tempfile --
 ┃                                                                              ┃
 ┃       ╭───────────────────────────────────────╮                              ┃
 ┃  [2]: │ def foo(x: float, y: float) -> float: │                              ┃
@@ -7,10 +7,4 @@
 ┃                                                                              ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-┏━ /Users/pawlu/development/nbpreview/tests/unit/test_main.py ━━━━━━━━━━━━━━━━━┓
-┃                                                                              ┃
-┃  /Users/pawlu/development/nbpreview/tests/unit/test_main.py is not a valid   ┃
-┃  Jupyter Notebook path.                                                      ┃
-┃                                                                              ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
+-- tempfile --

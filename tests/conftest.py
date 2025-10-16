@@ -299,11 +299,12 @@ def normalize_file_paths() -> Callable[[str, Path], str]:
 
     def _normalize_file_paths(output: str, path: Path) -> str:
         """Replace file path names."""
-        # Replace all instances of the path with a mock path
-        # Handle cases where whitespace breaks up the path (e.g., line breaks)
-        path_str = str(path)
-        # Create a regex pattern that allows optional whitespace between each character
+        path_str = rf"file://{path}"
         pattern = r"\s*".join(re.escape(char) for char in path_str)
-        return re.sub(pattern, "mock/path/to/file", output)
+        return re.sub(
+            rf"\s*{pattern}[\w.]+[^\S\r\n]*",
+            repl=" file://mock/path/to/file.txt",
+            string=output,
+        )
 
     return _normalize_file_paths

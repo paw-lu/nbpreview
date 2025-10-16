@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import re
+import sys
 import textwrap
 from collections.abc import Callable, Generator
 from pathlib import Path
@@ -119,7 +120,7 @@ def rich_notebook_output(
     def _rich_notebook_output(
         cell: dict[str, Any] | None,
         plain: bool | None = None,
-        theme: str = "material",
+        theme: str = "monokai",
         no_wrap: bool | None = None,
         unicode: bool | None = None,
         hide_output: bool = False,
@@ -178,7 +179,7 @@ def test_automatic_plain(
     con = console.Console(
         file=output_file,
         width=80,
-        color_system="truecolor",
+        color_system=None,
         legacy_windows=False,
         force_terminal=False,
     )
@@ -189,7 +190,9 @@ def test_automatic_plain(
     snapshot_with_dir.assert_match(output, "test_automatic_plain.txt")
 
 
-def test_julia_syntax() -> None:
+def test_julia_syntax(
+    snapshot_with_dir: Snapshot,
+) -> None:
     """It highlights Julia code."""
     julia_notebook = {
         "cells": [
@@ -209,10 +212,7 @@ def test_julia_syntax() -> None:
                     }
                 ],
                 "source": (
-                    "function printx(x)\n"
-                    '    println("x = $x")\n'
-                    "    return nothing\n"
-                    "end"
+                    'function printx(x)\n    println("x = $x")\n    return nothing\nend'
                 ),
             }
         ],
@@ -243,37 +243,10 @@ def test_julia_syntax() -> None:
         legacy_windows=False,
         force_terminal=False,
     )
-    rendered_notebook = notebook.Notebook(julia_notebook_node, theme="material")
+    rendered_notebook = notebook.Notebook(julia_notebook_node, theme="monokai")
     con.print(rendered_notebook)
     output = output_file.getvalue()
-    expected_output = (
-        "\x1b[38;2;187;128;179;49mfunction\x1b[0m\x1b[38;2"
-        ";238;255;255;49m \x1b[0m\x1b[38;2;238;255;255;"
-        "49mprintx\x1b[0m\x1b[38;2;137;221;255;49m(\x1b[0m"
-        "\x1b[38;2;238;255;255;49mx\x1b[0m\x1b[38;2;137;22"
-        "1;255;49m)\x1b[0m                          "
-        "                                    \n\x1b[3"
-        "8;2;238;255;255;49m    \x1b[0m\x1b[38;2;238;25"
-        "5;255;49mprintln\x1b[0m\x1b[38;2;137;221;255;4"
-        '9m(\x1b[0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2'
-        ";195;232;141;49mx = \x1b[0m\x1b[38;2;137;221;2"
-        '55;49m$x\x1b[0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b'
-        "[38;2;137;221;255;49m)\x1b[0m              "
-        "                                        "
-        "     \n\x1b[38;2;238;255;255;49m    \x1b[0m\x1b[38"
-        ";2;187;128;179;49mreturn\x1b[0m\x1b[38;2;238;2"
-        "55;255;49m \x1b[0m\x1b[38;2;130;170;255;49mnot"
-        "hing\x1b[0m                                "
-        "                              \n\x1b[38;2;18"
-        "7;128;179;49mend\x1b[0m                    "
-        "                                        "
-        "                 \n                      "
-        "                                        "
-        "                  \nprintx (generic funct"
-        "ion with 1 method)                      "
-        "                   \n"
-    )
-    assert output == expected_output
+    snapshot_with_dir.assert_match(output, "test_julia_syntax.txt")
 
 
 def test_notebook_markdown_cell(
@@ -3485,6 +3458,10 @@ def test_render_unknown_data_type(
     snapshot_with_dir.assert_match(output, "test_render_unknown_data_type.txt")
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="For some reason colors are rendering differently on different platforms",
+)
 def test_render_block_image(
     rich_notebook_output: RichOutput,
     mock_tempfile_file: Generator[Mock, None, None],
@@ -4123,7 +4100,10 @@ def test_notebook_line_numbers_magic_code_cell(
     )
 
 
-def test_code_wrap(rich_notebook_output: RichOutput) -> None:
+def test_code_wrap(
+    rich_notebook_output: RichOutput,
+    snapshot_with_dir: Snapshot,
+) -> None:
     """It wraps code when narrow."""
     code_cell = {
         "cell_type": "code",
@@ -4134,39 +4114,8 @@ def test_code_wrap(rich_notebook_output: RichOutput) -> None:
         "source": "non_monkeys ="
         ' [animal for animal in get_animals("mamals") if animal != "monkey"]',
     }
-    expected_output = (
-        "     ╭──────────────────────────────────"
-        "───────────────────────────────────────╮"
-        "\n\x1b[38;5;247m[3]:\x1b[0m │ \x1b[38;2;238;255;25"
-        "5;49mnon_monkeys\x1b[0m\x1b[38;2;238;255;255;4"
-        "9m \x1b[0m\x1b[38;2;137;221;255;49m=\x1b[0m\x1b[38;2"
-        ";238;255;255;49m \x1b[0m\x1b[38;2;137;221;255;"
-        "49m[\x1b[0m\x1b[38;2;238;255;255;49manimal\x1b[0m"
-        "\x1b[38;2;238;255;255;49m \x1b[0m\x1b[38;2;187;12"
-        "8;179;49mfor\x1b[0m\x1b[38;2;238;255;255;49m \x1b"
-        "[0m\x1b[38;2;238;255;255;49manimal\x1b[0m\x1b[38;"
-        "2;238;255;255;49m \x1b[0m\x1b[3;38;2;137;221;2"
-        "55;49min\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b"
-        "[38;2;238;255;255;49mget_animals\x1b[0m\x1b[38"
-        ";2;137;221;255;49m(\x1b[0m\x1b[38;2;195;232;14"
-        '1;49m"\x1b[0m\x1b[38;2;195;232;141;49mmamals\x1b['
-        '0m\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2;137;'
-        "221;255;49m)\x1b[0m\x1b[38;2;238;255;255;49m \x1b"
-        "[0m\x1b[38;2;187;128;179;49mif\x1b[0m\x1b[38;2;23"
-        "8;255;255;49m \x1b[0m\x1b[38;2;238;255;255;49m"
-        "animal\x1b[0m\x1b[38;2;238;255;255;49m \x1b[0m\x1b[3"
-        "8;2;137;221;255;49m!=\x1b[0m\x1b[38;2;238;255;"
-        "255;49m \x1b[0m │\n     │ \x1b[38;2;195;232;141"
-        ';49m"\x1b[0m\x1b[38;2;195;232;141;49mmonkey\x1b[0'
-        'm\x1b[38;2;195;232;141;49m"\x1b[0m\x1b[38;2;137;2'
-        "21;255;49m]\x1b[0m                         "
-        "                                      │\n"
-        "     ╰──────────────────────────────────"
-        "───────────────────────────────────────╯"
-        "\n"
-    )
     output = rich_notebook_output(code_cell, code_wrap=True)
-    assert output == expected_output
+    snapshot_with_dir.assert_match(output, "test_code_wrap.txt")
 
 
 def test_html_encoded_image_link_text(

@@ -21,8 +21,7 @@
      │ fmri.head()                                                             │
      ╰─────────────────────────────────────────────────────────────────────────╯
                                                                                 
-[2]:  🌐                                                                        
-      file://mock/path/to/file0.html                                                                
+[2]:  🌐 file://mock/path/to/file.txt
                                                                                 
 [2]:       subject   timepoint   event     region      signal                   
       ────────────────────────────────────────────────────────                  
@@ -68,8 +67,7 @@
                                                                                 
 [3]:  [Text(0.5, 0, ''), Text(0, 0.5, ''), [], []]                              
                                                                                 
-      🖼                                                                         
-      file://mock/path/to/file1.png                                                                 
+      🖼 file://mock/path/to/file.txt
                                                                                 
       GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
       GGGGGGGGGG:::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG

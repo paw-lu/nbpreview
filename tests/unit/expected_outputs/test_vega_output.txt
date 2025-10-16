@@ -2,4 +2,4 @@
 [38;5;247m[3]:[0m │                         │
      ╰─────────────────────────╯
                                 
-      ]8;id=0;file://mock/path/to/file0.html\[94m Click to view Vega chart[0m]8;;\
+      ]8;id=0; file://mock/path/to/file.txt\[94m Click to view Vega chart[0m]8;;\
