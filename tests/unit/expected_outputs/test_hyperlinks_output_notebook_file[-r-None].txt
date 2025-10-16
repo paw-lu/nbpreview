@@ -22,8 +22,7 @@
      ╰─────────────────────────────────────────────────────────────────────────╯
                                                                                 
 [2]:  🌐                                                                        
-      file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_
-      file0.html                                                                
+      file://mock/path/to/file0.html                                                                
                                                                                 
 [2]:       subject   timepoint   event     region      signal                   
       ────────────────────────────────────────────────────────                  
@@ -70,8 +69,7 @@
 [3]:  [Text(0.5, 0, ''), Text(0, 0.5, ''), [], []]                              
                                                                                 
       🖼                                                                         
-      file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_
-      file1.png                                                                 
+      file://mock/path/to/file1.png                                                                 
                                                                                 
       GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
       GGGGGGGGGG:::GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG

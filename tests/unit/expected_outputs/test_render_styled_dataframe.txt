@@ -2,7 +2,7 @@
 [38;5;247m[2]:[0m │                                                                     │
      ╰─────────────────────────────────────────────────────────────────────╯
                                                                             
-[38;5;247m[2]:[0m  ]8;id=0;file:///var/folders/bz/z8pmyyl5795bdncz1cl20qz00000gp/T/tmpnbpreview_link_file0.html\[94m🌐 Click to view HTML[0m]8;;\                                                 
+[38;5;247m[2]:[0m  ]8;id=0;file://mock/path/to/file0.html\[94m🌐 Click to view HTML[0m]8;;\                                                 
                                                                             
 [38;5;247m[2]:[0m   [1m               Model:[0m            [1mDecision Tree[0m            [1mRegression[0m 
        [1m           Predicted:[0m   [1mTumour[0m   [1m   Non-Tumour[0m   [1mTumour[0m   [1mNon-Tumour[0m 

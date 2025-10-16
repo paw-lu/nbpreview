@@ -1,4 +1,5 @@
 """Test cases for render."""
+
 import dataclasses
 import io
 import json
@@ -789,6 +790,7 @@ def test_render_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame."""
     code_cell = {
@@ -852,7 +854,9 @@ def test_render_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_dataframe.txt")
 
 
@@ -1309,6 +1313,7 @@ def test_render_styled_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a styled DataFrame."""
     code_cell = {
@@ -1389,7 +1394,9 @@ def test_render_styled_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_styled_dataframe.txt")
 
 
@@ -1399,6 +1406,7 @@ def test_render_missing_column_name_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with a missing column index name."""
     code_cell = {
@@ -1450,7 +1458,9 @@ def test_render_missing_column_name_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(
         output, "test_render_missing_column_name_dataframe.txt"
     )
@@ -1462,6 +1472,7 @@ def test_render_missing_index_name_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with a missing index index name."""
     code_cell = {
@@ -1512,7 +1523,9 @@ def test_render_missing_index_name_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(
         output, "test_render_missing_index_name_dataframe.txt"
     )
@@ -1524,6 +1537,7 @@ def test_render_missing_last_index_name_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with missing lasst index index name."""
     code_cell = {
@@ -1574,7 +1588,9 @@ def test_render_missing_last_index_name_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(
         output, "test_render_missing_last_index_name_dataframe.txt"
     )
@@ -1586,6 +1602,7 @@ def test_render_plain_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame as normal when plain is True."""
     code_cell = {
@@ -1649,7 +1666,9 @@ def test_render_plain_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell, plain=True))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell, plain=True)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_plain_dataframe.txt")
 
 
@@ -1819,6 +1838,7 @@ def test_render_no_columns_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with missing columns."""
     code_cell = {
@@ -1897,7 +1917,9 @@ def test_render_no_columns_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_no_columns_dataframe.txt")
 
 
@@ -1907,6 +1929,7 @@ def test_render_uneven_data_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with non square data."""
     code_cell = {
@@ -1983,7 +2006,9 @@ def test_render_uneven_data_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_uneven_data_dataframe.txt")
 
 
@@ -1993,6 +2018,7 @@ def test_render_uneven_index_dataframe(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a DataFrame with uneven index names."""
     code_cell = {
@@ -2066,7 +2092,9 @@ def test_render_uneven_index_dataframe(
         ],
         "source": "",
     }
-    output = remove_link_ids(rich_notebook_output(code_cell))
+    output = normalize_file_paths(
+        remove_link_ids(rich_notebook_output(code_cell)), tempfile_path
+    )
     snapshot_with_dir.assert_match(output, "test_render_uneven_index_dataframe.txt")
 
 
@@ -2467,6 +2495,7 @@ def test_vega_output(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a hyperlink to a rendered Vega plot."""
     vega_output_cell = {
@@ -2584,7 +2613,7 @@ def test_vega_output(
         hyperlinks=True,
         hide_hyperlink_hints=False,
     )
-    output = remove_link_ids(output)
+    output = normalize_file_paths(remove_link_ids(output), tempfile_path)
     snapshot_with_dir.assert_match(output, "test_vega_output.txt")
 
 
@@ -2594,6 +2623,7 @@ def test_invalid_vega_output(
     remove_link_ids: Callable[[str], str],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a hyperlink to an invalid Vega plot."""
     vega_output_cell = {
@@ -2620,7 +2650,7 @@ def test_invalid_vega_output(
         hyperlinks=True,
         hide_hyperlink_hints=False,
     )
-    output = remove_link_ids(output)
+    output = normalize_file_paths(remove_link_ids(output), tempfile_path)
     snapshot_with_dir.assert_match(output, "test_invalid_vega_output.txt")
 
 
@@ -3131,6 +3161,7 @@ def test_vega_no_hyperlink(
     tempfile_path: Path,
     adjust_for_fallback: Callable[[str, int], str],
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders the file path when no hyperlinks are allowed."""
     vegalite_output_cell = {
@@ -3178,6 +3209,7 @@ def test_vega_no_hyperlink(
         hide_hyperlink_hints=True,
         unicode=True,
     )
+    output = normalize_file_paths(output, tempfile_path)
     snapshot_with_dir.assert_match(output, "test_vega_no_hyperlink.txt")
 
 
@@ -3459,6 +3491,8 @@ def test_render_block_image(
     remove_link_ids: Callable[[str], str],
     disable_capture: ContextManager[_PluggyPlugin],
     snapshot_with_dir: Snapshot,
+    tempfile_path: Path,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a block drawing of an image."""
     image_cell = {
@@ -3600,7 +3634,7 @@ def test_render_block_image(
 
     with disable_capture:
         output = rich_notebook_output(image_cell, images=True, image_drawing="block")
-    output = remove_link_ids(output)
+    output = normalize_file_paths(remove_link_ids(output), tempfile_path)
     snapshot_with_dir.assert_match(output, "test_render_block_image.txt")
 
 
@@ -3611,6 +3645,7 @@ def test_render_invalid_block_image(
     disable_capture: ContextManager[_PluggyPlugin],
     tempfile_path: Path,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It renders a fallback when image is invalid."""
     image_cell = {
@@ -3639,7 +3674,7 @@ def test_render_invalid_block_image(
 
     with disable_capture:
         output = rich_notebook_output(image_cell, images=True, image_drawing="block")
-    output = remove_link_ids(output)
+    output = normalize_file_paths(remove_link_ids(output), tempfile_path)
     snapshot_with_dir.assert_match(output, "test_render_invalid_block_image.txt")
 
 
@@ -4171,7 +4206,8 @@ def test_long_path(
     "bad_reference", ["data:image/png;unknown,abc123", "data:unknown;base64,abc123"]
 )
 def test_unknown_data_link(
-    bad_reference: str, rich_notebook_output: RichOutput,
+    bad_reference: str,
+    rich_notebook_output: RichOutput,
     snapshot_with_dir: Snapshot,
 ) -> None:
     """It does not decode the data link if it is not identified."""

@@ -291,3 +291,19 @@ def mock_tempfile_file(mocker: MockerFixture, tempfile_path: Path) -> Iterator[M
     tempfiles = tempfile_parent.glob(f"{tempfile_stem}*")
     for file in tempfiles:
         file.unlink()
+
+
+@pytest.fixture
+def normalize_file_paths() -> Callable[[str, Path], str]:
+    """Fixture to normalize file paths to make them consistent."""
+
+    def _normalize_file_paths(output: str, path: Path) -> str:
+        """Replace file path names."""
+        # Replace all instances of the path with a mock path
+        # Handle cases where whitespace breaks up the path (e.g., line breaks)
+        path_str = str(path)
+        # Create a regex pattern that allows optional whitespace between each character
+        pattern = r"\s*".join(re.escape(char) for char in path_str)
+        return re.sub(pattern, "mock/path/to/file", output)
+
+    return _normalize_file_paths

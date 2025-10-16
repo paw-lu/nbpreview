@@ -331,6 +331,8 @@ def test_cli_snapshot(
     remove_link_ids: Callable[[str], str],
     request: FixtureRequest,
     snapshot_with_dir: Snapshot,
+    normalize_file_paths: Callable[[str, Path], str],
+    tempfile_path: Path,
 ) -> Callable[..., None]:
     """Return fixture that tests output using snapshots."""
 
@@ -367,7 +369,8 @@ def test_cli_snapshot(
             **kwargs,
         )
         test_name = request.node.name
-        snapshot_with_dir.assert_match(remove_link_ids(output), f"{test_name}.txt")
+        formatted_output = normalize_file_paths(remove_link_ids(output), tempfile_path)
+        snapshot_with_dir.assert_match(formatted_output, f"{test_name}.txt")
 
     return _test_cli_snapshot
 
@@ -954,6 +957,8 @@ def test_render_stdin(
     remove_link_ids: Callable[[str], str],
     snapshot_with_dir: Snapshot,
     request: FixtureRequest,
+    tempfile_path: Path,
+    normalize_file_paths: Callable[[str, Path], str],
 ) -> None:
     """It treats stdin as a file's text and renders a notebook."""
     stdin = notebook_path.read_text()
@@ -961,9 +966,9 @@ def test_render_stdin(
     if file_argument is not None:
         args.append(file_argument)
     result = runner.invoke(__main__.typer_click_object, args=args, input=stdin)
-    output = result.output
+    output = normalize_file_paths(remove_link_ids(result.output), tempfile_path)
     test_name = request.node.name
-    snapshot_with_dir.assert_match(remove_link_ids(output), f"{test_name}.txt")
+    snapshot_with_dir.assert_match(output, f"{test_name}.txt")
 
 
 def test_stdin_cwd_path(
