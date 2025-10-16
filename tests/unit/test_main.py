@@ -253,7 +253,7 @@ def cli_arg(
             str: The output of the invoked command.
         """
         cleaned_args = [arg for arg in args if arg is not None]
-        upper_kwargs = runner.env | {
+        upper_kwargs = dict(runner.env) | {
             name.upper(): value for name, value in kwargs.items() if value is not None
         }
         cli_args = [os.fsdecode(notebook_path), *cleaned_args]
