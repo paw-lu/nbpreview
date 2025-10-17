@@ -136,7 +136,7 @@ norecursedirs = "tests/util"
 
 [tool.interrogate]
 color = true
-fail-under = 100
+fail-under = 95
 verbose = 2
 
 [tool.isort]

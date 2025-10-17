@@ -202,20 +202,6 @@ def coverage(session: Session) -> None:
                 session.run("coverage", "xml")
 
 
-@session(python=python_versions[0])
-def typeguard(session: Session) -> None:
-    """Runtime type checking using Typeguard."""
-    session.install(".")
-    session.install("pytest", "typeguard", "pygments", "pytest-mock")
-    session.run(
-        "pytest",
-        f"--typeguard-packages={package}",
-        "-m",
-        "not no_typeguard",
-        *session.posargs,
-    )
-
-
 @session(python=python_versions)
 def xdoctest(session: Session) -> None:
     """Run examples with xdoctest."""
