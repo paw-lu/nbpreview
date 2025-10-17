@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import re
+import sys
 import textwrap
 from collections.abc import Callable, Generator
 from pathlib import Path
@@ -4132,6 +4133,9 @@ def test_html_encoded_image_link_text(
     assert remove_link_ids(output) == remove_link_ids(expected_output)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Path will redner differently on windows"
+)
 def test_long_path(
     rich_notebook_output: RichOutput,
     remove_link_ids: Callable[[str], str],
