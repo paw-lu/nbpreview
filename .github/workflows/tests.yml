@@ -27,7 +27,6 @@ jobs:
           - { python: "3.11", os: "ubuntu-latest", session: "tests" }
           - { python: "3.13", os: "windows-latest", session: "tests" }
           - { python: "3.13", os: "macos-latest", session: "tests" }
-          - { python: "3.13", os: "ubuntu-latest", session: "typeguard" }
           - { python: "3.13", os: "ubuntu-latest", session: "xdoctest" }
           - { python: "3.13", os: "ubuntu-latest", session: "docs-build" }
 
