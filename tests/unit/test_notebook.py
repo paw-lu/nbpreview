@@ -6,7 +6,6 @@ import json
 import os
 import pathlib
 import re
-import sys
 import textwrap
 from collections.abc import Callable, Generator
 from pathlib import Path
@@ -3459,8 +3458,8 @@ def test_render_unknown_data_type(
 
 
 @pytest.mark.skipif(
-    sys.platform != "darwin",
-    reason="For some reason colors are rendering differently on different platforms",
+    os.environ.get("CI") == "true",
+    reason="For some reason colors are rendering differently on CI",
 )
 def test_render_block_image(
     rich_notebook_output: RichOutput,
