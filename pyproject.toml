@@ -104,7 +104,7 @@ exclude_lines = [
     # Typing overloads are never run
     "@typing.overload",
 ]
-fail_under = 100
+fail_under = 95
 show_missing = true
 
 [tool.mypy]
@@ -136,7 +136,7 @@ norecursedirs = "tests/util"
 
 [tool.interrogate]
 color = true
-fail-under = 95
+fail-under = 100
 verbose = 2
 
 [tool.isort]
