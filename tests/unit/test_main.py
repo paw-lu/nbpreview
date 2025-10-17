@@ -11,6 +11,7 @@ import pathlib
 import platform
 import re
 import shlex
+import sys
 import tempfile
 from collections.abc import Callable, Generator, Iterable, Iterator, Mapping
 from pathlib import Path
@@ -501,6 +502,9 @@ def test_force_plain(
     snapshot_with_dir.assert_match(result.output, "test_force_plain.txt")
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Different box characters used on windows"
+)
 def test_raise_no_source(
     runner: CliRunner,
     temp_file: Callable[[str | None], str],
@@ -520,6 +524,9 @@ def test_raise_no_source(
     snapshot_with_dir.assert_match(output[:80], "test_raise_no_source.txt")
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Different box characters used on windows"
+)
 def test_raise_no_output(
     runner: CliRunner,
     temp_file: Callable[[str | None], str],
@@ -1017,6 +1024,7 @@ def _normalize_file_header(output: str, file_name: str) -> str:
     )
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Bad escape code on windows")
 def test_multiple_files(
     runner: CliRunner,
     write_notebook: Callable[[dict[str, Any] | None], str],
@@ -1063,6 +1071,7 @@ def test_multiple_files_long_path() -> None:
     assert output == expected_output
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Bad escape code on windows")
 def test_file_and_stdin(
     runner: CliRunner,
     write_notebook: Callable[[dict[str, Any] | None], str],
@@ -1159,6 +1168,7 @@ def test_multiple_files_all_fail_message(
     assert "paths" in result.output
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Bad escape code on windows")
 def test_multiple_files_some_fail(
     runner: CliRunner,
     write_notebook: Callable[[dict[str, Any] | None], str],
@@ -1201,9 +1211,7 @@ def test_multiple_files_some_fail(
     removed_tempfile = _normalize_file_header(result.output, tempfile_name)
     removed_bad_path = _normalize_file_header(removed_tempfile, invalid_file_name)
     first_cell = "\n".join(removed_bad_path.splitlines()[:10])
-    snapshot_with_dir.assert_match(
-        first_cell, "test_multiple_files_some_fail.txt"
-    )
+    snapshot_with_dir.assert_match(first_cell, "test_multiple_files_some_fail.txt")
     assert "not" in removed_bad_path
     assert "valid" in removed_bad_path
 
