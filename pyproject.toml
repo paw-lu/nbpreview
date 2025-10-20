@@ -90,8 +90,8 @@ nbp = "nbpreview.__main__:app"
 nbpreview = "nbpreview.__main__:app"
 
 [tool.coverage.paths]
-source = ["*/site-packages", "src"]
-tests = ["*/tests", "tests"]
+source = ["src", "*/site-packages"]
+tests = ["tests", "*/tests"]
 
 [tool.coverage.run]
 branch = true
