@@ -36,25 +36,35 @@ a detailed breakdown of its [features],
 [command-line usage][usage],
 and [instructions on how to configure][configure] the tool.
 
-## Requirements
+<!-- installation-start -->
 
-- Python 3.11+
+## Quick look
+
+Want to just see how nbpreview would render an output on your terminal?
+Use [uv] to get a preview.
+The snippet below installs uv
+(if not already in your system)
+and uses it to render a notebook stored in this repository.
+
+```console
+% curl -LsSf https://astral.sh/uv/install.sh | sh
+% curl https://raw.githubusercontent.com/paw-lu/nbpreview/refs/heads/main/docs/example_notebook_cells/hero_notebook.ipynb | uvx nbpreview
+```
 
 ## Installation
 
-<!-- installation-start -->
+nbpreview can be installed through any of the major python package managers
+(eg [uv], [pipx], or [pip] from [PyPI](https://pypi.org/)).
 
-nbpreview can be installed through [pipx] or [pip] from [PyPI](https://pypi.org/).
-
-[pipx] provides an easy way to install Python applications in isolated environments.
-[See the documentation for how to install pipx.](https://pypa.github.io/pipx/installation/#install-pipx)
+[uv] is the easiest way to get started,
+[there are multiple ways to install it](https://docs.astral.sh/uv/getting-started/installation/).
+(Such as the example snippet above using curl).
 
 ```console
-% pipx install nbpreview
+% uv tool install nbpreview
 ```
 
-If [pipx] is not installed,
-nbpreview may also be installed via [pip]:
+nbpreview may also be installed via [pip] if you prefer:
 
 ```console
 % python -m pip install nbpreview
@@ -62,6 +72,7 @@ nbpreview may also be installed via [pip]:
 
 [pipx]: https://pypa.github.io/pipx/
 [pip]: https://pip.pypa.io/
+[uv]: https://docs.astral.sh/uv/
 
 <!-- installation-end -->
 
