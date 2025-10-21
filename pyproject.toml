@@ -13,7 +13,7 @@ license = "MIT"
 name = "nbpreview"
 readme = "README.md"
 repository = "https://github.com/paw-lu/nbpreview"
-version = "0.9.1"
+version = "0.10.0"
 
 [tool.poetry.urls]
 Changelog = "https://github.com/paw-lu/nbpreview/releases"
