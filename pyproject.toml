@@ -32,7 +32,7 @@ ipython = "^9.6.0"
 lxml = ">=6.0.2"
 markdown-it-py = ">=3.0,<4.0"
 mdit-py-plugins = ">=0.5.0"
-nbformat = { extras = ["fast"], version = ">=5.10.4" }
+nbformat = ">=5.10.4"
 picharsso = ">=2.0.1"
 pylatexenc = ">=2.10"
 python = "^3.11.0"
